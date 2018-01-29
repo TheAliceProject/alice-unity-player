@@ -1,0 +1,4 @@
+﻿# FileBrowser - Release notes
+
+## 1.0.0 - 28.12.2017
+* Production release
