@@ -8,7 +8,7 @@ public class JsonParser
 
 	public string ToJsonExample ()
 	{
-		JsonExampleClass obj = new JsonExampleClass ();
+        ExampleClass obj = new ExampleClass ();
 		obj.level = 1;
 		obj.timeElapsed = 0.5f;
 		obj.playerName = "Name";
@@ -37,7 +37,7 @@ public class JsonParser
 		//Debug.Log("Selected file: " + path);
 
 		string json = System.IO.File.ReadAllText(path);
-		JsonExampleClass obj = JsonUtility.FromJson<JsonExampleClass>(json);
+		ExampleClass obj = JsonUtility.FromJson<ExampleClass>(json);
 
 		return "Loaded in Json file, stored in object: " + obj.ToString();
 	}
