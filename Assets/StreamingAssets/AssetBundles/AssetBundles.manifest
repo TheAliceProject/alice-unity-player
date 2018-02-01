@@ -1,0 +1,10 @@
+ManifestFileVersion: 0
+CRC: 3633514411
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: alice.0
+      Dependencies: {}
+    Info_1:
+      Name: alice.1
+      Dependencies: {}

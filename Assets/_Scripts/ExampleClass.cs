@@ -6,9 +6,9 @@ public class ExampleClass
 	public string playerName = "default";
     public ExampleSubClass obj;
 
-	public string ToString ()
+	public string ObjToString ()
 	{
 		return "Level: " + level + ", Time Elapsed: " + timeElapsed + ", PlayerName: " + playerName + "\n"
-            + obj.ToString();
+            + obj.ObjToString();
 	}
 }
