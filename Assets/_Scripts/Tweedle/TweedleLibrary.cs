@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Tweedle
+﻿namespace Alice.Tweedle
 {
-    public class TweedleLibrary : MonoBehaviour
+    public class TweedleLibrary
     {
 
         
