@@ -1,4 +1,4 @@
-﻿namespace Tweedle
+﻿namespace Alice.Tweedle
 {
     public enum ProjectType
     {

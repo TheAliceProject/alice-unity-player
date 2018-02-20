@@ -1,6 +1,6 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleProperty
+    abstract public class TweedleType
     {
 
     }
