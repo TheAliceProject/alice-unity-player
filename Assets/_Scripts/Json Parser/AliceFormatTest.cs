@@ -1,9 +1,15 @@
-﻿public class AliceFormatTest {
+﻿using System.Collections.Generic;
 
-    private string[] implementationBrief;
+[System.Serializable]
+public class AliceFormatTest {
 
-    public void ObjToString()
+    //private List<string> implementationBrief;
+
+    public string ObjToString()
     {
-
+        string str = "";
+        //for (int i = 0; i < implementationBrief.Count; i++)
+        //    str += implementationBrief[i];
+        return str;
     }
 }
