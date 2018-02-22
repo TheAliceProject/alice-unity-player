@@ -143,7 +143,12 @@ ModelImporter:
     13700004: alien_eyeLid_L
     13700006: alien_eyeLid_R
     13700008: alien_skin
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: alien_alien_shader
+    second: {fileID: 2100000, guid: f6703ca0d6e5e6741a506d35f624eda0, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
