@@ -6,9 +6,7 @@ namespace Alice.Tweedle
 {
     public class TweedleLibrary
     {
-        private string name;
-        private string id;
-        private string version;
+		private ProjectIdentifier id;
         //private File storageLocation;
 
         private List<ProjectIdentifier> prerequisites;
