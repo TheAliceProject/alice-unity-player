@@ -102,4 +102,15 @@ public class JsonParser : MonoBehaviour
 
         return "Loaded in Json file, stored in object: " + obj.ObjToString();
 	}
+
+	public static void SetValue(Object obj, string variable, object value)
+	{
+		try
+		{
+			obj.GetType().GetField(variable, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(obj, value);
+		} catch (System.Exception e)
+		{
+			return;
+		}
+	}
 }

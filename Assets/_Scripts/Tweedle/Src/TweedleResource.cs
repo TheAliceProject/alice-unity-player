@@ -2,6 +2,10 @@
 {
     public class TweedleResource
     {
-        private string name;
+        private string contentType;
+		private string entryName;
+		private string name;
+		private string originalFileName;
+		private System.Guid uuid;
     }
 }

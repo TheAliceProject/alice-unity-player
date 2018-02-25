@@ -5,7 +5,6 @@ namespace Alice.Tweedle
     public class TweedleProgram
     {
         private string aliceVersion;
-        private string name;
         private ProjectIdentifier id;
         private List<ProjectIdentifier> prerequisites;
         private List<TypeDefinition> typeDefinitions;
