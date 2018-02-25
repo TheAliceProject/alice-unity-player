@@ -60,7 +60,7 @@ namespace GenerateCodeDom
             )));
             targetClass.Members.Add(valueProperty);
 
-
+			/*
             CodeBinaryOperatorExpression valueExpress = 
                 new CodeBinaryOperatorExpression(
                     new CodeFieldReferenceExpression(
@@ -69,6 +69,7 @@ namespace GenerateCodeDom
                     CodeBinaryOperatorType.Multiply,
                     new CodePrimitiveExpression(4.0)
                 );
+			*/
             // NOT ADDED TO ANYTHING YET
         }
 
