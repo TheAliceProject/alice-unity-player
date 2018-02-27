@@ -1,8 +1,8 @@
-﻿namespace Alice.Tweedle
+﻿namespace Alice.VM
 {
     public class TweedleFrame
     {
-        public TweedleFrame(TweedleObject instance)
+        public TweedleFrame(Tweedle.TweedleObject instance)
         {
 
         }

@@ -1,4 +1,4 @@
-﻿namespace Alice.Tweedle
+﻿namespace Alice.Linker
 {
     public class ProjectIdentifier
     {

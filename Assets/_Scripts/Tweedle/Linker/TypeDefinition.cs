@@ -6,9 +6,9 @@ namespace Alice.Tweedle
     {
         string name;
         TypeDefinitionType type;
-        TypeDefinition superClass;
-        List<TweedleMethod> instanceMethods;
-        List<TweedleProperty> instanceProperties;
-        List<string> values;
+        //TypeDefinition superClass;
+        //List<TweedleMethod> instanceMethods;
+        //List<TweedleProperty> instanceProperties;
+        //List<string> values;
     }
 }
