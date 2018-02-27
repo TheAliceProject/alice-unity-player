@@ -19,7 +19,7 @@
 
         }
 
-        public TweedleValue<T> initializeField<T>(TweedleFrame frame, TweedleField<T> field) where T : TweedleType
+        public TweedleValue<T> initializeField<T>(VM.TweedleFrame frame, TweedleField<T> field) where T : TweedleType
         {
             TweedleValue<T> value = null;
             set(field, value);

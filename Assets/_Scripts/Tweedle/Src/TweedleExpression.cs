@@ -2,7 +2,7 @@
 {
     public class TweedleExpression
     {
-        public TweedleValue<T> evaluate<T>(TweedleFrame frame) where T : TweedleType
+        public TweedleValue<T> evaluate<T>(VM.TweedleFrame frame) where T : TweedleType
         {
             return null;
         }

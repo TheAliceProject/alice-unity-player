@@ -7,7 +7,7 @@
             return true;
         }
 
-        public void execute(TweedleFrame frame)
+        public void execute(VM.TweedleFrame frame)
         {
 
         }

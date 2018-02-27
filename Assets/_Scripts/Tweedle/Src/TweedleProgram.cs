@@ -4,15 +4,16 @@ namespace Alice.Tweedle
 {
     public class TweedleProgram
     {
-        private string aliceVersion;
-        private ProjectIdentifier id;
-        private List<ProjectIdentifier> prerequisites;
+        //private Linker.Linker programSrc;
         private List<TypeDefinition> typeDefinitions;
         private Dictionary<string, TweedleResource> resources;
+        private List<TweedleStatement> main;
 
-        public void main(TweedleStatement[] statements)
+        public void Start(VM.VirtualMachine vm)
         {
-
+            //vm.run(main);
+            //for (int i = 0; i < main.Count; i++)
+                //run main
         }
     }
 }

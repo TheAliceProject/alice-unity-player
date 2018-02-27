@@ -26,7 +26,7 @@ namespace Alice.Tweedle
             
         }
 
-        public TweedleObject instantiate(TweedleFrame frame, TweedleValue<TweedleType>[] args)
+        public TweedleObject instantiate(VM.TweedleFrame frame, TweedleValue<TweedleType>[] args)
         {
             return null;
         }
