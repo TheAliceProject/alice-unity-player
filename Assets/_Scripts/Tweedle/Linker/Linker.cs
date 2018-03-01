@@ -12,7 +12,7 @@ namespace Alice.Linker
 
         public void AddClass(ClassAssetDescription classAsset)
         {
-            loadedFiles.Add(classAsset.Id);
+            loadedFiles.Add(classAsset.identifier);
             assets.Add(classAsset);
             classes.Add(classAsset.Name, new Tuple<ClassDescription, Tweedle.TweedleClass>(classAsset.Description, null));
             //unlinkedClasses.Add(asset.Name, asset.Description);
