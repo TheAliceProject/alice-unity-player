@@ -97,8 +97,7 @@ public class JsonParser : MonoBehaviour
     public string FromJsonFile (string path)
 	{
 		string json = System.IO.File.ReadAllText(path);
-        //ExampleClass obj = JsonUtility.FromJson<ExampleClass>(json);
-        AliceFormatTest obj = JsonUtility.FromJson<AliceFormatTest>(json);
+        ExampleClass obj = JsonUtility.FromJson<ExampleClass>(json);
 
         return "Loaded in Json file, stored in object: " + obj.ObjToString();
 	}

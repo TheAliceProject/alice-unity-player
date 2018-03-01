@@ -2,15 +2,18 @@
 
 namespace Alice.Linker
 {
+	[System.Serializable]
     public class AssetDescription
     {
-        public ProjectIdentifier Id
-        {
-            get { return id; }
-        }
+        public ProjectIdentifier identifier;
+		public List<ProjectIdentifier> prerequisites;
+		public List<ResourceDescription> resources;
 
-        private ProjectIdentifier id;
-        private List<ResourceDescription> resources;
-        private List<ProjectIdentifier> prerequisites;
+		public AssetDescription(AssetDescription asset)
+		{
+			this.identifier = asset.identifier;
+			this.prerequisites = asset.prerequisites;
+			this.resources = asset.resources;
+		}
     }
 }

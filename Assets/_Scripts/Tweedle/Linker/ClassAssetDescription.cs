@@ -13,5 +13,9 @@
         }
 
         private ClassDescription description;
-    }
+
+		public ClassAssetDescription(AssetDescription toCopy) : base(toCopy) 
+		{
+		}
+	}
 }

@@ -203,6 +203,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1603471889}
   - component: {fileID: 1603471888}
+  - component: {fileID: 1603471890}
   m_Layer: 0
   m_Name: Json
   m_TagString: Untagged
@@ -216,11 +217,12 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1603471887}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d193b6c8d43ff584b99266466274be4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  encodedString: '{"implementationBrief": ["vmPrimitive", ["playAudio:", ["audioSource"]]]}'
 --- !u!4 &1603471889
 Transform:
   m_ObjectHideFlags: 0
@@ -234,6 +236,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1603471890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1603471887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a555c5295f1f24d83b36a6358bb974, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1923489323
 GameObject:
   m_ObjectHideFlags: 0
