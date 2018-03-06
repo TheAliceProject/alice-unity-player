@@ -5,7 +5,7 @@ namespace Alice.Tweedle
     public class TweedleProgram
     {
         //private Linker.Linker programSrc;
-        private List<TypeDefinition> typeDefinitions;
+        private List<Linker.Deprecated.TypeDefinition> typeDefinitions;
         private Dictionary<string, TweedleResource> resources;
         private List<TweedleStatement> main;
 
