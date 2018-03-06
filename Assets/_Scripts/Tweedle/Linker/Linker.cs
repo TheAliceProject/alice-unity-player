@@ -5,32 +5,36 @@ namespace Alice.Linker
     public class Linker
     {
         private HashSet<ProjectIdentifier> loadedFiles;
-        private Dictionary<string, Tuple<ClassDescription, Tweedle.TweedleClass>> classes;
-        //private Dictionary<string, ClassDescription> unlinkedClasses;
-        private Dictionary<string, ResourceDescription> unlinkedResources;
+		//private Dictionary<string, Tuple<Deprecated.ClassDescription, Tweedle.TweedleClass>> classes;
+		//private Dictionary<string, ClassDescription> unlinkedClasses;
+		private Dictionary<string, AssetDescription> unlinkedAssets;
+		private Dictionary<string, ResourceDescription> unlinkedResources;
         private List<AssetDescription> assets;
 
-        public void AddClass(ClassAssetDescription classAsset)
+        /*public void AddClass(Deprecated.ClassAssetDescription classAsset)
         {
-            loadedFiles.Add(classAsset.identifier);
+            loadedFiles.Add(classAsset.package.identifier);
             assets.Add(classAsset);
-            classes.Add(classAsset.Name, new Tuple<ClassDescription, Tweedle.TweedleClass>(classAsset.Description, null));
+            classes.Add(classAsset.Name, new Tuple<Deprecated.ClassDescription, Tweedle.TweedleClass>(classAsset.Description, null));
             //unlinkedClasses.Add(asset.Name, asset.Description);
-        }
+        }*/
 
         public void AddLibrary(LibraryDescription libAsset)
         {
+			unlinkedAssets.Add(libAsset.Name, libAsset);
         }
 
         public void AddProgram(ProgramDescription programAsset)
         {
-        }
+			unlinkedAssets.Add(programAsset.Name, programAsset);
+		}
 
-        public void AddModel(ModelAssetDescription modelAsset)
+        public void AddModel(ModelDescription modelAsset)
         {
-        }
+			unlinkedAssets.Add(modelAsset.Name, modelAsset);
+		}
 
-        public Tweedle.TweedleProgram Link()
+		public Tweedle.TweedleProgram Link()
         {
             // (paritally) order classes
             // link the class heirarchy
@@ -39,21 +43,20 @@ namespace Alice.Linker
             return null;
         }
 
-        public ClassDescription NewUnlinkedClass(string name)
+        /*public Deprecated.ClassDescription NewUnlinkedClass(string name)
         {
             if (classes.ContainsKey(name))
             {
 
             }
-            ClassDescription classNew = new ClassDescription(name);
-            classes.Add(name, new Tuple<ClassDescription, Tweedle.TweedleClass>(classNew, null));
+			Deprecated.ClassDescription classNew = new Deprecated.ClassDescription(name);
+            classes.Add(name, new Tuple<Deprecated.ClassDescription, Tweedle.TweedleClass>(classNew, null));
             return classNew;
-        }
-/*
-        public TweedleType GetLinkedTypeNamed(string name)
+        }*/
+
+        /*public TweedleType GetLinkedTypeNamed(string name)
         {
 
-        }
-*/
+        }*/
     }
 }

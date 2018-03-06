@@ -4,7 +4,8 @@ namespace Alice.Linker
 {
     public class ProgramDescription : LibraryDescription
     {
-        private List<StatementDescription> main;
+		private List<Preference> preferences;
+        private List<Deprecated.StatementDescription> main;
 
 		public ProgramDescription(AssetDescription asset) : base(asset)
 		{
