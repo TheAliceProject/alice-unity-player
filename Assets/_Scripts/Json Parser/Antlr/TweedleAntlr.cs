@@ -9,10 +9,12 @@ public class TweedleAntlr : MonoBehaviour
 	
 	void Start () {
 		string file = System.IO.File.ReadAllText(path);
-		Debug.Log(file);
+		//Debug.Log(file);
 		AntlrInputStream antlerStream = new AntlrInputStream(file);
 		TweedleLexer lexer = new TweedleLexer(antlerStream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		TweedleParser parser = new TweedleParser(tokenStream);
+
+		Debug.Log(parser.SourceName);
 	}
 }
