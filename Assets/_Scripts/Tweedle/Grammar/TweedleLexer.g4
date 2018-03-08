@@ -52,6 +52,7 @@ NUMBER:             'Number';
 PRIMETIME:          'primetime';
 RETURN:             'return';
 STATIC:             'static';
+STRING:             'String';
 SUPER:              'super';
 THIS:               'this';
 TUCKED_AWAY:        'tuckedAway';
