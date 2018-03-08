@@ -5,22 +5,17 @@ namespace Alice.Linker
     public class Linker
     {
         private HashSet<ProjectIdentifier> loadedFiles;
+		private HashSet<Resource.ResourceIdentifier> loadedResources;
+
 		private Dictionary<Tuple<string, ProjectType>, AssetDescription> unlinkedAssets;
+		private Dictionary<Resource.ResourceIdentifier, ResourceDescription> unlinkedResources;
+
 		private Dictionary<string, LibraryDescription> unlinkedLibraries;
 		private Dictionary<string, ProgramDescription> unlinkedPrograms;
-		private Dictionary<string, TweedleLexer> unlinkedClasses;
 		private Dictionary<string, ModelDescription>   unlinkedModels;
-		private Dictionary<string, ResourceDescription> unlinkedResources;
-        private List<AssetDescription> assets;
+		private Dictionary<string, TweedleParser> unlinkedClasses;
 
-        public void AddClass(ProjectIdentifier identifier, TweedleLexer classLex)
-        {
-            loadedFiles.Add(identifier);
-			unlinkedClasses.Add(identifier.id, classLex);
-			//unlinkedAssets.Add(new Tuple<string, ProjectType>(identifier.id, ProjectType.Library), libAsset);
-		}
-
-        public void AddLibrary(LibraryDescription libAsset)
+		public void AddLibrary(LibraryDescription libAsset)
         {
             loadedFiles.Add(libAsset.package.identifier);
 			unlinkedLibraries.Add(libAsset.Id, libAsset);
@@ -39,6 +34,17 @@ namespace Alice.Linker
             loadedFiles.Add(modelAsset.package.identifier);
 			unlinkedModels.Add(modelAsset.Id, modelAsset);
 			unlinkedAssets.Add(new Tuple<string, ProjectType>(modelAsset.Name, ProjectType.Model), modelAsset);
+		}
+		public void AddClass(TweedleParser classParsed)
+		{
+			unlinkedClasses.Add(classParsed.classType().ToString(), classParsed);
+		}
+
+		public void AddResource(ResourceDescription resourceAsset)
+		{
+			Resource.ResourceIdentifier identifier = new Resource.ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
+			loadedResources.Add(identifier);
+			unlinkedResources.Add(identifier, resourceAsset);
 		}
 
 		public Tweedle.TweedleProgram Link()

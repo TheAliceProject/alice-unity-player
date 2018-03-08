@@ -11,7 +11,31 @@ namespace Alice.Linker
 			{
 				string type = System.Text.RegularExpressions.Regex.Replace(contentType, @"([.,-][a-z]|\b[a-z])", m => m.Value.ToUpper());
 				type = type.Replace("-", string.Empty);
-				return (Resource.ContentType)System.Enum.Parse(typeof(Resource.ContentType), type);
+				try
+				{
+					return (Resource.ContentType)System.Enum.Parse(typeof(Resource.ContentType), type);
+				}
+				catch (System.Exception)
+				{
+					return Resource.ContentType.NULL;
+				}
+			}
+		}
+
+		public Resource.FormatType FormatType
+		{
+			get
+			{
+				string type = System.Text.RegularExpressions.Regex.Replace(format, @"([.,-][a-z]|\b[a-z])", m => m.Value.ToUpper());
+				type = type.Replace("-", string.Empty);
+				try
+				{
+					return (Resource.FormatType)System.Enum.Parse(typeof(Resource.FormatType), type);
+				}
+				catch (System.Exception)
+				{
+					return Resource.FormatType.NULL;
+				}
 			}
 		}
 
