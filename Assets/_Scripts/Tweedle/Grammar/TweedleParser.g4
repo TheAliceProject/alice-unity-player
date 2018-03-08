@@ -185,7 +185,7 @@ formalParameterList
     ;
 
 formalParameter
-    : variableModifier* typeType variableDeclaratorId
+    : variableModifier* typeType (variableDeclaratorId | '?'variableDeclaratorId | '?'variableDeclaratorId parExpression)
     ;
 
 lastFormalParameter
@@ -241,12 +241,20 @@ parExpression
     : '(' expression ')'
     ;
 
+labeledExpressionList
+    : labeledExpression (',' labeledExpression)*
+    ;
+
+labeledExpression
+    : expressionLabel=IDENTIFIER ':' expression
+    ;
+
 expressionList
     : expression (',' expression)*
     ;
 
 methodCall
-    : IDENTIFIER '(' expressionList? ')'
+    : IDENTIFIER '(' labeledExpressionList? ')'
     ;
 
 expression
@@ -365,7 +373,7 @@ typeList
     ;
 
 typeType
-    : (classOrInterfaceType | primitiveType) ('[' ']')* '?'?
+    : (classOrInterfaceType | primitiveType) ('[' ']')*
     ;
 
 primitiveType
@@ -373,6 +381,7 @@ primitiveType
     | DECIMAL_NUMBER
     | WHOLE_NUMBER
     | NUMBER
+    | STRING
     ;
 
 typeArguments

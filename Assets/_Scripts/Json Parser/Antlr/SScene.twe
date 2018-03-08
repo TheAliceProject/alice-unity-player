@@ -1,0 +1,124 @@
+class SScene extends SThing {
+  @hidden Color atmosphereColor;
+  @hidden Color fromAboveLightColor;
+  @hidden Color fromBelowLightColor;
+  @hidden DecimalNumber fogDensity;
+
+
+  @hidden SScene getScene() {
+    return this;
+  }
+
+	Color getAtmosphereColor() {
+		return atmosphereColor;
+	}
+
+	void setAtmosphereColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		atmosphereColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+	}
+
+	@hidden Color getAmbientLightColor() {
+		return fromAboveLightColor;
+	}
+
+	@hidden void setAmbientLightColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		fromAboveLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+	}
+
+	Color getFromAboveLightColor() {
+		return fromAboveLightColor;
+	}
+
+	void setFromAboveLightColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		fromAboveLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+	}
+
+	Color getFromBelowLightColor() {
+		return fromBelowLightColor;
+	}
+
+	void setFromBelowLightColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		fromBelowLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+	}
+
+	DecimalNumber getFogDensity() {
+		return fogDensity;
+	}
+
+	void setFogDensity( Number density, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		fogDensity.animateValue( endValue: density.floatValue(), duration: duration, animation: animationStyle );
+	}
+
+	void addMouseClickOnScreenListener( MouseClickOnScreenListener listener, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addMouseClickOnScreenListener( listener: listener, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addMouseClickOnObjectListener( MouseClickOnObjectListener listener, MultipleEventPolicy ?multipleEventPolicy, Visual[] ?setOfVisuals ) {
+		getEventManager().addMouseClickOnObjectListener( listener: listener, multiEventPolicy: multipleEventPolicy, visuals: setOfVisuals );
+	}
+
+	void addDefaultModelManipulation() {
+		getEventManager().addDragAdapter();
+	}
+
+	void addTimeListener( TimeListener listener, Number frequency, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addTimerEventListener( listener: listener, frequency: frequency, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addSceneActivationListener( SceneActivationListener listener ) {
+		addSceneActivationListener( listener: listener );
+	}
+
+	void addKeyPressListener( KeyPressListener listener, MultipleEventPolicy ?multipleEventPolicy, HeldKeyPolicy ?heldKeyPolicy ) {
+		getEventManager().addKeyListener( listener: listener, multiEventPolicy: multipleEventPolicy, heldKeyPolicy: heldKeyPolicy );
+	}
+
+	void addArrowKeyPressListener( ArrowKeyPressListener listener, MultipleEventPolicy ?multipleEventPolicy, HeldKeyPolicy ?heldKeyPolicy ) {
+		getEventManager().addArrowKeyListener( listener: listener, multiEventPolicy: multipleEventPolicy, heldKeyPolicy: heldKeyPolicy );
+	}
+
+	void addNumberKeyPressListener( NumberKeyPressListener listener, MultipleEventPolicy ?multipleEventPolicy, HeldKeyPolicy ?heldKeyPolicy ) {
+		getEventManager().addNumberKeyListener( listener: listener, multiEventPolicy: multipleEventPolicy, heldKeyPolicy: heldKeyPolicy );
+	}
+
+	void addObjectMoverFor( SMovableTurnable thing ) {
+		getEventManager().moveWithArrows( thing: thing, speed: 2.5 );
+	}
+
+	void addPointOfViewChangeListener( PointOfViewChangeListener listener, SThing[] set ) {
+		getEventManager().addTransformationListener( listener: listener, targets: set );
+	}
+
+	void addCollisionStartListener( CollisionStartListener listener, SThing[] setA, SThing[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addCollisionListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addCollisionEndListener( CollisionEndListener listener, SThing[] setA, SThing[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addCollisionListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addProximityEnterListener( ProximityEnterListener listener, SThing[] setA, SThing[] setB, Number distance, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addProximityEventListener( listener: listener, a: setA, b: setB, distance: distance, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addProximityExitListener( ProximityExitListener listener, SThing[] setA, SThing[] setB, Number distance, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addProximityEventListener( listener: listener, a: setA, b: setB, distance: distance, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addViewEnterListener( ViewEnterListener listener, SModel[] set, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addComesIntoViewEventListener( listener: listener, targets: set, multiEventPolicy: multipleEventPolicy );
+	}
+
+
+	void addViewExitListener( ViewExitListener listener, SModel[] set, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addLeavesViewEventListener( listener: listener, targets: set, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addOcclusionStartListener( OcclusionStartListener listener, SModel[] setA, SModel[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addOcclusionEventListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
+	}
+
+	void addOcclusionEndListener( OcclusionEndListener listener, SModel[] setA, SModel[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+		getEventManager().addOcclusionEventListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
+	}
+}

@@ -1,56 +1,56 @@
 class SThing {
-    @hidden String name;
-    @hidden SThing vehicle;
+  @hidden String name;
+  @hidden SThing vehicle;
 
 	@tuckedAway String getName() {
 		return name;
 	}
 
 	@tuckedAway void setName( String newName ) {
-		name <- newName;
+		name <- newName ;
 	}
 
 	SThing getVehicle() {
-	    return vehicle;
+	  return vehicle;
 	}
 
   @hidden VantagePoint getVantagePoint( SThing entity ) {
-    return VantagePoint.createInstance( this.getImplementation().getTransformation( entity.getImplementation() ) );
+    return VantagePoint.createInstance( transformation: getTransformation( target: entity ) );
   }
 
   void delay( Number duration ) {
-    Primitive.delay( duration );
+    Primitive.delay( duration: duration );
   }
 
   void playAudio( AudioSource audioSource ) {
-    Primitive.playAudio( audioSource );
+    Primitive.playAudio( resource: audioSource );
   }
 
   Boolean isCollidingWith( SThing other ) {
-    return Primitive.isCollidingWith( other );
+    return Primitive.isCollidingWith( target: other );
   }
 
   Boolean getBooleanFromUser( String message ) {
-    return Primitive.getBooleanFromUser( message );
+    return Primitive.getBooleanFromUser( message: message );
   }
 
   String getStringFromUser( String message ) {
-    return Primitive.getStringFromUser( message );
+    return Primitive.getStringFromUser( message: message );
   }
 
   DecimalNumber getDoubleFromUser( String message ) {
-    return Primitive.getDoubleFromUser( message );
+    return Primitive.getDoubleFromUser( message: message );
   }
 
   WholeNumber getIntegerFromUser( String message ) {
-    return Primitive.getIntegerFromUser( message );
+    return Primitive.getIntegerFromUser( message: message );
   }
 
   String toString() {
     if( name != null ) {
       return name;
     } else {
-      return "unnamed " + Primitive.getClassName( this );
+      return "unnamed " + Primitive.getClassName( instance: this );
     }
   }
 

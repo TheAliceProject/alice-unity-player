@@ -1,0 +1,113 @@
+class STurnable extends SThing {
+
+	Boolean isFacing( SThing other ) {
+		return isFacing( target: other );
+	}
+
+	void turn( TurnDirection direction,
+	           Number amount,
+	           DecimalNumber ?duration (Defaults.getDuration()),
+	           AnimationStyle ?animationStyle (Defaults.getAnimationStyle),
+	           SThing ?asSeenBy (this) ) {
+		animateApplyRotationInRevolutions( axis: direction.getAxis(), revolutions: amount, viewer: asSeenBy, duration: duration, animation: animationStyle );
+	}
+
+	void roll( RollDirection direction,
+	           Number amount,
+	           DecimalNumber ?duration,
+	           AnimationStyle ?animationStyle,
+	           SThing ?asSeenBy ) {
+		animateApplyRotationInRevolutions( axis: direction.getAxis(), revolutions: amount, viewer: overrideDefault( override: asSeenBy, default: this ), duration: duration, animation: animationStyle );
+	}
+
+	void turnToFace( SThing target, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		animateOrientationOnlyToFace( target: target, offset: null, duration: duration, animation: animationStyle );
+	}
+
+	void orientToUpright( DecimalNumber ?duration, AnimationStyle ?animationStyle, SThing ?upAsSeenBy ) {
+		animateOrientationToUpright( viewer: overrideDefault( override: asSeenBy, default: getScene() ), duration: duration, animation: animationStyle );
+	}
+
+	void pointAt( SThing target, DecimalNumber ?duration, AnimationStyle ?animationStyle, SThing ?upAsSeenBy ) {
+		animateOrientationToPointAt( target: target, viewer: overrideDefault( override: asSeenBy, default: getScene() ), duration: duration, animation: animationStyle );
+	}
+
+	void orientTo( SThing target, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		animateOrientationOnly( target: target, offset: null, duration: duration, animation: animationStyle );
+	}
+
+	@tuckedAway Orientation getOrientationRelativeToVehicle() {
+		return Orientation.createInstance( orientation: getLocalOrientation() );
+	}
+
+	@tuckedAway void setOrientationRelativeToVehicle( Orientation orientation, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+		if( vehicle != null ) {
+			animateOrientationOnly( vehicle: vehicle, orientation: orientation.getInternal(), duration: duration, animation: animationStyle );
+		} else {
+			AbstractTransformable sgTransformable <- getSgComposite();
+			AffineMatrix4x4 m <- sgTransformable.getLocalTransformation();
+			m.orientation.setValue( orientation: orientation.getInternal() );
+			sgTransformable.setLocalTransformation( transformation: m );
+		}
+	}
+
+	Double getDistanceTo( STurnable other ) {
+		return getDistanceTo( target: other );
+	}
+
+	Double getDistanceAbove( SThing other,
+	                         SThing ?asSeenBy (getScene()) ) {
+		return getDistanceAbove( target: other, viewer: asSeenBy );
+	}
+
+	Boolean isAbove( SThing other, SThing ?asSeenBy ) {
+		return getDistanceAbove( target: other, viewer: overrideDefault( override: asSeenBy, default: getScene() ) ) > 0;
+	}
+
+	Double getDistanceBelow( SThing other, SThing ?asSeenBy ) {
+		return getDistanceBelow( target: other, viewer: overrideDefault( override: asSeenBy, default: getScene() ) );
+	}
+
+	Boolean isBelow( SThing other, SThing ?asSeenBy ) {
+		return getDistanceBelow( target: other, viewer: overrideDefault( override: asSeenBy, default: getScene() ) ) > 0;
+	}
+
+	Double getDistanceToTheRightOf( SThing other, SThing ?asSeenBy ) {
+		return getDistanceToTheRightOf( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) );
+	}
+
+	Boolean isToTheRightOf( SThing other, SThing ?asSeenBy ) {
+		return getDistanceToTheRightOf( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) ) > 0;
+	}
+
+	Double getDistanceToTheLeftOf( SThing other, SThing ?asSeenBy ) {
+		return getDistanceToTheLeftOf( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) );
+	}
+
+	Boolean isToTheLeftOf( SThing other, SThing ?asSeenBy ) {
+		return getDistanceToTheLeftOf( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) ) > 0;
+	}
+
+	Double getDistanceInFrontOf( SThing other, SThing ?asSeenBy ) {
+		return getDistanceInFrontOf( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) );
+	}
+
+	Boolean isInFrontOf( SThing other, SThing ?asSeenBy ) {
+		return getDistanceInFrontOf( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) ) > 0;
+	}
+
+	Double getDistanceBehind( SThing other, SThing ?asSeenBy ) {
+		return getDistanceBehind( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) );
+	}
+
+	Boolean isBehind( SThing other, SThing ?asSeenBy ) {
+		return getDistanceBehind( target: other, viewer: overrideDefault( override: asSeenBy, default: other ) ) > 0;
+	}
+
+	@hidden SThing overrideDefault(SThing override, SThing default) {
+	  if (override != null) {
+	    return override;
+	  }
+	  return default;
+	}
+}
