@@ -5,12 +5,14 @@ namespace Alice.Linker
 	[System.Serializable]
     public class AssetDescription
     {
+		public string Id
+		{
+			get { return package.identifier.id; }
+		}
+
 		public string Name
 		{
-			get
-			{
-				return description.name;
-			}
+			get { return description.name; }
 		}
 
 		public Description description;

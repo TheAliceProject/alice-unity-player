@@ -5,33 +5,40 @@ namespace Alice.Linker
     public class Linker
     {
         private HashSet<ProjectIdentifier> loadedFiles;
-		//private Dictionary<string, Tuple<Deprecated.ClassDescription, Tweedle.TweedleClass>> classes;
-		//private Dictionary<string, ClassDescription> unlinkedClasses;
-		private Dictionary<string, AssetDescription> unlinkedAssets;
+		private Dictionary<Tuple<string, ProjectType>, AssetDescription> unlinkedAssets;
+		private Dictionary<string, LibraryDescription> unlinkedLibraries;
+		private Dictionary<string, ProgramDescription> unlinkedPrograms;
+		private Dictionary<string, TweedleLexer> unlinkedClasses;
+		private Dictionary<string, ModelDescription>   unlinkedModels;
 		private Dictionary<string, ResourceDescription> unlinkedResources;
         private List<AssetDescription> assets;
 
-        /*public void AddClass(Deprecated.ClassAssetDescription classAsset)
+        public void AddClass(ProjectIdentifier identifier, TweedleLexer classLex)
         {
-            loadedFiles.Add(classAsset.package.identifier);
-            assets.Add(classAsset);
-            classes.Add(classAsset.Name, new Tuple<Deprecated.ClassDescription, Tweedle.TweedleClass>(classAsset.Description, null));
-            //unlinkedClasses.Add(asset.Name, asset.Description);
-        }*/
+            loadedFiles.Add(identifier);
+			unlinkedClasses.Add(identifier.id, classLex);
+			//unlinkedAssets.Add(new Tuple<string, ProjectType>(identifier.id, ProjectType.Library), libAsset);
+		}
 
         public void AddLibrary(LibraryDescription libAsset)
         {
-			unlinkedAssets.Add(libAsset.Name, libAsset);
+            loadedFiles.Add(libAsset.package.identifier);
+			unlinkedLibraries.Add(libAsset.Id, libAsset);
+			unlinkedAssets.Add(new Tuple<string, ProjectType>(libAsset.Name, ProjectType.Library), libAsset);
         }
 
         public void AddProgram(ProgramDescription programAsset)
         {
-			unlinkedAssets.Add(programAsset.Name, programAsset);
+            loadedFiles.Add(programAsset.package.identifier);
+			unlinkedPrograms.Add(programAsset.Id, programAsset);
+			unlinkedAssets.Add(new Tuple<string, ProjectType>(programAsset.Name, ProjectType.World), programAsset);
 		}
 
-        public void AddModel(ModelDescription modelAsset)
+		public void AddModel(ModelDescription modelAsset)
         {
-			unlinkedAssets.Add(modelAsset.Name, modelAsset);
+            loadedFiles.Add(modelAsset.package.identifier);
+			unlinkedModels.Add(modelAsset.Id, modelAsset);
+			unlinkedAssets.Add(new Tuple<string, ProjectType>(modelAsset.Name, ProjectType.Model), modelAsset);
 		}
 
 		public Tweedle.TweedleProgram Link()
@@ -42,21 +49,5 @@ namespace Alice.Linker
             // if depends on child class throw error (gracefully)
             return null;
         }
-
-        /*public Deprecated.ClassDescription NewUnlinkedClass(string name)
-        {
-            if (classes.ContainsKey(name))
-            {
-
-            }
-			Deprecated.ClassDescription classNew = new Deprecated.ClassDescription(name);
-            classes.Add(name, new Tuple<Deprecated.ClassDescription, Tweedle.TweedleClass>(classNew, null));
-            return classNew;
-        }*/
-
-        /*public TweedleType GetLinkedTypeNamed(string name)
-        {
-
-        }*/
     }
 }
