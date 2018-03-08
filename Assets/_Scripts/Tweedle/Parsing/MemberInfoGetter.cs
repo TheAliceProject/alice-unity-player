@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Alice.Json
+namespace Alice.Parse
 {
 	public static class MemberInfoGetter
 	{
