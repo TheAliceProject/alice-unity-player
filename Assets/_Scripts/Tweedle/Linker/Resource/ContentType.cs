@@ -3,6 +3,7 @@
 	[System.Serializable]
 	public enum ContentType
 	{
-		Audio, Class, Image, Model, SkeletonMesh, Texture
+		Audio, Class, Image, Model, SkeletonMesh, Texture,
+		NULL
 	};
 }

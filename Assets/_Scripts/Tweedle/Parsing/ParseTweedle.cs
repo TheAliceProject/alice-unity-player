@@ -1,49 +1,49 @@
-﻿namespace Alice.Json
+﻿namespace Alice.Parse
 {
 	public class ParseTweedle
 	{
-		string rootPath = "";
-		public ParseTweedle(string p)
+		private string rootPath = "";
+		private Linker.Linker program;
+
+		public ParseTweedle(Linker.Linker program, string p)
 		{
+			this.program = program;
 			rootPath = p;
 		}
 
-        public void Parse(Linker.Linker program, string json)
-        {
+		public void JsonFile(string json)
+		{
 			Linker.AssetDescription asset = UnityEngine.JsonUtility.FromJson<Linker.AssetDescription>(json);
 			JSONObject jsonObj = new JSONObject(json);
-			ParseResources(ref program, ref asset.resources, jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)]);
+			JsonResources(
+				ref asset.resources, 
+				jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)]
+				);
 			Linker.ProjectType t = asset.package.identifier.Type;
             switch (t)
             {
-                case Linker.ProjectType.Class:
-					// Deprecated ClassAssetDescription
-                    //Linker.ClassAssetDescription classAsset = new Linker.ClassAssetDescription(asset);
-					// Parse JSON into a
-					//program.AddClass(classAsset);
-                    break;
                 case Linker.ProjectType.Library:
                     Linker.LibraryDescription libAsset = new Linker.LibraryDescription(asset);
-					// Parse JSON into a
-					UnityEngine.Debug.Log(libAsset.ToString());
 					program.AddLibrary(libAsset);
-                    break;
+					// REMOVE
+					UnityEngine.Debug.Log(libAsset.ToString());
+					break;
                 case Linker.ProjectType.World:
                     Linker.ProgramDescription worldAsset =  new Linker.ProgramDescription(asset);
-					// Parse JSON into a
 					program.AddProgram(worldAsset);
-                    break;
+					// REMOVE
+					UnityEngine.Debug.Log(worldAsset.ToString());
+					break;
                 case Linker.ProjectType.Model:
-					//Linker.ModelDescription modelAsset = new Linker.ModelDescription(asset);
 					Linker.ModelDescription modelAsset = UnityEngine.JsonUtility.FromJson<Linker.ModelDescription>(json);
-					UnityEngine.Debug.Log(modelAsset.ToString());
                     program.AddModel(modelAsset);
-                    break;
+					// REMOVE
+					UnityEngine.Debug.Log(modelAsset.ToString());
+					break;
             }
         }
 
-		private void ParseResources(
-			ref Linker.Linker program,
+		private void JsonResources(
 			ref System.Collections.Generic.List<Linker.ResourceDescription> resources, 
 			JSONObject json)
 		{
@@ -51,7 +51,7 @@
 			{
 				return;
 			}
-			// TODO do I want to add these resources to the program?
+			
 			for (int i = 0; i < resources.Count; i++)
 			{
 				switch (resources[i].ContentType)
@@ -61,6 +61,7 @@
 						break;
 					case Linker.Resource.ContentType.Class:
 						resources[i] = UnityEngine.JsonUtility.FromJson<Linker.Resource.ClassDescription>(json.list[i].ToString());
+
 						break;
 					case Linker.Resource.ContentType.Image:
 						resources[i] = UnityEngine.JsonUtility.FromJson<Linker.Resource.ImageDescription>(json.list[i].ToString());
@@ -71,7 +72,7 @@
 						{
 							string relativePath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
 							string subJson = System.IO.File.ReadAllText(relativePath);
-							Parse(program, subJson);
+							JsonFile(subJson);
 						}
 						break;
 					case Linker.Resource.ContentType.SkeletonMesh:
@@ -81,6 +82,7 @@
 						resources[i] = UnityEngine.JsonUtility.FromJson<Linker.Resource.TextureDescription >(json.list[i].ToString());
 						break;
 				}
+				program.AddResource(resources[i]);
 			}
 		}
 	}
