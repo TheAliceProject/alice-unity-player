@@ -180,12 +180,17 @@ formalParameters
     ;
 
 formalParameterList
-    : formalParameter (',' formalParameter)* (',' lastFormalParameter)?
+    : requiredParameter (',' requiredParameter)* (',' optionalParameter)* (',' lastFormalParameter)?
+    | optionalParameter (',' optionalParameter)* (',' lastFormalParameter)?
     | lastFormalParameter
     ;
 
-formalParameter
-    : variableModifier* typeType (variableDeclaratorId | '?'variableDeclaratorId | '?'variableDeclaratorId parExpression)
+requiredParameter
+    : variableModifier* typeType variableDeclaratorId
+    ;
+
+optionalParameter
+    : variableModifier* typeType variableDeclaratorId LARROW expression
     ;
 
 lastFormalParameter
