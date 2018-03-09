@@ -13,7 +13,9 @@ class SScene extends SThing {
 		return atmosphereColor;
 	}
 
-	void setAtmosphereColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+	void setAtmosphereColor( Color color,
+	                         DecimalNumber duration <- Defaults.getDuration(),
+	                         AnimationStyle animationStyle <- Defaults.getAnimationStyle() ) {
 		atmosphereColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
 	}
 
@@ -21,7 +23,9 @@ class SScene extends SThing {
 		return fromAboveLightColor;
 	}
 
-	@hidden void setAmbientLightColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+	@hidden void setAmbientLightColor( Color color,
+	                                   DecimalNumber duration <- Defaults.getDuration(),
+	                                   AnimationStyle animationStyle <- Defaults.getAnimationStyle() ) {
 		fromAboveLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
 	}
 
@@ -29,7 +33,9 @@ class SScene extends SThing {
 		return fromAboveLightColor;
 	}
 
-	void setFromAboveLightColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+	void setFromAboveLightColor( Color color,
+	                             DecimalNumber duration <- Defaults.getDuration(),
+	                             AnimationStyle animationStyle <- Defaults.getAnimationStyle() ) {
 		fromAboveLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
 	}
 
@@ -37,7 +43,9 @@ class SScene extends SThing {
 		return fromBelowLightColor;
 	}
 
-	void setFromBelowLightColor( Color color, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+	void setFromBelowLightColor( Color color,
+	                             DecimalNumber duration <- Defaults.getDuration(),
+	                             AnimationStyle animationStyle <- Defaults.getAnimationStyle() ) {
 		fromBelowLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
 	}
 
@@ -45,15 +53,20 @@ class SScene extends SThing {
 		return fogDensity;
 	}
 
-	void setFogDensity( Number density, DecimalNumber ?duration, AnimationStyle ?animationStyle ) {
+	void setFogDensity( Number density,
+	                    DecimalNumber duration <- Defaults.getDuration(),
+	                    AnimationStyle animationStyle <- Defaults.getAnimationStyle() ) {
 		fogDensity.animateValue( endValue: density.floatValue(), duration: duration, animation: animationStyle );
 	}
 
-	void addMouseClickOnScreenListener( MouseClickOnScreenListener listener, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addMouseClickOnScreenListener( MouseClickOnScreenListener listener,
+	                                    MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy()) {
 		getEventManager().addMouseClickOnScreenListener( listener: listener, multiEventPolicy: multipleEventPolicy );
 	}
 
-	void addMouseClickOnObjectListener( MouseClickOnObjectListener listener, MultipleEventPolicy ?multipleEventPolicy, Visual[] ?setOfVisuals ) {
+	void addMouseClickOnObjectListener( MouseClickOnObjectListener listener,
+	                                    MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy(),
+	                                    Visual[] setOfVisuals <- Defaults.allVisuals()) {
 		getEventManager().addMouseClickOnObjectListener( listener: listener, multiEventPolicy: multipleEventPolicy, visuals: setOfVisuals );
 	}
 
@@ -61,7 +74,9 @@ class SScene extends SThing {
 		getEventManager().addDragAdapter();
 	}
 
-	void addTimeListener( TimeListener listener, Number frequency, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addTimeListener( TimeListener listener,
+	                      Number frequency,
+	                      MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addTimerEventListener( listener: listener, frequency: frequency, multiEventPolicy: multipleEventPolicy );
 	}
 
@@ -69,15 +84,21 @@ class SScene extends SThing {
 		addSceneActivationListener( listener: listener );
 	}
 
-	void addKeyPressListener( KeyPressListener listener, MultipleEventPolicy ?multipleEventPolicy, HeldKeyPolicy ?heldKeyPolicy ) {
+	void addKeyPressListener( KeyPressListener listener,
+	                          MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy(),
+	                          HeldKeyPolicy heldKeyPolicy <- Defaults.heldKeyPolicy() ) {
 		getEventManager().addKeyListener( listener: listener, multiEventPolicy: multipleEventPolicy, heldKeyPolicy: heldKeyPolicy );
 	}
 
-	void addArrowKeyPressListener( ArrowKeyPressListener listener, MultipleEventPolicy ?multipleEventPolicy, HeldKeyPolicy ?heldKeyPolicy ) {
+	void addArrowKeyPressListener( ArrowKeyPressListener listener,
+	                               MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy(),
+	                               HeldKeyPolicy heldKeyPolicy <- Defaults.heldKeyPolicy() ) {
 		getEventManager().addArrowKeyListener( listener: listener, multiEventPolicy: multipleEventPolicy, heldKeyPolicy: heldKeyPolicy );
 	}
 
-	void addNumberKeyPressListener( NumberKeyPressListener listener, MultipleEventPolicy ?multipleEventPolicy, HeldKeyPolicy ?heldKeyPolicy ) {
+	void addNumberKeyPressListener( NumberKeyPressListener listener,
+	                                MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy(),
+	                                HeldKeyPolicy heldKeyPolicy <- Defaults.heldKeyPolicy() ) {
 		getEventManager().addNumberKeyListener( listener: listener, multiEventPolicy: multipleEventPolicy, heldKeyPolicy: heldKeyPolicy );
 	}
 
@@ -89,36 +110,43 @@ class SScene extends SThing {
 		getEventManager().addTransformationListener( listener: listener, targets: set );
 	}
 
-	void addCollisionStartListener( CollisionStartListener listener, SThing[] setA, SThing[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addCollisionStartListener( CollisionStartListener listener, SThing[] setA, SThing[] setB,
+	                                MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addCollisionListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
 	}
 
-	void addCollisionEndListener( CollisionEndListener listener, SThing[] setA, SThing[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addCollisionEndListener( CollisionEndListener listener, SThing[] setA, SThing[] setB,
+	                              MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addCollisionListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
 	}
 
-	void addProximityEnterListener( ProximityEnterListener listener, SThing[] setA, SThing[] setB, Number distance, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addProximityEnterListener( ProximityEnterListener listener, SThing[] setA, SThing[] setB, Number distance,
+	                                MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addProximityEventListener( listener: listener, a: setA, b: setB, distance: distance, multiEventPolicy: multipleEventPolicy );
 	}
 
-	void addProximityExitListener( ProximityExitListener listener, SThing[] setA, SThing[] setB, Number distance, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addProximityExitListener( ProximityExitListener listener, SThing[] setA, SThing[] setB, Number distance,
+	                               MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addProximityEventListener( listener: listener, a: setA, b: setB, distance: distance, multiEventPolicy: multipleEventPolicy );
 	}
 
-	void addViewEnterListener( ViewEnterListener listener, SModel[] set, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addViewEnterListener( ViewEnterListener listener, SModel[] set,
+	                           MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addComesIntoViewEventListener( listener: listener, targets: set, multiEventPolicy: multipleEventPolicy );
 	}
 
-
-	void addViewExitListener( ViewExitListener listener, SModel[] set, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addViewExitListener( ViewExitListener listener, SModel[] set,
+	                          MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addLeavesViewEventListener( listener: listener, targets: set, multiEventPolicy: multipleEventPolicy );
 	}
 
-	void addOcclusionStartListener( OcclusionStartListener listener, SModel[] setA, SModel[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addOcclusionStartListener( OcclusionStartListener listener, SModel[] setA, SModel[] setB,
+	                                MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addOcclusionEventListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
 	}
 
-	void addOcclusionEndListener( OcclusionEndListener listener, SModel[] setA, SModel[] setB, MultipleEventPolicy ?multipleEventPolicy ) {
+	void addOcclusionEndListener( OcclusionEndListener listener, SModel[] setA, SModel[] setB,
+	                              MultipleEventPolicy multipleEventPolicy <- Defaults.multiEventPolicy() ) {
 		getEventManager().addOcclusionEventListener( listener: listener, a: setA, b: setB, multiEventPolicy: multipleEventPolicy );
 	}
 }
