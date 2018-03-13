@@ -286,7 +286,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c070020fc0231694db8103ef55d649ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: alien.dae
+  fileName: cola.dae
+  texOverride: {fileID: 2800000, guid: d6c49808bb734ba4fa51d4251baac70a, type: 3}
 --- !u!4 &1643920919
 Transform:
   m_ObjectHideFlags: 0
