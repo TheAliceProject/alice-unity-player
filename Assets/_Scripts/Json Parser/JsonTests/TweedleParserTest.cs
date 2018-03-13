@@ -11,8 +11,7 @@ public class TweedleParserTest : MonoBehaviour {
 		int index = file.LastIndexOf("/");
 		string path = file.Substring(0, index + 1);
 		
-		Alice.Linker.Linker program = new Alice.Linker.Linker();
-		Alice.Parse.ParseTweedle parser = new Alice.Parse.ParseTweedle(program, path);
-		parser.JsonFile(jsonStr);
+		Alice.Tweedle.Unlinked.JsonUnlinkedParser parser = new Alice.Tweedle.Unlinked.JsonUnlinkedParser(path);
+		parser.ParseFile(jsonStr);
 	}
 }
