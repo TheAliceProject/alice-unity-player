@@ -22,7 +22,7 @@ namespace Crosstales.FB.EditorExt
             {
                 PlayerSettings.apiCompatibilityLevel = ApiCompatibilityLevel.NET_2_0;
 #endif
-                Debug.Log("File Browser: API level changed to .NET 2.0.");
+                Debug.LogWarning("File Browser: API level changed to .NET 2.0.");
             }
 
 #endif

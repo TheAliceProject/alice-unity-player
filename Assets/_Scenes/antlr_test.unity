@@ -121,7 +121,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 912520703}
-  - component: {fileID: 912520702}
   - component: {fileID: 912520704}
   m_Layer: 0
   m_Name: antlr
@@ -130,18 +129,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &912520702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 912520701}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83fa431dd8e89c84da885c90689ffc65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Name: world
 --- !u!4 &912520703
 Transform:
   m_ObjectHideFlags: 0
@@ -166,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e4484ba730059c45a3b9b06531e0065, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/_Scripts/Json Parser/Antlr/SThing.twe
+  path: Assets/_Scripts/Json Parser/Antlr/SScene.twe
 --- !u!1 &1076086497
 GameObject:
   m_ObjectHideFlags: 0
