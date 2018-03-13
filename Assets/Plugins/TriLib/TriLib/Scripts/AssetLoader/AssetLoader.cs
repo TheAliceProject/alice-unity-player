@@ -165,7 +165,7 @@ namespace TriLib
             {
                 foreach (var item in _materialData)
                 {
-                    item.Dispose();
+					item.Dispose();
                 }
                 _materialData = null;
             }
