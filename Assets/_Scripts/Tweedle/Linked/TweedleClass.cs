@@ -4,26 +4,18 @@ namespace Alice.Tweedle
 {
     public class TweedleClass : TweedleType
     {
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-
         public TweedleClass Super
         {
             get { return super; }
             set { super = value; }
         }
 
-        private string name;
         private TweedleClass super;
         private Dictionary<string, TweedleProperty> properties;
         private Dictionary<string, TweedleMethod> methods;
 
-        public TweedleClass(string name) : base()
+        public TweedleClass(string name) : base(name)
         {
-            
         }
 
         public TweedleObject instantiate(VM.TweedleFrame frame, TweedleValue<TweedleType>[] args)

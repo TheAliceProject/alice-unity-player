@@ -1,6 +1,6 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleArray<T> : TweedleValue<TweedleArrayType<T>> where T: TweedleType
+    public class TweedleArray<T> : TweedleValue<TweedleArrayType> where T: TweedleType
     {
         public int Length
         {
@@ -12,7 +12,7 @@
             get { return values[i]; }
         }
 
-        public readonly T[] values;
+        private readonly T[] values;
 
         public TweedleArray(T[] values)
         {

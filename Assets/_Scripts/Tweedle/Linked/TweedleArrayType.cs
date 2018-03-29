@@ -1,7 +1,12 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleArrayType<T> : TweedleType where T : TweedleType
-    {
-        private TweedleType type;
+	public class TweedleArrayType : TweedleType
+	{
+		private TweedleType type;
+
+		public TweedleArrayType(TweedleType type) : base(type.Name + "[]")
+		{
+		}
+
     }
 }

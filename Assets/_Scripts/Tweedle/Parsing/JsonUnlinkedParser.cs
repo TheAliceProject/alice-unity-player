@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle.Unlinked
+﻿using Alice.Tweedle.File;
+
+namespace Alice.Tweedle.Unlinked
 {
 	public class JsonUnlinkedParser
 	{
@@ -19,7 +21,7 @@
 
 		public void ParseFile(string json)
 		{
-			AssetDescription asset = UnityEngine.JsonUtility.FromJson<AssetDescription>(json);
+			Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(json);
 			JSONObject jsonObj = new JSONObject(json);
 			ParseResources(
 				ref asset.resources, 
@@ -29,7 +31,7 @@
             switch (t)
             {
                 case ProjectType.Library:
-                    LibraryDescription libAsset = new LibraryDescription(asset);
+                    LibraryManifest libAsset = new LibraryManifest(asset);
 					system.AddLibrary(libAsset);
 					// REMOVE
 					UnityEngine.Debug.Log(libAsset.ToString());
@@ -41,7 +43,7 @@
 					UnityEngine.Debug.Log(worldAsset.ToString());
 					break;
                 case ProjectType.Model:
-					ModelDescription modelAsset = UnityEngine.JsonUtility.FromJson<ModelDescription>(json);
+					ModelManifest modelAsset = UnityEngine.JsonUtility.FromJson<ModelManifest>(json);
 					system.AddModel(modelAsset);
 					// REMOVE
 					UnityEngine.Debug.Log(modelAsset.ToString());
@@ -50,7 +52,7 @@
         }
 
 		private void ParseResources(
-			ref System.Collections.Generic.List<ResourceDescription> resources, 
+			ref System.Collections.Generic.List<ResourceReference> resources, 
 			JSONObject json)
 		{
 			if (json == null || json.type != JSONObject.Type.ARRAY)
@@ -62,18 +64,18 @@
 			{
 				switch (resources[i].ContentType)
 				{
-					case Resource.ContentType.Audio:
-						resources[i] = UnityEngine.JsonUtility.FromJson<Resource.AudioDescription>(json.list[i].ToString());
+					case ContentType.Audio:
+						resources[i] = UnityEngine.JsonUtility.FromJson<AudioReference>(json.list[i].ToString());
 						break;
-					case Resource.ContentType.Class:
-						resources[i] = UnityEngine.JsonUtility.FromJson<Resource.ClassDescription>(json.list[i].ToString());
+					case ContentType.Type:
+						resources[i] = UnityEngine.JsonUtility.FromJson<TypeReference>(json.list[i].ToString());
 
 						break;
-					case Resource.ContentType.Image:
-						resources[i] = UnityEngine.JsonUtility.FromJson<Resource.ImageDescription>(json.list[i].ToString());
+					case ContentType.Image:
+						resources[i] = UnityEngine.JsonUtility.FromJson<ImageReference>(json.list[i].ToString());
 						break;
-					case Resource.ContentType.Model:
-						resources[i] = UnityEngine.JsonUtility.FromJson<Resource.ModelDescription>(json.list[i].ToString());
+					case ContentType.Model:
+						resources[i] = UnityEngine.JsonUtility.FromJson<ModelReference>(json.list[i].ToString());
 						for (int j = 0; j < resources[i].files.Count; j++)
 						{
 							string relativePath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
@@ -81,11 +83,11 @@
 							ParseFile(subJson);
 						}
 						break;
-					case Resource.ContentType.SkeletonMesh:
-						resources[i] = UnityEngine.JsonUtility.FromJson<Resource.StructureDescription>(json.list[i].ToString());
+					case ContentType.SkeletonMesh:
+						resources[i] = UnityEngine.JsonUtility.FromJson<StructureReference>(json.list[i].ToString());
 						break;
-					case Resource.ContentType.Texture:
-						resources[i] = UnityEngine.JsonUtility.FromJson<Resource.TextureDescription >(json.list[i].ToString());
+					case ContentType.Texture:
+						resources[i] = UnityEngine.JsonUtility.FromJson<TextureReference >(json.list[i].ToString());
 						break;
 				}
 				system.AddResource(resources[i]);
