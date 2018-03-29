@@ -73,7 +73,7 @@ public class JsonParser : MonoBehaviour
         FileInfo[] files = dir.GetFiles("*." + json_ext);
         for (int i = 0; i < files.Length; i++)
         {
-            text.text += FromJsonFile(files[i].FullName);
+			text.text += FromJsonFile(files[i].FullName);
         }
     }
 

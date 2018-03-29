@@ -1,5 +1,4 @@
-﻿/*
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 
@@ -7,10 +6,10 @@ namespace Alice.Tweedle
 {
     public class TweedleLibrary
     {
-		private ProjectIdentifier id;
+		private File.ProjectIdentifier id;
         //private File storageLocation;
 
-        private List<ProjectIdentifier> prerequisites;
+        private List<File.ProjectIdentifier> prerequisites;
         private Dictionary<string, TweedleClass> classes;
         private Dictionary<string, TweedleResource> resources;
 
@@ -31,4 +30,3 @@ namespace Alice.Tweedle
         }
     }
 }
-*/

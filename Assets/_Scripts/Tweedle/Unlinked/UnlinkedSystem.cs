@@ -1,35 +1,36 @@
 ﻿using System.Collections.Generic;
+using Alice.Tweedle.File;
 
 namespace Alice.Tweedle.Unlinked
 {
 	public class UnlinkedSystem
 	{
 		private HashSet<ProjectIdentifier> loadedFiles;
-		private HashSet<Resource.ResourceIdentifier> loadedResources;
+		private HashSet<ResourceIdentifier> loadedResources;
 
-		private Dictionary<Tuple<string, ProjectType>, AssetDescription> unlinkedAssets;
-		private Dictionary<Resource.ResourceIdentifier, ResourceDescription> unlinkedResources;
+		private Dictionary<Tuple<string, ProjectType>, Manifest> unlinkedAssets;
+		private Dictionary<ResourceIdentifier, ResourceReference> unlinkedResources;
 
-		private Dictionary<string, LibraryDescription> unlinkedLibraries;
+		private Dictionary<string, LibraryManifest> unlinkedLibraries;
 		private Dictionary<string, ProgramDescription> unlinkedPrograms;
-		private Dictionary<string, ModelDescription> unlinkedModels;
+		private Dictionary<string, ModelManifest> unlinkedModels;
 		private Dictionary<string, UnlinkedClass> unlinkedClasses;
 		private Dictionary<string, UnlinkedEnum> unlinkedEnums;
 
 		public UnlinkedSystem()
 		{
 			loadedFiles = new HashSet<ProjectIdentifier>();
-			loadedResources = new HashSet<Resource.ResourceIdentifier>();
+			loadedResources = new HashSet<ResourceIdentifier>();
 
-			unlinkedAssets = new Dictionary<Tuple<string, ProjectType>, AssetDescription>();
-			unlinkedResources = new Dictionary<Resource.ResourceIdentifier, ResourceDescription>();
+			unlinkedAssets = new Dictionary<Tuple<string, ProjectType>, Manifest>();
+			unlinkedResources = new Dictionary<ResourceIdentifier, ResourceReference>();
 
-			unlinkedLibraries = new Dictionary<string, LibraryDescription>();
+			unlinkedLibraries = new Dictionary<string, LibraryManifest>();
 			unlinkedPrograms = new Dictionary<string, ProgramDescription>();
-			unlinkedModels = new Dictionary<string, ModelDescription>();
+			unlinkedModels = new Dictionary<string, ModelManifest>();
 		}
 
-		public void AddLibrary(LibraryDescription libAsset)
+		public void AddLibrary(LibraryManifest libAsset)
 		{
 			loadedFiles.Add(libAsset.package.identifier);
 			unlinkedLibraries.Add(libAsset.Id, libAsset);
@@ -43,7 +44,7 @@ namespace Alice.Tweedle.Unlinked
 			unlinkedAssets.Add(new Tuple<string, ProjectType>(programAsset.Name, ProjectType.World), programAsset);
 		}
 
-		public void AddModel(ModelDescription modelAsset)
+		public void AddModel(ModelManifest modelAsset)
 		{
 			loadedFiles.Add(modelAsset.package.identifier);
 			unlinkedModels.Add(modelAsset.Id, modelAsset);
@@ -60,9 +61,9 @@ namespace Alice.Tweedle.Unlinked
 			unlinkedEnums.Add(unlinkedEnum.Name, unlinkedEnum);
 		}
 
-		public void AddResource(ResourceDescription resourceAsset)
+		public void AddResource(ResourceReference resourceAsset)
 		{
-			Resource.ResourceIdentifier identifier = new Resource.ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
+			ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
 			loadedResources.Add(identifier);
 			unlinkedResources.Add(identifier, resourceAsset);
 		}

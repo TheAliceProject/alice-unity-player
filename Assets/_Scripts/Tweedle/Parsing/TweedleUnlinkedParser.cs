@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Alice.Tweedle.Unlinked
 {
@@ -24,47 +25,99 @@ namespace Alice.Tweedle.Unlinked
 			{
 				base.VisitClassDeclaration(context);
 				string className = context.identifier().GetText();
+				UnlinkedClass unlinkedClass;
 				if (context.EXTENDS() != null)
 				{
 					string superclass = context.typeType().classOrInterfaceType().GetText();
-					return new UnlinkedClass(className, superclass);
+					unlinkedClass = new UnlinkedClass(className, superclass);
 				} else
 				{
-					return new UnlinkedClass(className);
+					unlinkedClass = new UnlinkedClass(className);
 				}
+
+				ClassBodyDeclarationListener cbdListener = new ClassBodyDeclarationListener(unlinkedClass);
+				context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.EnterRule(cbdListener));
+
+				return unlinkedClass;
 			}
 
 			public override UnlinkedType VisitEnumDeclaration([NotNull] TweedleParser.EnumDeclarationContext context)
 			{
 				base.VisitEnumDeclaration(context);
 				List<string> values = new List<string>();
-				var enumConsts = context.enumConstants().enumConstant();
-				foreach (var enumConst in enumConsts)
-				{
-					values.Add(enumConst.identifier().GetText());
-				}
+				context.enumConstants().enumConstant().ToList().ForEach(enumConst => values.Add(enumConst.identifier().GetText());
 				return new UnlinkedEnum(context.identifier().GetText(), values);
 			}
 		}
 
-		private class MethodVisitor : TweedleParserBaseVisitor<TweedleMethod>
+		private class ClassBodyDeclarationListener : TweedleParserBaseListener
 		{
-			public override TweedleMethod VisitMethodDeclaration([NotNull] TweedleParser.MethodDeclarationContext context)
+			private UnlinkedClass unlinkedClass;
+
+			public ClassBodyDeclarationListener(UnlinkedClass unlinkedClass)
+			{
+				this.unlinkedClass = unlinkedClass;
+			}
+
+			public override void EnterFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context)
+			{
+				base.EnterFieldDeclaration(context);
+				List<UnlinkedField> fields = new List<UnlinkedField>();
+				context.variableDeclarators().variableDeclarator()
+					.ToList()
+					.ForEach(field => fields.Add(new UnlinkedField(
+							field.variableDeclaratorId().GetText(), 
+							field.variableInitializer().Accept(new StatementVisitor())
+					)));
+				unlinkedClass.fields = fields;
+			}
+
+			public override void EnterMethodDeclaration([NotNull] TweedleParser.MethodDeclarationContext context)
+			{
+				base.EnterMethodDeclaration(context);
+				List<UnlinkedMethod> methods = new List<UnlinkedMethod>();
+				/*
+				context.methodBody()
+					.ToList()
+					.ForEach(field => fields.Add(new UnlinkedField(
+							field.variableDeclaratorId().GetText(),
+							field.variableInitializer().Accept(new StatementVisitor())
+					)));
+				*/
+				unlinkedClass.methods = methods;
+			}
+
+			public override void EnterConstructorDeclaration([NotNull] TweedleParser.ConstructorDeclarationContext context)
+			{
+				base.EnterConstructorDeclaration(context);
+				List<UnlinkedConstructor> constructors = new List<UnlinkedConstructor>();
+				//context.constructorBody
+				unlinkedClass.constructors = constructors;
+			}
+		}
+
+		private class ClassBodyDeclarationVisitor : TweedleParserBaseVisitor<UnlinkedClassBodyDeclaration>
+		{
+			/*public override UnlinkedClassBodyDeclaration VisitMethodBody([NotNull] TweedleParser.MethodBodyContext context)
+			{
+				return base.VisitMethodBody(context);
+			}*/
+
+			/*public override TweedleMethod ([NotNull] TweedleParser.MethodDeclarationContext context)
 			{
 				string methodName = context.IDENTIFIER().GetText();
 				InstructionVisitor instructionVisitor = new InstructionVisitor();
 				List<TweedleStatement> instructions = null;//= context.instruction
 				return new TweedleMethod(methodName, instructions);
-			}
+			}*/
 		}
 
-		private class InstructionVisitor : TweedleParserBaseVisitor<TweedleStatement>
+		private class StatementVisitor : TweedleParserBaseVisitor<UnlinkedStatement>
 		{
-			public override TweedleStatement VisitGenericMethodDeclaration([NotNull] TweedleParser.GenericMethodDeclarationContext context)
+			public override UnlinkedStatement VisitStatement([NotNull] TweedleParser.StatementContext context)
 			{
-				string instructionName = context.GetText();
-				//return new TweedleStatement(instructionName);
-				return new TweedleStatement();
+				string statementName = context.GetText();
+				return new UnlinkedStatement(statementName);
 			}
 		}
 
