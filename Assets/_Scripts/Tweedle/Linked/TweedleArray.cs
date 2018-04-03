@@ -1,6 +1,6 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleArray<T> : TweedleValue<TweedleArrayType> where T: TweedleType
+    public class TweedleArray<T> where T : TweedleArrayType
     {
         public int Length
         {

@@ -2,7 +2,7 @@
 {
     public class TweedleInvokable
     {
-        public TweedleValue<T> invoke<T>(TweedleValue<T>[] args) where T : TweedleType
+        public TweedleValue invoke(TweedleValue[] args)
         {
             return null;
         }

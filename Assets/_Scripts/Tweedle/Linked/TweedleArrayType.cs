@@ -4,7 +4,8 @@
 	{
 		private TweedleType type;
 
-		public TweedleArrayType(TweedleType type) : base(type.Name + "[]")
+		public TweedleArrayType(TweedleType type) 
+			: base(type.Name + "[]")
 		{
 		}
 

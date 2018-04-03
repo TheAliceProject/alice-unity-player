@@ -11,5 +11,13 @@
         {
 
         }
-    }
+
+		// TEMPORARY
+		private string name;
+
+		public TweedleStatement(string name)
+		{
+			this.name = name;
+		}
+	}
 }

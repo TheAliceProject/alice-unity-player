@@ -1,27 +1,27 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleObject : TweedleValue<TweedleClass>
+    public class TweedleObject : TweedleValue
     {
-        private readonly TweedleClass twClass;
+        private readonly TweedleClass tweClass;
 
         public TweedleObject(TweedleClass aClass)
         {
-            twClass = aClass;
+            tweClass = aClass;
         }
 
-        public TweedleValue<T> get<T>(TweedleField<T> field) where T : TweedleType
+        public TweedleValue get(TweedleField field)
         {
             return null;
         }
 
-        public void set<T>(TweedleField<T> field, TweedleValue<T> value) where T : TweedleType
+        public void set(TweedleField field, TweedleValue value)
         {
 
         }
 
-        public TweedleValue<T> initializeField<T>(VM.TweedleFrame frame, TweedleField<T> field) where T : TweedleType
+        public TweedleValue initializeField(VM.TweedleFrame frame, TweedleField field)
         {
-            TweedleValue<T> value = null;
+            TweedleValue value = null;
             set(field, value);
             return value;
         }

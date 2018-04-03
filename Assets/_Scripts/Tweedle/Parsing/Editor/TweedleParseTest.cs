@@ -8,7 +8,7 @@ namespace Alice.Tweedle.Unlinked
 {
 	public class TweedleParseTest
 	{
-		private UnlinkedType ParseString(string src)
+		private TweedleTypeReference ParseString(string src)
 		{
 			TweedleUnlinkedParser t = new TweedleUnlinkedParser();
 			return t.Parse(src);
@@ -17,7 +17,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void SomethingShouldBeCreatedForARootClass()
 		{
-			UnlinkedType tested = ParseString("class SThing {}");
+			TweedleTypeReference tested = ParseString("class SThing {}");
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
 
@@ -25,15 +25,15 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void ARootClassShouldBeCreated()
 		{
-			UnlinkedType tested = ParseString("class SThing {}");
+			TweedleTypeReference tested = ParseString("class SThing {}");
 
-			Assert.IsInstanceOf<UnlinkedClass>(tested, "The parser should have returned a UnlinkedClass.");
+			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a UnlinkedClass.");
 		}
 
 		[Test]
 		public void ClassShouldKnowItsName()
 		{
-			UnlinkedType tested = ParseString("class SThing {}");
+			TweedleTypeReference tested = ParseString("class SThing {}");
 
 			Assert.AreEqual("SThing", tested.Name, "The name should be 'SThing'");
 		}
@@ -100,7 +100,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void SomethingShouldBeCreatedForASubclass()
 		{
-			UnlinkedType tested = ParseString("class SScene extends SThing {}");
+			TweedleTypeReference tested = ParseString("class SScene extends SThing {}");
 
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
@@ -108,15 +108,15 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void ASubclassShouldBeCreated()
 		{
-			UnlinkedType tested = ParseString("class SScene extends SThing {}");
+			TweedleTypeReference tested = ParseString("class SScene extends SThing {}");
 
-			Assert.IsInstanceOf<UnlinkedClass>(tested, "The parser should have returned a UnlinkedClass.");
+			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a UnlinkedClass.");
 		}
 
 		[Test]
 		public void ClassNameShouldBeReturnedOnSubclass()
 		{
-			UnlinkedType tested = ParseString("class SScene extends SThing {}");
+			TweedleTypeReference tested = ParseString("class SScene extends SThing {}");
 
 			Assert.AreEqual("SScene",
 							tested.Name,
@@ -126,7 +126,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void SuperclassNameShouldBeReturnedOnSubclass()
 		{
-			UnlinkedClass sScene = (UnlinkedClass)ParseString("class SScene extends SThing {}");
+			TweedleClass sScene = (TweedleClass)ParseString("class SScene extends SThing {}");
 
 			Assert.AreEqual("SThing",
 							sScene.SuperclassName,
@@ -136,7 +136,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void SomethingShouldBeCreatedForAnEnum()
 		{
-			UnlinkedType tested = ParseString("enum Direction {UP, DOWN}");
+			TweedleTypeReference tested = ParseString("enum Direction {UP, DOWN}");
 
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
@@ -144,15 +144,15 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AnEnumShouldBeCreated()
 		{
-			UnlinkedType tested = ParseString("enum Direction {UP, DOWN}");
+			TweedleTypeReference tested = ParseString("enum Direction {UP, DOWN}");
 
-			Assert.IsInstanceOf<UnlinkedEnum>(tested, "The parser should have returned a UnlinkedEnum.");
+			Assert.IsInstanceOf<TweedleEnum>(tested, "The parser should have returned a UnlinkedEnum.");
 		}
 
 		[Test]
 		public void NameShouldBeReturnedOnEnum()
 		{
-			UnlinkedType tested = ParseString("enum Direction {UP, DOWN}");
+			TweedleTypeReference tested = ParseString("enum Direction {UP, DOWN}");
 
 			Assert.AreEqual("Direction",
 							tested.Name,
@@ -162,7 +162,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void EnumShouldIncludeTwoValues()
 		{
-			UnlinkedEnum directionEnum = (UnlinkedEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
 
 			Assert.AreEqual(2,
 							directionEnum.Values.Count,
@@ -172,7 +172,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void EnumShouldIncludeUpValue()
 		{
-			UnlinkedEnum directionEnum = (UnlinkedEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
 
 			Assert.True(directionEnum.Values.Contains("UP"),
 						"The enum Direction should include UP.");
@@ -181,7 +181,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void EnumShouldIncludeDownValue()
 		{
-			UnlinkedEnum directionEnum = (UnlinkedEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
 
 			Assert.True(directionEnum.Values.Contains("DOWN"),
 						"The enum Direction should include DOWN.");
@@ -190,7 +190,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void EnumShouldNotIncludeLeftValue()
 		{
-			UnlinkedEnum directionEnum = (UnlinkedEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
 
 			Assert.False(directionEnum.Values.Contains("LEFT"),
 						 "The enum Direction should not include LEFT.");
