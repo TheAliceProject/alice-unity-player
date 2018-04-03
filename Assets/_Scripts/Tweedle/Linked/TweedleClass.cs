@@ -11,14 +11,20 @@ namespace Alice.Tweedle
         }
 
         private TweedleClass super;
-        private Dictionary<string, TweedleProperty> properties;
-        private Dictionary<string, TweedleMethod> methods;
+        private List<TweedleProperty> properties;
+        private List<TweedleMethod> methods;
+		public List<TweedleConstructor> constructors { get; internal set; }
 
-        public TweedleClass(string name) : base(name)
+		public TweedleClass(string name) : base(name)
         {
         }
 
-        public TweedleObject instantiate(VM.TweedleFrame frame, TweedleValue<TweedleType>[] args)
+		public TweedleClass(string name, TweedleClass super) : base(name)
+		{
+			this.super = super;
+		}
+
+		public TweedleObject instantiate(VM.TweedleFrame frame, TweedleValue[] args)
         {
             return null;
         }
