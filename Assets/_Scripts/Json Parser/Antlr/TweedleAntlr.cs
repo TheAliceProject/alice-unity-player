@@ -20,7 +20,7 @@ public class TweedleAntlr : MonoBehaviour
 		*/
 
 		Alice.Tweedle.Unlinked.TweedleUnlinkedParser parse = new Alice.Tweedle.Unlinked.TweedleUnlinkedParser();
-		Alice.Tweedle.TweedleTypeReference type = parse.Parse(file);
+		Alice.Tweedle.TweedleType type = parse.Parse(file);
 		Debug.Log(type.Name);
 	}
 }

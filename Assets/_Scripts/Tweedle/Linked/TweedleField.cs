@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 			this.type = type;
 		}
 
-		public TweedleField(TweedleType type, string name, List<string> modifier)
+		public TweedleField(List<string> modifier, TweedleType type, string name)
 		{
 			this.name = name;
 			this.type = type;
@@ -29,12 +29,17 @@ namespace Alice.Tweedle
 			this.initializer = initializer;
 		}
 
-		public TweedleField(TweedleType type, List<string> modifier, string name, TweedleStatement initializer)
+		public TweedleField(List<string> modifier, TweedleType type, string name, TweedleStatement initializer)
 		{
 			this.name = name;
 			this.type = type;
 			this.modifier = modifier;
 			this.initializer = initializer;
+		}
+
+		public void Initializer(TweedleExpression expr)
+		{
+
 		}
 	}
 }
