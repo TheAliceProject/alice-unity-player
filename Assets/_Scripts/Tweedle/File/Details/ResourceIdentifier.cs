@@ -5,9 +5,9 @@
 	{
 		public string id;
 		public ContentType contentType;
-		public FormatType format;
+		public string format;
 
-		public ResourceIdentifier(string id, ContentType contentType, FormatType format)
+		public ResourceIdentifier(string id, ContentType contentType, string format)
 		{
 			this.id = id;
 			this.contentType = contentType;

@@ -29,26 +29,30 @@ namespace Alice.Tweedle.Unlinked
 			unlinkedLibraries = new Dictionary<string, LibraryManifest>();
 			unlinkedPrograms = new Dictionary<string, ProgramDescription>();
 			unlinkedModels = new Dictionary<string, ModelManifest>();
+
+			classes = new Dictionary<string, TweedleClass>();
+			enums = new Dictionary<string, TweedleEnum>();
+			types = new Dictionary<string, TweedleType>();
 		}
 
 		public void AddLibrary(LibraryManifest libAsset)
 		{
-			loadedFiles.Add(libAsset.package.identifier);
-			unlinkedLibraries.Add(libAsset.Id, libAsset);
+			loadedFiles.Add(libAsset.Identifier);
+			unlinkedLibraries.Add(libAsset.Identifier.id, libAsset);
 			unlinkedAssets.Add(new Tuple<string, ProjectType>(libAsset.Name, ProjectType.Library), libAsset);
 		}
 
 		public void AddProgram(ProgramDescription programAsset)
 		{
-			loadedFiles.Add(programAsset.package.identifier);
-			unlinkedPrograms.Add(programAsset.Id, programAsset);
+			loadedFiles.Add(programAsset.Identifier);
+			unlinkedPrograms.Add(programAsset.Identifier.id, programAsset);
 			unlinkedAssets.Add(new Tuple<string, ProjectType>(programAsset.Name, ProjectType.World), programAsset);
 		}
 
 		public void AddModel(ModelManifest modelAsset)
 		{
-			loadedFiles.Add(modelAsset.package.identifier);
-			unlinkedModels.Add(modelAsset.Id, modelAsset);
+			loadedFiles.Add(modelAsset.Identifier);
+			unlinkedModels.Add(modelAsset.Identifier.id, modelAsset);
 			unlinkedAssets.Add(new Tuple<string, ProjectType>(modelAsset.Name, ProjectType.Model), modelAsset);
 		}
 
