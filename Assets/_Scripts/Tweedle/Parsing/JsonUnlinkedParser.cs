@@ -6,17 +6,20 @@ namespace Alice.Tweedle.Unlinked
 	{
 		private string rootPath = "";
 		private UnlinkedSystem system;
+		private TweedleUnlinkedParser tweedleParser;
 
 		public JsonUnlinkedParser(string root)
 		{
 			this.system = new UnlinkedSystem();
-			rootPath = root;
+			this.rootPath = root;
+			this.tweedleParser = new TweedleUnlinkedParser();
 		}
 
 		public JsonUnlinkedParser(UnlinkedSystem system, string root)
 		{
 			this.system = system;
-			rootPath = root;
+			this.rootPath = root;
+			this.tweedleParser = new TweedleUnlinkedParser();
 		}
 
 		public void ParseFile(string json)
@@ -69,7 +72,14 @@ namespace Alice.Tweedle.Unlinked
 						break;
 					case ContentType.Type:
 						resources[i] = UnityEngine.JsonUtility.FromJson<TypeReference>(json.list[i].ToString());
-
+						TweedleType tweType = (TweedleType)tweedleParser.Parse("");
+						if (tweType is TweedleClass)
+						{
+							system.AddClass((TweedleClass)tweType);
+						} else
+						{
+							system.AddEnum((TweedleEnum)tweType);
+						}
 						break;
 					case ContentType.Image:
 						resources[i] = UnityEngine.JsonUtility.FromJson<ImageReference>(json.list[i].ToString());

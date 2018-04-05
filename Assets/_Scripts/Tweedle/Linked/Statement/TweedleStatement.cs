@@ -1,6 +1,6 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleStatement
+    abstract public class TweedleStatement
     {
         public bool isEnabled()
         {
@@ -11,13 +11,5 @@
         {
 
         }
-
-		// TEMPORARY
-		private string name;
-
-		public TweedleStatement(string name)
-		{
-			this.name = name;
-		}
 	}
 }

@@ -29,7 +29,7 @@ namespace Alice.Tweedle.Unlinked
 				if (context.EXTENDS() != null)
 				{
 					string superclass = context.typeType().classOrInterfaceType().GetText();
-					unlinkedClass = new TweedleClass(className, new TweedleClass(superclass)); // TODO
+					unlinkedClass = new TweedleClass(className, UnlinkedSystem.types[superclass]); // TODO
 				} else
 				{
 					unlinkedClass = new TweedleClass(className);
@@ -61,8 +61,10 @@ namespace Alice.Tweedle.Unlinked
 			public override void VisitTerminal([NotNull] ITerminalNode node)
 			{
 				base.VisitTerminal(node);
-				modifiers = new List<string>();
-				modifiers.Add(node.GetText());
+				modifiers = new List<string>
+				{
+					node.GetText()
+				};
 			}
 
 			public override void EnterBlock([NotNull] TweedleParser.BlockContext context)
@@ -73,9 +75,11 @@ namespace Alice.Tweedle.Unlinked
 			public override void EnterClassModifier([NotNull] TweedleParser.ClassModifierContext context)
 			{
 				base.EnterClassModifier(context);
-				modifiers = new List<string>();
-				// Ignore visibility
-				modifiers.Add(context.STATIC().GetText());
+				modifiers = new List<string>
+				{
+					// Ignore visibility
+					context.STATIC().GetText()
+				};
 			}
 
 			public override void EnterMemberDeclaration([NotNull] TweedleParser.MemberDeclarationContext context)
@@ -100,16 +104,9 @@ namespace Alice.Tweedle.Unlinked
 			public override void EnterFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context)
 			{
 				base.EnterFieldDeclaration(context);
-				TweedleTypeReference type = new TweedleTypeReference(context.typeType().GetText());
-				StatementVisitor statementVisitor = new StatementVisitor();
-				List<TweedleProperty> properties = 
-					context.variableDeclarators().variableDeclarator()
-						.Select(field => new TweedleProperty(
-								modifiers,
-								type,
-								field.variableDeclaratorId().GetText(), 
-								statementVisitor.Visit(field.variableInitializer())
-						)).ToList();
+				TweedleType type = UnlinkedSystem.types[context.typeType().GetText()];
+				VaraiableVisitor variableVisitor = new VaraiableVisitor(modifiers, type);
+				List<TweedleField> properties = context.variableDeclarators().Accept(variableVisitor);
 				unlinkedClass.properties.AddRange(properties);
 			}
 
@@ -119,7 +116,7 @@ namespace Alice.Tweedle.Unlinked
 				StatementVisitor statementVisitor = new StatementVisitor();
 				TweedleMethod method = new TweedleMethodReference(
 						modifiers,
-						new TweedleTypeReference(context.typeTypeOrVoid().GetText()),
+						UnlinkedSystem.types[context.typeTypeOrVoid().GetText()],
 						context.IDENTIFIER().GetText(),
 						RequiredParameters(context.formalParameters()),
 						OptionalParameters(context.formalParameters()),
@@ -135,7 +132,7 @@ namespace Alice.Tweedle.Unlinked
 				base.EnterConstructorDeclaration(context);
 				StatementVisitor statementVisitor = new StatementVisitor();
 				TweedleConstructor constructor = new TweedleConstructor(
-					new TweedleTypeReference(""),
+					UnlinkedSystem.types[context.IDENTIFIER().GetText()],
 					context.IDENTIFIER().GetText(),
 					RequiredParameters(context.formalParameters()),
 					OptionalParameters(context.formalParameters()),
@@ -150,9 +147,8 @@ namespace Alice.Tweedle.Unlinked
 			{
 				return context.formalParameterList().requiredParameter().Select(field => new TweedleField(
 							field.variableModifier().Select(modifier => modifier.GetText()).ToList(),
-							new TweedleTypeReference(""),
-							field.typeType().GetText(),
-							new TweedleStatement(field.variableDeclaratorId().GetText())
+							UnlinkedSystem.types[field.typeType().GetText()],
+							field.variableDeclaratorId().IDENTIFIER().GetText()
 						)).ToList();
 			}
 
@@ -160,41 +156,56 @@ namespace Alice.Tweedle.Unlinked
 			{
 				return context.formalParameterList().optionalParameter().Select(field => new TweedleField(
 						field.variableModifier().Select(modifier => modifier.GetText()).ToList(),
-						new TweedleTypeReference(""),
-						field.typeType().GetText(),
-						new TweedleStatement(field.variableDeclaratorId().GetText())
+						UnlinkedSystem.types[field.typeType().GetText()],
+						field.variableDeclaratorId().IDENTIFIER().GetText()
 					)).ToList();
+			}
+		}
+
+		private class VaraiableVisitor : TweedleParserBaseVisitor<List<TweedleField>>
+		{
+			private List<string> modifiers;
+			private TweedleType type;
+
+			public VaraiableVisitor(List<string> modifiers, TweedleType type)
+			{
+				this.modifiers = modifiers;
+				this.type = type;
+			}
+
+			public override List<TweedleField> VisitVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context)
+			{
+				StatementVisitor statementVisitor = new StatementVisitor();
+				List<TweedleField> properties =
+					context.variableDeclarator()
+						.Select(field => new TweedleField(
+								modifiers,
+								type,
+								field.variableDeclaratorId().IDENTIFIER().GetText(),
+								statementVisitor.Visit(field.variableInitializer())
+						)).ToList();
+				return properties;
 			}
 		}
 
 		private class StatementVisitor : TweedleParserBaseVisitor<TweedleStatement>
 		{
-			public override TweedleStatement VisitStatement([NotNull] TweedleParser.StatementContext context)
-			{
-				// TODO
-				string statementName = context.GetText();
-				return new TweedleStatement(statementName);
-			}
-
 			public override TweedleStatement VisitLocalVariableDeclaration([NotNull] TweedleParser.LocalVariableDeclarationContext context)
 			{
-				// TODO SHOULD RETURN A FIELD NOT A STATEMENT
-				return new TweedleStatement("Should be a field");
+				if (!string.IsNullOrEmpty(context.NODE_COMMENT().GetText()))
+				{
+					return new TweedleComment(); // TODO
+				}
+				List<string> modifiers = context.variableModifier().Select(modifier => modifier.GetText()).ToList();
+				TweedleType type = UnlinkedSystem.types[context.typeType().GetText()];
+				VaraiableVisitor variableVisitor = new VaraiableVisitor(modifiers, type);
+				List<TweedleField> variables = context.variableDeclarators().Accept(variableVisitor);
+				return new TweedleLocalVariableDeclaration(variables);
 			}
 
 			public override TweedleStatement VisitBlockStatement([NotNull] TweedleParser.BlockStatementContext context)
 			{
 				return base.VisitBlockStatement(context);
-			}
-
-			public override TweedleStatement VisitArrayInitializer([NotNull] TweedleParser.ArrayInitializerContext context)
-			{
-				return base.VisitArrayInitializer(context);
-			}
-
-			public override TweedleStatement VisitExpression([NotNull] TweedleParser.ExpressionContext context)
-			{
-				return base.VisitExpression(context);
 			}
 		}
 	}

@@ -14,8 +14,9 @@ namespace Alice.Tweedle.Unlinked
 		private Dictionary<string, LibraryManifest> unlinkedLibraries;
 		private Dictionary<string, ProgramDescription> unlinkedPrograms;
 		private Dictionary<string, ModelManifest> unlinkedModels;
-		private Dictionary<string, TweedleClass> unlinkedClasses;
-		private Dictionary<string, TweedleEnum> unlinkedEnums;
+		private Dictionary<string, TweedleClass> classes;
+		private Dictionary<string, TweedleEnum> enums;
+		public static Dictionary<string, TweedleType> types;
 
 		public UnlinkedSystem()
 		{
@@ -51,14 +52,17 @@ namespace Alice.Tweedle.Unlinked
 			unlinkedAssets.Add(new Tuple<string, ProjectType>(modelAsset.Name, ProjectType.Model), modelAsset);
 		}
 
-		public void AddClass(TweedleClass unlinkedClass)
+		public void AddClass(TweedleClass tweClass)
 		{
-			unlinkedClasses.Add(unlinkedClass.Name, unlinkedClass);
+			classes.Add(tweClass.Name, tweClass);
+			types.Add(tweClass.Name, tweClass);
+
 		}
 
-		public void AddEnum(TweedleEnum unlinkedEnum)
+		public void AddEnum(TweedleEnum tweEnum)
 		{
-			unlinkedEnums.Add(unlinkedEnum.Name, unlinkedEnum);
+			enums.Add(tweEnum.Name, tweEnum);
+			types.Add(tweEnum.Name, tweEnum);
 		}
 
 		public void AddResource(ResourceReference resourceAsset)
