@@ -29,13 +29,13 @@ namespace Alice.Tweedle.Unlinked
 				if (context.EXTENDS() != null)
 				{
 					string superclass = context.typeType().classOrInterfaceType().GetText();
-					unlinkedClass = new TweedleClass(className, UnlinkedSystem.types[superclass]); // TODO
+					unlinkedClass = new TweedleClass(className, new TweedleTypeReference(superclass)); // TODO
 				} else
 				{
 					unlinkedClass = new TweedleClass(className);
 				}
 
-				context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.EnterRule(new ClassBodyDeclarationListener(ref unlinkedClass)));
+				context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.EnterRule(new ClassBodyDeclarationListener(unlinkedClass)));
 				return unlinkedClass;
 			}
 
@@ -53,7 +53,7 @@ namespace Alice.Tweedle.Unlinked
 			private TweedleClass unlinkedClass;
 			private List<string> modifiers;
 
-			public ClassBodyDeclarationListener(ref TweedleClass unlinkedClass)
+			public ClassBodyDeclarationListener(TweedleClass unlinkedClass)
 			{
 				this.unlinkedClass = unlinkedClass;
 			}
@@ -72,20 +72,10 @@ namespace Alice.Tweedle.Unlinked
 				base.EnterBlock(context);
 			}
 
-			public override void EnterClassModifier([NotNull] TweedleParser.ClassModifierContext context)
-			{
-				base.EnterClassModifier(context);
-				modifiers = new List<string>
-				{
-					// Ignore visibility
-					context.STATIC().GetText()
-				};
-			}
-
 			public override void EnterMemberDeclaration([NotNull] TweedleParser.MemberDeclarationContext context)
 			{
 				base.EnterMemberDeclaration(context);
-				context.EnterRule(new MemberDeclarationListener(ref unlinkedClass, modifiers));
+				context.EnterRule(new MemberDeclarationListener(unlinkedClass, modifiers));
 			}
 
 		}
@@ -95,7 +85,7 @@ namespace Alice.Tweedle.Unlinked
 			private TweedleClass unlinkedClass;
 			private List<string> modifiers;
 
-			public MemberDeclarationListener(ref TweedleClass unlinkedClass, List<string> modifiers)
+			public MemberDeclarationListener(TweedleClass unlinkedClass, List<string> modifiers)
 			{
 				this.unlinkedClass = unlinkedClass;
 				this.modifiers = modifiers;
@@ -104,7 +94,7 @@ namespace Alice.Tweedle.Unlinked
 			public override void EnterFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context)
 			{
 				base.EnterFieldDeclaration(context);
-				TweedleType type = UnlinkedSystem.types[context.typeType().GetText()];
+				TweedleTypeReference type = new TweedleTypeReference(context.typeType().GetText());
 				VaraiableVisitor variableVisitor = new VaraiableVisitor(modifiers, type);
 				List<TweedleField> properties = context.variableDeclarators().Accept(variableVisitor);
 				unlinkedClass.properties.AddRange(properties);
@@ -116,7 +106,7 @@ namespace Alice.Tweedle.Unlinked
 				StatementVisitor statementVisitor = new StatementVisitor();
 				TweedleMethod method = new TweedleMethodReference(
 						modifiers,
-						UnlinkedSystem.types[context.typeTypeOrVoid().GetText()],
+						new TweedleTypeReference(context.typeTypeOrVoid().GetText()),
 						context.IDENTIFIER().GetText(),
 						RequiredParameters(context.formalParameters()),
 						OptionalParameters(context.formalParameters()),
@@ -132,7 +122,7 @@ namespace Alice.Tweedle.Unlinked
 				base.EnterConstructorDeclaration(context);
 				StatementVisitor statementVisitor = new StatementVisitor();
 				TweedleConstructor constructor = new TweedleConstructor(
-					UnlinkedSystem.types[context.IDENTIFIER().GetText()],
+					new TweedleTypeReference(context.IDENTIFIER().GetText()),
 					context.IDENTIFIER().GetText(),
 					RequiredParameters(context.formalParameters()),
 					OptionalParameters(context.formalParameters()),
@@ -147,7 +137,7 @@ namespace Alice.Tweedle.Unlinked
 			{
 				return context.formalParameterList().requiredParameter().Select(field => new TweedleField(
 							field.variableModifier().Select(modifier => modifier.GetText()).ToList(),
-							UnlinkedSystem.types[field.typeType().GetText()],
+							new TweedleTypeReference(field.typeType().GetText()),
 							field.variableDeclaratorId().IDENTIFIER().GetText()
 						)).ToList();
 			}
@@ -156,7 +146,7 @@ namespace Alice.Tweedle.Unlinked
 			{
 				return context.formalParameterList().optionalParameter().Select(field => new TweedleField(
 						field.variableModifier().Select(modifier => modifier.GetText()).ToList(),
-						UnlinkedSystem.types[field.typeType().GetText()],
+						new TweedleTypeReference(field.typeType().GetText()),
 						field.variableDeclaratorId().IDENTIFIER().GetText()
 					)).ToList();
 			}
@@ -197,7 +187,7 @@ namespace Alice.Tweedle.Unlinked
 					return new TweedleComment(); // TODO
 				}
 				List<string> modifiers = context.variableModifier().Select(modifier => modifier.GetText()).ToList();
-				TweedleType type = UnlinkedSystem.types[context.typeType().GetText()];
+				TweedleTypeReference type = new TweedleTypeReference(context.typeType().GetText());
 				VaraiableVisitor variableVisitor = new VaraiableVisitor(modifiers, type);
 				List<TweedleField> variables = context.variableDeclarators().Accept(variableVisitor);
 				return new TweedleLocalVariableDeclaration(variables);

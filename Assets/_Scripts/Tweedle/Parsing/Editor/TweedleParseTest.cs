@@ -83,19 +83,19 @@ namespace Alice.Tweedle.Unlinked
 			});
 		}
 
-		[Test]
-		public void EnumNamedSameAsBooleanPrimitiveShouldFail()
-		{
-			Assert.That(() => ParseString("enum Boolean {TRUE, FALSE}"),
-				Throws.TypeOf<Antlr4.Runtime.Misc.ParseCanceledException>());
-		}
+		//[Test]
+		//public void EnumNamedSameAsBooleanPrimitiveShouldFail()
+		//{
+		//	Assert.That(() => ParseString("enum Boolean {TRUE, FALSE}"),
+		//		Throws.TypeOf<Antlr4.Runtime.Misc.ParseCanceledException>());
+		//}
 
-		[Test]
-		public void ClassNamedSameAsBooleanPrimitiveShouldFail()
-		{
-			Assert.That(() => ParseString("class Boolean {}"),
-				Throws.TypeOf<Antlr4.Runtime.Misc.ParseCanceledException>());
-		}
+		//[Test]
+		//public void ClassNamedSameAsBooleanPrimitiveShouldFail()
+		//{
+		//	Assert.That(() => ParseString("class Boolean {}"),
+		//		Throws.TypeOf<Antlr4.Runtime.Misc.ParseCanceledException>());
+		//}
 
 		[Test]
 		public void SomethingShouldBeCreatedForASubclass()
