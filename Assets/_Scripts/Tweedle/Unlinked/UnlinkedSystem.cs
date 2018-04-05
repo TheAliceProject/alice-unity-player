@@ -16,7 +16,7 @@ namespace Alice.Tweedle.Unlinked
 		private Dictionary<string, ModelManifest> unlinkedModels;
 		private Dictionary<string, TweedleClass> classes;
 		private Dictionary<string, TweedleEnum> enums;
-		public static Dictionary<string, TweedleType> types;
+		private Dictionary<string, TweedleType> types;
 
 		public UnlinkedSystem()
 		{
