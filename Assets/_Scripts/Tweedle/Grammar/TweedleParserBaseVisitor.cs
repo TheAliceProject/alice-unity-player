@@ -24,697 +24,693 @@ using Antlr4.Runtime.Tree;
 using IToken = Antlr4.Runtime.IToken;
 using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 
-namespace Alice.Tweedle
-{
+/// <summary>
+/// This class provides an empty implementation of <see cref="ITweedleParserVisitor{Result}"/>,
+/// which can be extended to create a visitor which only needs to handle a subset
+/// of the available methods.
+/// </summary>
+/// <typeparam name="Result">The return type of the visit operation.</typeparam>
+[System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.7")]
+[System.CLSCompliant(false)]
+public partial class TweedleParserBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, ITweedleParserVisitor<Result> {
 	/// <summary>
-	/// This class provides an empty implementation of <see cref="ITweedleParserVisitor{Result}"/>,
-	/// which can be extended to create a visitor which only needs to handle a subset
-	/// of the available methods.
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
 	/// </summary>
-	/// <typeparam name="Result">The return type of the visit operation.</typeparam>
-	[System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.7")]
-	[System.CLSCompliant(false)]
-	public partial class TweedleParserBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, ITweedleParserVisitor<Result>
-	{
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeDeclaration([NotNull] TweedleParser.TypeDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.classModifier"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitClassModifier([NotNull] TweedleParser.ClassModifierContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.visibility"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitVisibility([NotNull] TweedleParser.VisibilityContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.visibilityLevel"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitVisibilityLevel([NotNull] TweedleParser.VisibilityLevelContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.variableModifier"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitVariableModifier([NotNull] TweedleParser.VariableModifierContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.classDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitClassDeclaration([NotNull] TweedleParser.ClassDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.identifier"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitIdentifier([NotNull] TweedleParser.IdentifierContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeParameters"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeParameters([NotNull] TweedleParser.TypeParametersContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeParameter"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeParameter([NotNull] TweedleParser.TypeParameterContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeBound"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeBound([NotNull] TweedleParser.TypeBoundContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.enumDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitEnumDeclaration([NotNull] TweedleParser.EnumDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.enumConstants"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitEnumConstants([NotNull] TweedleParser.EnumConstantsContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.enumConstant"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitEnumConstant([NotNull] TweedleParser.EnumConstantContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.classBody"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitClassBody([NotNull] TweedleParser.ClassBodyContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.classBodyDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitClassBodyDeclaration([NotNull] TweedleParser.ClassBodyDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.memberDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitMemberDeclaration([NotNull] TweedleParser.MemberDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.methodDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitMethodDeclaration([NotNull] TweedleParser.MethodDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.methodBody"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitMethodBody([NotNull] TweedleParser.MethodBodyContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeTypeOrVoid"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeTypeOrVoid([NotNull] TweedleParser.TypeTypeOrVoidContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.genericMethodDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitGenericMethodDeclaration([NotNull] TweedleParser.GenericMethodDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.genericConstructorDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitGenericConstructorDeclaration([NotNull] TweedleParser.GenericConstructorDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.constructorDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitConstructorDeclaration([NotNull] TweedleParser.ConstructorDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.fieldDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclarators"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclarator"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitVariableDeclarator([NotNull] TweedleParser.VariableDeclaratorContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclaratorId"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitVariableDeclaratorId([NotNull] TweedleParser.VariableDeclaratorIdContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.variableInitializer"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitVariableInitializer([NotNull] TweedleParser.VariableInitializerContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.arrayInitializer"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitArrayInitializer([NotNull] TweedleParser.ArrayInitializerContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.classOrInterfaceType"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitClassOrInterfaceType([NotNull] TweedleParser.ClassOrInterfaceTypeContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeArgument"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeArgument([NotNull] TweedleParser.TypeArgumentContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.formalParameters"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitFormalParameters([NotNull] TweedleParser.FormalParametersContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.formalParameterList"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitFormalParameterList([NotNull] TweedleParser.FormalParameterListContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.requiredParameter"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitRequiredParameter([NotNull] TweedleParser.RequiredParameterContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.optionalParameter"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitOptionalParameter([NotNull] TweedleParser.OptionalParameterContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.lastFormalParameter"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLastFormalParameter([NotNull] TweedleParser.LastFormalParameterContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.literal"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLiteral([NotNull] TweedleParser.LiteralContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.block"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitBlock([NotNull] TweedleParser.BlockContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.blockStatement"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitBlockStatement([NotNull] TweedleParser.BlockStatementContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.localVariableDeclaration"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLocalVariableDeclaration([NotNull] TweedleParser.LocalVariableDeclarationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.statement"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitStatement([NotNull] TweedleParser.StatementContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.forControl"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitForControl([NotNull] TweedleParser.ForControlContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.parExpression"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitParExpression([NotNull] TweedleParser.ParExpressionContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.labeledExpressionList"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLabeledExpressionList([NotNull] TweedleParser.LabeledExpressionListContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.labeledExpression"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLabeledExpression([NotNull] TweedleParser.LabeledExpressionContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.expressionList"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitExpressionList([NotNull] TweedleParser.ExpressionListContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.methodCall"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitMethodCall([NotNull] TweedleParser.MethodCallContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.expression"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitExpression([NotNull] TweedleParser.ExpressionContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.lambdaExpression"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLambdaExpression([NotNull] TweedleParser.LambdaExpressionContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.lambdaParameters"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.lambdaBody"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitLambdaBody([NotNull] TweedleParser.LambdaBodyContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.primary"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitPrimary([NotNull] TweedleParser.PrimaryContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.classType"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitClassType([NotNull] TweedleParser.ClassTypeContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.creator"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitCreator([NotNull] TweedleParser.CreatorContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.createdName"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitCreatedName([NotNull] TweedleParser.CreatedNameContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.innerCreator"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitInnerCreator([NotNull] TweedleParser.InnerCreatorContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.arrayCreatorRest"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitArrayCreatorRest([NotNull] TweedleParser.ArrayCreatorRestContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.classCreatorRest"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitClassCreatorRest([NotNull] TweedleParser.ClassCreatorRestContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.explicitGenericInvocation"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitExplicitGenericInvocation([NotNull] TweedleParser.ExplicitGenericInvocationContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeArgumentsOrDiamond"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeArgumentsOrDiamond([NotNull] TweedleParser.TypeArgumentsOrDiamondContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.nonWildcardTypeArgumentsOrDiamond"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitNonWildcardTypeArgumentsOrDiamond([NotNull] TweedleParser.NonWildcardTypeArgumentsOrDiamondContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.nonWildcardTypeArguments"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitNonWildcardTypeArguments([NotNull] TweedleParser.NonWildcardTypeArgumentsContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeList"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeList([NotNull] TweedleParser.TypeListContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeType"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeType([NotNull] TweedleParser.TypeTypeContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.primitiveType"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitPrimitiveType([NotNull] TweedleParser.PrimitiveTypeContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.typeArguments"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitTypeArguments([NotNull] TweedleParser.TypeArgumentsContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.superSuffix"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitSuperSuffix([NotNull] TweedleParser.SuperSuffixContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.explicitGenericInvocationSuffix"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitExplicitGenericInvocationSuffix([NotNull] TweedleParser.ExplicitGenericInvocationSuffixContext context) { return VisitChildren(context); }
-		/// <summary>
-		/// Visit a parse tree produced by <see cref="TweedleParser.arguments"/>.
-		/// <para>
-		/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-		/// on <paramref name="context"/>.
-		/// </para>
-		/// </summary>
-		/// <param name="context">The parse tree.</param>
-		/// <return>The visitor result.</return>
-		public virtual Result VisitArguments([NotNull] TweedleParser.ArgumentsContext context) { return VisitChildren(context); }
-	}
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeDeclaration([NotNull] TweedleParser.TypeDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.classModifier"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitClassModifier([NotNull] TweedleParser.ClassModifierContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.visibility"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVisibility([NotNull] TweedleParser.VisibilityContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.visibilityLevel"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVisibilityLevel([NotNull] TweedleParser.VisibilityLevelContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.variableModifier"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableModifier([NotNull] TweedleParser.VariableModifierContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.classDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitClassDeclaration([NotNull] TweedleParser.ClassDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.identifier"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitIdentifier([NotNull] TweedleParser.IdentifierContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeParameters"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeParameters([NotNull] TweedleParser.TypeParametersContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeParameter"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeParameter([NotNull] TweedleParser.TypeParameterContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeBound"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeBound([NotNull] TweedleParser.TypeBoundContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.enumDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitEnumDeclaration([NotNull] TweedleParser.EnumDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.enumConstants"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitEnumConstants([NotNull] TweedleParser.EnumConstantsContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.enumConstant"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitEnumConstant([NotNull] TweedleParser.EnumConstantContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.classBody"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitClassBody([NotNull] TweedleParser.ClassBodyContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.classBodyDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitClassBodyDeclaration([NotNull] TweedleParser.ClassBodyDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.memberDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMemberDeclaration([NotNull] TweedleParser.MemberDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.methodDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMethodDeclaration([NotNull] TweedleParser.MethodDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.methodBody"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMethodBody([NotNull] TweedleParser.MethodBodyContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeTypeOrVoid"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeTypeOrVoid([NotNull] TweedleParser.TypeTypeOrVoidContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.genericMethodDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitGenericMethodDeclaration([NotNull] TweedleParser.GenericMethodDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.genericConstructorDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitGenericConstructorDeclaration([NotNull] TweedleParser.GenericConstructorDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.constructorDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitConstructorDeclaration([NotNull] TweedleParser.ConstructorDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.fieldDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclarators"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclarator"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableDeclarator([NotNull] TweedleParser.VariableDeclaratorContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclaratorId"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableDeclaratorId([NotNull] TweedleParser.VariableDeclaratorIdContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.variableInitializer"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableInitializer([NotNull] TweedleParser.VariableInitializerContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.arrayInitializer"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitArrayInitializer([NotNull] TweedleParser.ArrayInitializerContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.classOrInterfaceType"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitClassOrInterfaceType([NotNull] TweedleParser.ClassOrInterfaceTypeContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeArgument"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeArgument([NotNull] TweedleParser.TypeArgumentContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.formalParameters"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitFormalParameters([NotNull] TweedleParser.FormalParametersContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.formalParameterList"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitFormalParameterList([NotNull] TweedleParser.FormalParameterListContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.requiredParameter"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitRequiredParameter([NotNull] TweedleParser.RequiredParameterContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.optionalParameter"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitOptionalParameter([NotNull] TweedleParser.OptionalParameterContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.lastFormalParameter"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLastFormalParameter([NotNull] TweedleParser.LastFormalParameterContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.literal"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLiteral([NotNull] TweedleParser.LiteralContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.block"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBlock([NotNull] TweedleParser.BlockContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.blockStatement"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBlockStatement([NotNull] TweedleParser.BlockStatementContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.localVariableDeclaration"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLocalVariableDeclaration([NotNull] TweedleParser.LocalVariableDeclarationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.statement"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitStatement([NotNull] TweedleParser.StatementContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.forControl"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitForControl([NotNull] TweedleParser.ForControlContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.parExpression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitParExpression([NotNull] TweedleParser.ParExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.labeledExpressionList"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLabeledExpressionList([NotNull] TweedleParser.LabeledExpressionListContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.labeledExpression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLabeledExpression([NotNull] TweedleParser.LabeledExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.expressionList"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExpressionList([NotNull] TweedleParser.ExpressionListContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.methodCall"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitMethodCall([NotNull] TweedleParser.MethodCallContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExpression([NotNull] TweedleParser.ExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.lambdaExpression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLambdaExpression([NotNull] TweedleParser.LambdaExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.lambdaParameters"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.lambdaBody"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLambdaBody([NotNull] TweedleParser.LambdaBodyContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.primary"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPrimary([NotNull] TweedleParser.PrimaryContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.classType"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitClassType([NotNull] TweedleParser.ClassTypeContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.creator"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCreator([NotNull] TweedleParser.CreatorContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.createdName"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCreatedName([NotNull] TweedleParser.CreatedNameContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.innerCreator"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitInnerCreator([NotNull] TweedleParser.InnerCreatorContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.arrayCreatorRest"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitArrayCreatorRest([NotNull] TweedleParser.ArrayCreatorRestContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.classCreatorRest"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitClassCreatorRest([NotNull] TweedleParser.ClassCreatorRestContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.explicitGenericInvocation"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExplicitGenericInvocation([NotNull] TweedleParser.ExplicitGenericInvocationContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeArgumentsOrDiamond"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeArgumentsOrDiamond([NotNull] TweedleParser.TypeArgumentsOrDiamondContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.nonWildcardTypeArgumentsOrDiamond"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitNonWildcardTypeArgumentsOrDiamond([NotNull] TweedleParser.NonWildcardTypeArgumentsOrDiamondContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.nonWildcardTypeArguments"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitNonWildcardTypeArguments([NotNull] TweedleParser.NonWildcardTypeArgumentsContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeList"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeList([NotNull] TweedleParser.TypeListContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeType"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeType([NotNull] TweedleParser.TypeTypeContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.primitiveType"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPrimitiveType([NotNull] TweedleParser.PrimitiveTypeContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeArguments"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitTypeArguments([NotNull] TweedleParser.TypeArgumentsContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.superSuffix"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitSuperSuffix([NotNull] TweedleParser.SuperSuffixContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.explicitGenericInvocationSuffix"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitExplicitGenericInvocationSuffix([NotNull] TweedleParser.ExplicitGenericInvocationSuffixContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.arguments"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitArguments([NotNull] TweedleParser.ArgumentsContext context) { return VisitChildren(context); }
 }
