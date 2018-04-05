@@ -18,11 +18,17 @@ namespace Alice.Tweedle
 
 		public TweedleClass(string name) : base(name)
         {
-        }
+			this.properties = new List<TweedleField>();
+			this.methods = new List<TweedleMethod>();
+			this.constructors = new List<TweedleConstructor>();
+		}
 
 		public TweedleClass(string name, TweedleType super) : base(name)
 		{
 			this.super = super;
+			this.properties = new List<TweedleField>();
+			this.methods = new List<TweedleMethod>();
+			this.constructors = new List<TweedleConstructor>();
 		}
 
 		public TweedleObject Instantiate(VM.TweedleFrame frame, TweedleValue[] args)

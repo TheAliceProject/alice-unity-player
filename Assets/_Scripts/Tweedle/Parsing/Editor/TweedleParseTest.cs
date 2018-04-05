@@ -134,6 +134,33 @@ namespace Alice.Tweedle.Unlinked
 		}
 
 		[Test]
+		public void PropertyShouldBeReturnedOnClassProperty()
+		{
+			TweedleClass sScene = (TweedleClass)ParseString("class SScene extends SThing { int test; }");
+			//sScene.properties.Add(new TweedleField(new TweedleTypeReference("int"), "test"));
+
+			Assert.AreEqual("test",
+							sScene.properties[0].Name,
+							"The class SScene should have a property named test.");
+			Assert.AreEqual("int",
+							sScene.properties[0].Type.Name,
+							"The class SScene should have a property with type int.");
+		}
+
+		[Test]
+		public void PropertyModifierShouldBeReturnedOnClassProperty()
+		{
+			TweedleClass sScene = (TweedleClass)ParseString("class SScene extends SThing { static int test; }");
+
+			Assert.AreEqual("static",
+							sScene.properties[0].Modifiers[0],
+							"The class SScene should have a property with static modifier.");
+		}
+
+		///
+		/// ENUM
+		///
+		[Test]
 		public void SomethingShouldBeCreatedForAnEnum()
 		{
 			TweedleEnum tested = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
@@ -195,6 +222,5 @@ namespace Alice.Tweedle.Unlinked
 			Assert.False(directionEnum.Values.Contains("LEFT"),
 						 "The enum Direction should not include LEFT.");
 		}
-
 	}
 }

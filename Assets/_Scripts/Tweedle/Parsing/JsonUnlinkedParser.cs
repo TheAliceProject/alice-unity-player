@@ -1,4 +1,5 @@
 ﻿using Alice.Tweedle.File;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle.Unlinked
 {
@@ -27,10 +28,10 @@ namespace Alice.Tweedle.Unlinked
 			Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(json);
 			JSONObject jsonObj = new JSONObject(json);
 			ParseResources(
-				ref asset.resources, 
+				asset.resources, 
 				jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)]
 				);
-			ProjectType t = asset.package.identifier.Type;
+			ProjectType t = asset.Identifier.Type;
             switch (t)
             {
                 case ProjectType.Library:
@@ -51,18 +52,17 @@ namespace Alice.Tweedle.Unlinked
 					// REMOVE
 					UnityEngine.Debug.Log(modelAsset.ToString());
 					break;
-            }
+			}
         }
 
 		private void ParseResources(
-			ref System.Collections.Generic.List<ResourceReference> resources, 
+			List<ResourceReference> resources, 
 			JSONObject json)
 		{
 			if (json == null || json.type != JSONObject.Type.ARRAY)
 			{
 				return;
 			}
-			
 			for (int i = 0; i < resources.Count; i++)
 			{
 				switch (resources[i].ContentType)
@@ -70,15 +70,22 @@ namespace Alice.Tweedle.Unlinked
 					case ContentType.Audio:
 						resources[i] = UnityEngine.JsonUtility.FromJson<AudioReference>(json.list[i].ToString());
 						break;
-					case ContentType.Type:
-						resources[i] = UnityEngine.JsonUtility.FromJson<TypeReference>(json.list[i].ToString());
-						TweedleType tweType = (TweedleType)tweedleParser.Parse("");
-						if (tweType is TweedleClass)
+					case ContentType.Class:
+						resources[i] = UnityEngine.JsonUtility.FromJson<ClassReference>(json.list[i].ToString());
+						for (int j = 0; j < resources[i].files.Count; j++)
 						{
-							system.AddClass((TweedleClass)tweType);
-						} else
+							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
+							TweedleClass tweClass = (TweedleClass)tweedleParser.Parse(System.IO.File.ReadAllText(absPath));
+							system.AddClass(tweClass);
+						}
+						break;
+					case ContentType.Enum:
+						resources[i] = UnityEngine.JsonUtility.FromJson<EnumReference>(json.list[i].ToString());
+						for (int j = 0; j < resources[i].files.Count; j++)
 						{
-							system.AddEnum((TweedleEnum)tweType);
+							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
+							TweedleEnum tweEnum = (TweedleEnum)tweedleParser.Parse(System.IO.File.ReadAllText(absPath));
+							system.AddEnum(tweEnum);
 						}
 						break;
 					case ContentType.Image:
@@ -88,8 +95,8 @@ namespace Alice.Tweedle.Unlinked
 						resources[i] = UnityEngine.JsonUtility.FromJson<ModelReference>(json.list[i].ToString());
 						for (int j = 0; j < resources[i].files.Count; j++)
 						{
-							string relativePath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
-							string subJson = System.IO.File.ReadAllText(relativePath);
+							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
+							string subJson = System.IO.File.ReadAllText(absPath);
 							ParseFile(subJson);
 						}
 						break;

@@ -7,9 +7,9 @@ namespace Alice.Tweedle.Unlinked
 {
 	public class UnlinkedParser : MonoBehaviour {
 
+		public bool uniqueDirectory = true;
+
 		private string root;
-		// Select zip file -> Unzip
-		// Parse root json
 
 		private static string json_ext = "json";
 		private static string project_ext = "a3p";
@@ -34,7 +34,10 @@ namespace Alice.Tweedle.Unlinked
 		{
 			string zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
 			string extractPath = zipPath.Substring(0, zipPath.Length - project_ext.Length - 1);
-			extractPath = UniqueDirectoryName(extractPath);
+			if (uniqueDirectory)
+			{
+				extractPath = UniqueDirectoryName(extractPath);
+			}
 
 			System.IO.Compression.ZipFile.ExtractToDirectory(zipPath, extractPath);
 			DirectoryInfo dir = new DirectoryInfo(extractPath);
@@ -46,7 +49,7 @@ namespace Alice.Tweedle.Unlinked
 				if (files[i].Name == manifestFile)
 				{
 					JsonUnlinkedParser parse = new JsonUnlinkedParser(files[i].DirectoryName);
-					parse.ParseFile(System.IO.File.ReadAllText(files[i].Name));
+					parse.ParseFile(System.IO.File.ReadAllText(files[i].FullName));
 					break;
 				}
 			}
