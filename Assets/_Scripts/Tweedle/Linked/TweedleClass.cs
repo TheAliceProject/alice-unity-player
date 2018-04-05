@@ -10,10 +10,11 @@ namespace Alice.Tweedle
             set { super = value; }
         }
 
-        private TweedleClass super;
-        private List<TweedleProperty> properties;
-        private List<TweedleMethod> methods;
+        public List<TweedleProperty> properties;
+        public List<TweedleMethod> methods;
 		public List<TweedleConstructor> constructors { get; internal set; }
+
+		private TweedleClass super;
 
 		public TweedleClass(string name) : base(name)
         {

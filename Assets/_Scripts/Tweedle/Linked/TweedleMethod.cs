@@ -11,6 +11,15 @@ namespace Alice.Tweedle
 		private List<TweedleField> optional;
 		private List<TweedleStatement> body;
 
+		public TweedleMethod(TweedleType type, string name, List<TweedleField> required, List<TweedleField> optional, List<TweedleStatement> body)
+		{
+			this.type = type;
+			this.name = name;
+			this.required = required;
+			this.optional = optional;
+			this.body = body;
+		}
+
 		public TweedleMethod(List<string> modifiers, TweedleType type, string name, List<TweedleField> required, List<TweedleField> optional, List<TweedleStatement> body)
 		{
 			this.modifiers = modifiers;
