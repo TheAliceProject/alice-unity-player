@@ -4,6 +4,11 @@ namespace Alice.Tweedle
 {
     abstract public class TweedleMethod
     {
+		public string Name
+		{
+			get { return name; }
+		}
+
 		private List<string> modifiers;
 		private TweedleType type;
 		private string name;
