@@ -2,8 +2,11 @@
 {
 	public class TweedleComment : TweedleStatement
 	{
-		public TweedleComment()
+		private string text;
+
+		public TweedleComment(string text)
 		{
+			this.text = text;
 		}
 	}
 }

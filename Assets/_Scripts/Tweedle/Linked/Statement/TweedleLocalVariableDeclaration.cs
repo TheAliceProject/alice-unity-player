@@ -4,11 +4,11 @@ namespace Alice.Tweedle
 {
 	public class TweedleLocalVariableDeclaration : TweedleStatement
 	{
-		private List<TweedleField> variables;
+		private List<TweedleField> field;
 
-		public TweedleLocalVariableDeclaration(List<TweedleField> variables)
+		public TweedleLocalVariableDeclaration(List<TweedleField> field)
 		{
-			this.variables = variables;
+			this.field = field;
 		}
 	}
 }
