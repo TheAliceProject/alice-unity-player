@@ -35,5 +35,19 @@ namespace Alice.Tweedle
         {
             return null;
         }
-    }
+
+		public override string ToString()
+		{
+			string str = Name + "\n";
+			//for (int i = 0; i < properties.Count; i++)
+			//	str += properties[i].Name + " ";
+			//str += "\n";
+			//for (int i = 0; i < methods.Count; i++)
+			//	str += methods[i].Name + " ";
+			//str += "\n";
+			for (int i = 0; i < constructors.Count; i++)
+				str += constructors[i].Name + " ";
+			return str;
+		}
+	}
 }

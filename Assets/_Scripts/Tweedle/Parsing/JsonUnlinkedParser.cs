@@ -76,6 +76,7 @@ namespace Alice.Tweedle.Unlinked
 						{
 							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
 							TweedleClass tweClass = (TweedleClass)tweedleParser.Parse(System.IO.File.ReadAllText(absPath));
+							UnityEngine.Debug.Log(tweClass.ToString());
 							system.AddClass(tweClass);
 						}
 						break;
