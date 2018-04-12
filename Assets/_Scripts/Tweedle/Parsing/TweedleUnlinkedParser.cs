@@ -49,34 +49,29 @@ namespace Alice.Tweedle.Unlinked
 			}
 		}
 
-		private class ClassBodyDeclarationVisitor : TweedleParserBaseVisitor<Visitor>
+        private class ClassBodyDeclarationVisitor : TweedleParserBaseVisitor<object>
 		{
-			private TweedleClass unlinkedClass;
-			private List<string> modifiers;
+            private readonly TweedleClass unlinkedClass;
 
 			public ClassBodyDeclarationVisitor(TweedleClass unlinkedClass)
 			{
 				this.unlinkedClass = unlinkedClass;
 			}
 
-			public override Visitor VisitClassModifier([NotNull] TweedleParser.ClassModifierContext context)
+			public override object VisitClassBodyDeclaration([NotNull] TweedleParser.ClassBodyDeclarationContext context)
 			{
-				modifiers = new List<string>
-				{
-					context.STATIC().ToString()
-				};
-				return base.VisitClassModifier(context);
-			}
-
-
-			public override Visitor VisitMemberDeclaration([NotNull] TweedleParser.MemberDeclarationContext context)
-			{
-				context.Accept(new MemberDeclarationVisitor(unlinkedClass, modifiers));
-				return base.VisitMemberDeclaration(context);
+                TweedleParser.MemberDeclarationContext memberDec = context.memberDeclaration();
+                if (memberDec != null)
+                {
+                    List<string> modifiers =
+                        context.classModifier().Select(classMod => (classMod.STATIC() != null) ? "static" : null).ToList();
+                    memberDec.Accept(new MemberDeclarationVisitor(unlinkedClass, modifiers));
+                }
+                return base.VisitClassBodyDeclaration(context);
 			}
 		}
 
-		private class MemberDeclarationVisitor : TweedleParserBaseVisitor<Visitor>
+		private class MemberDeclarationVisitor : TweedleParserBaseVisitor<object>
 		{
 			private TweedleClass unlinkedClass;
 			private List<string> modifiers;
@@ -87,7 +82,7 @@ namespace Alice.Tweedle.Unlinked
 				this.modifiers = modifiers;
 			}
 
-			public override Visitor VisitFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context)
+            public override object VisitFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context)
 			{
 				//UnityEngine.Debug.Log("Field");
 				//UnityEngine.Debug.Log(context.typeType().GetText());
@@ -98,11 +93,11 @@ namespace Alice.Tweedle.Unlinked
 				return base.VisitFieldDeclaration(context);
 			}
 
-			public override Visitor VisitMethodDeclaration([NotNull] TweedleParser.MethodDeclarationContext context)
+            public override object VisitMethodDeclaration([NotNull] TweedleParser.MethodDeclarationContext context)
 			{
 				//UnityEngine.Debug.Log("Method");
 				StatementVisitor statementVisitor = new StatementVisitor();
-				TweedleMethod method = new TweedleMethodReference(
+				TweedleMethod method = new TweedleMethod(
 						modifiers,
 						new TweedleTypeReference(context.typeTypeOrVoid().GetText()),
 						context.IDENTIFIER().GetText(),
@@ -116,7 +111,7 @@ namespace Alice.Tweedle.Unlinked
 				return base.VisitMethodDeclaration(context);
 			}
 
-			public override Visitor VisitConstructorDeclaration([NotNull] TweedleParser.ConstructorDeclarationContext context)
+            public override object VisitConstructorDeclaration([NotNull] TweedleParser.ConstructorDeclarationContext context)
 			{
 				//UnityEngine.Debug.Log("Constructor");
 				StatementVisitor statementVisitor = new StatementVisitor();
@@ -133,30 +128,29 @@ namespace Alice.Tweedle.Unlinked
 				return base.VisitConstructorDeclaration(context);
 			}
 
-			private List<TweedleField> RequiredParameters(TweedleParser.FormalParametersContext context)
+            private List<TweedleRequiredParameter> RequiredParameters(TweedleParser.FormalParametersContext context)
 			{
 				if (context.formalParameterList() == null || context.formalParameterList().requiredParameter() == null)
 				{
-					return new List<TweedleField>();
+                    return new List<TweedleRequiredParameter>();
 				}
-				return context.formalParameterList().requiredParameter().Select(field => new TweedleField(
-							field.variableModifier().Select(modifier => modifier.GetText()).ToList(),
-							new TweedleTypeReference(field.typeType().GetText()),
-							field.variableDeclaratorId().IDENTIFIER().GetText()
+                return context.formalParameterList().requiredParameter().Select(field => new TweedleRequiredParameter(
+                    new TweedleTypeReference(field.typeType().GetText()),
+                        field.variableDeclaratorId().IDENTIFIER().GetText()
 						)).ToList();
 			}
 
-			private List<TweedleField> OptionalParameters(TweedleParser.FormalParametersContext context)
+            private List<TweedleOptionalParameter> OptionalParameters(TweedleParser.FormalParametersContext context)
 			{
 				if (context.formalParameterList() == null || context.formalParameterList().optionalParameter() == null)
 				{
-					return new List<TweedleField>();
+                    return new List<TweedleOptionalParameter>();
 				}
-				return context.formalParameterList().optionalParameter().Select(field => new TweedleField(
-						field.variableModifier().Select(modifier => modifier.GetText()).ToList(),
-						new TweedleTypeReference(field.typeType().GetText()),
-						field.variableDeclaratorId().IDENTIFIER().GetText()
-					)).ToList();
+                return context.formalParameterList().optionalParameter().Select(field => new TweedleOptionalParameter(
+                    new TweedleTypeReference(field.typeType().GetText()),
+                        field.variableDeclaratorId().IDENTIFIER().GetText(),
+                        field.Accept(new ExpressionVisitor())
+					    )).ToList();
 			}
 		}
 
@@ -173,17 +167,51 @@ namespace Alice.Tweedle.Unlinked
 
 			public override List<TweedleField> VisitVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context)
 			{
-				StatementVisitor statementVisitor = new StatementVisitor();
+                ExpressionVisitor expressionVisitor = new ExpressionVisitor();
 				List<TweedleField> properties =
 					context.variableDeclarator()
 						.Select(field => new TweedleField(
 								modifiers,
 								type,
 								field.variableDeclaratorId().IDENTIFIER().GetText(),
-								statementVisitor.Visit(field.variableInitializer())
+								expressionVisitor.Visit(field)
 						)).ToList();
 				return properties;
 			}
+        }
+
+        private class ExpressionVisitor : TweedleParserBaseVisitor<TweedleExpression>
+        {
+			public override TweedleExpression VisitExpression([NotNull] TweedleParser.ExpressionContext context)
+			{
+                UnityEngine.Debug.Log("expression");
+                IToken operation = context.bop;
+                if (operation != null)
+                {
+                    List<TweedleExpression> expressions = context.expression().Select(a => a.Accept(this)).ToList();
+                    switch (operation.Text) {
+                        case "." :
+                           // doStuff();
+                            break;
+                        case "*":
+                            return new MultiplicationExpression(expressions[0], expressions[1]);
+                        case "/":
+                            return new MultiplicationExpression(expressions[0], expressions[1]);
+                        case "+":
+                            return new AdditionExpression(expressions[0], expressions[1]);
+                        default :
+                            throw new System.Exception("Trouble");
+                    }
+
+                }
+                return null;
+			}
+
+			public override TweedleExpression VisitArrayInitializer([NotNull] TweedleParser.ArrayInitializerContext context)
+			{
+                 UnityEngine.Debug.Log("array init");
+                return new TweedleArrayInitializer(context.variableInitializer().Select(a => a.Accept(this)).ToList());
+ 			}
 		}
 
 		private class StatementVisitor : TweedleParserBaseVisitor<TweedleStatement>
@@ -202,10 +230,6 @@ namespace Alice.Tweedle.Unlinked
 				UnityEngine.Debug.Log("block statement");
 				return base.VisitBlockStatement(context);
 			}
-		}
-		private class Visitor
-		{
-			// return class for the visitor
 		}
 	}
 }
