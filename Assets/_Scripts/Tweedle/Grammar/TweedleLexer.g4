@@ -42,20 +42,20 @@ ENUM:               'enum';
 EXTENDS:            'extends';
 FOR_EACH:           'forEach';
 EACH_TOGETHER:      'eachTogether';
-HIDE:               'hidden';
+COMPLETELY_HIDDEN:  'CompletelyHidden';
 IF:                 'if';
 IN:                 'in';
 LOOP:               'loop';
 MODELS:             'models';
 NEW:                'new';
 NUMBER:             'Number';
-PRIMETIME:          'primetime';
+PRIME_TIME:         'PrimeTime';
 RETURN:             'return';
 STATIC:             'static';
 STRING:             'String';
 SUPER:              'super';
 THIS:               'this';
-TUCKED_AWAY:        'tuckedAway';
+TUCKED_AWAY:        'TuckedAway';
 VOID:               'void';
 WHILE:              'while';
 WHOLE_NUMBER:       'WholeNumber';
@@ -133,7 +133,8 @@ LARROW:             '<-';
 WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
 COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
 LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
-NODE_COMMENT:       '**';
+NODE_DISABLE:       '*<';
+NODE_ENABLE:        '>*';
 
 // Identifiers
 
