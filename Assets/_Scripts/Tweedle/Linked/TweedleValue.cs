@@ -1,8 +1,9 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleValue
+    public abstract class TweedleValue
     {
-		private TweedleType type;
-		private string name;
+        public abstract TweedleType Type {
+            get;
+        }
     }
 }

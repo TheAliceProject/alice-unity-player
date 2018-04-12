@@ -4,6 +4,14 @@
     {
         private readonly TweedleClass tweClass;
 
+        public override TweedleType Type
+        {
+            get
+            {
+                return tweClass;
+            }
+        }
+
         public TweedleObject(TweedleClass aClass)
         {
             tweClass = aClass;
