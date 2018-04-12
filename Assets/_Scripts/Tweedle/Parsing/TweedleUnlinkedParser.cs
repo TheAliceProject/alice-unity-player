@@ -185,10 +185,53 @@ namespace Alice.Tweedle.Unlinked
 			public override TweedleExpression VisitExpression([NotNull] TweedleParser.ExpressionContext context)
 			{
                 UnityEngine.Debug.Log("expression");
-                IToken operation = context.bop;
-                if (operation != null)
+				TweedleExpression expression = context.Accept(new ExpressionChildVisitor());
+				if (expression != null)
+				{
+					return expression;
+				}
+
+				IToken postfix = context.postfix;
+				IToken prefix = context.prefix;
+				IToken operation = context.bop;
+				List<TweedleExpression> expressions = context.expression().Select(exp => exp.Accept(this)).ToList();
+
+				if (postfix != null)
+				{
+					switch (postfix.Text)
+					{
+						case "++":
+							return new PostfixIncrementExpression(expressions[0]);
+						case "--":
+							return new PostfixDecrementExpression(expressions[0]);
+						default:
+							throw new System.Exception("Postfix");
+					}
+				}
+				else if (prefix != null)
+				{
+					switch (prefix.Text)
+					{
+						case "+":
+							return null; // TODO Not sure what the case for this is.
+							//return new PrefixAdditionExpression(expression[0]);
+						case "-":
+							return null; // TODO Not sure what the case for this is.
+							//return new PrefixSubtractionExpression(expression[0]);
+						case "++":
+							return new PrefixIncrementExpression(expressions[0]);
+						case "--":
+							return new PrefixDecrementExpression(expressions[0]);
+						case "~":
+							return new BitwiseNotExpression(expressions[0]);
+						case "!":
+							return new LogicalNotExpression(expressions[0]);
+						default:
+							throw new System.Exception("Prefix");
+					}
+				}
+                else if (operation != null)
                 {
-                    List<TweedleExpression> expressions = context.expression().Select(a => a.Accept(this)).ToList();
                     switch (operation.Text) {
                         case "." :
                            // doStuff();
@@ -196,11 +239,45 @@ namespace Alice.Tweedle.Unlinked
                         case "*":
                             return new MultiplicationExpression(expressions[0], expressions[1]);
                         case "/":
-                            return new MultiplicationExpression(expressions[0], expressions[1]);
-                        case "+":
-                            return new AdditionExpression(expressions[0], expressions[1]);
-                        default :
-                            throw new System.Exception("Trouble");
+                            return new DivisionExpression(expressions[0], expressions[1]);
+						case "%":
+							return new ModuloExpression(expressions[0], expressions[1]);
+						case "+":
+							return new AdditionExpression(expressions[0], expressions[1]);
+						case "-":
+							return new SubtractionExpression(expressions[0], expressions[1]);
+						case "<<":
+							return new LeftShiftExpression(expressions[0], expressions[1]);
+						case ">>>":
+							return new LogicalRightShiftExpression(expressions[0], expressions[1]);
+						case ">>":
+                            return new ArithmeticRightShiftExpression(expressions[0], expressions[1]);
+						case "<=":
+							return new LessThanOrEqualExpression(expressions[0], expressions[1]);
+						case ">=":
+							return new GreaterThanOrEqualExpression(expressions[0], expressions[1]);
+						case ">":
+							return new GreaterThanExpression(expressions[0], expressions[1]);
+						case "<":
+							return new LessThanExpression(expressions[0], expressions[1]);
+						case "==":
+							return new EqualToExpression(expressions[0], expressions[1]);
+						case "!=":
+							return new NotEqualToExpression(expressions[0], expressions[1]);
+						case "&":
+							return new BitwiseAndExpression(expressions[0], expressions[1]);
+						case "^":
+							return new BitwiseXORExpression(expressions[0], expressions[1]);
+						case "|":
+							return new BitwiseOrExpression(expressions[0], expressions[1]);
+						case "&&":
+							return new LogicalAndExpression(expressions[0], expressions[1]);
+						case "||":
+							return new LogicalOrExpression(expressions[0], expressions[1]);
+						case "?":
+							return new TernaryExpression(expressions[0], expressions[1]);
+						default :
+                            throw new System.Exception("Operation");
                     }
 
                 }
@@ -214,7 +291,20 @@ namespace Alice.Tweedle.Unlinked
  			}
 		}
 
-		private class StatementVisitor : TweedleParserBaseVisitor<TweedleStatement>
+		private class ExpressionChildVisitor : TweedleParserBaseVisitor<TweedleExpression>
+		{
+			public override TweedleExpression VisitMethodCall([NotNull] TweedleParser.MethodCallContext context)
+			{
+				return base.VisitMethodCall(context);
+			}
+
+			public override TweedleExpression VisitCreator([NotNull] TweedleParser.CreatorContext context)
+			{
+				return base.VisitCreator(context);
+			}
+		}
+
+			private class StatementVisitor : TweedleParserBaseVisitor<TweedleStatement>
 		{
 			public override TweedleStatement VisitLocalVariableDeclaration([NotNull] TweedleParser.LocalVariableDeclarationContext context)
 			{
