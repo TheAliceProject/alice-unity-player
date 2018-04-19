@@ -4,13 +4,13 @@
     {
 
         public EqualToExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs)
+            : base(lhs, rhs, TweedleTypes.BOOLEAN)
         {
         }
 
-        protected override TweedleValue Evaluate(TweedleValue lValue, TweedleValue rValue)
+        protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
         {
-            throw new System.NotImplementedException();
+			return TweedleTypes.BOOLEAN.Instantiate(left.Equals(right));
         }
     }
 }

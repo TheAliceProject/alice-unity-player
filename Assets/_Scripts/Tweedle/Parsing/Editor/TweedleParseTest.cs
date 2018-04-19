@@ -8,16 +8,19 @@ namespace Alice.Tweedle.Unlinked
 {
 	public class TweedleParseTest
 	{
-		private TweedleType ParseString(string src)
+		private TweedleType ParseType(string src)
 		{
 			TweedleUnlinkedParser t = new TweedleUnlinkedParser();
-			return t.Parse(src);
+			return t.ParseType(src);
 		}
 
+		///
+		/// CLASS
+		/// 
 		[Test]
 		public void SomethingShouldBeCreatedForARootClass()
 		{
-			TweedleClass tested = (TweedleClass)ParseString("class SThing {}");
+			TweedleClass tested = (TweedleClass)ParseType("class SThing {}");
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
 
@@ -25,7 +28,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void ARootClassShouldBeCreated()
 		{
-			TweedleClass tested = (TweedleClass)ParseString("class SThing {}");
+			TweedleClass tested = (TweedleClass)ParseType("class SThing {}");
 
 			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a UnlinkedClass.");
 		}
@@ -33,7 +36,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void ClassShouldKnowItsName()
 		{
-			TweedleClass tested = (TweedleClass)ParseString("class SThing {}");
+			TweedleClass tested = (TweedleClass)ParseType("class SThing {}");
 
 			Assert.AreEqual("SThing", tested.Name, "The name should be 'SThing'");
 		}
@@ -43,7 +46,7 @@ namespace Alice.Tweedle.Unlinked
 		{
 			Assert.Throws<System.NullReferenceException>(delegate ()
 			{
-				ParseString("class SScene extends Boolean {}");
+				ParseType("class SScene extends Boolean {}");
 			});
 		}
 
@@ -52,7 +55,7 @@ namespace Alice.Tweedle.Unlinked
 		{
 			Assert.Throws<System.NullReferenceException>(delegate ()
 			{
-				ParseString("class SScene extends DecimalNumber {}");
+				ParseType("class SScene extends DecimalNumber {}");
 			});
 		}
 
@@ -61,7 +64,7 @@ namespace Alice.Tweedle.Unlinked
 		{
 			Assert.Throws<System.NullReferenceException>(delegate ()
 			{
-				ParseString("class SScene extends WholeNumber {}");
+				ParseType("class SScene extends WholeNumber {}");
 			});
 		}
 
@@ -70,37 +73,39 @@ namespace Alice.Tweedle.Unlinked
 		{
 			Assert.Throws<System.NullReferenceException>(delegate ()
 			{
-				ParseString("class SScene extends Number {}");
+				ParseType("class SScene extends Number {}");
 			});
 		}
 
 		[Test]
-		public void SubclassOfStringPrimitiveShouldFail()
+		public void SubclassOfTextStringPrimitiveShouldFail()
 		{
 			Assert.Throws<System.NullReferenceException>(delegate ()
 			{
-				ParseString("class SScene extends String {}");
+				ParseType("class SScene extends TextString {}");
 			});
 		}
 
-		//[Test]
-		//public void EnumNamedSameAsBooleanPrimitiveShouldFail()
-		//{
-		//	Assert.That(() => ParseString("enum Boolean {TRUE, FALSE}"),
-		//		Throws.TypeOf<Antlr4.Runtime.Misc.ParseCanceledException>());
-		//}
+		[Test]
+		public void SubclassOfStringShouldNotFail()
+		{
+			TweedleType tested = ParseType("class SScene extends String {}");
 
-		//[Test]
-		//public void ClassNamedSameAsBooleanPrimitiveShouldFail()
-		//{
-		//	Assert.That(() => ParseString("class Boolean {}"),
-		//		Throws.TypeOf<Antlr4.Runtime.Misc.ParseCanceledException>());
-		//}
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void ClassNamedSameAsBooleanPrimitiveShouldCreateSomething()
+		{
+			TweedleType tested = ParseType("class Boolean {}");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
 
 		[Test]
 		public void SomethingShouldBeCreatedForASubclass()
 		{
-			TweedleClass tested = (TweedleClass)ParseString("class SScene extends SThing {}");
+			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing {}");
 
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
@@ -108,7 +113,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void ASubclassShouldBeCreated()
 		{
-			TweedleClass tested = (TweedleClass)ParseString("class SScene extends SThing {}");
+			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing {}");
 
 			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a UnlinkedClass.");
 		}
@@ -116,7 +121,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void ClassNameShouldBeReturnedOnSubclass()
 		{
-			TweedleClass tested = (TweedleClass)ParseString("class SScene extends SThing {}");
+			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing {}");
 
 			Assert.AreEqual("SScene",
 							tested.Name,
@@ -126,44 +131,92 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void SuperclassNameShouldBeReturnedOnSubclass()
 		{
-			TweedleClass sScene = (TweedleClass)ParseString("class SScene extends SThing {}");
+			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing {}");
 
 			Assert.AreEqual("SThing",
-							sScene.Super.Name,
+							tested.Super.Name,
 							"The class SScene should have a superclass SThing.");
 		}
+
+		///
+		/// CLASS PROPERTIES
+		/// 
 
 		[Test]
 		public void PropertyShouldBeReturnedOnClassProperty()
 		{
-			TweedleClass sScene = (TweedleClass)ParseString("class SScene extends SThing { int test; }");
+			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing { int test; }");
 			//sScene.properties.Add(new TweedleField(new TweedleTypeReference("int"), "test"));
 
 			Assert.AreEqual("test",
-							sScene.properties[0].Name,
+							tested.properties[0].Name,
 							"The class SScene should have a property named test.");
 			Assert.AreEqual("int",
-							sScene.properties[0].Type.Name,
+							tested.properties[0].Type.Name,
 							"The class SScene should have a property with type int.");
 		}
 
 		[Test]
 		public void PropertyModifierShouldBeReturnedOnClassProperty()
 		{
-			TweedleClass sScene = (TweedleClass)ParseString("class SScene extends SThing { static int test; }");
+			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing { static int test; }");
 
 			Assert.AreEqual("static",
-							sScene.properties[0].Modifiers[0],
+							tested.properties[0].Modifiers[0],
 							"The class SScene should have a property with static modifier.");
+		}
+
+		///
+		/// CLASS CONSTRUCTOR
+		/// 
+
+		[Test]
+		public void SomethingShouldBeCreatedForClassWithConstructor()
+		{
+			string scene = "class Scene extends SScene models Scene {\n"
+						+ "  Scene() {\n"
+						+ "    super();\n"
+						+ "  }\n"
+						+ "}";
+			TweedleType tested = ParseType(scene);
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void SomethingShouldBeCreatedForClassWithListener()
+		{
+			string scene = "class Scene extends SScene {\n"
+						+ "  Scene() {\n"
+						+ "    super();\n"
+						+ "  }\n"
+						+ "  void initializeEventListeners() {\n"
+						+ "    this.addSceneActivationListener(listener: (SceneActivationEvent event) -> {\n"
+						+ "      this.myFirstMethod();\n"
+						+ "    });\n"
+						+ "  }\n"
+						+ "}";
+			TweedleType tested = ParseType(scene);
+
+			Assert.NotNull(tested, "The parser should have returned something.");
 		}
 
 		///
 		/// ENUM
 		///
+
+		[Test]
+		public void EnumNamedSameAsBooleanPrimitiveShouldCreateSomething()
+		{
+			TweedleType tested = ParseType("enum Boolean {TRUE, FALSE}");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
 		[Test]
 		public void SomethingShouldBeCreatedForAnEnum()
 		{
-			TweedleEnum tested = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
@@ -171,7 +224,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AnEnumShouldBeCreated()
 		{
-			TweedleEnum tested = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
 			Assert.IsInstanceOf<TweedleEnum>(tested, "The parser should have returned a UnlinkedEnum.");
 		}
@@ -179,7 +232,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void NameShouldBeReturnedOnEnum()
 		{
-			TweedleEnum tested = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
 			Assert.AreEqual("Direction",
 							tested.Name,
@@ -189,38 +242,129 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void EnumShouldIncludeTwoValues()
 		{
-			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
 			Assert.AreEqual(2,
-							directionEnum.Values.Count,
+							tested.Values.Count,
 							"The enum Direction should have two values.");
 		}
 
 		[Test]
 		public void EnumShouldIncludeUpValue()
 		{
-			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
-			Assert.True(directionEnum.Values.Contains("UP"),
+			Assert.True(tested.Values.Contains("UP"),
 						"The enum Direction should include UP.");
 		}
 
 		[Test]
 		public void EnumShouldIncludeDownValue()
 		{
-			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
-			Assert.True(directionEnum.Values.Contains("DOWN"),
+			Assert.True(tested.Values.Contains("DOWN"),
 						"The enum Direction should include DOWN.");
 		}
 
 		[Test]
 		public void EnumShouldNotIncludeLeftValue()
 		{
-			TweedleEnum directionEnum = (TweedleEnum)ParseString("enum Direction {UP, DOWN}");
+			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
-			Assert.False(directionEnum.Values.Contains("LEFT"),
+			Assert.False(tested.Values.Contains("LEFT"),
 						 "The enum Direction should not include LEFT.");
+		}
+
+		/// 
+		/// Scene
+		/// 
+
+		[Test]
+		public void SomethingShouldBeCreatedForGeneratedScene()
+		{
+			string generatedScene = "class Scene extends SScene models Scene {\n" + "  Scene() {\n" + "    super();\n" + "  }\n"
+						+ "\n" + "  void initializeEventListeners() {\n"
+						+ "    this.addSceneActivationListener(listener: (SceneActivationEvent event)-> {\n"
+						+ "      this.myFirstMethod();\n" + "    });\n" + "  }\n" + "\n" + "  void myFirstMethod() {\n"
+						+ "    this.sphere.jump();\n" + "    this.sphere.jump();\n" + "    doTogether {\n"
+						+ "      this.walrus.moveToward(target: this.sphere,amount: 2.0);\n"
+						+ "      this.walrus.moveToward(target: this.cylinder,amount: 2.0);\n" + "    }\n" + "    doTogether {\n"
+						+ "      this.sphere.setPaint(paint: Color.GREEN);\n" + "      this.sphere.setPaint(paint: Color.RED);\n"
+						+ "    }\n" + "    this.walrus.say(text: \"hello \\\"Ralph\\\" How are you? \\\\\\\"/\\\" today?\");\n"
+						+ "    doTogether {\n" + "      this.walrus.turn(direction: TurnDirection.LEFT,amount: 1.0);\n" + "    }\n"
+						+ "*<  this.walrus.roll(direction: RollDirection.RIGHT,amount: 1.0); >*\n"
+						+ "    this.walrus.turn(direction: TurnDirection.LEFT,amount: 1.0);\n" + "    doInOrder {\n"
+						+ "      doInOrder {\n" + "      }\n" + "      // So much to say\n"
+						+ "      // And I can use multiple lines\n"
+						+ "      // Nicer if the other side updated as I typed, but what can you do?\n" + "*<    doInOrder {\n"
+						+ "*<      this.walrus.turnToFace(target: this.cylinder,details: TurnToFace.duration(unknown: 2.0)); >*\n"
+						+ "        this.walrus.turnToFace(target: this.sphere,details: TurnToFace.duration(unknown: 2.0));\n"
+						+ "      } >*\n" + "    }\n" + "    doInOrder {\n" + "      doTogether {\n"
+						+ "        forEach(SModel x in new SModel[]{this.sphere, this.walrus}) {\n" + "          doTogether {\n"
+						+ "          }\n" + "        }\n" + "      }\n" + "      SModel[] muddles <- new SModel[]{};\n"
+						+ "      doInOrder {\n" + "        doTogether {\n"
+						+ "          this.walrus.turnToFace(target: this.cylinder,details: TurnToFace.duration(unknown: 2.0));\n"
+						+ "          this.walrus.turnToFace(target: this.sphere,details: TurnToFace.duration(unknown: 2.0));\n"
+						+ "        }\n" + "      }\n" + "    }\n" + "*<  countUpTo( indexA < 2 ) {\n" + "    } >*\n"
+						+ "    countUpTo( indexB < 2 ) {\n" + "    }\n" + "*<  while (false) {\n" + "    } >*\n"
+						+ "    while (false) {\n" + "    }\n"
+						+ "*<  forEach(SModel x in new SModel[]{this.sphere, this.walrus}) {\n" + "      doTogether {\n"
+						+ "      }\n" + "    } >*\n" + "    forEach(SModel x in new SModel[]{this.sphere, this.walrus}) {\n"
+						+ "      doTogether {\n" + "      }\n" + "    }\n" + "*<  if(true) {\n" + "    } else {\n" + "    } >*\n"
+						+ "    if(true) {\n" + "    } else {\n" + "    }\n" + "*<  doTogether {\n" + "    } >*\n"
+						+ "    doTogether {\n" + "    }\n"
+						+ "*<  eachTogether(TextString msg in new TextString[]{\"hello\", \"hello\"}) {\n"
+						+ "      this.walrus.say(text: msg);\n" + "    } >*\n"
+						+ "    eachTogether(TextString msg in new TextString[]{\"hello\", \"hello\"}) {\n"
+						+ "      this.walrus.say(text: msg);\n" + "    }\n" + "*<  WholeNumber a <- 2; >*\n" + "    WholeNumber a <- 2;\n"
+						+ "*<  a <- 2; >*\n" + "    a <- 2;\n" + "  }\n" + "\n" + "  void doInfix() {\n"
+						+ "    WholeNumber v <- 1+2+(2-1)*3;\n" + "    if((true||false)&&false) {\n" + "    } else {\n" + "    }\n"
+						+ "    if(false&&false||0.5<=1.0) {\n" + "    } else {\n" + "    }\n"
+						+ "    if((false||false)&&(true||true)) {\n" + "    } else {\n" + "    }\n"
+						+ "    if(false&&false||true&&true) {\n" + "    } else {\n" + "    }\n" + "  }\n"
+						+ "  SGround ground <- new SGround();\n" + "  SCamera camera <- new SCamera();\n"
+						+ "  Walrus walrus <- new Walrus();\n" + "  Sphere sphere <- new Sphere();\n"
+						+ "  Cylinder cylinder <- new Cylinder();\n" + "\n" + "  void performCustomSetup() {\n"
+						+ "    // Make adjustments to the starting scene, in a way not available in the Scene editor\n" + "  }\n"
+						+ "\n" + "  void performGeneratedSetUp() {\n" + "    // DO NOT EDIT\n"
+						+ "    // This code is automatically generated.  Any work you perform in this method will be overwritten.\n"
+						+ "    // DO NOT EDIT\n"
+						+ "    this.setAtmosphereColor(color: new Color(red: 0.588,green: 0.886,blue: 0.988));\n"
+						+ "    this.setFromAboveLightColor(color: Color.WHITE);\n"
+						+ "    this.setFromBelowLightColor(color: Color.BLACK);\n" + "    this.setFogDensity(density: 0.0);\n"
+						+ "    this.setName(name: \"myScene\");\n" + "    this.ground.setPaint(paint: SurfaceAppearance.GRASS);\n"
+						+ "    this.ground.setOpacity(opacity: 1.0);\n" + "    this.ground.setName(name: \"ground\");\n"
+						+ "    this.ground.setVehicle(vehicle: this);\n" + "    this.camera.setName(name: \"camera\");\n"
+						+ "    this.camera.setVehicle(vehicle: this);\n"
+						+ "    this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0,y: 0.995185,z: 0.0980144,w: 6.12323E-17));\n"
+						+ "    this.camera.setPositionRelativeToVehicle(position: new Position(right: 9.61E-16,up: 1.56,backward: -7.85));\n"
+						+ "    this.walrus.setPaint(paint: Color.WHITE);\n" + "    this.walrus.setOpacity(opacity: 1.0);\n"
+						+ "    this.walrus.setName(name: \"walrus\");\n" + "    this.walrus.setVehicle(vehicle: this);\n"
+						+ "    this.walrus.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0,y: 0.0,z: 0.0,w: 1.0));\n"
+						+ "    this.walrus.setPositionRelativeToVehicle(position: new Position(right: 0.618,up: 0.0111,backward: -0.877));\n"
+						+ "    this.sphere.setRadius(radius: 0.5);\n" + "    this.sphere.setPaint(paint: Color.WHITE);\n"
+						+ "    this.sphere.setOpacity(opacity: 1.0);\n" + "    this.sphere.setName(name: \"sphere\");\n"
+						+ "    this.sphere.setVehicle(vehicle: this);\n"
+						+ "    this.sphere.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0,y: 0.0,z: 0.0,w: 1.0));\n"
+						+ "    this.sphere.setPositionRelativeToVehicle(position: new Position(right: -7.34,up: 0.5,backward: 18.9));\n"
+						+ "    this.cylinder.setRadius(radius: 0.5);\n" + "    this.cylinder.setLength(length: 1.0);\n"
+						+ "    this.cylinder.setPaint(paint: Color.WHITE);\n" + "    this.cylinder.setOpacity(opacity: 1.0);\n"
+						+ "    this.cylinder.setName(name: \"cylinder\");\n" + "    this.cylinder.setVehicle(vehicle: this);\n"
+						+ "    this.cylinder.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0,y: 0.0,z: 0.0,w: 1.0));\n"
+						+ "    this.cylinder.setPositionRelativeToVehicle(position: new Position(right: 7.63,up: 0.0,backward: 19.7));\n"
+						+ "  }\n" + "\n" + "  void handleActiveChanged(Boolean isActive,WholeNumber activationCount) {\n"
+						+ "    if(isActive) {\n" + "      if(activationCount==1) {\n" + "        this.performGeneratedSetUp();\n"
+						+ "        this.performCustomSetup();\n" + "        this.initializeEventListeners();\n" + "      } else {\n"
+						+ "        this.restoreStateAndEventListeners();\n" + "      }\n" + "    } else {\n"
+						+ "      this.preserveStateAndEventListeners();\n" + "    }\n" + "  }\n" + "  SGround getGround() {\n"
+						+ "    return this.ground;\n" + "  }\n" + "  SCamera getCamera() {\n" + "    return this.camera;\n"
+						+ "  }\n" + "  Walrus getWalrus() {\n" + "    return this.walrus;\n" + "  }\n" + "  Sphere getSphere() {\n"
+						+ "    return this.sphere;\n" + "  }\n" + "  Cylinder getCylinder() {\n" + "    return this.cylinder;\n"
+						+ "  }\n" + "}";
+			TweedleType tested = ParseType(generatedScene);
+
+			Assert.NotNull(tested, "The parser should have returned something.");
 		}
 	}
 }

@@ -1,16 +1,28 @@
 ﻿namespace Alice.Tweedle
 {
-    class AdditionExpression : BinaryExpression
+	public class AdditionWholeExpression : BinaryNumericExpression<int, int>
     {
-
-        public AdditionExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs)
+        public AdditionWholeExpression(TweedleExpression lhs, TweedleExpression rhs)
+            : base(lhs, rhs, TweedleTypes.WHOLE_NUMBER)
         {
         }
 
-        protected override TweedleValue Evaluate(TweedleValue lValue, TweedleValue rValue)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+		protected override int Evaluate(int left, int right)
+		{
+			return left + right;
+		}
+	}
+
+	public class AdditionDecimalExpression : BinaryNumericExpression<double, double>
+	{
+		public AdditionDecimalExpression(TweedleExpression lhs, TweedleExpression rhs)
+			: base(lhs, rhs, TweedleTypes.DECIMAL_NUMBER)
+		{
+		}
+
+		protected override double Evaluate(double left, double right)
+		{
+			return left + right;
+		}
+	}
 }

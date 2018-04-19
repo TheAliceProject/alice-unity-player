@@ -5,7 +5,8 @@
         private TweedleExpression lhs;
         private TweedleExpression rhs;
 
-        public BinaryExpression(TweedleExpression lhs, TweedleExpression rhs)
+        public BinaryExpression(TweedleExpression lhs, TweedleExpression rhs, TweedleType type)
+			: base(type)
         {
             this.lhs = lhs;
             this.rhs = rhs;
@@ -16,6 +17,6 @@
             return Evaluate(lhs.Evaluate(frame), rhs.Evaluate(frame));
         }
 
-        protected abstract TweedleValue Evaluate(TweedleValue lValue, TweedleValue rValue);
+        protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);
     }
 }

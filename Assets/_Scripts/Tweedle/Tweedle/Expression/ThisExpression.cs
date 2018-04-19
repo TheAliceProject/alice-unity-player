@@ -2,16 +2,16 @@
 
 namespace Alice.Tweedle
 {
-    public abstract class TweedleValue : TweedleExpression
-    {
-		protected TweedleValue(TweedleType type)
+	public class ThisExpression : TweedleExpression
+	{
+		public ThisExpression(TweedleType type)
 			: base(type)
 		{
 		}
 
 		public override TweedleValue Evaluate(TweedleFrame frame)
 		{
-			return this;
+			return null;
 		}
 	}
 }

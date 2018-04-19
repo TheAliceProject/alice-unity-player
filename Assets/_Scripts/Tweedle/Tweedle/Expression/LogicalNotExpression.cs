@@ -1,16 +1,19 @@
 ﻿namespace Alice.Tweedle
 {
-    class LogicalNotExpression : PrePostfixExpression
+    class LogicalNotExpression : TweedleExpression
     {
+		private TweedleExpression expression;
 
         public LogicalNotExpression(TweedleExpression expression)
-            : base(expression)
+            : base(TweedleTypes.BOOLEAN)
         {
+			this.expression = expression;
         }
 
         public override TweedleValue Evaluate(VM.TweedleFrame frame)
         {
-            throw new System.NotImplementedException();
+			TweedlePrimitiveValue<bool> eval = (TweedlePrimitiveValue<bool>)expression.Evaluate(frame);
+			return TweedleTypes.BOOLEAN.Instantiate(!eval.Value);
         }
     }
 }

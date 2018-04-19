@@ -1,16 +1,30 @@
 ﻿namespace Alice.Tweedle
 {
-    class MultiplicationExpression : BinaryExpression
-    {
+    class MultiplicationWholeExpression : BinaryNumericExpression<int, int>
+	{
 
-        public MultiplicationExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs)
+        public MultiplicationWholeExpression(TweedleExpression lhs, TweedleExpression rhs)
+            : base(lhs, rhs, TweedleTypes.WHOLE_NUMBER)
         {
         }
 
-        protected override TweedleValue Evaluate(TweedleValue lValue, TweedleValue rValue)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+		protected override int Evaluate(int left, int right)
+		{
+			return left * right;
+		}
+	}
+
+	class MultiplicationDecimalExpression : BinaryNumericExpression<double, double>
+	{
+
+		public MultiplicationDecimalExpression(TweedleExpression lhs, TweedleExpression rhs)
+			: base(lhs, rhs, TweedleTypes.DECIMAL_NUMBER)
+		{
+		}
+
+		protected override double Evaluate(double left, double right)
+		{
+			return left * right;
+		}
+	}
 }

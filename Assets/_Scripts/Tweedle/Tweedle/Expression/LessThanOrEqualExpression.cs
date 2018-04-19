@@ -1,16 +1,28 @@
 ﻿namespace Alice.Tweedle
 {
-    class LessThanOrEqualExpression : BinaryExpression
-    {
-
-        public LessThanOrEqualExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs)
+    class LessThanOrEqualWholeExpression : BinaryNumericExpression<bool, int>
+	{
+        public LessThanOrEqualWholeExpression(TweedleExpression lhs, TweedleExpression rhs)
+            : base(lhs, rhs, TweedleTypes.BOOLEAN)
         {
         }
 
-        protected override TweedleValue Evaluate(TweedleValue lValue, TweedleValue rValue)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+		protected override bool Evaluate(int left, int right)
+		{
+			return left <= right;
+		}
+	}
+
+	class LessThanOrEqualDecimalExpression : BinaryNumericExpression<bool, double>
+	{
+		public LessThanOrEqualDecimalExpression(TweedleExpression lhs, TweedleExpression rhs)
+			: base(lhs, rhs, TweedleTypes.BOOLEAN)
+		{
+		}
+
+		protected override bool Evaluate(double left, double right)
+		{
+			return left <= right;
+		}
+	}
 }
