@@ -4,33 +4,26 @@
     {
         private readonly TweedleClass tweClass;
 
-        public override TweedleType Type
-        {
-            get
-            {
-                return tweClass;
-            }
-        }
-
         public TweedleObject(TweedleClass aClass)
+			: base(aClass)
         {
             tweClass = aClass;
         }
 
-        public TweedleValue get(TweedleField field)
+        public TweedleValue Get(TweedleField field)
         {
             return null;
         }
 
-        public void set(TweedleField field, TweedleValue value)
+        public void Set(TweedleField field, TweedleValue value)
         {
 
         }
 
-        public TweedleValue initializeField(VM.TweedleFrame frame, TweedleField field)
+        public TweedleValue InitializeField(VM.TweedleFrame frame, TweedleField field)
         {
             TweedleValue value = null;
-            set(field, value);
+            Set(field, value);
             return value;
         }
     }

@@ -75,7 +75,7 @@ namespace Alice.Tweedle.Unlinked
 						for (int j = 0; j < resources[i].files.Count; j++)
 						{
 							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
-							TweedleClass tweClass = (TweedleClass)tweedleParser.Parse(System.IO.File.ReadAllText(absPath));
+							TweedleClass tweClass = (TweedleClass)tweedleParser.ParseType(System.IO.File.ReadAllText(absPath));
 							UnityEngine.Debug.Log(tweClass.ToString());
 							system.AddClass(tweClass);
 						}
@@ -85,7 +85,7 @@ namespace Alice.Tweedle.Unlinked
 						for (int j = 0; j < resources[i].files.Count; j++)
 						{
 							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
-							TweedleEnum tweEnum = (TweedleEnum)tweedleParser.Parse(System.IO.File.ReadAllText(absPath));
+							TweedleEnum tweEnum = (TweedleEnum)tweedleParser.ParseType(System.IO.File.ReadAllText(absPath));
 							system.AddEnum(tweEnum);
 						}
 						break;
