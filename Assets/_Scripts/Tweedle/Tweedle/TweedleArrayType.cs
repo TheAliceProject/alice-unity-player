@@ -2,12 +2,28 @@
 {
 	public class TweedleArrayType : TweedleType
 	{
-		private TweedleType type;
+		private TweedleType valueType;
 
-		public TweedleArrayType(TweedleType type) 
-			: base(type.Name + "[]")
+        public TweedleType ValueType
+        {
+            get
+            {
+                return valueType;
+            }
+        }
+
+        public TweedleArrayType(TweedleType valueType) 
+            : base(valueType.Name + "[]")
 		{
+            this.valueType = valueType;
 		}
+
+        public override bool AcceptsType(TweedleType type)
+        {
+            return this == type ||
+                            ((type is TweedleArrayType) &&
+                             valueType.AcceptsType(((TweedleArrayType)type).valueType) );
+        }
 
     }
 }

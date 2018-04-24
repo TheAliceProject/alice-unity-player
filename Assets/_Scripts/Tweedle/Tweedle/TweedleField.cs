@@ -13,9 +13,16 @@ namespace Alice.Tweedle
 		}
 
 
-        public TweedleField(List<string> modifiers, TweedleType type, string name, TweedleExpression initializer)
+        public TweedleField(List<string> modifiers, TweedleType type, string name)
             : base(type, name)
 		{
+            this.modifiers = modifiers;
+        }
+
+
+        public TweedleField(List<string> modifiers, TweedleType type, string name, TweedleExpression initializer)
+            : base(type, name)
+        {
             this.modifiers = modifiers;
             this.initializer = initializer;
         }

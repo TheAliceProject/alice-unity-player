@@ -1,12 +1,22 @@
-﻿namespace Alice.Tweedle
+﻿using System.Collections.Generic;
+
+namespace Alice.Tweedle
 {
 	public class TweedleWhileLoop : TweedleAbstractLoop
 	{
-		private TweedleExpression conditional;
+		private TweedleExpression runCondition;
 
-		public TweedleWhileLoop(TweedleExpression conditional, BlockStatement body) : base(body)
+        public TweedleExpression RunCondition
+        {
+            get
+            {
+                return runCondition;
+            }
+        }
+
+        public TweedleWhileLoop(TweedleExpression runCondition, List<TweedleStatement> body) : base(body)
 		{
-			this.conditional = conditional;
+            this.runCondition = runCondition;
 		}
 	}
 }

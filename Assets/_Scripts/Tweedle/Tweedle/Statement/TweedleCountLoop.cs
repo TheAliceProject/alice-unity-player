@@ -1,13 +1,25 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+using System.Collections.Generic;
+
+namespace Alice.Tweedle
 {
 	public class TweedleCountLoop : TweedleAbstractLoop
 	{
-		private TweedleField variable;
-		private TweedleExpression count;
+        private TweedleLocalVariable variable;
 
-		public TweedleCountLoop(TweedleField variable, TweedleExpression count, BlockStatement body) : base(body)
-		{
-			this.variable = variable;
+        public TweedleLocalVariable Variable
+        {
+            get
+            {
+                return variable;
+            }
+        }
+
+        private TweedleExpression count;
+
+        public TweedleCountLoop(string variableName, TweedleExpression count, List<TweedleStatement> body) : base(body)
+        {
+            this.variable = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, variableName);
 			this.count = count;
 		}
 	}

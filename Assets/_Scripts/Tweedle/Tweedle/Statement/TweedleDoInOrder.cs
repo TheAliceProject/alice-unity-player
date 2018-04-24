@@ -1,8 +1,10 @@
-﻿namespace Alice.Tweedle
+﻿using System.Collections.Generic;
+
+namespace Alice.Tweedle
 {
 	public class TweedleDoInOrder : TweedleAbstractStatementWithBody
 	{
-		public TweedleDoInOrder(BlockStatement body) : base(body)
+        public TweedleDoInOrder(List<TweedleStatement> body) : base(body)
 		{
 		}
 	}

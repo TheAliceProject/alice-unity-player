@@ -1,12 +1,22 @@
-﻿namespace Alice.Tweedle
+﻿using System.Collections.Generic;
+
+namespace Alice.Tweedle
 {
 	abstract public class TweedleAbstractStatementWithBody : TweedleStatement
-	{
-		private BlockStatement body;
+    {
+        private List<TweedleStatement> statements;
 
-		public TweedleAbstractStatementWithBody(BlockStatement body)
+        public List<TweedleStatement> Statements
+        {
+            get
+            {
+                return statements;
+            }
+        }
+
+        public TweedleAbstractStatementWithBody(List<TweedleStatement> statements)
 		{
-			this.body = body;
-		}
+            this.statements = statements;
+        }
 	}
 }

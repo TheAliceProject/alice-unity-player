@@ -1,8 +1,10 @@
-﻿namespace Alice.Tweedle
+﻿using System.Collections.Generic;
+
+namespace Alice.Tweedle
 {
 	public class TweedleDoTogether : TweedleAbstractStatementWithBody
 	{
-		public TweedleDoTogether(BlockStatement body) : base(body)
+        public TweedleDoTogether(List<TweedleStatement> body) : base(body)
 		{
 		}
 	}

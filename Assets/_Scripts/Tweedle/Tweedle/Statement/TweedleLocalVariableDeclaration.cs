@@ -4,11 +4,30 @@ namespace Alice.Tweedle
 {
 	public class TweedleLocalVariableDeclaration : TweedleStatement
 	{
-		private List<TweedleField> field;
+        private TweedleLocalVariable variable;
 
-		public TweedleLocalVariableDeclaration(List<TweedleField> field)
+        public TweedleLocalVariable Variable
+        {
+            get
+            {
+                return variable;
+            }
+        }
+
+        private bool isConstant;
+
+        public bool IsConstant
+        {
+            get
+            {
+                return isConstant;
+            }
+        }
+
+        public TweedleLocalVariableDeclaration(bool isConstant, TweedleLocalVariable variable)
 		{
-			this.field = field;
+            this.isConstant = isConstant;
+            this.variable = variable;
 		}
 	}
 }
