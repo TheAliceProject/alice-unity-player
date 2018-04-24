@@ -212,16 +212,6 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.variableDeclarators"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.variableDeclarators"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.variableDeclarator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -491,16 +481,6 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitCreatedName([NotNull] TweedleParser.CreatedNameContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.innerCreator"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterInnerCreator([NotNull] TweedleParser.InnerCreatorContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.innerCreator"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitInnerCreator([NotNull] TweedleParser.InnerCreatorContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.arrayCreatorRest"/>.
 	/// </summary>

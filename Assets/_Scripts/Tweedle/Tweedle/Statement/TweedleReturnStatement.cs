@@ -2,13 +2,32 @@
 {
 	public class TweedleReturnStatement : TweedleStatement
 	{
-		private TweedleType type;
 		private TweedleExpression expression;
 
-		public TweedleReturnStatement(TweedleType type, TweedleExpression expression)
+        public TweedleExpression Expression
+        {
+            get
+            {
+                return expression;
+            }
+        }
+
+        public TweedleType Type
+        {
+            get
+            {
+                return expression.Type;
+            }
+        }
+
+        public TweedleReturnStatement()
 		{
-			this.type = type;
+            this.expression = TweedleNull.NULL;
+		}
+
+		public TweedleReturnStatement(TweedleExpression expression)
+		{
 			this.expression = expression;
 		}
-	}
+    }
 }

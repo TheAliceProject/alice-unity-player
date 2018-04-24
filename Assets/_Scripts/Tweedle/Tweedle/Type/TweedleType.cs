@@ -22,7 +22,7 @@
 			this.impliedType = impliedType;
 		}
 
-		public bool AcceptsType(TweedleType type)
+		virtual public bool AcceptsType(TweedleType type)
 		{
 			return this == type || (type.impliedType != null && AcceptsType(type.impliedType));
 		}

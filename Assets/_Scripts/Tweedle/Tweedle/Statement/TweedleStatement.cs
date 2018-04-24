@@ -1,15 +1,27 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
     abstract public class TweedleStatement
     {
-        public bool isEnabled()
+        private bool enabled = true;
+
+        public bool IsEnabled
         {
-            return true;
+            get
+            {
+                return enabled;
+            }
         }
 
         public void execute(VM.TweedleFrame frame)
         {
 
         }
+
+		internal void Disable()
+		{
+            enabled = false;
+		}
 	}
 }

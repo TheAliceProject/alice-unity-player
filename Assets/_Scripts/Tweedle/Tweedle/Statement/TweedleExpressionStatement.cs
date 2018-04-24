@@ -4,7 +4,15 @@
 	{
 		private TweedleExpression expression;
 
-		public TweedleExpressionStatement(TweedleExpression expression)
+        public TweedleExpression Expression
+        {
+            get
+            {
+                return expression;
+            }
+        }
+
+        public TweedleExpressionStatement(TweedleExpression expression)
 		{
 			this.expression = expression;
 		}

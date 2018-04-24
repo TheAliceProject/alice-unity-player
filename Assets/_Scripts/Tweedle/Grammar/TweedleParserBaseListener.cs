@@ -252,18 +252,6 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.variableDeclarators"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.variableDeclarators"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.variableDeclarator"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -587,18 +575,6 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitCreatedName([NotNull] TweedleParser.CreatedNameContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.innerCreator"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterInnerCreator([NotNull] TweedleParser.InnerCreatorContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.innerCreator"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitInnerCreator([NotNull] TweedleParser.InnerCreatorContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.arrayCreatorRest"/>.
 	/// <para>The default implementation does nothing.</para>

@@ -4,13 +4,30 @@ namespace Alice.Tweedle
 {
 	public class TweedleEachInArrayTogether : TweedleAbstractStatementWithBody
 	{
-		private TweedleField item;
-		private TweedleExpression array;
+        private TweedleLocalVariable itemVariable;
 
-		public TweedleEachInArrayTogether(TweedleField item, TweedleExpression array, BlockStatement body) 
+        public TweedleLocalVariable ItemVariable
+        {
+            get
+            {
+                return itemVariable;
+            }
+        }
+
+        private TweedleExpression array;
+
+        public TweedleExpression Array
+        {
+            get
+            {
+                return array;
+            }
+        }
+
+        public TweedleEachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> body) 
 			: base(body)
 		{
-			this.item = item;
+            this.itemVariable = itemVariable;
 			this.array = array;
 		}
 	}

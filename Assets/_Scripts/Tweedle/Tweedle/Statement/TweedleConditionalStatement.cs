@@ -1,13 +1,43 @@
-﻿namespace Alice.Tweedle
+﻿using System.Collections.Generic;
+
+namespace Alice.Tweedle
 {
 	public class TweedleConditionalStatement : TweedleStatement
 	{
-		private Tuple<bool, BlockStatement> ifElseIfs;
-		private BlockStatement elseBody;
+        private TweedleExpression condition;
 
-		public TweedleConditionalStatement(Tuple<bool, BlockStatement> ifElseIfs, BlockStatement elseBody)
+        public TweedleExpression Condition
+        {
+            get
+            {
+                return condition;
+            }
+        }
+
+        private List<TweedleStatement> thenBody;
+
+        public List<TweedleStatement> ThenBody
+        {
+            get
+            {
+                return thenBody;
+            }
+        }
+
+        private List<TweedleStatement> elseBody;
+
+        public List<TweedleStatement> ElseBody
+        {
+            get
+            {
+                return elseBody;
+            }
+        }
+
+        public TweedleConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
 		{
-			this.ifElseIfs = ifElseIfs;
+            this.condition = condition;
+            this.thenBody = thenBody;
 			this.elseBody = elseBody;
 		}
 	}

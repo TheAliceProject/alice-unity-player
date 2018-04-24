@@ -141,12 +141,6 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitFieldDeclaration([NotNull] TweedleParser.FieldDeclarationContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclarators"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitVariableDeclarators([NotNull] TweedleParser.VariableDeclaratorsContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.variableDeclarator"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -308,12 +302,6 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitCreatedName([NotNull] TweedleParser.CreatedNameContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="TweedleParser.innerCreator"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitInnerCreator([NotNull] TweedleParser.InnerCreatorContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.arrayCreatorRest"/>.
 	/// </summary>
