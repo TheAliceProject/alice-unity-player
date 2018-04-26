@@ -528,18 +528,6 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.lambdaBody"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterLambdaBody([NotNull] TweedleParser.LambdaBodyContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.lambdaBody"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitLambdaBody([NotNull] TweedleParser.LambdaBodyContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.primary"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

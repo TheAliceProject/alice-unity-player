@@ -279,12 +279,6 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="TweedleParser.lambdaBody"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitLambdaBody([NotNull] TweedleParser.LambdaBodyContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.primary"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

@@ -442,16 +442,6 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.lambdaBody"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterLambdaBody([NotNull] TweedleParser.LambdaBodyContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.lambdaBody"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitLambdaBody([NotNull] TweedleParser.LambdaBodyContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.primary"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
