@@ -20,7 +20,7 @@
 
         }
 
-        public TweedleValue InitializeField(VM.TweedleFrame frame, TweedleField field)
+        public TweedleValue InitializeField(TweedleFrame frame, TweedleField field)
         {
             TweedleValue value = null;
             Set(field, value);

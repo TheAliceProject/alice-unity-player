@@ -134,7 +134,7 @@ namespace Alice.Tweedle.Unlinked
 			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing {}");
 
 			Assert.AreEqual("SThing",
-							tested.Super.Name,
+							tested.SuperClassName,
 							"The class SScene should have a superclass SThing.");
 		}
 

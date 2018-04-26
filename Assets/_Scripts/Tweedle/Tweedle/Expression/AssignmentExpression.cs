@@ -11,7 +11,7 @@
             this.valueExp = valueExp;
         }
 
-        public override TweedleValue Evaluate(VM.TweedleFrame frame)
+        public override TweedleValue Evaluate(TweedleFrame frame)
         {
             TweedleValue newValue = valueExp.Evaluate(frame);
             // TODO Evaluate the assignee as a target and set to the newValue

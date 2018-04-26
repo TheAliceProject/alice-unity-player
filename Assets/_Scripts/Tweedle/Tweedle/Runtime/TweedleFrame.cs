@@ -1,4 +1,4 @@
-﻿namespace Alice.VM
+﻿namespace Alice.Tweedle
 {
     public class TweedleFrame
     {

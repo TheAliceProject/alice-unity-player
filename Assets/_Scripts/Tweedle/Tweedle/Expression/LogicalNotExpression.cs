@@ -10,7 +10,7 @@
 			this.expression = expression;
         }
 
-        public override TweedleValue Evaluate(VM.TweedleFrame frame)
+        public override TweedleValue Evaluate(TweedleFrame frame)
         {
 			TweedlePrimitiveValue<bool> eval = (TweedlePrimitiveValue<bool>)expression.Evaluate(frame);
 			return TweedleTypes.BOOLEAN.Instantiate(!eval.Value);

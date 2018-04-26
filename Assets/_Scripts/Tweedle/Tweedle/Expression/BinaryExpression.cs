@@ -12,7 +12,7 @@
             this.rhs = rhs;
         }
 
-        public override TweedleValue Evaluate(VM.TweedleFrame frame)
+        public override TweedleValue Evaluate(TweedleFrame frame)
         {
             return Evaluate(lhs.Evaluate(frame), rhs.Evaluate(frame));
         }

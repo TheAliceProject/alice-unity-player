@@ -2,38 +2,55 @@
 
 namespace Alice.Tweedle
 {
-    public class TweedleClass : TweedleType
+    public class TweedleClass : TweedleType, InvocableMethodHolder
     {
-        public TweedleType Super
-        {
-            get { return super; }
-            set { super = value; }
-       } 
-
         public List<TweedleField> properties;
         public List<TweedleMethod> methods;
 		public List<TweedleConstructor> constructors { get; internal set; }
 
-		private TweedleType super;
+		private InvocableMethodHolder superClass;
 
-		public TweedleClass(string name) : base(name)
+        public string SuperClassName
+        {
+            get { return superClass?.Name; }
+       } 
+
+		public TweedleClass(string name) 
+			: base(name)
         {
 			this.properties = new List<TweedleField>();
 			this.methods = new List<TweedleMethod>();
 			this.constructors = new List<TweedleConstructor>();
 		}
 
-		public TweedleClass(string name, TweedleType super) : base(name)
+		public TweedleClass(string name, TweedleTypeReference superClass) 
+			: base(name, superClass)
 		{
-			this.super = super;
+			this.superClass = superClass;
 			this.properties = new List<TweedleField>();
 			this.methods = new List<TweedleMethod>();
 			this.constructors = new List<TweedleConstructor>();
 		}
 
-		public TweedleObject Instantiate(VM.TweedleFrame frame, TweedleValue[] args)
+		public TweedleClass(string name, string super)
+			: this(name, new TweedleTypeReference(super))
+		{
+		}
+
+		public void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
+		{
+			if (methods.Contains(method))
+			{
+				method.Invoke(frame, target, arguments);
+			} else
+			{
+				superClass.Invoke(frame, target, method, arguments);
+			}
+		}
+
+		public TweedleObject Instantiate(TweedleFrame frame, TweedleValue[] args)
         {
-            return null;
+            return new TweedleObject(this);
         }
 
 		public override string ToString()

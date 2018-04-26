@@ -14,7 +14,7 @@ namespace Alice.Tweedle
             }
         }
 
-        public void execute(VM.TweedleFrame frame)
+        public void Execute(TweedleFrame frame)
         {
 
         }

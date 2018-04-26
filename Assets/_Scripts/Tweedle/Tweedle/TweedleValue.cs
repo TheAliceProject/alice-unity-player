@@ -1,6 +1,4 @@
-﻿using Alice.VM;
-
-namespace Alice.Tweedle
+﻿namespace Alice.Tweedle
 {
     public abstract class TweedleValue : TweedleExpression
     {
