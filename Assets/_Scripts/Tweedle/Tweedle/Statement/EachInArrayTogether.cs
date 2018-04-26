@@ -2,7 +2,7 @@
 
 namespace Alice.Tweedle
 {
-	public class TweedleEachInArrayTogether : TweedleAbstractStatementWithBody
+	public class EachInArrayTogether : AbstractStatementWithBody
 	{
         private TweedleLocalVariable itemVariable;
 
@@ -24,7 +24,7 @@ namespace Alice.Tweedle
             }
         }
 
-        public TweedleEachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> body) 
+        public EachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> body) 
 			: base(body)
 		{
             this.itemVariable = itemVariable;

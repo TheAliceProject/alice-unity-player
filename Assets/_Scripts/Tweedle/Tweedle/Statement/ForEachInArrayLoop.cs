@@ -2,12 +2,12 @@
 
 namespace Alice.Tweedle
 {
-	public class TweedleForEachInArrayLoop : TweedleAbstractLoop
+	public class ForEachInArrayLoop : AbstractLoop
 	{
         private TweedleLocalVariable item;
 		private TweedleExpression array;
 
-        public TweedleForEachInArrayLoop(TweedleLocalVariable item, TweedleExpression array, List<TweedleStatement> body) 
+        public ForEachInArrayLoop(TweedleLocalVariable item, TweedleExpression array, List<TweedleStatement> body) 
 			: base(body)
 		{
 			this.item = item;

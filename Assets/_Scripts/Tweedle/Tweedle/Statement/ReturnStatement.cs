@@ -1,6 +1,6 @@
 ﻿namespace Alice.Tweedle
 {
-	public class TweedleReturnStatement : TweedleStatement
+	public class ReturnStatement : TweedleStatement
 	{
 		private TweedleExpression expression;
 
@@ -20,12 +20,12 @@
             }
         }
 
-        public TweedleReturnStatement()
+        public ReturnStatement()
 		{
             this.expression = TweedleNull.NULL;
 		}
 
-		public TweedleReturnStatement(TweedleExpression expression)
+		public ReturnStatement(TweedleExpression expression)
 		{
 			this.expression = expression;
 		}
