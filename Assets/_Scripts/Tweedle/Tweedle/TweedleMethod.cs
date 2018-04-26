@@ -4,49 +4,36 @@ namespace Alice.Tweedle
 {
     public class TweedleMethod
     {
+		private List<TweedleStatement> body;
+		private List<string> modifiers;
+		private TweedleType type;
+        private string name;
+        private List<TweedleRequiredParameter> required;
+
 		public string Name
 		{
 			get { return name; }
 		}
 
-		private List<string> modifiers;
-		private TweedleType type;
-
         public TweedleType Type
         {
-            get
-            {
-                return type;
-            }
+            get { return type; }
         }
-
-        private string name;
-        private List<TweedleRequiredParameter> required;
 
         public List<TweedleRequiredParameter> RequiredParameters
         {
-            get
-            {
-                return required;
-            }
+            get { return required; }
         }
 
         private List<TweedleOptionalParameter> optional;
         public List<TweedleOptionalParameter> OptionalParameters
         {
-            get
-            {
-                return optional;
-            }
+            get { return optional; }
         }
-		private List<TweedleStatement> body;
 
         public List<TweedleStatement> Body
         {
-            get
-            {
-                return body;
-            }
+            get { return body; }
         }
 
         public TweedleMethod(TweedleType type, string name, List<TweedleRequiredParameter> required, List<TweedleOptionalParameter> optional, List<TweedleStatement> body)
@@ -62,6 +49,11 @@ namespace Alice.Tweedle
             : this(type, name, required, optional, body)
 		{
 			this.modifiers = modifiers;
+		}
+
+		public TweedleValue Invoke(TweedleFrame frame, TweedleObject target, TweedleValue[] arguments)
+		{
+			return null;
 		}
 	}
 }

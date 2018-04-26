@@ -14,6 +14,6 @@
 			this.type = type;
 		}
 
-        public abstract TweedleValue Evaluate(VM.TweedleFrame frame);
+        public abstract TweedleValue Evaluate(TweedleFrame frame);
     }
 }

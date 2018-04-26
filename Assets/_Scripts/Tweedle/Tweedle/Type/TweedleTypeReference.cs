@@ -1,6 +1,6 @@
 ﻿namespace Alice.Tweedle
 {
-	public class TweedleTypeReference : TweedleType
+	public class TweedleTypeReference : TweedleType, InvocableMethodHolder
 	{
 		public TweedleTypeReference(string name) : base(name)
 		{
@@ -14,14 +14,14 @@
             }
             else
             {
-                throw new System.Exception("LinkException - Attempt to use an unlinked type " + Name);
+                throw new TweedleLinkException("LinkException - Attempt to use an unlinked type " + Name);
             }
         }
 
-        /*override public void invoke(Frame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
-        {
-            throw new System.Exception("LinkException - Attempt to invoke the method " + method.Name + " on an unlinked type " + Name);
-        }*/
+		public void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
+		{
+			throw new TweedleLinkException("Attempt to invoke the method " + method.Name + " on an unlinked type " + Name);
+		}
 
         override public bool Equals(object obj)
         {

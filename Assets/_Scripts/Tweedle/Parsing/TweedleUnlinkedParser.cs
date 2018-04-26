@@ -43,7 +43,7 @@ namespace Alice.Tweedle.Unlinked
 				if (context.EXTENDS() != null)
 				{
 					string superclass = context.typeType().classOrInterfaceType().GetText();
-					tweClass = new TweedleClass(className, new TweedleTypeReference(superclass)); // TODO
+					tweClass = new TweedleClass(className, superclass);
 				} else
 				{
 					tweClass = new TweedleClass(className);
@@ -206,11 +206,6 @@ namespace Alice.Tweedle.Unlinked
 
 			public TweedleExpression ParseExpression([NotNull] TweedleParser.ExpressionContext context)
             {
-                if (context.NEW() != null)
-                {
-                    return InstantiationExpression(context);
-                }
-
                 IToken prefix = context.prefix;
 				IToken operation = context.bop;
 
@@ -272,9 +267,13 @@ namespace Alice.Tweedle.Unlinked
 						default :
                             throw new System.Exception("Binary operation not found.");
                     }
-
-                }
-                return base.VisitChildren(context); ;
+                } else if (context.expression().Length == 2)
+				{
+					TweedleExpression array = context.expression(0).Accept(this);
+					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
+					return new ArrayIndexExpression(array.Type, array, index);
+				}
+				return base.VisitChildren(context);
 			}
 
 			public override TweedleExpression VisitPrimary([NotNull] TweedleParser.PrimaryContext context)
@@ -342,28 +341,47 @@ namespace Alice.Tweedle.Unlinked
 				
 			}
 
-			private TweedleExpression InstantiationExpression(TweedleParser.ExpressionContext context)
-            {
-                string typeName = context.creator().createdName().GetText();
-                TweedleParser.ArrayCreatorRestContext arrayDetails = context.creator().arrayCreatorRest();
-                if (arrayDetails != null)
+			public override TweedleExpression VisitCreator([NotNull] TweedleParser.CreatorContext context)
+			{
+				string typeName = context.createdName().GetText();
+				TweedleType memberType = GetPrimitiveType(typeName);
+                memberType = memberType ?? GetTypeReference(typeName);
+                TweedleParser.ArrayCreatorRestContext arrayCreator = context.arrayCreatorRest();
+                if (arrayCreator != null)
                 {
-                    TweedleType prim = GetPrimitiveType(typeName);
-                    TweedleType memberType = prim ?? GetTypeReference(typeName);
-                    if (arrayDetails.arrayInitializer() != null)
+					TweedleArrayType arrayMemberType = new TweedleArrayType(memberType);
+
+					if (arrayCreator.arrayInitializer() != null)
                     {
-                        return new TweedleArrayInitializer(
-                                        new TweedleArrayType(memberType),
-                            arrayDetails.arrayInitializer().expression().Select(a=>a.Accept(new ExpressionVisitor(memberType)))
+                        return new ArrayInitializer(
+                                        arrayMemberType,
+							arrayCreator.arrayInitializer().expression().Select(a=>a.Accept(new ExpressionVisitor(memberType)))
                                                      .ToList());
-                    }
-                    // TODO return sized array
+                    } else
+					{
+						return new ArrayInitializer(
+							arrayMemberType,
+							arrayCreator.expression().Accept(new ExpressionVisitor())
+							);
+					}
                 }
                 else
                 {
-                    //TODO Object instantiation
+					TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
+					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
+					if (argsContext != null)
+					{
+						argsContext.labeledExpression().ToList().ForEach(arg =>
+						{
+							TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor()); // TODO <<<< argument types should correspond to constructor types
+							arguments.Add(arg.IDENTIFIER().GetText(), argValue);
+						});
+					}
+					return new ClassInitializer(
+							memberType,
+							arguments
+						);
                 }
-                return null;
             }
 
             private TweedleExpression FieldOrMethodRef(TweedleParser.ExpressionContext context)

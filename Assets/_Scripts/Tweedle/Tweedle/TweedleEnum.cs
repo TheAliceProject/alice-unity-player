@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 			this.values = values;
         }
 
-        public TweedleObject instantiate(VM.TweedleFrame frame, TweedleValue[] args)
+        public TweedleObject Instantiate(TweedleFrame frame, TweedleValue[] args)
         {
             return null;
         }

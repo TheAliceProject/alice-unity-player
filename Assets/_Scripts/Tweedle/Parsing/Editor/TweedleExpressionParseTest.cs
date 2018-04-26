@@ -288,7 +288,7 @@ namespace Alice.Tweedle.Unlinked
         public void APrimitiveArrayInitializerShouldBeCreated()
         {
             TweedleExpression tested = ParseExpression("new WholeNumber[] {3, 4, 5}");
-            Assert.IsInstanceOf<TweedleArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
+            Assert.IsInstanceOf<ArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
         }
 
         [Test]
@@ -302,7 +302,7 @@ namespace Alice.Tweedle.Unlinked
         public void AnObjectArrayInitializerShouldBeCreated()
         {
             TweedleExpression tested = ParseExpression("new SModel[] {this.sphere, this.walrus}");
-            Assert.IsInstanceOf<TweedleArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
+            Assert.IsInstanceOf<ArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
         }
     }
 }
