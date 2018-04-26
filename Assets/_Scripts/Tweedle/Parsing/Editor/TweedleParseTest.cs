@@ -143,7 +143,18 @@ namespace Alice.Tweedle.Unlinked
 		/// 
 
 		[Test]
-		public void PropertyShouldBeReturnedOnClassProperty()
+		public void PropertyShouldHaveTypeOnClassProperty()
+		{
+			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing { int test; }");
+			//sScene.properties.Add(new TweedleField(new TweedleTypeReference("int"), "test"));
+
+			Assert.AreEqual("int",
+							tested.properties[0].Type.Name,
+							"The class SScene should have a property with type int.");
+		}
+
+		[Test]
+		public void PropertyShouldHaveNameOnClassProperty()
 		{
 			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing { int test; }");
 			//sScene.properties.Add(new TweedleField(new TweedleTypeReference("int"), "test"));
@@ -151,9 +162,6 @@ namespace Alice.Tweedle.Unlinked
 			Assert.AreEqual("test",
 							tested.properties[0].Name,
 							"The class SScene should have a property named test.");
-			Assert.AreEqual("int",
-							tested.properties[0].Type.Name,
-							"The class SScene should have a property with type int.");
 		}
 
 		[Test]
@@ -293,7 +301,7 @@ namespace Alice.Tweedle.Unlinked
             TweedleMethod sumThing = tested.methods[0];
             TweedleStatement stmt = sumThing.Body[0];
 
-            Assert.IsInstanceOf<TweedleReturnStatement>(stmt, "The method statement should be a return.");
+            Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
         }
 
         [Test]
@@ -306,7 +314,7 @@ namespace Alice.Tweedle.Unlinked
                             + "}";
             TweedleClass tested = (TweedleClass)ParseType(scene);
             TweedleMethod sumThing = tested.methods[0];
-            TweedleReturnStatement stmt = (TweedleReturnStatement)sumThing.Body[0];
+            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
             Assert.NotNull(stmt.Expression, "The return statement should hold an expression.");
         }
@@ -321,7 +329,7 @@ namespace Alice.Tweedle.Unlinked
                             + "}";
             TweedleClass tested = (TweedleClass)ParseType(scene);
             TweedleMethod sumThing = tested.methods[0];
-            TweedleReturnStatement stmt = (TweedleReturnStatement)sumThing.Body[0];
+            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
             Assert.AreEqual(TweedleNull.NULL, stmt.Expression, "The return statement should hold NULL.");
         }
@@ -353,7 +361,7 @@ namespace Alice.Tweedle.Unlinked
             TweedleMethod sumThing = tested.methods[0];
             TweedleStatement stmt = sumThing.Body[0];
 
-            Assert.IsInstanceOf<TweedleReturnStatement>(stmt, "The method statement should be a return.");
+            Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
         }
 
         [Test]
@@ -366,7 +374,7 @@ namespace Alice.Tweedle.Unlinked
                             + "}";
             TweedleClass tested = (TweedleClass)ParseType(scene);
             TweedleMethod sumThing = tested.methods[0];
-            TweedleReturnStatement stmt = (TweedleReturnStatement)sumThing.Body[0];
+            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
             Assert.NotNull(stmt.Expression, "The method statement should hold an expression.");
         }
@@ -381,7 +389,7 @@ namespace Alice.Tweedle.Unlinked
                             + "}";
             TweedleClass tested = (TweedleClass)ParseType(scene);
             TweedleMethod sumThing = tested.methods[0];
-            TweedleReturnStatement stmt = (TweedleReturnStatement)sumThing.Body[0];
+            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
             Assert.IsInstanceOf<AdditionWholeExpression>(stmt.Expression, "The method statement should hold an addition expression.");
         }

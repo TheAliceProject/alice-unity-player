@@ -1,10 +1,10 @@
 ﻿namespace Alice.Tweedle
 {
-	public class TweedleComment : TweedleStatement
+	public class Comment : TweedleStatement
 	{
 		private string text;
 
-		public TweedleComment(string text)
+		public Comment(string text)
 		{
 			this.text = text;
 		}

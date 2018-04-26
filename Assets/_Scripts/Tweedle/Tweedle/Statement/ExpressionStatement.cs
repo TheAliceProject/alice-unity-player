@@ -1,6 +1,6 @@
 ﻿namespace Alice.Tweedle
 {
-	public class TweedleExpressionStatement : TweedleStatement
+	public class ExpressionStatement : TweedleStatement
 	{
 		private TweedleExpression expression;
 
@@ -12,7 +12,7 @@
             }
         }
 
-        public TweedleExpressionStatement(TweedleExpression expression)
+        public ExpressionStatement(TweedleExpression expression)
 		{
 			this.expression = expression;
 		}

@@ -2,7 +2,7 @@
 
 namespace Alice.Tweedle
 {
-	public class TweedleConditionalStatement : TweedleStatement
+	public class ConditionalStatement : TweedleStatement
 	{
         private TweedleExpression condition;
 
@@ -34,7 +34,7 @@ namespace Alice.Tweedle
             }
         }
 
-        public TweedleConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
+        public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
 		{
             this.condition = condition;
             this.thenBody = thenBody;

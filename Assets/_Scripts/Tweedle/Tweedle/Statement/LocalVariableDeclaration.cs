@@ -2,7 +2,7 @@
 
 namespace Alice.Tweedle
 {
-	public class TweedleLocalVariableDeclaration : TweedleStatement
+	public class LocalVariableDeclaration : TweedleStatement
 	{
         private TweedleLocalVariable variable;
 
@@ -24,7 +24,7 @@ namespace Alice.Tweedle
             }
         }
 
-        public TweedleLocalVariableDeclaration(bool isConstant, TweedleLocalVariable variable)
+        public LocalVariableDeclaration(bool isConstant, TweedleLocalVariable variable)
 		{
             this.isConstant = isConstant;
             this.variable = variable;
