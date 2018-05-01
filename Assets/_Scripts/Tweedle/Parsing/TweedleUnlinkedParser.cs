@@ -33,54 +33,77 @@ namespace Alice.Tweedle.Unlinked
 			return new ExpressionVisitor().Visit(ParseSource(src).expression());
         }
 
+		private class ClassBody
+		{
+			public List<TweedleField> properties;
+			public List<TweedleMethod> methods;
+			public List<TweedleConstructor> constructors;
+
+			public ClassBody()
+			{
+				this.properties = new List<TweedleField>();
+				this.methods = new List<TweedleMethod>();
+				this.constructors = new List<TweedleConstructor>();
+			}
+		}
+
 		private class TypeVisitor : TweedleParserBaseVisitor<TweedleType>
 		{
+			private ClassBody body;
+			private ClassBodyDeclarationVisitor cbdVisitor;
+
+			public override TweedleType VisitTypeDeclaration([NotNull] TweedleParser.TypeDeclarationContext context)
+			{
+				body = new ClassBody();
+				cbdVisitor = new ClassBodyDeclarationVisitor(body);
+				return base.VisitChildren(context);
+			}
+
 			public override TweedleType VisitClassDeclaration([NotNull] TweedleParser.ClassDeclarationContext context)
 			{
-				base.VisitClassDeclaration(context);
+				context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
 				string className = context.identifier().GetText();
-				TweedleClass tweClass;
 				if (context.EXTENDS() != null)
 				{
-					string superclass = context.typeType().classOrInterfaceType().GetText();
-					tweClass = new TweedleClass(className, superclass);
+					string superclass = context.typeType().classType().GetText();
+					return new TweedleClass(className, superclass, 
+						body.properties, body.methods, body.constructors);
 				} else
 				{
-					tweClass = new TweedleClass(className);
+					return new TweedleClass(className,
+						body.properties, body.methods, body.constructors);
 				}
-
-				ClassBodyDeclarationVisitor cbdVisitor = new ClassBodyDeclarationVisitor(tweClass);
-				context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
-				return tweClass;
 			}
 
 			public override TweedleType VisitEnumDeclaration([NotNull] TweedleParser.EnumDeclarationContext context)
 			{
-				Dictionary<string, TweedleMethod> values = new Dictionary<string, TweedleMethod>();
+				List<TweedleEnumValue> values = new List<TweedleEnumValue>();
 				context.enumConstants().enumConstant().ToList().ForEach(enumConst => {
 					string name = enumConst.identifier().GetText();
+					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
 					if (enumConst.arguments() != null)
 					{
-						Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitArguments(enumConst.arguments().labeledExpressionList());
-						//TweedleMethod method = new TweedleMethod(name, null, )
+						arguments = TweedleUnlinkedParser.VisitArguments(enumConst.arguments().labeledExpressionList());
 					}
-					if (enumConst.classBody() != null)
-					{
-						//ClassBodyDeclarationVisitor cbdVisitor = new ClassBodyDeclarationVisitor(tweClass);
-						//context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
-					}
+					values.Add(new TweedleEnumValue(name, arguments));
 					});
-				return new TweedleEnum(context.identifier().GetText(), values);
+				if (context.enumBodyDeclarations() != null)
+				{
+					context.enumBodyDeclarations().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
+				}
+				return new TweedleEnum(context.identifier().GetText(),
+					body.properties, body.methods, body.constructors,
+					values);
 			}
 		}
 
         private class ClassBodyDeclarationVisitor : TweedleParserBaseVisitor<object>
 		{
-            private readonly TweedleClass tweClass;
+            private readonly ClassBody body;
 
-			public ClassBodyDeclarationVisitor(TweedleClass tweClass)
+			public ClassBodyDeclarationVisitor(ClassBody body)
 			{
-				this.tweClass = tweClass;
+				this.body = body;
 			}
 
 			public override object VisitClassBodyDeclaration([NotNull] TweedleParser.ClassBodyDeclarationContext context)
@@ -90,7 +113,7 @@ namespace Alice.Tweedle.Unlinked
                 {
                     List<string> modifiers =
                         context.classModifier().Select(classMod => (classMod.STATIC() != null) ? "static" : null).ToList();
-                    memberDec.Accept(new MemberDeclarationVisitor(tweClass, modifiers));
+                    memberDec.Accept(new MemberDeclarationVisitor(body, modifiers));
                 }
                 return base.VisitClassBodyDeclaration(context);
 			}
@@ -98,12 +121,12 @@ namespace Alice.Tweedle.Unlinked
 
 		private class MemberDeclarationVisitor : TweedleParserBaseVisitor<object>
 		{
-			private TweedleClass tweClass;
+			private ClassBody body;
 			private List<string> modifiers;
 
-			public MemberDeclarationVisitor(TweedleClass tweClass, List<string> modifiers)
+			public MemberDeclarationVisitor(ClassBody body, List<string> modifiers)
 			{
-				this.tweClass = tweClass;
+				this.body = body;
 				this.modifiers = modifiers;
 			}
 
@@ -123,9 +146,9 @@ namespace Alice.Tweedle.Unlinked
                 {
                     property = new TweedleField(modifiers, type, name);
                 }
-                tweClass.properties.Add(property);
-                return null;
-            }
+				body.properties.Add(property);
+				return base.VisitFieldDeclaration(context);
+			}
 
             public override object VisitMethodDeclaration([NotNull] TweedleParser.MethodDeclarationContext context)
 			{
@@ -137,7 +160,7 @@ namespace Alice.Tweedle.Unlinked
 						OptionalParameters(context.formalParameters()),
                         CollectBlockStatements(context.methodBody().block().blockStatement())
 					);
-				tweClass.methods.Add(method);
+				body.methods.Add(method);
 				return base.VisitMethodDeclaration(context);
 			}
 
@@ -150,7 +173,7 @@ namespace Alice.Tweedle.Unlinked
                     OptionalParameters(context.formalParameters()),
                     CollectBlockStatements(context.constructorBody.blockStatement())
 				);
-				tweClass.constructors.Add(constructor);
+				body.constructors.Add(constructor);
 				return base.VisitConstructorDeclaration(context);
 			}
 
@@ -209,7 +232,6 @@ namespace Alice.Tweedle.Unlinked
                 if (expectedType != null && expression != null && expression.Type != null
                     && !expectedType.AcceptsType(expression.Type))
                 {
-					// TODO: Should this only output a message or should it fail?
                     UnityEngine.Debug.Log(
                         "Had been expecting expression of type " + expectedType + ", but it is typed as " + expression.Type);
                 }
@@ -220,6 +242,7 @@ namespace Alice.Tweedle.Unlinked
             {
                 IToken prefix = context.prefix;
 				IToken operation = context.bop;
+				IToken bracket = context.bracket;
 
 				if (prefix != null)
 				{
@@ -279,9 +302,9 @@ namespace Alice.Tweedle.Unlinked
 						default :
                             throw new System.Exception("Binary operation not found.");
                     }
-                } else if (context.expression().Length == 2)
+                } else if (bracket != null)
 				{
-					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(new TweedleArrayType(null))); // TODO: new TweedleArrayType(??) where ?? == expected
+					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(new TweedleArrayType(null)));
 					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
 					return new ArrayIndexExpression(((TweedleArrayType)array.Type).ValueType, array, index);
 				}
@@ -343,8 +366,21 @@ namespace Alice.Tweedle.Unlinked
 
 			public override TweedleExpression VisitSuperSuffix([NotNull] TweedleParser.SuperSuffixContext context)
 			{
-				// TODO
-				return base.VisitSuperSuffix(context);
+				SuperExpression super = new SuperExpression(null);
+				if (context.IDENTIFIER() != null)
+				{
+					if (context.arguments() != null)
+					{
+						return new MethodCallExpression(super, context.IDENTIFIER().GetText(), TweedleUnlinkedParser.VisitArguments(context.arguments().labeledExpressionList()));
+					} else
+					{
+						return new FieldAccess(super, context.IDENTIFIER().GetText());
+					}
+				} else if (context.arguments() != null)
+				{
+					return new Instantiation((TweedleTypeReference)super.Type, TweedleUnlinkedParser.VisitArguments(context.arguments().labeledExpressionList()));
+				}
+				throw new System.Exception("Super suffix could not be constructed."); ;
 			}
 
 			public override TweedleExpression VisitLambdaExpression([NotNull] TweedleParser.LambdaExpressionContext context)
@@ -356,7 +392,18 @@ namespace Alice.Tweedle.Unlinked
 					)).ToList();
 				List<TweedleStatement> statements = CollectBlockStatements(context.block().blockStatement());
 				return new LambdaExpression(parameters, statements);
-				
+			}
+
+			public override TweedleExpression VisitLambdaCall([NotNull] TweedleParser.LambdaCallContext context)
+			{
+				// TODO
+				return base.VisitLambdaCall(context);
+			}
+
+			public override TweedleExpression VisitMethodCall([NotNull] TweedleParser.MethodCallContext context)
+			{
+				// TODO
+				return base.VisitMethodCall(context);
 			}
 
 			public override TweedleExpression VisitCreator([NotNull] TweedleParser.CreatorContext context)
@@ -370,10 +417,14 @@ namespace Alice.Tweedle.Unlinked
 					TweedleArrayType arrayMemberType = new TweedleArrayType(memberType);
 					if (arrayCreator.arrayInitializer() != null)
                     {
+						List<TweedleExpression> elements = new List<TweedleExpression>();
+						if (arrayCreator.arrayInitializer().unlabeledExpressionList() != null)
+						{
+							elements = arrayCreator.arrayInitializer().unlabeledExpressionList().expression().Select(a => a.Accept(new ExpressionVisitor(memberType))).ToList();
+						}
                         return new ArrayInitializer(
                                         arrayMemberType,
-							arrayCreator.arrayInitializer().expression().Select(a=>a.Accept(new ExpressionVisitor(memberType)))
-                                                     .ToList());
+										elements);
                     } else
 					{
 						return new ArrayInitializer(
@@ -384,10 +435,10 @@ namespace Alice.Tweedle.Unlinked
                 }
                 else
                 {
-					TweedleTypeReference typeRef = GetTypeReference(typeName); // TODO: should be tweedletyperef not generic (why?)
+					TweedleTypeReference typeRef = GetTypeReference(typeName);
 					TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
 					Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitArguments(argsContext);
-					return new ClassInitializer(
+					return new Instantiation(
 							typeRef,
 							arguments
 						);
@@ -405,7 +456,11 @@ namespace Alice.Tweedle.Unlinked
                 if (context.methodCall() != null)
                 {
 					TweedleParser.LabeledExpressionListContext argsContext = context.methodCall().labeledExpressionList();
-					Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitArguments(argsContext);
+					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
+					if (argsContext != null)
+					{
+						arguments = TweedleUnlinkedParser.VisitArguments(argsContext);
+					}
 					return new MethodCallExpression(target, 
 						context.methodCall().IDENTIFIER().GetText(),
 						arguments
@@ -593,9 +648,9 @@ namespace Alice.Tweedle.Unlinked
 		private static TweedleType GetTypeType(TweedleParser.TypeTypeContext context)
         {
 			TweedleType baseType;
-			if (context.classOrInterfaceType() != null)
+			if (context.classType() != null)
 			{
-				baseType = GetTypeReference(context.classOrInterfaceType().GetText());
+				baseType = GetTypeReference(context.classType().GetText());
 			} else
 			{
 				baseType = GetPrimitiveType(context.primitiveType().GetText());

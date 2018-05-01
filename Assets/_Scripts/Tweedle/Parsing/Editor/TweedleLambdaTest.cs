@@ -26,27 +26,27 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void ClassWithMethodShouldHaveMethod()
 		{
-			Assert.False(tested.methods.Count.Equals(0), "The class should have a method.");
+			Assert.False(tested.Methods.Count.Equals(0), "The class should have a method.");
 		}
 
 		[Test]
 		public void MethodShouldBeNamed()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			Assert.AreEqual("initializeEventListeners", initListeners.Name, "The method should be named.");
 		}
 
 		[Test]
 		public void MethodShouldHaveTwoStatements()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			Assert.AreEqual(2, initListeners.Body.Count, "The method should have two statements.");
 		}
 
 		[Test]
 		public void MethodShouldHaveNonNullStatements()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			Assert.NotNull(initListeners.Body[0], "The first method statement should not be null.");
 			Assert.NotNull(initListeners.Body[1], "The second method statement should not be null.");
 		}
@@ -54,7 +54,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void MethodsFirstStatementShouldBeAnExpressionStatement()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			TweedleStatement statement = initListeners.Body[0];
 			Assert.IsInstanceOf<ExpressionStatement>(statement, "The first method statement should be an ExpressionStatement.");
 		}
@@ -62,7 +62,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void MethodsFirstExpressionStatementShouldHoldAMethodCall()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			Assert.IsInstanceOf<MethodCallExpression>(statement.Expression, "The expression statement should hold a MethodCall.");
 		}
@@ -70,7 +70,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void MethodsFirstMethodCallShouldBeAddSceneActivationListener()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			Assert.AreEqual("addSceneActivationListener", methodCall.MethodName,
@@ -80,7 +80,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerShouldHaveOneArg()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			Assert.NotNull(methodCall.GetArg("listener"),
@@ -90,7 +90,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerOneArgShouldBeLambda()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			Assert.IsInstanceOf<LambdaExpression>(methodCall.GetArg("listener"),
@@ -100,7 +100,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerLambdaShouldHaveOneParameter()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
@@ -111,7 +111,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneParameterNamedEvent()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
@@ -123,7 +123,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneParameterTypedReference()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
@@ -135,7 +135,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneParameterTypedSceneActivationEvent()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
@@ -148,7 +148,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerSecondLambdaParameterShouldHaveOneParameterTypedArrowKeyEvent()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[1];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
@@ -161,7 +161,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneStatement()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
@@ -172,7 +172,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneNonNullStatement()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
@@ -183,7 +183,7 @@ namespace Alice.Tweedle.Unlinked
 		[Test]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneExpressionStatement()
 		{
-			TweedleMethod initListeners = tested.methods[0];
+			TweedleMethod initListeners = tested.Methods[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
 			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");

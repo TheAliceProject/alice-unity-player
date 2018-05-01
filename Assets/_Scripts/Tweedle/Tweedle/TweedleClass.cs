@@ -2,42 +2,43 @@
 
 namespace Alice.Tweedle
 {
-    public class TweedleClass : TweedleType, InvocableMethodHolder
+    public class TweedleClass : TweedleTypeDeclaration, InvocableMethodHolder
     {
-        public List<TweedleField> properties;
-        public List<TweedleMethod> methods;
-		public List<TweedleConstructor> constructors { get; internal set; }
-
 		private InvocableMethodHolder superClass;
 
-        public string SuperClassName
+
+		public string SuperClassName
         {
             get { return superClass?.Name; }
-       } 
-
-		public TweedleClass(string name) 
-			: base(name)
-        {
-			this.properties = new List<TweedleField>();
-			this.methods = new List<TweedleMethod>();
-			this.constructors = new List<TweedleConstructor>();
 		}
 
-		public TweedleClass(string name, TweedleTypeReference superClass) 
-			: base(name, superClass)
+		public TweedleClass(string name,
+			List<TweedleField> properties,
+			List<TweedleMethod> methods,
+			List<TweedleConstructor> constructors)
+			: base(name, properties, methods, constructors)
 		{
-			this.superClass = superClass;
-			this.properties = new List<TweedleField>();
-			this.methods = new List<TweedleMethod>();
-			this.constructors = new List<TweedleConstructor>();
+			superClass = null;
 		}
 
-		public TweedleClass(string name, string super)
-			: this(name, new TweedleTypeReference(super))
+		public TweedleClass(string name, TweedleTypeReference super,
+			List<TweedleField> properties,
+			List<TweedleMethod> methods,
+			List<TweedleConstructor> constructors)
+			: base(name, super, properties, methods, constructors)
+		{
+			superClass = super;
+		}
+
+		public TweedleClass(string name, string super,
+			List<TweedleField> properties,
+			List<TweedleMethod> methods,
+			List<TweedleConstructor> constructors)
+			: this(name, new TweedleTypeReference(super), properties, methods, constructors)
 		{
 		}
 
-		public void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
+		public override void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
 		{
 			if (methods.Contains(method))
 			{

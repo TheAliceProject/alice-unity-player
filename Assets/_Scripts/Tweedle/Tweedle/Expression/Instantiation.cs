@@ -2,12 +2,12 @@
 
 namespace Alice.Tweedle
 {
-	public class ClassInitializer : TweedleExpression
+	public class Instantiation : TweedleExpression
 	{
 		private InvocableMethodHolder invocable;
 		private Dictionary<string, TweedleExpression> arguments;
 
-		public ClassInitializer(TweedleTypeReference type, Dictionary<string, TweedleExpression> arguments)
+		public Instantiation(TweedleTypeReference type, Dictionary<string, TweedleExpression> arguments)
 			: base(type)
 		{
 			this.invocable = type;
