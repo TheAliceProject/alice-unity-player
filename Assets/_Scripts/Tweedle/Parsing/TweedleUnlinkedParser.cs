@@ -198,6 +198,7 @@ namespace Alice.Tweedle.Unlinked
                 if (expectedType != null && expression != null && expression.Type != null
                     && !expectedType.AcceptsType(expression.Type))
                 {
+					// TODO: Should this only output a message or should it fail?
                     UnityEngine.Debug.Log(
                         "Had been expecting expression of type " + expectedType + ", but it is typed as " + expression.Type);
                 }
@@ -269,9 +270,9 @@ namespace Alice.Tweedle.Unlinked
                     }
                 } else if (context.expression().Length == 2)
 				{
-					TweedleExpression array = context.expression(0).Accept(this); // Todo: should be array expression, this is not right
+					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor()); // TODO: new TweedleArrayType(??) where ?? == expected
 					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
-					return new ArrayIndexExpression(array.Type, array, index); // Todo: type should be of array element type not array.Type
+					return new ArrayIndexExpression(((TweedleArrayType)array.Type).ValueType, array, index);
 				}
 				return base.VisitChildren(context);
 			}
@@ -292,7 +293,7 @@ namespace Alice.Tweedle.Unlinked
                     return new IdentifierReference(context.IDENTIFIER().GetText());
                 }
 
-				return base.VisitPrimary(context);
+				return base.VisitChildren(context);
 			}
 
 			public override TweedleExpression VisitLiteral([NotNull] TweedleParser.LiteralContext context)
@@ -329,6 +330,12 @@ namespace Alice.Tweedle.Unlinked
 				throw new System.Exception("Literal couldn't be found in grammar.");
 			}
 
+			public override TweedleExpression VisitSuperSuffix([NotNull] TweedleParser.SuperSuffixContext context)
+			{
+				// TODO
+				return base.VisitSuperSuffix(context);
+			}
+
 			public override TweedleExpression VisitLambdaExpression([NotNull] TweedleParser.LambdaExpressionContext context)
 			{
 				List<TweedleRequiredParameter> parameters = context.lambdaParameters().requiredParameter()
@@ -344,13 +351,12 @@ namespace Alice.Tweedle.Unlinked
 			public override TweedleExpression VisitCreator([NotNull] TweedleParser.CreatorContext context)
 			{
 				string typeName = context.createdName().GetText();
-				TweedleType memberType = GetPrimitiveType(typeName); // Todo: should be tweedletyperef not generic
-                memberType = memberType ?? GetTypeReference(typeName);
                 TweedleParser.ArrayCreatorRestContext arrayCreator = context.arrayCreatorRest();
                 if (arrayCreator != null)
                 {
+					TweedleType memberType = GetPrimitiveType(typeName);
+					memberType = memberType ?? GetTypeReference(typeName);
 					TweedleArrayType arrayMemberType = new TweedleArrayType(memberType);
-
 					if (arrayCreator.arrayInitializer() != null)
                     {
                         return new ArrayInitializer(
@@ -367,18 +373,11 @@ namespace Alice.Tweedle.Unlinked
                 }
                 else
                 {
+					TweedleTypeReference typeRef = GetTypeReference(typeName); // TODO: should be tweedletyperef not generic (why?)
 					TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
-					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-					if (argsContext != null) // Todo make a function, copy to below
-					{
-						argsContext.labeledExpression().ToList().ForEach(arg =>
-						{
-							TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
-							arguments.Add(arg.IDENTIFIER().GetText(), argValue);
-						});
-					}
+					Dictionary<string, TweedleExpression> arguments = VisitArguments(argsContext);
 					return new ClassInitializer(
-							memberType,
+							typeRef,
 							arguments
 						);
                 }
@@ -394,20 +393,29 @@ namespace Alice.Tweedle.Unlinked
                 }
                 if (context.methodCall() != null)
                 {
-					MethodCallExpression methodCall = new MethodCallExpression(target, context.methodCall().IDENTIFIER().GetText());
 					TweedleParser.LabeledExpressionListContext argsContext = context.methodCall().labeledExpressionList();
-					if (argsContext != null)
-					{
-						argsContext.labeledExpression().ToList().ForEach(arg =>
-						{
-							TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
-							methodCall.AddArg(arg.IDENTIFIER().GetText(), argValue);
-						});
-					}
-					return methodCall;
+					Dictionary<string, TweedleExpression> arguments = VisitArguments(argsContext);
+					return new MethodCallExpression(target, 
+						context.methodCall().IDENTIFIER().GetText(),
+						arguments
+						);
                 }
                 throw new System.Exception("Unexpected details on context " + context);
             }
+
+			private Dictionary<string, TweedleExpression> VisitArguments(TweedleParser.LabeledExpressionListContext context)
+			{
+				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
+				if (context != null)
+				{
+					context.labeledExpression().ToList().ForEach(arg =>
+					{
+						TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
+						arguments.Add(arg.IDENTIFIER().GetText(), argValue);
+					});
+				}
+				return arguments;
+			}
 
 			private List<TweedleExpression> TypedExpression(TweedleParser.ExpressionContext context, TweedleType type)
 			{

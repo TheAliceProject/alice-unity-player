@@ -6,10 +6,7 @@
 
         public TweedleType ValueType
         {
-            get
-            {
-                return valueType;
-            }
+            get { return valueType; }
         }
 
         public TweedleArrayType(TweedleType valueType) 
