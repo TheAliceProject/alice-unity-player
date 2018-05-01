@@ -30,7 +30,7 @@ parser grammar TweedleParser;
 options { tokenVocab=TweedleLexer; }
 
 typeDeclaration
-    : classModifier*
+    : visibility?
       (classDeclaration | enumDeclaration)
     | ';'
     ;
@@ -64,7 +64,7 @@ classDeclaration
 identifier : IDENTIFIER ;
 
 enumDeclaration
-    : ENUM identifier '{' enumConstants? '}'
+    : ENUM identifier '{' enumConstants? ','? enumBodyDeclarations? '}'
     ;
 
 enumConstants
@@ -72,7 +72,11 @@ enumConstants
     ;
 
 enumConstant
-    : identifier arguments? classBody?
+    : identifier arguments?
+    ;
+
+enumBodyDeclarations
+    : ';' classBodyDeclaration*
     ;
 
 classBody
@@ -88,8 +92,6 @@ memberDeclaration
     : methodDeclaration
     | fieldDeclaration
     | constructorDeclaration
-    | classDeclaration
-    | enumDeclaration
     ;
 
 /* We use rule this even for void methods which cannot have [] after parameters.
@@ -117,11 +119,7 @@ constructorDeclaration
     ;
 
 fieldDeclaration
-    : typeType variableDeclarators ';'
-    ;
-
-variableDeclarators
-    : variableDeclarator (',' variableDeclarator)*
+    : typeType variableDeclarator ';'
     ;
 
 variableDeclarator
@@ -138,10 +136,10 @@ variableInitializer
     ;
 
 arrayInitializer
-    : '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+    : '{' unlabeledExpressionList? '}'
     ;
 
-classOrInterfaceType
+classType
     : IDENTIFIER
     ;
 
@@ -156,15 +154,15 @@ formalParameterList
     ;
 
 requiredParameter
-    : variableModifier* typeType variableDeclaratorId
+    : typeType variableDeclaratorId
     ;
 
 optionalParameter
-    : variableModifier* typeType variableDeclaratorId LARROW expression
+    : typeType variableDeclaratorId LARROW expression
     ;
 
 lastFormalParameter
-    : variableModifier* typeType '...' variableDeclaratorId
+    : typeType '...' variableDeclaratorId
     ;
 
 literal
@@ -188,7 +186,7 @@ blockStatement
     ;
 
 localVariableDeclaration
-    : variableModifier* typeType variableDeclarators
+    : CONSTANT? typeType variableDeclarator
     ;
 
 statement
@@ -214,6 +212,10 @@ parExpression
     : '(' expression ')'
     ;
 
+unlabeledExpressionList
+    : expression (',' expression)*
+    ;
+
 labeledExpressionList
     : labeledExpression (',' labeledExpression)*
     ;
@@ -226,53 +228,46 @@ methodCall
     : IDENTIFIER '(' labeledExpressionList? ')'
     ;
 
+lambdaCall
+    : IDENTIFIER '(' unlabeledExpressionList ')'
+    | IDENTIFIER '(' '-' ')'
+    ;
+
 expression
     : primary
-    | expression bop='.'
-      (IDENTIFIER
-      | methodCall
-      | THIS
-      | NEW innerCreator
-      | SUPER superSuffix
-      )
-    | expression '[' expression ']'
-    | methodCall
+    | expression bop='.' (IDENTIFIER | methodCall)
+    | expression bracket='[' expression ']'
     | NEW creator
-    | '(' typeType ')' expression
-    | expression postfix=('++' | '--')
-    | prefix=('+'|'-'|'++'|'--') expression
-    | prefix=('~'|'!') expression
+    | lambdaCall
+    | methodCall
+    | prefix=('+'|'-') expression
+    | prefix='!' expression
     | expression bop=('*'|'/'|'%') expression
     | expression bop=('+'|'-') expression
-    | expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     | expression bop=('<=' | '>=' | '>' | '<') expression
     | expression bop=('==' | '!=') expression
-    | expression bop='&' expression
-    | expression bop='^' expression
-    | expression bop='|' expression
     | expression bop='&&' expression
     | expression bop='||' expression
-    | expression bop='?' expression ':' expression
-    | <assoc=right> expression LARROW expression
+    | <assoc=right> expression bop=LARROW expression
     | lambdaExpression // Java8
     ;
 
-// Java8
 lambdaExpression
-    : lambdaParameters '->' lambdaBody
+    : lambdaParameters '->' block
     ;
 
-// Java8
 lambdaParameters
-    : IDENTIFIER
-    | '(' formalParameterList? ')'
-    | '(' IDENTIFIER (',' IDENTIFIER)* ')'
+    : '('(requiredParameter (',' requiredParameter)*)?')'
     ;
 
-// Java8
-lambdaBody
-    : expression
-    | block
+lambdaTypeSignature
+    : '<'typeList '->' typeTypeOrVoid'>'
+    ;
+
+typeList
+    : '(' ')'
+    | typeType
+    | '(' typeType (',' typeType)* ')'
     ;
 
 primary
@@ -281,7 +276,6 @@ primary
     | SUPER superSuffix
     | literal
     | IDENTIFIER
-    | typeTypeOrVoid '.' CLASS
     ;
 
 creator
@@ -293,20 +287,17 @@ createdName
     | primitiveType
     ;
 
-innerCreator
-    : IDENTIFIER classCreatorRest
-    ;
-
 arrayCreatorRest
-    : '[' (']' ('[' ']')* arrayInitializer | expression ']' ('[' expression ']')* ('[' ']')*)
+    : '[' (']' arrayInitializer | expression ']' )
     ;
 
 classCreatorRest
-    : arguments classBody?
+    : arguments
     ;
 
 typeType
-    : (classOrInterfaceType | primitiveType) ('[' ']')*
+    : (classType | primitiveType) ('[' ']')?
+    | lambdaTypeSignature
     ;
 
 primitiveType
@@ -314,7 +305,7 @@ primitiveType
     | DECIMAL_NUMBER
     | WHOLE_NUMBER
     | NUMBER
-    | STRING
+    | TEXT_STRING
     ;
 
 superSuffix
