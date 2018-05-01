@@ -93,6 +93,12 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitEnumConstant([NotNull] TweedleParser.EnumConstantContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.enumBodyDeclarations"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEnumBodyDeclarations([NotNull] TweedleParser.EnumBodyDeclarationsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.classBody"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -165,11 +171,11 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitArrayInitializer([NotNull] TweedleParser.ArrayInitializerContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="TweedleParser.classOrInterfaceType"/>.
+	/// Visit a parse tree produced by <see cref="TweedleParser.classType"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitClassOrInterfaceType([NotNull] TweedleParser.ClassOrInterfaceTypeContext context);
+	Result VisitClassType([NotNull] TweedleParser.ClassTypeContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.formalParameters"/>.
 	/// </summary>
@@ -243,6 +249,12 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitParExpression([NotNull] TweedleParser.ParExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.unlabeledExpressionList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitUnlabeledExpressionList([NotNull] TweedleParser.UnlabeledExpressionListContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.labeledExpressionList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -261,6 +273,12 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMethodCall([NotNull] TweedleParser.MethodCallContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.lambdaCall"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLambdaCall([NotNull] TweedleParser.LambdaCallContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -278,6 +296,18 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.lambdaTypeSignature"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLambdaTypeSignature([NotNull] TweedleParser.LambdaTypeSignatureContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="TweedleParser.typeList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTypeList([NotNull] TweedleParser.TypeListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.primary"/>.
 	/// </summary>

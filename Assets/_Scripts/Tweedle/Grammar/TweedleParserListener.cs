@@ -132,6 +132,16 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitEnumConstant([NotNull] TweedleParser.EnumConstantContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.enumBodyDeclarations"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterEnumBodyDeclarations([NotNull] TweedleParser.EnumBodyDeclarationsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.enumBodyDeclarations"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitEnumBodyDeclarations([NotNull] TweedleParser.EnumBodyDeclarationsContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.classBody"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -252,15 +262,15 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitArrayInitializer([NotNull] TweedleParser.ArrayInitializerContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.classOrInterfaceType"/>.
+	/// Enter a parse tree produced by <see cref="TweedleParser.classType"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterClassOrInterfaceType([NotNull] TweedleParser.ClassOrInterfaceTypeContext context);
+	void EnterClassType([NotNull] TweedleParser.ClassTypeContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.classOrInterfaceType"/>.
+	/// Exit a parse tree produced by <see cref="TweedleParser.classType"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitClassOrInterfaceType([NotNull] TweedleParser.ClassOrInterfaceTypeContext context);
+	void ExitClassType([NotNull] TweedleParser.ClassTypeContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.formalParameters"/>.
 	/// </summary>
@@ -382,6 +392,16 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitParExpression([NotNull] TweedleParser.ParExpressionContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.unlabeledExpressionList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterUnlabeledExpressionList([NotNull] TweedleParser.UnlabeledExpressionListContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.unlabeledExpressionList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitUnlabeledExpressionList([NotNull] TweedleParser.UnlabeledExpressionListContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.labeledExpressionList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -412,6 +432,16 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitMethodCall([NotNull] TweedleParser.MethodCallContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.lambdaCall"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLambdaCall([NotNull] TweedleParser.LambdaCallContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.lambdaCall"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLambdaCall([NotNull] TweedleParser.LambdaCallContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -441,6 +471,26 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.lambdaTypeSignature"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLambdaTypeSignature([NotNull] TweedleParser.LambdaTypeSignatureContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.lambdaTypeSignature"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLambdaTypeSignature([NotNull] TweedleParser.LambdaTypeSignatureContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.typeList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTypeList([NotNull] TweedleParser.TypeListContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.typeList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTypeList([NotNull] TweedleParser.TypeListContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.primary"/>.
 	/// </summary>

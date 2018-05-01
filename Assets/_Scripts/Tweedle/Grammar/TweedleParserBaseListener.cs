@@ -156,6 +156,18 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitEnumConstant([NotNull] TweedleParser.EnumConstantContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.enumBodyDeclarations"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterEnumBodyDeclarations([NotNull] TweedleParser.EnumBodyDeclarationsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.enumBodyDeclarations"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitEnumBodyDeclarations([NotNull] TweedleParser.EnumBodyDeclarationsContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.classBody"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -300,17 +312,17 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitArrayInitializer([NotNull] TweedleParser.ArrayInitializerContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.classOrInterfaceType"/>.
+	/// Enter a parse tree produced by <see cref="TweedleParser.classType"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterClassOrInterfaceType([NotNull] TweedleParser.ClassOrInterfaceTypeContext context) { }
+	public virtual void EnterClassType([NotNull] TweedleParser.ClassTypeContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.classOrInterfaceType"/>.
+	/// Exit a parse tree produced by <see cref="TweedleParser.classType"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitClassOrInterfaceType([NotNull] TweedleParser.ClassOrInterfaceTypeContext context) { }
+	public virtual void ExitClassType([NotNull] TweedleParser.ClassTypeContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.formalParameters"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -456,6 +468,18 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitParExpression([NotNull] TweedleParser.ParExpressionContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.unlabeledExpressionList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterUnlabeledExpressionList([NotNull] TweedleParser.UnlabeledExpressionListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.unlabeledExpressionList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitUnlabeledExpressionList([NotNull] TweedleParser.UnlabeledExpressionListContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.labeledExpressionList"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -492,6 +516,18 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitMethodCall([NotNull] TweedleParser.MethodCallContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.lambdaCall"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLambdaCall([NotNull] TweedleParser.LambdaCallContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.lambdaCall"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLambdaCall([NotNull] TweedleParser.LambdaCallContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -527,6 +563,30 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitLambdaParameters([NotNull] TweedleParser.LambdaParametersContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.lambdaTypeSignature"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLambdaTypeSignature([NotNull] TweedleParser.LambdaTypeSignatureContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.lambdaTypeSignature"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLambdaTypeSignature([NotNull] TweedleParser.LambdaTypeSignatureContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="TweedleParser.typeList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTypeList([NotNull] TweedleParser.TypeListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="TweedleParser.typeList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTypeList([NotNull] TweedleParser.TypeListContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.primary"/>.
 	/// <para>The default implementation does nothing.</para>
