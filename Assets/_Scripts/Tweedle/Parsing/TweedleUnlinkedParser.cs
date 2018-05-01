@@ -269,9 +269,9 @@ namespace Alice.Tweedle.Unlinked
                     }
                 } else if (context.expression().Length == 2)
 				{
-					TweedleExpression array = context.expression(0).Accept(this);
+					TweedleExpression array = context.expression(0).Accept(this); // Todo: should be array expression, this is not right
 					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
-					return new ArrayIndexExpression(array.Type, array, index);
+					return new ArrayIndexExpression(array.Type, array, index); // Todo: type should be of array element type not array.Type
 				}
 				return base.VisitChildren(context);
 			}
@@ -344,7 +344,7 @@ namespace Alice.Tweedle.Unlinked
 			public override TweedleExpression VisitCreator([NotNull] TweedleParser.CreatorContext context)
 			{
 				string typeName = context.createdName().GetText();
-				TweedleType memberType = GetPrimitiveType(typeName);
+				TweedleType memberType = GetPrimitiveType(typeName); // Todo: should be tweedletyperef not generic
                 memberType = memberType ?? GetTypeReference(typeName);
                 TweedleParser.ArrayCreatorRestContext arrayCreator = context.arrayCreatorRest();
                 if (arrayCreator != null)
@@ -369,11 +369,11 @@ namespace Alice.Tweedle.Unlinked
                 {
 					TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
 					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-					if (argsContext != null)
+					if (argsContext != null) // Todo make a function, copy to below
 					{
 						argsContext.labeledExpression().ToList().ForEach(arg =>
 						{
-							TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor()); // TODO <<<< argument types should correspond to constructor types
+							TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
 							arguments.Add(arg.IDENTIFIER().GetText(), argValue);
 						});
 					}
