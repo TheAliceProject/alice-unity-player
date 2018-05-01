@@ -56,9 +56,20 @@ namespace Alice.Tweedle.Unlinked
 
 			public override TweedleType VisitEnumDeclaration([NotNull] TweedleParser.EnumDeclarationContext context)
 			{
-				base.VisitEnumDeclaration(context);
-				List<string> values =
-					context.enumConstants().enumConstant().Select(enumConst => enumConst.identifier().GetText()).ToList();
+				Dictionary<string, TweedleMethod> values = new Dictionary<string, TweedleMethod>();
+				context.enumConstants().enumConstant().ToList().ForEach(enumConst => {
+					string name = enumConst.identifier().GetText();
+					if (enumConst.arguments() != null)
+					{
+						Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitArguments(enumConst.arguments().labeledExpressionList());
+						//TweedleMethod method = new TweedleMethod(name, null, )
+					}
+					if (enumConst.classBody() != null)
+					{
+						//ClassBodyDeclarationVisitor cbdVisitor = new ClassBodyDeclarationVisitor(tweClass);
+						//context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
+					}
+					});
 				return new TweedleEnum(context.identifier().GetText(), values);
 			}
 		}
@@ -270,7 +281,7 @@ namespace Alice.Tweedle.Unlinked
                     }
                 } else if (context.expression().Length == 2)
 				{
-					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor()); // TODO: new TweedleArrayType(??) where ?? == expected
+					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(new TweedleArrayType(null))); // TODO: new TweedleArrayType(??) where ?? == expected
 					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
 					return new ArrayIndexExpression(((TweedleArrayType)array.Type).ValueType, array, index);
 				}
@@ -375,7 +386,7 @@ namespace Alice.Tweedle.Unlinked
                 {
 					TweedleTypeReference typeRef = GetTypeReference(typeName); // TODO: should be tweedletyperef not generic (why?)
 					TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
-					Dictionary<string, TweedleExpression> arguments = VisitArguments(argsContext);
+					Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitArguments(argsContext);
 					return new ClassInitializer(
 							typeRef,
 							arguments
@@ -394,7 +405,7 @@ namespace Alice.Tweedle.Unlinked
                 if (context.methodCall() != null)
                 {
 					TweedleParser.LabeledExpressionListContext argsContext = context.methodCall().labeledExpressionList();
-					Dictionary<string, TweedleExpression> arguments = VisitArguments(argsContext);
+					Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitArguments(argsContext);
 					return new MethodCallExpression(target, 
 						context.methodCall().IDENTIFIER().GetText(),
 						arguments
@@ -402,20 +413,6 @@ namespace Alice.Tweedle.Unlinked
                 }
                 throw new System.Exception("Unexpected details on context " + context);
             }
-
-			private Dictionary<string, TweedleExpression> VisitArguments(TweedleParser.LabeledExpressionListContext context)
-			{
-				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-				if (context != null)
-				{
-					context.labeledExpression().ToList().ForEach(arg =>
-					{
-						TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
-						arguments.Add(arg.IDENTIFIER().GetText(), argValue);
-					});
-				}
-				return arguments;
-			}
 
 			private List<TweedleExpression> TypedExpression(TweedleParser.ExpressionContext context, TweedleType type)
 			{
@@ -569,6 +566,20 @@ namespace Alice.Tweedle.Unlinked
             StatementVisitor statementVisitor = new StatementVisitor();
             return contexts.Select(stmt => stmt.Accept(statementVisitor)).ToList();
         }
+
+		private static Dictionary<string, TweedleExpression> VisitArguments(TweedleParser.LabeledExpressionListContext context)
+		{
+			Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
+			if (context != null)
+			{
+				context.labeledExpression().ToList().ForEach(arg =>
+				{
+					TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
+					arguments.Add(arg.IDENTIFIER().GetText(), argValue);
+				});
+			}
+			return arguments;
+		}
 
 		private static TweedleType GetTypeOrVoid(TweedleParser.TypeTypeOrVoidContext context)
 		{

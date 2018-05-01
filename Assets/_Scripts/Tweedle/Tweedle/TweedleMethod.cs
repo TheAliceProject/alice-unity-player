@@ -9,6 +9,7 @@ namespace Alice.Tweedle
 		private TweedleType type;
         private string name;
         private List<TweedleRequiredParameter> required;
+        private List<TweedleOptionalParameter> optional;
 
 		public string Name
 		{
@@ -25,7 +26,6 @@ namespace Alice.Tweedle
             get { return required; }
         }
 
-        private List<TweedleOptionalParameter> optional;
         public List<TweedleOptionalParameter> OptionalParameters
         {
             get { return optional; }

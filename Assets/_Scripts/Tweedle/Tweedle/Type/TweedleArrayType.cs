@@ -19,7 +19,8 @@
         {
             return this == type ||
                             ((type is TweedleArrayType) &&
-                             valueType.AcceptsType(((TweedleArrayType)type).valueType) );
+							(valueType == null ||
+                             valueType.AcceptsType(((TweedleArrayType)type).valueType)));
         }
 
     }
