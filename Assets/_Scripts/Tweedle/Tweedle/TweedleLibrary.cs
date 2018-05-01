@@ -13,15 +13,17 @@ namespace Alice.Tweedle
         private Dictionary<string, TweedleClass> classes;
         private Dictionary<string, TweedleResource> resources;
 
-        public TweedleClass newClass(string name)
+        public TweedleClass NewClass(string name)
         {
-            if (classes.ContainsKey(name))
-            {
+			// TODO
+			//if (classes.ContainsKey(name))
+			//{
 
-            }
-            TweedleClass classNew = new TweedleClass(name);
-            classes.Add(name, classNew);
-            return classNew;
+			//}
+			//TweedleClass classNew = new TweedleClass(name);
+			//classes.Add(name, classNew);
+			//return classNew;
+			return null;
         }
 
         public TweedleType getTypeNamed(string name)
