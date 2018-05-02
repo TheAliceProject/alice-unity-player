@@ -83,7 +83,7 @@ namespace Alice.Tweedle.Unlinked
 					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
 					if (enumConst.arguments() != null)
 					{
-						arguments = TweedleUnlinkedParser.VisitArguments(enumConst.arguments().labeledExpressionList());
+						arguments = TweedleUnlinkedParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList());
 					}
 					values.Add(new TweedleEnumValue(name, arguments));
 					});
@@ -307,7 +307,21 @@ namespace Alice.Tweedle.Unlinked
 					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(new TweedleArrayType(null)));
 					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
 					return new ArrayIndexExpression(((TweedleArrayType)array.Type).ValueType, array, index);
-				}
+                }
+                else if (context.lambdaCall() != null)
+                {
+                    TweedleExpression lambdaSourceExp = TypedExpression(context, null)[0];
+                    if (context.lambdaCall().unlabeledExpressionList() == null)
+                    {
+                        return new LambdaEvaluation(lambdaSourceExp);
+                    }
+                    else
+                    {
+                        List<TweedleExpression> elements =
+                                        VisitUnlabeledArguments(context.lambdaCall().unlabeledExpressionList(), new ExpressionVisitor());
+                        return new LambdaEvaluation(lambdaSourceExp, elements);
+                    }
+                }
 				return base.VisitChildren(context);
 			}
 
@@ -320,7 +334,7 @@ namespace Alice.Tweedle.Unlinked
                 }
 				if (context.THIS() != null)
 				{
-					return new ThisExpression(null);
+					return new ThisExpression();
                 }
                 if (context.IDENTIFIER() != null)
                 {
@@ -371,14 +385,14 @@ namespace Alice.Tweedle.Unlinked
 				{
 					if (context.arguments() != null)
 					{
-						return new MethodCallExpression(super, context.IDENTIFIER().GetText(), TweedleUnlinkedParser.VisitArguments(context.arguments().labeledExpressionList()));
+						return new MethodCallExpression(super, context.IDENTIFIER().GetText(), TweedleUnlinkedParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
 					} else
 					{
 						return new FieldAccess(super, context.IDENTIFIER().GetText());
 					}
 				} else if (context.arguments() != null)
 				{
-					return new Instantiation((TweedleTypeReference)super.Type, TweedleUnlinkedParser.VisitArguments(context.arguments().labeledExpressionList()));
+					return new Instantiation((TweedleTypeReference)super.Type, TweedleUnlinkedParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
 				}
 				throw new System.Exception("Super suffix could not be constructed."); ;
 			}
@@ -394,16 +408,11 @@ namespace Alice.Tweedle.Unlinked
 				return new LambdaExpression(parameters, statements);
 			}
 
-			public override TweedleExpression VisitLambdaCall([NotNull] TweedleParser.LambdaCallContext context)
-			{
-				// TODO
-				return base.VisitLambdaCall(context);
-			}
-
 			public override TweedleExpression VisitMethodCall([NotNull] TweedleParser.MethodCallContext context)
-			{
-				// TODO
-				return base.VisitMethodCall(context);
+            {
+                return new MethodCallExpression(new ThisExpression(),
+                                                context.IDENTIFIER().GetText(),
+                                                TweedleUnlinkedParser.VisitLabeledArguments(context.labeledExpressionList()));
 			}
 
 			public override TweedleExpression VisitCreator([NotNull] TweedleParser.CreatorContext context)
@@ -437,7 +446,7 @@ namespace Alice.Tweedle.Unlinked
                 {
 					TweedleTypeReference typeRef = GetTypeReference(typeName);
 					TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
-					Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitArguments(argsContext);
+					Dictionary<string, TweedleExpression> arguments = TweedleUnlinkedParser.VisitLabeledArguments(argsContext);
 					return new Instantiation(
 							typeRef,
 							arguments
@@ -459,7 +468,7 @@ namespace Alice.Tweedle.Unlinked
 					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
 					if (argsContext != null)
 					{
-						arguments = TweedleUnlinkedParser.VisitArguments(argsContext);
+						arguments = TweedleUnlinkedParser.VisitLabeledArguments(argsContext);
 					}
 					return new MethodCallExpression(target, 
 						context.methodCall().IDENTIFIER().GetText(),
@@ -622,7 +631,7 @@ namespace Alice.Tweedle.Unlinked
             return contexts.Select(stmt => stmt.Accept(statementVisitor)).ToList();
         }
 
-		private static Dictionary<string, TweedleExpression> VisitArguments(TweedleParser.LabeledExpressionListContext context)
+        private static Dictionary<string, TweedleExpression> VisitLabeledArguments(TweedleParser.LabeledExpressionListContext context)
 		{
 			Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
 			if (context != null)
@@ -634,7 +643,15 @@ namespace Alice.Tweedle.Unlinked
 				});
 			}
 			return arguments;
-		}
+        }
+
+        private static List<TweedleExpression> VisitUnlabeledArguments(TweedleParser.UnlabeledExpressionListContext listContext,
+                                                                       ExpressionVisitor expressionVisitor)
+        {
+            return listContext == null
+                    ? new List<TweedleExpression>()
+                    : listContext.expression().Select(exp => exp.Accept(expressionVisitor)).ToList();
+        }
 
 		private static TweedleType GetTypeOrVoid(TweedleParser.TypeTypeOrVoidContext context)
 		{
