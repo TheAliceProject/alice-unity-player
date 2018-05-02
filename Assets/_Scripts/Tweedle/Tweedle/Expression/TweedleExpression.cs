@@ -9,10 +9,15 @@
 
 		private TweedleType type;
 
-		protected TweedleExpression(TweedleType type)
+		protected TweedleExpression()
 		{
-			this.type = type;
-		}
+			this.type = null;
+        }
+
+        protected TweedleExpression(TweedleType type)
+        {
+            this.type = type;
+        }
 
         public abstract TweedleValue Evaluate(TweedleFrame frame);
     }

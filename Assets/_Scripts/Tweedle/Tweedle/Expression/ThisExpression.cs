@@ -2,8 +2,8 @@
 {
 	public class ThisExpression : TweedleExpression
 	{
-		public ThisExpression(TweedleType type)
-			: base(type)
+		public ThisExpression()
+			: base(null)
 		{
 		}
 
