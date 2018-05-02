@@ -229,8 +229,7 @@ methodCall
     ;
 
 lambdaCall
-    : IDENTIFIER '(' unlabeledExpressionList ')'
-    | IDENTIFIER '(' '-' ')'
+    : '(' ( '-' | unlabeledExpressionList ) ')'
     ;
 
 expression
@@ -238,7 +237,7 @@ expression
     | expression bop='.' (IDENTIFIER | methodCall)
     | expression bracket='[' expression ']'
     | NEW creator
-    | lambdaCall
+    | expression lambdaCall
     | methodCall
     | prefix=('+'|'-') expression
     | prefix='!' expression
