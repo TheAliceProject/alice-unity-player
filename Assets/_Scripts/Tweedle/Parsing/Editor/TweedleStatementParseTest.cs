@@ -1,12 +1,12 @@
 ﻿using NUnit.Framework;
 
-namespace Alice.Tweedle.Unlinked
+namespace Alice.Tweedle.Parsed
 {
     public class TweedleStatementParseTest
     {
         private TweedleStatement ParseStatement(string src)
         {
-            return new TweedleUnlinkedParser().ParseStatement(src);
+            return new TweedleParser().ParseStatement(src);
         }
 
         [Test]

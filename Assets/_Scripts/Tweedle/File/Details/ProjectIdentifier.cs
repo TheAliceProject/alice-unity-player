@@ -3,6 +3,10 @@
 	[System.Serializable]
 	public class ProjectIdentifier
 	{
+		public string id;
+		public string version;
+		public string type;
+
 		public ProjectType Type
 		{
 			get
@@ -11,17 +15,29 @@
 			}
 		}
 
-		public string id;
-		public string version;
-		public string type;
-
-		public override string ToString()
+		public ProjectIdentifier(string id, string version, string type)
 		{
-			string str = base.ToString();
-			str += "\n" + id;
-			str += "\n" + version;
-			str += "\n" + type;
-			return str;
+			this.id = id;
+			this.version = version;
+			this.type = type;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != typeof(ProjectIdentifier)) return false;
+			return Equals((ProjectIdentifier)obj);
+		}
+
+		public bool Equals(ProjectIdentifier other)
+		{
+			return id.Equals(id) && version.Equals(other.version) && type.Equals(other.type);
+		}
+
+		public override int GetHashCode()
+		{
+			return new { A = id, B = version, C = type }.GetHashCode();
 		}
 	}
 }

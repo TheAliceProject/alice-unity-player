@@ -4,13 +4,13 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-namespace Alice.Tweedle.Unlinked
+namespace Alice.Tweedle.Parsed
 {
 	public class TweedleExpressionParseTest
 	{
 		private TweedleExpression ParseExpression(string src)
 		{
-			return new TweedleUnlinkedParser().ParseExpression(src);
+			return new TweedleParser().ParseExpression(src);
         }
 
         [Test]

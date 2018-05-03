@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Alice.Tweedle.Unlinked
+namespace Alice.Tweedle.Parsed
 {
 	public static class MemberInfoGetter
 	{

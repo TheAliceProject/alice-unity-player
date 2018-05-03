@@ -4,14 +4,13 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-namespace Alice.Tweedle.Unlinked
+namespace Alice.Tweedle.Parsed
 {
 	public class TweedleParseTest
 	{
 		private TweedleType ParseType(string src)
 		{
-			TweedleUnlinkedParser t = new TweedleUnlinkedParser();
-			return t.ParseType(src);
+			return new TweedleParser().ParseType(src);
 		}
 
 		///

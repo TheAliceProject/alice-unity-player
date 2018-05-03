@@ -32,16 +32,5 @@ namespace Alice.Tweedle.File
 		public string type;
 		public string format;
 		public List<string> files;
-
-		public override string ToString()
-		{
-			string str = base.ToString();
-			str += "\n" + id;
-			str += "\n" + type;
-			str += "\n" + format;
-			for (int i = 0; i < files.Count; i++)
-				str += "\n" + files[i];
-			return str;
-		}
 	}
 }
