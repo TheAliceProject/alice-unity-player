@@ -3,7 +3,7 @@
 	[System.Serializable]
 	public class AudioReference : ResourceReference
 	{
-		public System.Guid uuid; // TODO
+		public string uuid;
 		public float duration;
 
 		public override ContentType ContentType => ContentType.Audio;

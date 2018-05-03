@@ -4,7 +4,7 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-namespace Alice.Tweedle.Unlinked
+namespace Alice.Tweedle.Parsed
 {
 	public class TweedleLambdaTest
 	{
@@ -20,7 +20,7 @@ namespace Alice.Tweedle.Unlinked
 										+ "    this.addArrowKeyPressListener(listener: (ArrowKeyEvent event)-> {\n"
 										+ "      this.camera.move(direction: event.getMoveDirection(movedirectionplane: MoveDirectionPlane.FORWARD_BACKWARD_LEFT_RIGHT), amount: 0.25);\n"
 										+ "    });\n  } \n }";
-			tested = (TweedleClass)new TweedleUnlinkedParser().ParseType(sourceWithLambdas);
+			tested = (TweedleClass)new TweedleParser().ParseType(sourceWithLambdas);
 		}
 
 		[Test]

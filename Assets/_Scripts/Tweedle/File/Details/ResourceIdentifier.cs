@@ -14,13 +14,22 @@
 			this.format = format;
 		}
 
-		public override string ToString()
+		public override bool Equals(object obj)
 		{
-			string str = base.ToString();
-			str += "\n" + id;
-			str += "\n" + contentType;
-			str += "\n" + format;
-			return str;
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != typeof(ResourceIdentifier)) return false;
+			return Equals((ResourceIdentifier)obj);
+		}
+
+		public bool Equals(ResourceIdentifier other)
+		{
+			return id.Equals(id) && contentType.Equals(other.contentType) && format.Equals(other.format);
+		}
+
+		public override int GetHashCode()
+		{
+			return new { A = id, B = contentType, C = format }.GetHashCode();
 		}
 	}
 }

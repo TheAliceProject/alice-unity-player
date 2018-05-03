@@ -4,7 +4,8 @@ namespace Alice.Tweedle.File
 {
 	public class TypeManifest : Manifest
     {
-		public TypeManifest(Manifest asset) : base(asset)
+		public TypeManifest(Manifest asset) 
+			: base(asset)
 		{
 		}
 	}

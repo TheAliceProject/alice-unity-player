@@ -4,7 +4,7 @@ namespace Alice.Tweedle.Linker
 {
     public class Linker
     {
-		public Tweedle.TweedleProgram Link(Alice.Tweedle.Unlinked.UnlinkedSystem unlinkedSystem)
+		public Tweedle.TweedleProgram Link(Alice.Tweedle.Parsed.TweedleSystem unlinkedSystem)
         {
             // (paritally) order classes
             // link the class heirarchy
