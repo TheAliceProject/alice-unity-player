@@ -1,5 +1,7 @@
 ﻿using Alice.Tweedle.File;
+using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Alice.Tweedle.Parsed
 {
@@ -8,54 +10,61 @@ namespace Alice.Tweedle.Parsed
 		private string rootPath = "";
 		private TweedleSystem system;
 		private TweedleParser tweedleParser;
+		private ZipFile zipFile;
 
 		public TweedleSystem StoredSystem
 		{
 			get { return system; }
 		}
 
-		public JsonParser(string root)
-		{
-			this.system = new TweedleSystem();
-			this.rootPath = root;
-			this.tweedleParser = new TweedleParser();
-		}
-
-		public JsonParser(TweedleSystem system, string root)
+		public JsonParser(TweedleSystem system, string root, ZipFile zipFile)
 		{
 			this.system = system;
 			this.rootPath = root;
-			this.tweedleParser = new TweedleParser();
+			this.zipFile = zipFile;
+			tweedleParser = new TweedleParser();
 		}
 
-		public void ParseJson(string json)
+		internal void Parse()
 		{
-			Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(json);
-			JSONObject jsonObj = new JSONObject(json);
-			ParseResources(
-				asset.resources, 
+			ParseJson(ReadEntry("manifest.json"));
+		}
+
+		public void ParseJson(string manifestJson)
+		{
+			Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(manifestJson);
+			JSONObject jsonObj = new JSONObject(manifestJson);
+			ParseResourceDetails(
+				asset.resources,
 				jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)]
 				);
 			ProjectType t = asset.Identifier.Type;
-            switch (t)
-            {
-                case ProjectType.Library:
-                    LibraryManifest libAsset = new LibraryManifest(asset);
+			switch (t)
+			{
+				case ProjectType.Library:
+					LibraryManifest libAsset = new LibraryManifest(asset);
 					system.AddLibrary(libAsset);
 					break;
-                case ProjectType.World:
-                    ProgramDescription worldAsset =  new ProgramDescription(asset);
+				case ProjectType.World:
+					ProgramDescription worldAsset = new ProgramDescription(asset);
 					system.AddProgram(worldAsset);
 					break;
-                case ProjectType.Model:
-					ModelManifest modelAsset = UnityEngine.JsonUtility.FromJson<ModelManifest>(json);
+				case ProjectType.Model:
+					ModelManifest modelAsset = UnityEngine.JsonUtility.FromJson<ModelManifest>(manifestJson);
 					system.AddModel(modelAsset);
 					break;
 			}
-        }
+		}
 
-		private void ParseResources(
-			List<ResourceReference> resources, 
+		string ReadEntry(string location)
+		{
+			ZipEntry entry = zipFile.GetEntry(Path.Combine(rootPath, location));
+			Stream entryStream = zipFile.GetInputStream(entry);
+			return (new StreamReader(entryStream)).ReadToEnd();
+		}
+
+		private void ParseResourceDetails(
+			List<ResourceReference> resources,
 			JSONObject json)
 		{
 			if (json == null || json.type != JSONObject.Type.ARRAY)
@@ -64,58 +73,52 @@ namespace Alice.Tweedle.Parsed
 			}
 			for (int i = 0; i < resources.Count; i++)
 			{
-				for (int j = 0; j < resources[i].files.Count; j++)
-				{
-					string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
-					if (!System.IO.File.Exists(absPath))
-					{
-						UnityEngine.Debug.LogWarning("Missing class file: " + absPath);
-					}
-				}
-				switch (resources[i].ContentType)
-				{
-					case ContentType.Audio:
-						resources[i] = UnityEngine.JsonUtility.FromJson<AudioReference>(json.list[i].ToString());
-						break;
-					case ContentType.Class:
-						resources[i] = UnityEngine.JsonUtility.FromJson<ClassReference>(json.list[i].ToString());
-						for (int j = 0; j < resources[i].files.Count; j++)
-						{
-							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
-							TweedleClass tweClass = (TweedleClass)tweedleParser.ParseType(System.IO.File.ReadAllText(absPath));
-							system.AddClass(tweClass);
-						}
-						break;
-					case ContentType.Enum:
-						resources[i] = UnityEngine.JsonUtility.FromJson<EnumReference>(json.list[i].ToString());
-						for (int j = 0; j < resources[i].files.Count; j++)
-						{
-							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
-							TweedleEnum tweEnum = (TweedleEnum)tweedleParser.ParseType(System.IO.File.ReadAllText(absPath));
-							system.AddEnum(tweEnum);
-						}
-						break;
-					case ContentType.Image:
-						resources[i] = UnityEngine.JsonUtility.FromJson<ImageReference>(json.list[i].ToString());
-						break;
-					case ContentType.Model:
-						resources[i] = UnityEngine.JsonUtility.FromJson<ModelReference>(json.list[i].ToString());
-						for (int j = 0; j < resources[i].files.Count; j++)
-						{
-							string absPath = System.IO.Path.Combine(rootPath, resources[i].files[j]);
-							string subJson = System.IO.File.ReadAllText(absPath);
-							ParseJson(subJson);
-						}
-						break;
-					case ContentType.SkeletonMesh:
-						resources[i] = UnityEngine.JsonUtility.FromJson<StructureReference>(json.list[i].ToString());
-						break;
-					case ContentType.Texture:
-						resources[i] = UnityEngine.JsonUtility.FromJson<TextureReference >(json.list[i].ToString());
-						break;
-				}
-				system.AddResource(resources[i]);
+				ResourceReference strictResource = ReadResource(resources[i], json.list[i].ToString());
+				resources[i] = strictResource;
+				system.AddResource(strictResource);
 			}
+		}
+
+		private ResourceReference ReadResource(ResourceReference resourceRef, string refJson)
+		{
+			switch (resourceRef.ContentType)
+			{
+				case ContentType.Audio:
+					return UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+				case ContentType.Class:
+					for (int j = 0; j < resourceRef.files.Count; j++)
+					{
+						string tweedleCode = ReadEntry(resourceRef.files[j]);
+						UnityEngine.Debug.Log("Parsing class: " + tweedleCode);
+						TweedleClass tweClass = (TweedleClass)tweedleParser.ParseType(tweedleCode);
+						system.AddClass(tweClass);
+					}
+					return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
+				case ContentType.Enum:
+					for (int j = 0; j < resourceRef.files.Count; j++)
+					{
+						string tweedleCode = ReadEntry(resourceRef.files[j]);
+						UnityEngine.Debug.Log("Parsing enum: " + tweedleCode);
+						TweedleEnum tweedleEnum = (TweedleEnum)tweedleParser.ParseType(tweedleCode);
+						system.AddEnum(tweedleEnum);
+					}
+					return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
+				case ContentType.Image:
+					return UnityEngine.JsonUtility.FromJson<ImageReference>(refJson);
+				case ContentType.Model:
+					for (int j = 0; j < resourceRef.files.Count; j++)
+					{
+						string absPath = Path.Combine(rootPath, resourceRef.files[j]);
+						string subJson = System.IO.File.ReadAllText(absPath);
+						ParseJson(subJson);
+					}
+					return UnityEngine.JsonUtility.FromJson<ModelReference>(refJson);
+				case ContentType.SkeletonMesh:
+					return UnityEngine.JsonUtility.FromJson<StructureReference>(refJson);
+				case ContentType.Texture:
+					return UnityEngine.JsonUtility.FromJson<TextureReference>(refJson);
+			}
+			return null;
 		}
 	}
 }
