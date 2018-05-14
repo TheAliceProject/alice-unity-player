@@ -39,7 +39,7 @@ namespace Alice.Tweedle.Parsed
 
 		private TweedleSystem StoredSystem(string str)
 		{
-			JsonParser json = new JsonParser(root);
+			JsonParser json = new JsonParser(new TweedleSystem(), root, null);
 			json.ParseJson(str);
 			return json.StoredSystem;
 		}
