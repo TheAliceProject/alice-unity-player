@@ -72,16 +72,6 @@ public interface ITweedleParserListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVisibilityLevel([NotNull] TweedleParser.VisibilityLevelContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.variableModifier"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterVariableModifier([NotNull] TweedleParser.VariableModifierContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.variableModifier"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitVariableModifier([NotNull] TweedleParser.VariableModifierContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.classDeclaration"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

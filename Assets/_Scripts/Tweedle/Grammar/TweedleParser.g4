@@ -50,10 +50,6 @@ visibilityLevel
     | PRIME_TIME
     ;
 
-variableModifier
-    : CONSTANT
-    ;
-
 classDeclaration
     : CLASS identifier
       (EXTENDS typeType)?
@@ -242,6 +238,7 @@ expression
     | prefix=('+'|'-') expression
     | prefix='!' expression
     | expression bop=('*'|'/'|'%') expression
+    | expression bop='..' expression
     | expression bop=('+'|'-') expression
     | expression bop=('<=' | '>=' | '>' | '<') expression
     | expression bop=('==' | '!=') expression
