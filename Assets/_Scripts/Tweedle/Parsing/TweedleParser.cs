@@ -4,6 +4,7 @@ using Antlr4.Runtime.Tree;
 using System.Collections.Generic;
 using System.Linq;
 using Alice.Tweedle;
+using System;
 
 namespace Alice.Tweedle.Parsed
 {
@@ -263,7 +264,9 @@ namespace Alice.Tweedle.Parsed
 					List<TweedleExpression> expressions;
 					switch (operation.Text) {
                         case "." :
-                            return FieldOrMethodRef(context);
+							return FieldOrMethodRef(context);
+                        case "..":
+							return NewStringConcatenation(context);
                         case "*":
 							return NewBinaryNumericExpression<MultiplicationDecimalExpression, MultiplicationWholeExpression>(context, TweedleTypes.NUMBER);
                         case "/":
@@ -518,6 +521,12 @@ namespace Alice.Tweedle.Parsed
 					throw new System.Exception("Expression cannot be converted into a number expression.");
 				}
 			}
+
+			private TweedleExpression NewStringConcatenation(Tweedle.TweedleParser.ExpressionContext context)
+            {
+                List<TweedleExpression> expressions = TypedExpression(context, null);
+                return new StringConcatenationExpression(expressions[0], expressions[1]);
+            }
 		}
 
 		private class StatementVisitor : TweedleParserBaseVisitor<TweedleStatement>
@@ -669,7 +678,7 @@ namespace Alice.Tweedle.Parsed
 			}
 			else
 			{
-				TweedleType baseType;
+				TweedleType baseType = null;
 				if (context.classType() != null)
 				{
 					baseType = GetTypeReference(context.classType().GetText());

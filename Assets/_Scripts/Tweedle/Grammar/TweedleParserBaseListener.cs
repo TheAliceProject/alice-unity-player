@@ -84,18 +84,6 @@ public partial class TweedleParserBaseListener : ITweedleParserListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVisibilityLevel([NotNull] TweedleParser.VisibilityLevelContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="TweedleParser.variableModifier"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterVariableModifier([NotNull] TweedleParser.VariableModifierContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="TweedleParser.variableModifier"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitVariableModifier([NotNull] TweedleParser.VariableModifierContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.classDeclaration"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

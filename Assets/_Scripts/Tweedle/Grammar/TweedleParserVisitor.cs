@@ -57,12 +57,6 @@ public interface ITweedleParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVisibilityLevel([NotNull] TweedleParser.VisibilityLevelContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="TweedleParser.variableModifier"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitVariableModifier([NotNull] TweedleParser.VariableModifierContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.classDeclaration"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

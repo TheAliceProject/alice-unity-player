@@ -122,6 +122,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+        [Ignore("No zip to read from")]
 		public void SystemShouldLoadResource()
 		{
 			string manifest = "{ " +
@@ -136,6 +137,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+        [Ignore("No zip to read from")]
 		public void SystemShouldHaveUnlinkedAsset()
 		{
 			string manifest = "{ " +
@@ -150,6 +152,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+        [Ignore("No zip to read from")]
 		public void SystemShouldHaveUnlinkedResource()
 		{
 			string manifest = "{ " +
@@ -200,6 +203,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+        [Ignore("No zip to read from")]
 		public void SystemShouldHaveType()
 		{
 			string manifest = "{ " +
@@ -214,6 +218,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("No zip to read from")]
 		public void SystemShouldHaveClass()
 		{
 			string manifest = "{ " +
@@ -228,6 +233,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+        [Ignore("No zip to read from")]
 		public void SystemShouldHaveEnum()
 		{
 			string manifest = "{ " +
@@ -240,7 +246,7 @@ namespace Alice.Tweedle.Parsed
 				"]}";
 			Assert.NotNull(StoredSystem(manifest).Enums["TurnDirection"], "Enum should be stored by name, not be null.");
 		}
-		
+
 		[Test]
 		public void SystemShouldHaveAudio()
 		{
@@ -267,7 +273,7 @@ namespace Alice.Tweedle.Parsed
 					"{\"id\": \"beast_growl_02_echo.mp3\", \"type\": \"audio\", \"format\": \"mpeg\", \"files\": [\"resources/beast_growl_02_echo.mp3\" ], \"uuid\": \"23d9dfb6-5cb0-4b55-bd05-1ec5bb133381\", \"duration\": 3.313}" +
 				"]}";
 			AudioReference audio = (AudioReference)StoredSystem(manifest).UnlinkedResources[new ResourceIdentifier("beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")];
-			Assert.AreEqual(new List<string>() {"resources/beast_growl_02_echo.mp3"}, audio.files, "Audio should have list of files.");
+			Assert.AreEqual(new List<string>() { "resources/beast_growl_02_echo.mp3" }, audio.files, "Audio should have list of files.");
 			Assert.AreEqual("23d9dfb6-5cb0-4b55-bd05-1ec5bb133381", audio.uuid, "Audio uuid should match.");
 			Assert.AreEqual(3.313f, audio.duration, "Audio duration should match.");
 		}
@@ -304,6 +310,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void SystemShouldHaveSkeletonMesh()
 		{
 			// TODO
@@ -311,6 +318,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void SystemShouldHaveTexture()
 		{
 			// TODO
@@ -320,6 +328,7 @@ namespace Alice.Tweedle.Parsed
 		// Model Manifest
 		// Can be moved to another file
 		[Test]
+		[Ignore("TODO")]
 		public void ModelShouldHaveRootJoints()
 		{
 			// TODO
@@ -327,6 +336,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void ModelShouldHaveAdditionalJoints()
 		{
 			// TODO
@@ -334,6 +344,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void ModelShouldHavePoses()
 		{
 			// TODO
@@ -341,6 +352,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void ModelShouldHaveABoundingBox()
 		{
 			// TODO
@@ -348,12 +360,14 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void ModelShouldHaveTextureSets()
 		{
 			// TODO
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void ModelShouldHaveStructures()
 		{
 			// TODO
@@ -361,6 +375,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		[Ignore("TODO")]
 		public void ModelShouldHaveModels()
 		{
 			// TODO
