@@ -1,8 +1,4 @@
-﻿using UnityEngine;
-using UnityEditor;
-using UnityEngine.TestTools;
-using NUnit.Framework;
-using System.Collections;
+﻿using NUnit.Framework;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -10,6 +6,7 @@ using Alice.Tweedle.File;
 
 namespace Alice.Tweedle.Parsed
 {
+	[TestFixture]
 	public class JsonParseTest
 	{
 		private string root;
@@ -122,7 +119,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-        [Ignore("No zip to read from")]
+		[Ignore("No zip to read from")]
 		public void SystemShouldLoadResource()
 		{
 			string manifest = "{ " +
@@ -137,7 +134,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-        [Ignore("No zip to read from")]
+		[Ignore("No zip to read from")]
 		public void SystemShouldHaveUnlinkedAsset()
 		{
 			string manifest = "{ " +
@@ -152,7 +149,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-        [Ignore("No zip to read from")]
+		[Ignore("No zip to read from")]
 		public void SystemShouldHaveUnlinkedResource()
 		{
 			string manifest = "{ " +
@@ -203,7 +200,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-        [Ignore("No zip to read from")]
+		[Ignore("No zip to read from")]
 		public void SystemShouldHaveType()
 		{
 			string manifest = "{ " +
@@ -233,7 +230,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-        [Ignore("No zip to read from")]
+		[Ignore("No zip to read from")]
 		public void SystemShouldHaveEnum()
 		{
 			string manifest = "{ " +

@@ -2,22 +2,69 @@
 {
 	public class TweedlePrimitiveType : TweedleType
 	{
-		internal TweedlePrimitiveType(string name, TweedleType impliedType) 
+		internal TweedlePrimitiveType(string name, TweedleType impliedType)
 			: base(name, impliedType)
 		{
 		}
 	}
 
-	public class TweedlePrimitiveType<T> : TweedlePrimitiveType
+	public abstract class TweedlePrimitiveType<V> : TweedlePrimitiveType
 	{
 		public TweedlePrimitiveType(string name, TweedleType impliedType)
 			: base(name, impliedType)
 		{
 		}
 
-		public TweedlePrimitiveValue<T> Instantiate(T value)
+		public TweedlePrimitiveValue<V> Instantiate(V value)
 		{
-			return new TweedlePrimitiveValue<T>(value, this);
+			return new TweedlePrimitiveValue<V>(value, this);
 		}
 	}
+
+	// TODO Add explicit Number type?
+	// public class TweedleNumberType : TweedlePrimitiveType { }
+
+
+	public class TweedleDecimalNumberType : TweedlePrimitiveType<double>
+	{
+		public TweedleDecimalNumberType(TweedleType parent)
+			: base("DecimalNumber", parent)
+		{
+		}
+
+		internal override double ValueToDouble(TweedleValue value)
+		{
+			return ((TweedlePrimitiveValue<double>)value).Value;
+		}
+	}
+
+	public class TweedleWholeNumberType : TweedlePrimitiveType<int>
+	{
+		public TweedleWholeNumberType(TweedleType parent)
+			: base("WholeNumber", parent)
+		{
+		}
+
+		internal override double ValueToDouble(TweedleValue value)
+		{
+			return ((TweedlePrimitiveValue<int>)value).Value;
+		}
+	}
+
+	public class TweedleTextStringType : TweedlePrimitiveType<string>
+	{
+		public TweedleTextStringType()
+			: base("TextString", null)
+		{
+		}
+	}
+
+	public class TweedleBooleanType : TweedlePrimitiveType<bool>
+	{
+		public TweedleBooleanType()
+			: base("Boolean", null)
+		{
+		}
+	}
+
 }

@@ -1,40 +1,36 @@
-﻿using System.Collections.Generic;
-
-namespace Alice.Tweedle
+﻿namespace Alice.Tweedle
 {
-	public class TweedlePrimitiveValue : TweedleValue
+	public class TweedlePrimitiveValue<V> : TweedleValue
 	{
-		internal TweedlePrimitiveValue(TweedleType type) : base(type)
+		public V Value
 		{
+			get
+			{
+				return value;
+			}
 		}
-	}
 
-	public class TweedlePrimitiveValue<T> : TweedlePrimitiveValue
-	{
-        public T Value
-        {
-            get
-            {
-                return value;
-            }
-        }
+		readonly V value;
+		readonly TweedlePrimitiveType<V> type;
 
-		private readonly T value;
-        private readonly TweedlePrimitiveType<T> type;
-
-		public TweedlePrimitiveValue(T value, TweedlePrimitiveType<T> type)
+		public TweedlePrimitiveValue(V value, TweedlePrimitiveType<V> type)
 			: base(type)
 		{
 			this.value = value;
 			this.type = type;
 		}
 
+		internal override bool IsLiteral()
+		{
+			return true;
+		}
+
 		public override bool Equals(object obj)
 		{
-			return base.Equals(obj) ||
-				obj is TweedlePrimitiveValue<T> &&
-				value.Equals(((TweedlePrimitiveValue<T>)obj).value) &&
-				type.Equals(((TweedlePrimitiveValue<T>)obj).Type);
+			return ReferenceEquals(this, obj) ||
+				obj is TweedlePrimitiveValue<V> &&
+				value.Equals(((TweedlePrimitiveValue<V>)obj).value) &&
+				type.Equals(((TweedlePrimitiveValue<V>)obj).type);
 		}
 
 		public override int GetHashCode()

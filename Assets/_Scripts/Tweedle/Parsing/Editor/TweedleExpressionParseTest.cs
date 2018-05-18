@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-using UnityEditor;
-using UnityEngine.TestTools;
-using NUnit.Framework;
-using System.Collections;
+﻿using NUnit.Framework;
 
 namespace Alice.Tweedle.Parsed
 {
+	[TestFixture]
 	public class TweedleExpressionParseTest
 	{
 		private TweedleExpression ParseExpression(string src)
@@ -24,14 +21,14 @@ namespace Alice.Tweedle.Parsed
 		public void ANumberShouldBeCreatedForParenthesizedNumber()
 		{
 			TweedleExpression tested = ParseExpression("(3)");
-			Assert.IsInstanceOf<TweedlePrimitiveValue>(tested, "The parser should have returned a TweedlePrimitiveValue.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested, "The parser should have returned a TweedlePrimitiveValue.");
 		}
 
 		[Test]
 		public void ANumberShouldBeCreatedForMultiplyParenthesizedNumber()
 		{
 			TweedleExpression tested = ParseExpression("(((3)))");
-			Assert.IsInstanceOf<TweedlePrimitiveValue>(tested, "The parser should have returned aTweedlePrimitiveValue.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested, "The parser should have returned aTweedlePrimitiveValue.");
 		}
 
 		[Test]
@@ -79,7 +76,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			StringConcatenationExpression tested = (StringConcatenationExpression)ParseExpression("\"hello\" .. \" there\"");
 
-			Assert.IsInstanceOf<TweedlePrimitiveValue>(tested.Evaluate(null), "The StringConcatenationExpression should evaluate to a tweedle value.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<string>>(tested.Evaluate(null), "The StringConcatenationExpression should evaluate to a tweedle value.");
 		}
 
 		[Test]
@@ -114,7 +111,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleExpression tested = ParseExpression("3 + 4");
 
-			Assert.IsInstanceOf<AdditionWholeExpression>(tested, "The parser should have returned an AdditionExpression.");
+			Assert.IsInstanceOf<AdditionExpression>(tested, "The parser should have returned an AdditionExpression.");
 		}
 
 		/*	[Test]
@@ -126,23 +123,23 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void CreatedAdditionExpressionShouldEvaluate()
 		{
-			AdditionWholeExpression tested = (AdditionWholeExpression)ParseExpression("3 + 4");
+			AdditionExpression tested = (AdditionExpression)ParseExpression("3 + 4");
 
 			Assert.NotNull(tested.Evaluate(null), "The AdditionExpression should evaluate to something.");
 		}
 
 		[Test]
-		public void CreatedAdditionExpressionShouldEvaluateToAPrimitiveValue()
+		public void CreatedWholeNumberAdditionExpressionShouldEvaluateToAPrimitiveValue()
 		{
-			AdditionWholeExpression tested = (AdditionWholeExpression)ParseExpression("3 + 4");
+			AdditionExpression tested = (AdditionExpression)ParseExpression("3 + 4");
 
-			Assert.IsInstanceOf<TweedlePrimitiveValue>(tested.Evaluate(null), "The AdditionExpression should evaluate to a tweedle value.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested.Evaluate(null), "The AdditionExpression should evaluate to a primitive value.");
 		}
 
 		[Test]
-		public void CreatedAdditionExpressionShouldContainCorrectResult()
+		public void WholeNumberAdditionExpressionShouldContainCorrectResult()
 		{
-			AdditionWholeExpression tested = (AdditionWholeExpression)ParseExpression("3 + 4");
+			AdditionExpression tested = (AdditionExpression)ParseExpression("3 + 4");
 
 			Assert.AreEqual(7,
 				((TweedlePrimitiveValue<int>)tested.Evaluate(null)).Value,
@@ -150,19 +147,53 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-		public void WholeNumberAdditionShouldKnowItsType()
+		public void WholeNumberAdditionShouldNotKnowItsType()
 		{
 			TweedleExpression tested = ParseExpression("3 + 4");
-			Assert.AreEqual(TweedleTypes.WHOLE_NUMBER,
-				tested.Type,
-				"The type should be WholeNumber");
+			Assert.AreEqual(TweedleTypes.NUMBER, tested.Type, "The type should be Number");
 		}
 
 		[Test]
-		public void DecimalNumberMultiplicationShouldKnowItsType()
+		public void CompoundMathShouldEvaluate()
+		{
+			TweedleExpression tested = ParseExpression("(1 + 1 + 1 + 1 - 1 * 2 + 2) / 2");
+			Assert.AreEqual(2,
+				((TweedlePrimitiveValue<int>)tested.Evaluate(null)).Value,
+				"The compound expression should evaluate correctly to an int.");
+		}
+
+		[Test]
+		public void CompoundMathShouldSpreadType()
+		{
+			TweedleExpression tested = ParseExpression("(1 + 1 + 1.0 + 1 - 1 * 2 + 2) / 2");
+			Assert.AreEqual(2.0,
+				((TweedlePrimitiveValue<double>)tested.Evaluate(null)).Value,
+				"The compound expression should evaluate correctly to a double.");
+		}
+
+		[Test]
+		public void DecimalAdditionExpressionShouldEvaluateToAPrimitiveValue()
+		{
+			AdditionExpression tested = (AdditionExpression)ParseExpression("2.1 + 4.9");
+
+			Assert.IsInstanceOf<TweedlePrimitiveValue<double>>(tested.Evaluate(null), "The AdditionExpression should evaluate to a tweedle value.");
+		}
+
+		[Test]
+		public void DecimalNumberAdditionExpressionShouldContainCorrectResult()
+		{
+			AdditionExpression tested = (AdditionExpression)ParseExpression("2.1 + 4.9");
+
+			Assert.AreEqual(7.0,
+				((TweedlePrimitiveValue<double>)tested.Evaluate(null)).Value,
+				"The AdditionExpression should evaluate correctly.");
+		}
+
+		[Test]
+		public void DecimalNumberAdditionShouldNotKnowItsType()
 		{
 			TweedleExpression tested = ParseExpression("3.4 + 4.1");
-			Assert.AreEqual(TweedleTypes.DECIMAL_NUMBER, tested.Type, "The type should be DecimalNumber");
+			Assert.AreEqual(TweedleTypes.NUMBER, tested.Type, "The type should be Number");
 		}
 
 		[Test]
@@ -179,6 +210,22 @@ namespace Alice.Tweedle.Parsed
 			TweedleExpression tested = ParseExpression("\"Hello\" .. \" there\"");
 
 			Assert.IsInstanceOf<StringConcatenationExpression>(tested, "The parser should have returned an StringConcatenationExpression.");
+		}
+
+		[Test]
+		public void SomethingShouldBeCreatedForAdditionOfVariables()
+		{
+			TweedleExpression tested = ParseExpression("a + b");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void AnAdditionExpressionShouldBeCreatedForVariables()
+		{
+			TweedleExpression tested = ParseExpression("a + b");
+
+			Assert.IsInstanceOf<AdditionExpression>(tested, "The parser should have returned an AdditionExpression.");
 		}
 
 		[Test]

@@ -1,30 +1,21 @@
 ﻿namespace Alice.Tweedle
 {
-    class SubtractionWholeExpression : BinaryNumericExpression<int, int>
+	class SubtractionExpression : BinaryNumToNumExpression
 	{
 
-        public SubtractionWholeExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs, TweedleTypes.WHOLE_NUMBER)
+        public SubtractionExpression(TweedleExpression lhs, TweedleExpression rhs)
+            : base(lhs, rhs)
         {
         }
 
-		protected override int Evaluate(int left, int right)
-		{
-			return left - right;
-		}
-	}
+        protected override int Evaluate(int left, int right)
+        {
+            return left - right;
+        }
 
-	class SubtractionDecimalExpression : BinaryNumericExpression<double, double>
-	{
-
-		public SubtractionDecimalExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.DECIMAL_NUMBER)
-		{
-		}
-
-		protected override double Evaluate(double left, double right)
-		{
-			return left - right;
-		}
+        protected override double Evaluate(double left, double right)
+        {
+            return left - right;
+        }
 	}
 }

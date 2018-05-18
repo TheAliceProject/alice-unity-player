@@ -1,25 +1,48 @@
 ﻿namespace Alice.Tweedle
 {
-	public abstract class BinaryNumericExpression<T, R>  : BinaryExpression
+	public abstract class BinaryNumToNumExpression : BinaryExpression
 	{
-		private TweedlePrimitiveType<T> primitiveType;
-
-		public BinaryNumericExpression(TweedleExpression lhs, TweedleExpression rhs, TweedlePrimitiveType<T> type)
-			: base(lhs, rhs, type)
+		public BinaryNumToNumExpression(TweedleExpression lhs, TweedleExpression rhs)
+			: base(lhs, rhs, TweedleTypes.NUMBER)
 		{
-			primitiveType = type;
 		}
 
 		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
 		{
-			return primitiveType.Instantiate(Evaluate(ValueCast(left), ValueCast(right)));
+			if (left.Type is TweedleWholeNumberType && right.Type is TweedleWholeNumberType)
+			{
+				return TweedleTypes.WHOLE_NUMBER.Instantiate(
+					Evaluate(((TweedlePrimitiveValue<int>)left).Value,
+							 ((TweedlePrimitiveValue<int>)right).Value));
+			}
+			return TweedleTypes.DECIMAL_NUMBER.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
 		}
 
-		private R ValueCast(TweedleValue val)
+		protected abstract int Evaluate(int left, int right);
+
+		protected abstract double Evaluate(double left, double right);
+	}
+
+	public abstract class BinaryNumToBoolExpression : BinaryExpression
+	{
+		public BinaryNumToBoolExpression(TweedleExpression lhs, TweedleExpression rhs)
+			: base(lhs, rhs, TweedleTypes.BOOLEAN)
 		{
-			return ((TweedlePrimitiveValue<R>)val).Value;
 		}
 
-		protected abstract T Evaluate(R left, R right);
+		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
+		{
+			if (left.Type is TweedleWholeNumberType && right.Type is TweedleWholeNumberType)
+			{
+				return TweedleTypes.BOOLEAN.Instantiate(
+					Evaluate(((TweedlePrimitiveValue<int>)left).Value,
+							 ((TweedlePrimitiveValue<int>)right).Value));
+			}
+			return TweedleTypes.BOOLEAN.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
+		}
+
+		protected abstract bool Evaluate(int left, int right);
+
+		protected abstract bool Evaluate(double left, double right);
 	}
 }

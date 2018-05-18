@@ -3,14 +3,14 @@
 	public class TweedleTypes
 	{
 		public static readonly TweedlePrimitiveType NUMBER = new TweedlePrimitiveType("Number", null);
-		public static readonly TweedlePrimitiveType<double> DECIMAL_NUMBER = new TweedlePrimitiveType<double>("DecimalNumber", NUMBER);
-		public static readonly TweedlePrimitiveType<int> WHOLE_NUMBER = new TweedlePrimitiveType<int>("WholeNumber", NUMBER);
-		public static readonly TweedlePrimitiveType<bool> BOOLEAN = new TweedlePrimitiveType<bool>("Boolean", null);
-		public static readonly TweedlePrimitiveType<string> TEXT_STRING = new TweedlePrimitiveType<string>("TextString", null);
+		public static readonly TweedleDecimalNumberType DECIMAL_NUMBER = new TweedleDecimalNumberType(NUMBER);
+		public static readonly TweedleWholeNumberType WHOLE_NUMBER = new TweedleWholeNumberType(NUMBER);
+		public static readonly TweedleBooleanType BOOLEAN = new TweedleBooleanType();
+		public static readonly TweedleTextStringType TEXT_STRING = new TweedleTextStringType();
 
         //TODO Move these off the types class?
-        public static readonly TweedlePrimitiveValue<bool> TRUE = new TweedlePrimitiveValue<bool>(true, BOOLEAN);
-        public static readonly TweedlePrimitiveValue<bool> FALSE = new TweedlePrimitiveValue<bool>(false, BOOLEAN);
+		public static readonly TweedlePrimitiveValue<bool> TRUE = BOOLEAN.Instantiate(true);
+		public static readonly TweedlePrimitiveValue<bool> FALSE = BOOLEAN.Instantiate(false);
 
         public static readonly TweedlePrimitiveType[] PRIMITIVE_TYPES =
 			{NUMBER, DECIMAL_NUMBER, WHOLE_NUMBER, BOOLEAN, TEXT_STRING};

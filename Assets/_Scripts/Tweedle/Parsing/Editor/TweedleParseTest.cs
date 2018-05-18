@@ -6,6 +6,7 @@ using System.Collections;
 
 namespace Alice.Tweedle.Parsed
 {
+	[TestFixture]
 	public class TweedleParseTest
 	{
 		private TweedleType ParseType(string src)
@@ -188,210 +189,210 @@ namespace Alice.Tweedle.Parsed
 			TweedleType tested = ParseType(scene);
 
 			Assert.NotNull(tested, "The parser should have returned something.");
-        }
+		}
 
-        [Test]
-        public void ClassWithMethodShouldHaveMethod()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
+		[Test]
+		public void ClassWithMethodShouldHaveMethod()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
 
-            Assert.IsNotEmpty(tested.Methods, "The class should have a method.");
-        }
+			Assert.IsNotEmpty(tested.Methods, "The class should have a method.");
+		}
 
-        [Test]
-        public void ClassMethodShouldHaveReturnType()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
+		[Test]
+		public void ClassMethodShouldHaveReturnType()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
 
-            Assert.AreEqual(TweedleTypes.WHOLE_NUMBER, sumThing.Type, "The method should return a WholeNumber.");
-        }
+			Assert.AreEqual(TweedleTypes.WHOLE_NUMBER, sumThing.Type, "The method should return a WholeNumber.");
+		}
 
-        [Test]
-        public void ClassMethodShouldBeNamed()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
+		[Test]
+		public void ClassMethodShouldBeNamed()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
 
-            Assert.AreEqual("sumThing", sumThing.Name, "The method should be named.");
-        }
+			Assert.AreEqual("sumThing", sumThing.Name, "The method should be named.");
+		}
 
-        [Test]
-        public void ClassMethodShouldHaveNoRequiredParams()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
+		[Test]
+		public void ClassMethodShouldHaveNoRequiredParams()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
 
-            Assert.IsEmpty(sumThing.RequiredParameters, "The method should have no params.");
-        }
+			Assert.IsEmpty(sumThing.RequiredParameters, "The method should have no params.");
+		}
 
-        [Test]
-        public void ClassMethodShouldHaveNoOptionalParams()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
+		[Test]
+		public void ClassMethodShouldHaveNoOptionalParams()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
 
-            Assert.IsEmpty(sumThing.OptionalParameters, "The method should have no params.");
-        }
+			Assert.IsEmpty(sumThing.OptionalParameters, "The method should have no params.");
+		}
 
-        [Test]
-        public void ClassMethodShouldHaveAStatement()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
+		[Test]
+		public void ClassMethodShouldHaveAStatement()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
 
-            Assert.AreEqual(1, sumThing.Body.Count, "The method should have one statement.");
-        }
+			Assert.AreEqual(1, sumThing.Body.Count, "The method should have one statement.");
+		}
 
-        [Test]
-        public void ClassMethodWithEmptyReturnShouldHaveANonNullStatement()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            TweedleStatement stmt = sumThing.Body[0];
+		[Test]
+		public void ClassMethodWithEmptyReturnShouldHaveANonNullStatement()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			TweedleStatement stmt = sumThing.Body[0];
 
-            Assert.NotNull(stmt, "The method statement should not be null.");
-        }
+			Assert.NotNull(stmt, "The method statement should not be null.");
+		}
 
-        [Test]
-        public void ClassMethodWithEmptyReturnShouldHaveReturnStatement()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            TweedleStatement stmt = sumThing.Body[0];
+		[Test]
+		public void ClassMethodWithEmptyReturnShouldHaveReturnStatement()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			TweedleStatement stmt = sumThing.Body[0];
 
-            Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
-        }
+			Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
+		}
 
-        [Test]
-        public void ClassMethodWithEmptyReturnStatementShouldHaveAnExpression()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+		[Test]
+		public void ClassMethodWithEmptyReturnStatementShouldHaveAnExpression()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
-            Assert.NotNull(stmt.Expression, "The return statement should hold an expression.");
-        }
+			Assert.NotNull(stmt.Expression, "The return statement should hold an expression.");
+		}
 
-        [Test]
-        public void ClassMethodWithEmptyReturnReturnStatementShouldHaveTweedleNull()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+		[Test]
+		public void ClassMethodWithEmptyReturnReturnStatementShouldHaveTweedleNull()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
-            Assert.AreEqual(TweedleNull.NULL, stmt.Expression, "The return statement should hold NULL.");
-        }
+			Assert.AreEqual(TweedleNull.NULL, stmt.Expression, "The return statement should hold NULL.");
+		}
 
-        [Test]
-        public void ClassMethodShouldHaveANonNullStatement()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            TweedleStatement stmt = sumThing.Body[0];
+		[Test]
+		public void ClassMethodShouldHaveANonNullStatement()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			TweedleStatement stmt = sumThing.Body[0];
 
-            Assert.NotNull(stmt, "The method statement should not be null.");
-        }
+			Assert.NotNull(stmt, "The method statement should not be null.");
+		}
 
-        [Test]
-        public void ClassMethodShouldHaveReturnStatement()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            TweedleStatement stmt = sumThing.Body[0];
+		[Test]
+		public void ClassMethodShouldHaveReturnStatement()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			TweedleStatement stmt = sumThing.Body[0];
 
-            Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
-        }
+			Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
+		}
 
-        [Test]
-        public void ClassMethodReturnStatementShouldHaveAnExpression()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+		[Test]
+		public void ClassMethodReturnStatementShouldHaveAnExpression()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
-            Assert.NotNull(stmt.Expression, "The method statement should hold an expression.");
-        }
+			Assert.NotNull(stmt.Expression, "The method statement should hold an expression.");
+		}
 
-        [Test]
-        public void ClassMethodReturnStatementShouldHaveAnAdditionExpression()
-        {
-            string scene = "class Scene extends SScene {\n"
-                            + "  WholeNumber sumThing() {\n"
-                            + "    return 3 + 4;\n"
-                            + "  }\n"
-                            + "}";
-            TweedleClass tested = (TweedleClass)ParseType(scene);
-            TweedleMethod sumThing = tested.Methods[0];
-            ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+		[Test]
+		public void ClassMethodReturnStatementShouldHaveAnAdditionExpression()
+		{
+			string scene = "class Scene extends SScene {\n"
+							+ "  WholeNumber sumThing() {\n"
+							+ "    return 3 + 4;\n"
+							+ "  }\n"
+							+ "}";
+			TweedleClass tested = (TweedleClass)ParseType(scene);
+			TweedleMethod sumThing = tested.Methods[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
 
-            Assert.IsInstanceOf<AdditionWholeExpression>(stmt.Expression, "The method statement should hold an addition expression.");
-        }
+			Assert.IsInstanceOf<AdditionExpression>(stmt.Expression, "The method statement should hold an addition expression.");
+		}
 
 		[Test]
 		public void SomethingShouldBeCreatedForClassWithListener()

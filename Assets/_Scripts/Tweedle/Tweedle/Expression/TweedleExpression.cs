@@ -7,7 +7,7 @@
 			get { return type; }
 		}
 
-		private TweedleType type;
+		TweedleType type;
 
 		protected TweedleExpression()
 		{
@@ -20,5 +20,10 @@
         }
 
         public abstract TweedleValue Evaluate(TweedleFrame frame);
-    }
+
+		internal virtual bool IsLiteral()
+		{
+			return false;
+		}
+	}
 }
