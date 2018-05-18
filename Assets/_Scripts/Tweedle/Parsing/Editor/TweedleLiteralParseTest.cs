@@ -2,9 +2,10 @@
 
 namespace Alice.Tweedle.Parsed
 {
+	[TestFixture]
 	public class TweedleLiteralParseTest
 	{
-		private TweedleExpression ParseExpression(string src)
+		TweedleExpression ParseExpression(string src)
 		{
 			return new TweedleParser().ParseExpression(src);
 		}
@@ -133,7 +134,7 @@ namespace Alice.Tweedle.Parsed
 		public void SomethingShouldBeCreatedForNumberLiteral()
 		{
 			TweedleExpression tested = ParseExpression("4");
-			
+
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
 

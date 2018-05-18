@@ -1,10 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
 using System.Collections.Generic;
 using System.Linq;
-using Alice.Tweedle;
-using System;
 
 namespace Alice.Tweedle.Parsed
 {
@@ -265,27 +262,27 @@ namespace Alice.Tweedle.Parsed
 					switch (operation.Text) {
                         case "." :
 							return FieldOrMethodRef(context);
-                        case "..":
-							return NewStringConcatenation(context);
-                        case "*":
-							return NewBinaryNumericExpression<MultiplicationDecimalExpression, MultiplicationWholeExpression>(context, TweedleTypes.NUMBER);
-                        case "/":
-							return NewBinaryNumericExpression<DivisionDecimalExpression, DivisionWholeExpression>(context, TweedleTypes.NUMBER);
+						case "..":
+							return NewBinaryExpression<StringConcatenationExpression>(context, null);
+						case "*":
+							return NewBinaryExpression<MultiplicationExpression>(context, TweedleTypes.NUMBER);
+						case "/":
+							return NewBinaryExpression<DivisionExpression>(context, TweedleTypes.NUMBER);
 						case "%":
 							expressions = TypedExpression(context, TweedleTypes.WHOLE_NUMBER);
 							return new ModuloExpression(expressions[0], expressions[1]);
 						case "+":
-							return NewBinaryNumericExpression<AdditionDecimalExpression, AdditionWholeExpression>(context, TweedleTypes.NUMBER);
+							return NewBinaryExpression<AdditionExpression>(context, TweedleTypes.NUMBER);
 						case "-":
-							return NewBinaryNumericExpression<SubtractionDecimalExpression, SubtractionWholeExpression>(context, TweedleTypes.NUMBER);
+							return NewBinaryExpression<SubtractionExpression>(context, TweedleTypes.NUMBER);
 						case "<=":
-							return NewBinaryNumericExpression<LessThanOrEqualDecimalExpression, LessThanOrEqualWholeExpression>(context, TweedleTypes.NUMBER);
+							return NewBinaryExpression<LessThanOrEqualExpression>(context, TweedleTypes.BOOLEAN);
 						case ">=":
-							return NewBinaryNumericExpression<GreaterThanOrEqualDecimalExpression, GreaterThanOrEqualWholeExpression>(context, TweedleTypes.NUMBER);
+							return NewBinaryExpression<GreaterThanOrEqualExpression>(context, TweedleTypes.BOOLEAN);
 						case ">":
-							return NewBinaryNumericExpression<GreaterThanDecimalExpression, GreaterThanWholeExpression>(context, TweedleTypes.NUMBER);
+							return NewBinaryExpression<GreaterThanExpression>(context, TweedleTypes.BOOLEAN);
 						case "<":
-							return NewBinaryNumericExpression<LessThanDecimalExpression, LessThanWholeExpression>(context, TweedleTypes.NUMBER);
+							return NewBinaryExpression<LessThanExpression>(context, TweedleTypes.BOOLEAN);
 						case "==":
 							expressions = TypedExpression(context, null);
 							return new EqualToExpression(expressions[0], expressions[1]);
@@ -499,33 +496,17 @@ namespace Alice.Tweedle.Parsed
 				{
 					throw new System.Exception("Expression cannot be converted into a negative expression.");
 				}
-				if (exp is TweedlePrimitiveValue)
+				if (exp.IsLiteral())
 				{
 					return negativeExp.Evaluate(null);
 				}
 				return negativeExp;
 			}
 
-			private TweedleExpression NewBinaryNumericExpression<Decimal, Whole>(Tweedle.TweedleParser.ExpressionContext context, TweedleType type)
+			private TweedleExpression NewBinaryExpression<T>(Tweedle.TweedleParser.ExpressionContext context, TweedlePrimitiveType nUMBER) where T : BinaryExpression
 			{
-				List<TweedleExpression> expressions = TypedExpression(context, type);
-				if (expressions[0].Type == TweedleTypes.DECIMAL_NUMBER || expressions[1].Type == TweedleTypes.DECIMAL_NUMBER)
-				{
-					return (TweedleExpression)System.Activator.CreateInstance(typeof(Decimal), new object[] { expressions[0], expressions[1] });
-				}
-				else if (expressions[0].Type == TweedleTypes.WHOLE_NUMBER || expressions[1].Type == TweedleTypes.WHOLE_NUMBER)
-				{
-					return (TweedleExpression)System.Activator.CreateInstance(typeof(Whole), new object[] { expressions[0], expressions[1] });
-				} else 
-				{
-					throw new System.Exception("Expression cannot be converted into a number expression.");
-				}
-			}
-
-			private TweedleExpression NewStringConcatenation(Tweedle.TweedleParser.ExpressionContext context)
-            {
-                List<TweedleExpression> expressions = TypedExpression(context, null);
-                return new StringConcatenationExpression(expressions[0], expressions[1]);
+				List<TweedleExpression> expressions = TypedExpression(context, null);
+                return (TweedleExpression)System.Activator.CreateInstance(typeof(T), new object[] { expressions[0], expressions[1] });
             }
 		}
 

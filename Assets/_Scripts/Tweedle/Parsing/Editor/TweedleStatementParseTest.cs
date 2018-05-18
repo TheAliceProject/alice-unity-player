@@ -2,8 +2,9 @@
 
 namespace Alice.Tweedle.Parsed
 {
+    [TestFixture]
     public class TweedleStatementParseTest
-    {
+	{
         private TweedleStatement ParseStatement(string src)
         {
             return new TweedleParser().ParseStatement(src);

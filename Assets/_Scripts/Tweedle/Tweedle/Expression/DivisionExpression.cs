@@ -1,28 +1,20 @@
 ﻿namespace Alice.Tweedle
 {
-    class DivisionWholeExpression : BinaryNumericExpression<int, int>
+	class DivisionExpression : BinaryNumToNumExpression
 	{
-        public DivisionWholeExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs, TweedleTypes.WHOLE_NUMBER)
+        public DivisionExpression(TweedleExpression lhs, TweedleExpression rhs)
+            : base(lhs, rhs)
         {
         }
 
-		protected override int Evaluate(int left, int right)
-		{
-			return left / right;
-		}
-	}
+        protected override int Evaluate(int left, int right)
+        {
+            return left / right;
+        }
 
-	class DivisionDecimalExpression : BinaryNumericExpression<double, double>
-	{
-		public DivisionDecimalExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.DECIMAL_NUMBER)
-		{
-		}
-
-		protected override double Evaluate(double left, double right)
-		{
-			return left / right;
-		}
+        protected override double Evaluate(double left, double right)
+        {
+            return left / right;
+        }
 	}
 }

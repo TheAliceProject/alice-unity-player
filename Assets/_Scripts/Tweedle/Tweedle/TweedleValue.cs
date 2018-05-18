@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
     public abstract class TweedleValue : TweedleExpression
     {
@@ -10,6 +12,11 @@
 		public override TweedleValue Evaluate(TweedleFrame frame)
 		{
 			return this;
+		}
+
+		internal double ToDouble()
+		{
+			return Type.ValueToDouble(this);
 		}
 	}
 }

@@ -7,13 +7,13 @@
 			get { return name; }
 		}
 
-		private readonly string name;
-		private readonly TweedleType impliedType;
+		readonly string name;
+		readonly TweedleType impliedType;
 
 		public TweedleType(string name)
 		{
 			this.name = name;
-			this.impliedType = null;
+			impliedType = null;
 		}
 
 		public TweedleType(string name, TweedleType impliedType)
@@ -21,6 +21,11 @@
 			this.name = name;
 			this.impliedType = impliedType;
 		}
+
+        internal virtual double ValueToDouble(TweedleValue value)
+        {
+			throw new System.Exception("This type (" + this + ") cannot convert the value " + value +  "to a double.");
+        }
 
 		virtual public bool AcceptsType(TweedleType type)
 		{

@@ -1,10 +1,10 @@
 ﻿namespace Alice.Tweedle
 {
-    class MultiplicationWholeExpression : BinaryNumericExpression<int, int>
+	class MultiplicationExpression : BinaryNumToNumExpression
 	{
 
-        public MultiplicationWholeExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs, TweedleTypes.WHOLE_NUMBER)
+        public MultiplicationExpression(TweedleExpression lhs, TweedleExpression rhs)
+            : base(lhs, rhs)
         {
         }
 
@@ -12,19 +12,10 @@
 		{
 			return left * right;
 		}
-	}
 
-	class MultiplicationDecimalExpression : BinaryNumericExpression<double, double>
-	{
-
-		public MultiplicationDecimalExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.DECIMAL_NUMBER)
-		{
-		}
-
-		protected override double Evaluate(double left, double right)
-		{
-			return left * right;
-		}
+        protected override double Evaluate(double left, double right)
+        {
+            return left * right;
+        }
 	}
 }
