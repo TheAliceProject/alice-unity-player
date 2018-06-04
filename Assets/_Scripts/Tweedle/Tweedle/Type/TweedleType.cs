@@ -1,7 +1,7 @@
 ﻿namespace Alice.Tweedle
 {
-    abstract public class TweedleType
-    {
+	abstract public class TweedleType
+	{
 		public string Name
 		{
 			get { return name; }
@@ -22,10 +22,15 @@
 			this.impliedType = impliedType;
 		}
 
-        internal virtual double ValueToDouble(TweedleValue value)
-        {
-			throw new System.Exception("This type (" + this + ") cannot convert the value " + value +  "to a double.");
-        }
+		internal virtual double ValueToDouble(TweedleValue value)
+		{
+			throw new System.Exception("This type (" + this + ") cannot convert the value " + value + "to a double.");
+		}
+
+		internal virtual string ValueToString(TweedleValue value)
+		{
+			return "a" + name;
+		}
 
 		virtual public bool AcceptsType(TweedleType type)
 		{

@@ -196,6 +196,28 @@ namespace Alice.Tweedle.Parsed
 			Assert.AreEqual(TweedleTypes.NUMBER, tested.Type, "The type should be Number");
 		}
 
+        [Test]
+        public void PlusFailsWithStringArgument()
+        {
+            Assert.Throws<System.Exception>(() => ParseExpression("3 + \"4.1\""));
+		}
+
+        [Test]
+        public void ConcatWorksWithNumericArgument()
+        {
+			TweedleExpression tested = ParseExpression("3 .. \"4.1\"");
+            Assert.AreEqual("34.1",
+			                ((TweedlePrimitiveValue<string>)tested.Evaluate(null)).Value,
+			                "The StringConcatenationExpression should evaluate correctly.");
+		}
+
+        [Test]
+        public void ConcatWithNumericArgumentProducesString()
+        {
+            TweedleExpression tested = ParseExpression("3 .. \"4.1\"");
+            Assert.IsInstanceOf<StringConcatenationExpression>(tested, "The parser should have returned an StringConcatenationExpression.");
+        }
+
 		[Test]
 		public void SomethingShouldBeCreatedForStringConcat()
 		{

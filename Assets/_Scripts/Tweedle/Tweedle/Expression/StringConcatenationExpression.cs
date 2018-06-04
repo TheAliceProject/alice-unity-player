@@ -10,9 +10,7 @@
 
 		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
 		{
-			string l = ((TweedlePrimitiveValue<string>)left).Value;
-			string r = ((TweedlePrimitiveValue<string>)right).Value;
-			return TweedleTypes.TEXT_STRING.Instantiate(l + r);
+			return TweedleTypes.TEXT_STRING.Instantiate(left.ToTextString() + right.ToTextString());
 		}
 	}
 }

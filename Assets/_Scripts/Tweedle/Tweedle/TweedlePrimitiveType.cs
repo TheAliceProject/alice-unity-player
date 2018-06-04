@@ -19,6 +19,11 @@
 		{
 			return new TweedlePrimitiveValue<V>(value, this);
 		}
+
+		internal override string ValueToString(TweedleValue value)
+		{
+			return ((TweedlePrimitiveValue<V>)value).Value.ToString();
+		}
 	}
 
 	// TODO Add explicit Number type?

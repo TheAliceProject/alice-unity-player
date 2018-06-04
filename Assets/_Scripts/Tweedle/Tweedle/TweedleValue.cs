@@ -2,8 +2,8 @@
 
 namespace Alice.Tweedle
 {
-    public abstract class TweedleValue : TweedleExpression
-    {
+	public abstract class TweedleValue : TweedleExpression
+	{
 		protected TweedleValue(TweedleType type)
 			: base(type)
 		{
@@ -17,6 +17,11 @@ namespace Alice.Tweedle
 		internal double ToDouble()
 		{
 			return Type.ValueToDouble(this);
+		}
+
+		internal string ToTextString()
+		{
+			return Type.ValueToString(this);
 		}
 	}
 }
