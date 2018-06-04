@@ -7,7 +7,6 @@ namespace Alice.Tweedle.Parsed
 {
 	public class JsonParser
 	{
-		private string rootPath = "";
 		private TweedleSystem system;
 		private TweedleParser tweedleParser;
 		private ZipFile zipFile;
@@ -17,10 +16,9 @@ namespace Alice.Tweedle.Parsed
 			get { return system; }
 		}
 
-		public JsonParser(TweedleSystem system, string root, ZipFile zipFile)
+		public JsonParser(TweedleSystem system, ZipFile zipFile)
 		{
 			this.system = system;
-			this.rootPath = root;
 			this.zipFile = zipFile;
 			tweedleParser = new TweedleParser();
 		}
@@ -58,7 +56,16 @@ namespace Alice.Tweedle.Parsed
 
 		string ReadEntry(string location)
 		{
-			ZipEntry entry = zipFile.GetEntry(Path.Combine(rootPath, location));
+			ZipEntry entry = zipFile.GetEntry(location);
+			if (entry == null)
+			{
+				UnityEngine.Debug.Log("Did not find entry for: " + location);
+			}
+			return ReadEntry(entry);
+		}
+
+		string ReadEntry(ZipEntry entry)
+		{
 			Stream entryStream = zipFile.GetInputStream(entry);
 			return (new StreamReader(entryStream)).ReadToEnd();
 		}
@@ -89,7 +96,7 @@ namespace Alice.Tweedle.Parsed
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						UnityEngine.Debug.Log("Parsing class: " + tweedleCode);
+						UnityEngine.Debug.Log("Parsing classs: " + tweedleCode);
 						TweedleClass tweClass = (TweedleClass)tweedleParser.ParseType(tweedleCode);
 						system.AddClass(tweClass);
 					}
@@ -108,8 +115,7 @@ namespace Alice.Tweedle.Parsed
 				case ContentType.Model:
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
-						string absPath = Path.Combine(rootPath, resourceRef.files[j]);
-						string subJson = System.IO.File.ReadAllText(absPath);
+						string subJson = System.IO.File.ReadAllText(resourceRef.files[j]);
 						ParseJson(subJson);
 					}
 					return UnityEngine.JsonUtility.FromJson<ModelReference>(refJson);

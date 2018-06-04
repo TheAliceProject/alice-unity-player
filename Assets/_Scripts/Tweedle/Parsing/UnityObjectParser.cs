@@ -20,7 +20,7 @@ namespace Alice.Tweedle.Parsed
 				using (ZipFile zipFile = new ZipFile(fileStream))
 				{
 					TweedleSystem sys = new TweedleSystem();
-					JsonParser reader = new JsonParser(sys, Path.GetFileNameWithoutExtension(fileStream.Name), zipFile);
+					JsonParser reader = new JsonParser(sys, zipFile);
 					reader.Parse();
 					// TODO store the TweedleSystem
 				}
