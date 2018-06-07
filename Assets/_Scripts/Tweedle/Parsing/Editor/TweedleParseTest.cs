@@ -9,10 +9,21 @@ namespace Alice.Tweedle.Parsed
 	[TestFixture]
 	public class TweedleParseTest
 	{
-		private TweedleType ParseType(string src)
+		TweedleType ParseType(string src)
 		{
 			return new TweedleParser().ParseType(src);
 		}
+
+        static string commonProgram =
+            "class Program extends SProgram {\n"
+            + "Program()\n {  super(); }\n"
+            + "        Scene myScene<- new Scene();"
+            + "static void main(TextString[] args) {"
+            + "            Program story<-new Program();"
+            + "            story.initializeInFrame(args: args);"
+            + "            story.setActiveScene(scene: story.getMyScene());\n }"
+            + "Scene getMyScene() {\n"
+            + "  return this.myScene;\n }\n}";
 
 		///
 		/// CLASS
@@ -30,7 +41,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleClass tested = (TweedleClass)ParseType("class SThing {}");
 
-			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a UnlinkedClass.");
+			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a TweedleClass.");
 		}
 
 		[Test]
@@ -115,7 +126,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleClass tested = (TweedleClass)ParseType("class SScene extends SThing {}");
 
-			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a UnlinkedClass.");
+			Assert.IsInstanceOf<TweedleClass>(tested, "The parser should have returned a TweedleClass.");
 		}
 
 		[Test]
@@ -173,6 +184,65 @@ namespace Alice.Tweedle.Parsed
 							tested.Properties[0].Modifiers[0],
 							"The class SScene should have a property with static modifier.");
 		}
+
+        [Test]
+        public void SomethingShouldBeCreatedForAProgram()
+        {
+			TweedleClass tested = (TweedleClass)ParseType(commonProgram);
+
+            Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+        [Test]
+        public void TwoMethodShouldBeCreatedForAProgram()
+        {
+            TweedleClass tested = (TweedleClass)ParseType(commonProgram);
+
+			Assert.AreEqual(tested.Methods.Count, 2, "There should be 2 methods.");
+		}
+
+        [Test]
+        public void GetMySceneMethodShouldBeCreatedForAProgram()
+        {
+            TweedleClass tested = (TweedleClass)ParseType(commonProgram);
+
+            Assert.NotNull(tested.MethodNamed("getMyScene"), "There should be a method.");
+        }
+
+        [Test]
+        public void AMainMethodShouldBeCreatedForAProgram()
+        {
+            TweedleClass tested = (TweedleClass)ParseType(commonProgram);
+
+			Assert.NotNull(tested.MethodNamed("main"), "There should be a method.");
+		}
+
+        [Test]
+
+        public void NoConstructorAsMethodShouldBeCreatedForAProgram()
+        {
+            TweedleClass tested = (TweedleClass)ParseType(commonProgram);
+			Assert.Throws<TweedleLinkException>(delegate ()
+			{
+                tested.MethodNamed("constructor");
+            });
+		}
+
+        [Test]
+		public void StaticModifierShouldNotBeOnGetMySceneMethod()
+        {
+			TweedleMethod tested = ((TweedleClass)ParseType(commonProgram)).MethodNamed("getMyScene");
+
+            Assert.IsFalse(tested.IsStatic(), "Method getMyScene should not be static.");
+        }
+
+        [Test]
+        public void StaticModifierShouldBeOnMainMethod()
+        {
+			TweedleMethod tested = ((TweedleClass)ParseType(commonProgram)).MethodNamed("main");
+
+			Assert.IsTrue(tested.IsStatic(), "Method main should be static.");
+        }
 
 		///
 		/// CLASS CONSTRUCTOR
@@ -437,7 +507,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
 
-			Assert.IsInstanceOf<TweedleEnum>(tested, "The parser should have returned a UnlinkedEnum.");
+			Assert.IsInstanceOf<TweedleEnum>(tested, "The parser should have returned a TweedleEnum.");
 		}
 
 		[Test]

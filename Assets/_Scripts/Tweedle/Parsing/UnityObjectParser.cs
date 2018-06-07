@@ -15,16 +15,17 @@ namespace Alice.Tweedle.Parsed
 			string zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
 			if (System.IO.File.Exists(zipPath) == false)
 				return;
+            TweedleSystem sys = new TweedleSystem();
 			using (FileStream fileStream = new FileStream(zipPath, FileMode.Open, FileAccess.Read, FileShare.None))
 			{
 				using (ZipFile zipFile = new ZipFile(fileStream))
 				{
-					TweedleSystem sys = new TweedleSystem();
 					JsonParser reader = new JsonParser(sys, zipFile);
 					reader.Parse();
 					// TODO store the TweedleSystem
 				}
 			}
+			sys.RunProgramMain();
 		}
 	}
 }

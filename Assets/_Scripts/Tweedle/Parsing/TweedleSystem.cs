@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Alice.Tweedle.File;
+using Alice.VM;
 
 namespace Alice.Tweedle.Parsed
 {
@@ -15,6 +16,7 @@ namespace Alice.Tweedle.Parsed
 		public Dictionary<string, ProgramDescription> UnlinkedPrograms { get; private set; }
 		public Dictionary<string, ModelManifest> UnlinkedModels { get; private set; }
 		public Dictionary<string, TweedleClass> Classes { get; private set; }
+
 		public Dictionary<string, TweedleEnum> Enums { get; private set; }
 		public Dictionary<string, TweedleType> Types { get; private set; }
 
@@ -74,6 +76,39 @@ namespace Alice.Tweedle.Parsed
 			ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
 			LoadedResources.Add(identifier);
 			UnlinkedResources.Add(identifier, resourceAsset);
+		}
+
+		internal void RunProgramMain()
+		{
+			Link();
+			TweedleClass prog;
+			if (Classes.TryGetValue("Program", out prog))
+			{
+				VirtualMachine vm = new VirtualMachine(this);
+				vm.Execute(new StaticMethodCallExpression(prog, "main", new Dictionary<string, TweedleExpression>()));
+			}
+		}
+
+		private void Link()
+		{
+			// Validate and link the static code of the system
+			LinkTypes();
+			LinkStaticCalls();
+		}
+
+		private void LinkTypes()
+		{
+			// TODO Replace all TweedleTypeReferences
+		}
+
+		private void LinkStaticCalls()
+		{
+			// TODO Make static method calls hard refs to the method itself
+		}
+
+		TweedleFrame NewInvocationFrame()
+		{
+			return new TweedleFrame();
 		}
 	}
 }
