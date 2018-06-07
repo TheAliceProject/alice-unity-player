@@ -4,28 +4,30 @@ namespace Alice.Tweedle
 {
 	public class LambdaExpression : TweedleExpression
 	{
-		private List<TweedleRequiredParameter> parameters;
-		private List<TweedleStatement> statements;
+		List<TweedleRequiredParameter> parameters;
+		BlockStatement body;
 
 		public List<TweedleRequiredParameter> Parameters
 		{
 			get { return parameters; }
 		}
 
-		public List<TweedleStatement> Statements
+		public BlockStatement Body
 		{
-			get { return statements; }
+			get { return body; }
 		}
 
 		public LambdaExpression(List<TweedleRequiredParameter> parameters, List<TweedleStatement> statements)
 			: base(TweedleVoidType.VOID)
 		{
 			this.parameters = parameters;
-			this.statements = statements;
+			body = new BlockStatement(statements);
 		}
 
 		public override void Evaluate(TweedleFrame frame)
 		{
+			// TODO Add parameters to frame
+			//body.Execute(frame.LambdaFrame());
 			throw new System.NotImplementedException();
 		}
 	}

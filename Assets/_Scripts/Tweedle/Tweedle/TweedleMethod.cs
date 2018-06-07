@@ -5,7 +5,7 @@ namespace Alice.Tweedle
 {
     public class TweedleMethod
     {
-		private List<TweedleStatement> body;
+		private BlockStatement body;
 		private List<string> modifiers;
 		private TweedleType resultType;
         private string name;
@@ -32,22 +32,22 @@ namespace Alice.Tweedle
             get { return optional; }
         }
 
-        public List<TweedleStatement> Body
+		public BlockStatement Body
         {
             get { return body; }
         }
 
-		public TweedleMethod(TweedleType resultType, string name, List<TweedleRequiredParameter> required, List<TweedleOptionalParameter> optional, List<TweedleStatement> body)
+		public TweedleMethod(TweedleType resultType, string name, List<TweedleRequiredParameter> required, List<TweedleOptionalParameter> optional, List<TweedleStatement> statements)
 		{
 			this.resultType = resultType;
 			this.name = name;
 			this.required = required;
 			this.optional = optional;
-			this.body = body;
+			this.body = new BlockStatement(statements);
 		}
 
-		public TweedleMethod(List<string> modifiers, TweedleType type, string name, List<TweedleRequiredParameter> required, List<TweedleOptionalParameter> optional, List<TweedleStatement> body)
-            : this(type, name, required, optional, body)
+		public TweedleMethod(List<string> modifiers, TweedleType type, string name, List<TweedleRequiredParameter> required, List<TweedleOptionalParameter> optional, List<TweedleStatement> statements)
+			: this(type, name, required, optional, statements)
 		{
 			this.modifiers = modifiers;
 		}

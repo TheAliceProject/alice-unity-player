@@ -1,45 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
 	public class ConditionalStatement : TweedleStatement
 	{
-        private TweedleExpression condition;
+		TweedleExpression condition;
 
-        public TweedleExpression Condition
-        {
-            get
-            {
-                return condition;
-            }
-        }
-
-        private List<TweedleStatement> thenBody;
-
-        public List<TweedleStatement> ThenBody
-        {
-            get
-            {
-                return thenBody;
-            }
-        }
-
-        private List<TweedleStatement> elseBody;
-
-        public List<TweedleStatement> ElseBody
-        {
-            get
-            {
-                return elseBody;
-            }
-        }
-
-        public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
+		public TweedleExpression Condition
 		{
-            this.condition = condition;
-            this.thenBody = thenBody;
-			this.elseBody = elseBody;
+			get
+			{
+				return condition;
+			}
+		}
+
+		BlockStatement thenBody;
+
+		public BlockStatement ThenBody
+		{
+			get
+			{
+				return thenBody;
+			}
+		}
+
+		BlockStatement elseBody;
+
+		public BlockStatement ElseBody
+		{
+			get
+			{
+				return elseBody;
+			}
+		}
+
+		public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
+		{
+			this.condition = condition;
+			this.thenBody = new BlockStatement(thenBody);
+			this.elseBody = new BlockStatement(elseBody);
 		}
 
 		public override void Execute(TweedleFrame frame)
@@ -47,15 +46,15 @@ namespace Alice.Tweedle
 			condition.Evaluate(frame.ExecutionFrame(value => ExecuteBody(value, frame)));
 		}
 
-		private void ExecuteBody(TweedleValue value, TweedleFrame frame)
+		void ExecuteBody(TweedleValue value, TweedleFrame frame)
 		{
 			if (value.ToBoolean())
 			{
-				//thenBody.Execute(frame);
+				thenBody.ExecuteInSequence(frame);
 			}
 			else
 			{
-				//elseBody.Execute(frame);
+				elseBody.ExecuteInSequence(frame);
 			}
 		}
 	}

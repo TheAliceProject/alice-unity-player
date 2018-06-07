@@ -13,10 +13,5 @@ namespace Alice.Tweedle
 			this.item = item;
 			this.array = array;
 		}
-
-		public override void Execute(TweedleFrame frame)
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

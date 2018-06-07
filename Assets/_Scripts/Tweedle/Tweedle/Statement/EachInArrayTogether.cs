@@ -2,38 +2,38 @@
 
 namespace Alice.Tweedle
 {
-	public class EachInArrayTogether : AbstractStatementWithBody
+	public class EachInArrayTogether : TweedleStatement
 	{
-        private TweedleLocalVariable itemVariable;
+		TweedleLocalVariable itemVariable;
+		TweedleExpression array;
+		BlockStatement body;
 
-        public TweedleLocalVariable ItemVariable
-        {
-            get
-            {
-                return itemVariable;
-            }
-        }
-
-        private TweedleExpression array;
-
-        public TweedleExpression Array
-        {
-            get
-            {
-                return array;
-            }
-        }
-
-        public EachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> body) 
-			: base(body)
+		public TweedleLocalVariable ItemVariable
 		{
-            this.itemVariable = itemVariable;
+			get { return itemVariable; }
+		}
+
+		public TweedleExpression Array
+		{
+			get { return array; }
+		}
+
+		public BlockStatement Body
+		{
+			get { return body; }
+		}
+
+		public EachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> statements)
+		{
+			this.itemVariable = itemVariable;
 			this.array = array;
+			body = new BlockStatement(statements);
 		}
 
 		public override void Execute(TweedleFrame frame)
 		{
-			throw new System.NotImplementedException();
+			// TODO make frames for each statement with values
+			body.ExecuteInParallel(frame);
 		}
 	}
 }

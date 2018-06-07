@@ -341,7 +341,7 @@ namespace Alice.Tweedle.Parsed
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
 
-			Assert.AreEqual(1, sumThing.Body.Count, "The method should have one statement.");
+			Assert.AreEqual(1, sumThing.Body.Statements.Count, "The method should have one statement.");
 		}
 
 		[Test]
@@ -354,7 +354,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			TweedleStatement stmt = sumThing.Body[0];
+			TweedleStatement stmt = sumThing.Body.Statements[0];
 
 			Assert.NotNull(stmt, "The method statement should not be null.");
 		}
@@ -369,7 +369,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			TweedleStatement stmt = sumThing.Body[0];
+			TweedleStatement stmt = sumThing.Body.Statements[0];
 
 			Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
 		}
@@ -384,7 +384,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body.Statements[0];
 
 			Assert.NotNull(stmt.Expression, "The return statement should hold an expression.");
 		}
@@ -399,7 +399,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body.Statements[0];
 
 			Assert.AreEqual(TweedleNull.NULL, stmt.Expression, "The return statement should hold NULL.");
 		}
@@ -414,7 +414,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			TweedleStatement stmt = sumThing.Body[0];
+			TweedleStatement stmt = sumThing.Body.Statements[0];
 
 			Assert.NotNull(stmt, "The method statement should not be null.");
 		}
@@ -429,7 +429,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			TweedleStatement stmt = sumThing.Body[0];
+			TweedleStatement stmt = sumThing.Body.Statements[0];
 
 			Assert.IsInstanceOf<ReturnStatement>(stmt, "The method statement should be a return.");
 		}
@@ -444,7 +444,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body.Statements[0];
 
 			Assert.NotNull(stmt.Expression, "The method statement should hold an expression.");
 		}
@@ -459,7 +459,7 @@ namespace Alice.Tweedle.Parsed
 							+ "}";
 			TweedleClass tested = (TweedleClass)ParseType(scene);
 			TweedleMethod sumThing = tested.Methods[0];
-			ReturnStatement stmt = (ReturnStatement)sumThing.Body[0];
+			ReturnStatement stmt = (ReturnStatement)sumThing.Body.Statements[0];
 
 			Assert.IsInstanceOf<AdditionExpression>(stmt.Expression, "The method statement should hold an addition expression.");
 		}
