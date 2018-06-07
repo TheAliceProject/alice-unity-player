@@ -24,7 +24,7 @@ namespace Alice.Tweedle
 			this.statements = statements;
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame)
 		{
 			throw new System.NotImplementedException();
 		}

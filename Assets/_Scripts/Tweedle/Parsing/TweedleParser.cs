@@ -508,7 +508,7 @@ namespace Alice.Tweedle.Parsed
 				}
 				if (exp.IsLiteral())
 				{
-					return negativeExp.Evaluate(null);
+					return negativeExp.EvaluateNow();
 				}
 				return negativeExp;
 			}

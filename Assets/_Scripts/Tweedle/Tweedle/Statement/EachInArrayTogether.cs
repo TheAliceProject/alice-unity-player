@@ -30,5 +30,10 @@ namespace Alice.Tweedle
             this.itemVariable = itemVariable;
 			this.array = array;
 		}
+
+		public override void Execute(TweedleFrame frame)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -14,10 +14,7 @@ namespace Alice.Tweedle
             }
         }
 
-        public void Execute(TweedleFrame frame)
-        {
-
-        }
+		abstract public void Execute(TweedleFrame frame);
 
 		internal void Disable()
 		{

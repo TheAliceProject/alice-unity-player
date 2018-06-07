@@ -12,7 +12,7 @@
 			this.index = index;
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame)
 		{
 			throw new System.NotImplementedException();
 		}

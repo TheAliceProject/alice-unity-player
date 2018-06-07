@@ -37,16 +37,18 @@ namespace Alice.Tweedle
 			return null;
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame)
         {
 			if (initializeSize != null)
 			{
-				this.elements = new List<TweedleExpression>(((TweedlePrimitiveValue<int>)initializeSize.Evaluate(frame)).Value);
+				// TODO update and restore
+				//this.elements = new List<TweedleExpression>(((TweedlePrimitiveValue<int>)initializeSize.Evaluate(frame)).Value);
 			}
-			return new TweedleArray(
-				(TweedleArrayType)this.Type,
-				elements.Select(elem => elem?.Evaluate(frame)).ToList()
-				);
+			// TODO update and restore
+			//return new TweedleArray(
+				//(TweedleArrayType)this.Type
+				//elements.Select(elem => elem?.Evaluate(frame)).ToList()
+				//);
         }
     }
 }

@@ -60,6 +60,12 @@ namespace Alice.Tweedle
 			this.constructors = constructors;
 		}
 
-		public abstract void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments);
+		public abstract void Invoke(TweedleFrame frame, TweedleObject target, string methodName, Dictionary<string, TweedleValue> arguments);
+
+
+		public virtual TweedleMethod MethodNamed(string methodName)
+        {
+			return Methods.Find((TweedleMethod method) => method.Name.Equals(methodName));
+        }
 	}
 }

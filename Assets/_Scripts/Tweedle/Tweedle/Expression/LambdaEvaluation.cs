@@ -26,7 +26,7 @@ namespace Alice.Tweedle
             this.arguments = arguments;
         }
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame)
         {
             // TODO evaluate target to a lambda expression and evaluate it.
 			throw new System.NotImplementedException();

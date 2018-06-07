@@ -29,5 +29,10 @@ namespace Alice.Tweedle
             this.isConstant = isConstant;
             this.variable = variable;
 		}
+
+		public override void Execute(TweedleFrame frame)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

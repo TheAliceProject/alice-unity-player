@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
 	public class MethodCallExpression : MemberAccessExpression
 	{
-		private string methodName;
-		private Dictionary<string, TweedleExpression> arguments;
+		string methodName;
+		Dictionary<string, TweedleExpression> arguments;
 
 		public string MethodName
 		{
@@ -13,22 +14,26 @@ namespace Alice.Tweedle
 		}
 
 		public MethodCallExpression(TweedleExpression target, string methodName, Dictionary<string, TweedleExpression> arguments)
-            : base(target)
-        {
-            this.methodName = methodName;
+			: base(target)
+		{
+			this.methodName = methodName;
 			this.arguments = arguments;
-        }
+		}
 
-        override public TweedleValue Evaluate(TweedleFrame frame)
-        {
-            EvaluateTarget(frame);
-            // TODO invoke the method on the target.
-            return null;
-        }
+		override public void Evaluate(TweedleFrame frame)
+		{
+			Target.Evaluate(frame.ExecutionFrame(InvokeMethod(frame)));
+		}
 
 		public TweedleExpression GetArg(string argName)
 		{
 			return arguments[argName];
 		}
-    }
+
+		Action<TweedleValue> InvokeMethod(TweedleFrame frame)
+		{
+			// Return an Action that takes the target of the method as a value and calls the method
+			return target => { };// TODO target.InvokeMethod(methodName, arguments, frame);
+		}
+	}
 }

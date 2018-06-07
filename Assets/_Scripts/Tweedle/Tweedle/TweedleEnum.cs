@@ -27,7 +27,7 @@ namespace Alice.Tweedle
             return null;
         }
 
-		public override void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
+		public override void Invoke(TweedleFrame frame, TweedleObject target, string methodName, Dictionary<string, TweedleValue> arguments)
 		{
 			throw new System.NotImplementedException();
 		}

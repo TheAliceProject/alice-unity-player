@@ -119,7 +119,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedlePrimitiveValue<double> tested = (TweedlePrimitiveValue<double>)ParseExpression("4.731");
 
-			Assert.IsInstanceOf<TweedlePrimitiveValue<double>>(tested.Evaluate(null), "The parser should have returned a TweedlePrimitiveValue.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<double>>(tested.EvaluateNow(), "The parser should have returned a TweedlePrimitiveValue.");
 		}
 
 		[Test]
@@ -151,15 +151,15 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedlePrimitiveValue<int> tested = (TweedlePrimitiveValue<int>)ParseExpression("4");
 
-			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested.Evaluate(null), "The parser should have returned a TweedlePrimitiveValue.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested.EvaluateNow(), "The parser should have returned a TweedlePrimitiveValue.");
 		}
 
 		[Test]
 		public void TheValueInTheLiteralCreatedForNumberLiteralShouldMatch()
 		{
 			TweedlePrimitiveValue<int> tested = (TweedlePrimitiveValue<int>)ParseExpression("4");
-			TweedlePrimitiveValue<int> tweedleValue = (TweedlePrimitiveValue<int>)tested.Evaluate(null);
-
+			TweedlePrimitiveValue<int> tweedleValue = (TweedlePrimitiveValue<int>)tested.EvaluateNow();
+            
 			Assert.AreEqual(4, tweedleValue.Value, "The literal should hold the value.");
 		}
 
