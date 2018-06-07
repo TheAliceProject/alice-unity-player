@@ -5,7 +5,7 @@ namespace Alice.Tweedle
 {
     public class TweedleEnum : TweedleTypeDeclaration
     {
-		private List<TweedleEnumValue> values;
+		private List<TweedleEnumValue> values = new List<TweedleEnumValue>();
 
 		public List<string> Values
 		{
@@ -15,14 +15,17 @@ namespace Alice.Tweedle
         public TweedleEnum(string name, 
 			List<TweedleField> properties,
 			List<TweedleMethod> methods,
-			List<TweedleConstructor> constructors,
-			List<TweedleEnumValue> values)
+			List<TweedleConstructor> constructors)
 			: base(name, properties, methods, constructors)
         {
-			this.values = values;
         }
 
-		public TweedleObject Instantiate(TweedleFrame frame, TweedleValue[] args)
+		public void AddEnumValue(TweedleEnumValue value)
+		{
+			values.Add(value);
+		}
+
+		public TweedleObject Instantiate(TweedleFrame frame, Dictionary<string, TweedleValue> arguements)
         {
             return null;
         }
@@ -33,7 +36,7 @@ namespace Alice.Tweedle
 		}
 	}
 
-	public class TweedleEnumValue
+	public class TweedleEnumValue : TweedleValue
 	{
 		private string name;
 		private Dictionary<string, TweedleExpression> arguments;
@@ -43,7 +46,8 @@ namespace Alice.Tweedle
 			get { return name; }
 		}
 
-		public TweedleEnumValue(string name, Dictionary<string, TweedleExpression> arguments)
+		public TweedleEnumValue(TweedleEnum type, string name, Dictionary<string, TweedleExpression> arguments)
+			:base(type)
 		{
 			this.name = name;
 			this.arguments = arguments;
