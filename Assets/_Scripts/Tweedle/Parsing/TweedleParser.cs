@@ -75,7 +75,11 @@ namespace Alice.Tweedle.Parsed
 
 			public override TweedleType VisitEnumDeclaration([NotNull] Tweedle.TweedleParser.EnumDeclarationContext context)
 			{
-				List<TweedleEnumValue> values = new List<TweedleEnumValue>();
+				if (context.enumBodyDeclarations() != null)
+				{
+					context.enumBodyDeclarations().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
+				}
+				TweedleEnum tweedleEnum = new TweedleEnum(context.identifier().GetText(), body.properties, body.methods, body.constructors);
 				context.enumConstants().enumConstant().ToList().ForEach(enumConst =>
 				{
 					string name = enumConst.identifier().GetText();
@@ -84,15 +88,9 @@ namespace Alice.Tweedle.Parsed
 					{
 						arguments = TweedleParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList());
 					}
-					values.Add(new TweedleEnumValue(name, arguments));
+					tweedleEnum.AddEnumValue(new TweedleEnumValue(tweedleEnum, name, arguments));
 				});
-				if (context.enumBodyDeclarations() != null)
-				{
-					context.enumBodyDeclarations().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
-				}
-				return new TweedleEnum(context.identifier().GetText(),
-					body.properties, body.methods, body.constructors,
-					values);
+				return tweedleEnum;
 			}
 		}
 
