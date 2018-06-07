@@ -8,5 +8,10 @@
 		{
 			this.text = text;
 		}
+
+		public override void Execute(TweedleFrame frame)
+		{
+			frame.Next();
+		}
 	}
 }

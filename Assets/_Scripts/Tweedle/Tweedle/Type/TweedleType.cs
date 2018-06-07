@@ -27,9 +27,19 @@
 			throw new System.Exception("This type (" + this + ") cannot convert the value " + value + "to a double.");
 		}
 
+		internal virtual int ValueToInt(TweedleValue value)
+		{
+			throw new System.Exception("This type (" + this + ") cannot convert the value " + value + "to an int.");
+		}
+
 		internal virtual string ValueToString(TweedleValue value)
 		{
 			return "a" + name;
+		}
+
+		internal virtual bool ValueToBoolean(TweedleValue value)
+		{
+			throw new System.Exception("This type (" + this + ") cannot convert the value " + value + "to a bool.");
 		}
 
 		virtual public bool AcceptsType(TweedleType type)

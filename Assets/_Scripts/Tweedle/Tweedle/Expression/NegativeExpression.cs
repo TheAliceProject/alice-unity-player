@@ -19,10 +19,10 @@
 		{
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame)
 		{
-			TweedlePrimitiveValue<int> primitive = (TweedlePrimitiveValue<int>)expression.Evaluate(frame);
-			return TweedleTypes.WHOLE_NUMBER.Instantiate(0 - primitive.Value);
+            expression.Evaluate(frame.ExecutionFrame(
+				value => frame.Next(TweedleTypes.WHOLE_NUMBER.Instantiate(0 - value.ToInt()))));
 		}
 	}
 
@@ -34,10 +34,10 @@
 		{
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame)
 		{
-			TweedlePrimitiveValue<double> primitive = (TweedlePrimitiveValue<double>)expression.Evaluate(frame);
-			return TweedleTypes.DECIMAL_NUMBER.Instantiate(0 - primitive.Value);
+            expression.Evaluate(frame.ExecutionFrame(
+				value => frame.Next(TweedleTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble()))));
 		}
 	}
 }

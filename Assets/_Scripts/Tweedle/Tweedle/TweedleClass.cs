@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
-    public class TweedleClass : TweedleTypeDeclaration, InvocableMethodHolder
-    {
+	public class TweedleClass : TweedleTypeDeclaration, InvocableMethodHolder
+	{
 		private InvocableMethodHolder superClass;
 
 
 		public string SuperClassName
-        {
-            get { return superClass?.Name; }
+		{
+			get { return superClass?.Name; }
 		}
 
 		public TweedleClass(string name,
@@ -38,21 +39,51 @@ namespace Alice.Tweedle
 		{
 		}
 
-		public override void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
+		public override void Invoke(TweedleFrame frame, TweedleObject target, string methodName, Dictionary<string, TweedleValue> arguments)
 		{
-			if (methods.Contains(method))
+			TweedleMethod method = MethodNamed(methodName);
+			if (methods != null)
 			{
 				method.Invoke(frame, target, arguments);
-			} else
+			}
+			else
 			{
-				superClass.Invoke(frame, target, method, arguments);
+				throw new System.Exception("No method named " + methodName + " on " + target);
+			}
+		}
+
+		public void Invoke(TweedleFrame frame, string staticMethodName, Dictionary<string, TweedleValue> arguments)
+		{
+			TweedleMethod method = MethodNamed(staticMethodName);
+			if (methods != null && method.IsStatic())
+			{
+				method.Invoke(frame, arguments);
+			}
+			else
+			{
+				throw new System.Exception("No static method named " + staticMethodName + " on class " + Name);
 			}
 		}
 
 		public TweedleObject Instantiate(TweedleFrame frame, TweedleValue[] args)
-        {
-            return new TweedleObject(this);
-        }
+		{
+			return new TweedleObject(this);
+		}
+
+
+		public override TweedleMethod MethodNamed(string methodName)
+		{
+			TweedleMethod method = base.MethodNamed(methodName);
+			if (method != null)
+			{
+				return method;
+			}
+			if (superClass != null)
+			{
+				return superClass.MethodNamed(methodName);
+			}
+			return null;
+		}
 
 		public override string ToString()
 		{

@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Alice.Tweedle
+﻿namespace Alice.Tweedle
 {
-    public abstract class TweedleValueHolderDeclaration
-    {
+	public abstract class TweedleValueHolderDeclaration
+	{
 		public string Name
 		{
 			get { return name; }
@@ -17,7 +15,7 @@ namespace Alice.Tweedle
 		private string name;
 		private TweedleType type;
 
-        public TweedleValueHolderDeclaration(TweedleType type, string name)
+		public TweedleValueHolderDeclaration(TweedleType type, string name)
 		{
 			this.type = type;
 			this.name = name;

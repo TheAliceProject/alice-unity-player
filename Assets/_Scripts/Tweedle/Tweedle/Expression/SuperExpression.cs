@@ -7,9 +7,9 @@
 		{
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame)
 		{
-			return null;
+			//frame.GetThis().GetClass().GetSuper();
 		}
 	}
 }

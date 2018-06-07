@@ -16,5 +16,10 @@
 		{
 			this.expression = expression;
 		}
+
+		public override void Execute(TweedleFrame frame)
+		{
+			expression.Evaluate(frame);
+		}
 	}
 }

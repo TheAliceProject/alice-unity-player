@@ -68,7 +68,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			StringConcatenationExpression tested = (StringConcatenationExpression)ParseExpression("\"hello\" .. \" there\"");
 
-			Assert.NotNull(tested.Evaluate(null), "The StringConcatenationExpression should evaluate to something.");
+			Assert.NotNull(tested.EvaluateNow(), "The StringConcatenationExpression should evaluate to something.");
 		}
 
 		[Test]
@@ -76,7 +76,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			StringConcatenationExpression tested = (StringConcatenationExpression)ParseExpression("\"hello\" .. \" there\"");
 
-			Assert.IsInstanceOf<TweedlePrimitiveValue<string>>(tested.Evaluate(null), "The StringConcatenationExpression should evaluate to a tweedle value.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<string>>(tested.EvaluateNow(), "The StringConcatenationExpression should evaluate to a tweedle value.");
 		}
 
 		[Test]
@@ -85,7 +85,7 @@ namespace Alice.Tweedle.Parsed
 			StringConcatenationExpression tested = (StringConcatenationExpression)ParseExpression("\"hello\" .. \" there\"");
 
 			Assert.AreEqual("hello there",
-				((TweedlePrimitiveValue<string>)tested.Evaluate(null)).Value,
+			                ((TweedlePrimitiveValue<string>)tested.EvaluateNow()).Value,
 							"The StringConcatenationExpression should evaluate correctly.");
 		}
 
@@ -125,7 +125,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			AdditionExpression tested = (AdditionExpression)ParseExpression("3 + 4");
 
-			Assert.NotNull(tested.Evaluate(null), "The AdditionExpression should evaluate to something.");
+			Assert.NotNull(tested.EvaluateNow(), "The AdditionExpression should evaluate to something.");
 		}
 
 		[Test]
@@ -133,7 +133,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			AdditionExpression tested = (AdditionExpression)ParseExpression("3 + 4");
 
-			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested.Evaluate(null), "The AdditionExpression should evaluate to a primitive value.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested.EvaluateNow(), "The AdditionExpression should evaluate to a primitive value.");
 		}
 
 		[Test]
@@ -142,7 +142,7 @@ namespace Alice.Tweedle.Parsed
 			AdditionExpression tested = (AdditionExpression)ParseExpression("3 + 4");
 
 			Assert.AreEqual(7,
-				((TweedlePrimitiveValue<int>)tested.Evaluate(null)).Value,
+			                ((TweedlePrimitiveValue<int>)tested.EvaluateNow()).Value,
 				"The AdditionExpression should evaluate correctly.");
 		}
 
@@ -158,7 +158,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleExpression tested = ParseExpression("(1 + 1 + 1 + 1 - 1 * 2 + 2) / 2");
 			Assert.AreEqual(2,
-				((TweedlePrimitiveValue<int>)tested.Evaluate(null)).Value,
+			                ((TweedlePrimitiveValue<int>)tested.EvaluateNow()).Value,
 				"The compound expression should evaluate correctly to an int.");
 		}
 
@@ -167,7 +167,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleExpression tested = ParseExpression("(1 + 1 + 1.0 + 1 - 1 * 2 + 2) / 2");
 			Assert.AreEqual(2.0,
-				((TweedlePrimitiveValue<double>)tested.Evaluate(null)).Value,
+			                ((TweedlePrimitiveValue<double>)tested.EvaluateNow()).Value,
 				"The compound expression should evaluate correctly to a double.");
 		}
 
@@ -176,7 +176,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			AdditionExpression tested = (AdditionExpression)ParseExpression("2.1 + 4.9");
 
-			Assert.IsInstanceOf<TweedlePrimitiveValue<double>>(tested.Evaluate(null), "The AdditionExpression should evaluate to a tweedle value.");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<double>>(tested.EvaluateNow(), "The AdditionExpression should evaluate to a tweedle value.");
 		}
 
 		[Test]
@@ -185,7 +185,7 @@ namespace Alice.Tweedle.Parsed
 			AdditionExpression tested = (AdditionExpression)ParseExpression("2.1 + 4.9");
 
 			Assert.AreEqual(7.0,
-				((TweedlePrimitiveValue<double>)tested.Evaluate(null)).Value,
+			                ((TweedlePrimitiveValue<double>)tested.EvaluateNow()).Value,
 				"The AdditionExpression should evaluate correctly.");
 		}
 
@@ -207,7 +207,7 @@ namespace Alice.Tweedle.Parsed
         {
 			TweedleExpression tested = ParseExpression("3 .. \"4.1\"");
             Assert.AreEqual("34.1",
-			                ((TweedlePrimitiveValue<string>)tested.Evaluate(null)).Value,
+			                ((TweedlePrimitiveValue<string>)tested.EvaluateNow()).Value,
 			                "The StringConcatenationExpression should evaluate correctly.");
 		}
 

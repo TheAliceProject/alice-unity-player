@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
     public class TweedleOptionalParameter : TweedleValueHolderDeclaration
     {
@@ -9,5 +11,10 @@
         {
             this.initializer = initializer;
         }
+
+		internal TweedleExpression GetInitializer()
+		{
+			return initializer;
+		}
 	}
 }

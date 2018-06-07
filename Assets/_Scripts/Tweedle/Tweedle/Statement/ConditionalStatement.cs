@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
@@ -39,6 +40,23 @@ namespace Alice.Tweedle
             this.condition = condition;
             this.thenBody = thenBody;
 			this.elseBody = elseBody;
+		}
+
+		public override void Execute(TweedleFrame frame)
+		{
+			condition.Evaluate(frame.ExecutionFrame(value => ExecuteBody(value, frame)));
+		}
+
+		private void ExecuteBody(TweedleValue value, TweedleFrame frame)
+		{
+			if (value.ToBoolean())
+			{
+				//thenBody.Execute(frame);
+			}
+			else
+			{
+				//elseBody.Execute(frame);
+			}
 		}
 	}
 }
