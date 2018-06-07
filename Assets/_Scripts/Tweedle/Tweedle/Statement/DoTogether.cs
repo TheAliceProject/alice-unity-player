@@ -2,19 +2,23 @@
 
 namespace Alice.Tweedle
 {
-	public class DoTogether : AbstractStatementWithBody
+	public class DoTogether : TweedleStatement
 	{
-        public DoTogether(List<TweedleStatement> body) : base(body)
+		BlockStatement body;
+
+		public BlockStatement Body
 		{
+			get { return body; }
+		}
+
+		public DoTogether(List<TweedleStatement> statements)
+		{
+			body = new BlockStatement(statements);
 		}
 
 		public override void Execute(TweedleFrame frame)
 		{
-			TweedleFrame allDone = frame.ParallelFrame(Statements.Count);
-			foreach (TweedleStatement statement in Statements)
-			{
-				statement.Execute(allDone);
-			}
+			body.ExecuteInParallel(frame);
 		}
 	}
 }

@@ -25,17 +25,24 @@ namespace Alice.Tweedle.Parsed
         }
 
         [Test]
+        public void ATweedleCountLoopShouldHaveABody()
+        {
+            CountLoop tested = (CountLoop)ParseStatement("countUpTo( indexB < 2 ) {}");
+			Assert.NotNull(tested.Body, "The TweedleCountLoop should have a list of statements.");
+		}
+
+        [Test]
         public void ATweedleCountLoopShouldHaveBlockOfStatements()
         {
             CountLoop tested = (CountLoop)ParseStatement("countUpTo( indexB < 2 ) {}");
-            Assert.NotNull(tested.Statements, "The TweedleCountLoop should have a list of statements.");
+			Assert.NotNull(tested.Body.Statements, "The TweedleCountLoop should have a list of statements.");
         }
 
         [Test]
         public void ATweedleCountLoopShouldHaveEmptyBlockOfStatements()
         {
             CountLoop tested = (CountLoop)ParseStatement("countUpTo( indexB < 2 ) {}");
-            Assert.IsEmpty(tested.Statements, "The TweedleCountLoop should have an empty list of statements.");
+            Assert.IsEmpty(tested.Body.Statements, "The TweedleCountLoop should have an empty list of statements.");
         }
 
         [Test]
@@ -84,14 +91,14 @@ namespace Alice.Tweedle.Parsed
         public void AConditionalCreatedForIfThenShouldHaveThenStatementList()
         {
             ConditionalStatement tested = (ConditionalStatement)ParseStatement("if(true) { }");
-            Assert.IsEmpty(tested.ThenBody, "The parser should have returned a TweedleConditionalStatement with an empty then block.");
+			Assert.IsEmpty(tested.ThenBody.Statements, "The parser should have returned a TweedleConditionalStatement with an empty then block.");
         }
 
         [Test]
         public void AConditionalCreatedForIfThenShouldHaveElseStatementList()
         {
             ConditionalStatement tested = (ConditionalStatement)ParseStatement("if(true) { }");
-            Assert.IsEmpty(tested.ElseBody, "The parser should have returned a TweedleConditionalStatement with an empty else block.");
+			Assert.IsEmpty(tested.ElseBody.Statements, "The parser should have returned a TweedleConditionalStatement with an empty else block.");
         }
 
         [Test]
@@ -112,14 +119,14 @@ namespace Alice.Tweedle.Parsed
         public void AConditionalCreatedForIfThenElseShouldHaveThenStatementList()
         {
             ConditionalStatement tested = (ConditionalStatement)ParseStatement("if(true) { } else { }");
-            Assert.IsEmpty(tested.ThenBody, "The parser should have returned a TweedleConditionalStatement with an empty then block.");
+			Assert.IsEmpty(tested.ThenBody.Statements, "The parser should have returned a TweedleConditionalStatement with an empty then block.");
         }
 
         [Test]
         public void AConditionalCreatedForIfThenElseShouldHaveElseStatementList()
         {
             ConditionalStatement tested = (ConditionalStatement)ParseStatement("if(true) { } else { }");
-            Assert.IsEmpty(tested.ElseBody, "The parser should have returned a TweedleConditionalStatement with an empty else block.");
+			Assert.IsEmpty(tested.ElseBody.Statements, "The parser should have returned a TweedleConditionalStatement with an empty else block.");
         }
 
         [Test]
@@ -178,14 +185,14 @@ namespace Alice.Tweedle.Parsed
         public void AnEachTogetherShouldHaveBlockOfStatements()
         {
             EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
-            Assert.NotNull(tested.Statements, "The EachTogether should have a list of statements.");
+            Assert.NotNull(tested.Body.Statements, "The EachTogether should have a list of statements.");
         }
 
         [Test]
         public void AnEachTogetherShouldHaveEmptyBlockOfStatements()
         {
             EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
-            Assert.IsEmpty(tested.Statements, "The EachTogether should have an empty list of statements.");
+            Assert.IsEmpty(tested.Body.Statements, "The EachTogether should have an empty list of statements.");
         }
 
         [Test]
@@ -220,14 +227,14 @@ namespace Alice.Tweedle.Parsed
         public void AWhileLoopShouldHaveBlockOfStatements()
         {
             WhileLoop tested = (WhileLoop)ParseStatement("while(true) { }");
-            Assert.NotNull(tested.Statements, "The TweedleWhileLoop should have a list of statements.");
+            Assert.NotNull(tested.Body.Statements, "The TweedleWhileLoop should have a list of statements.");
         }
 
         [Test]
         public void AWhileLoopShouldHaveEmptyBlockOfStatements()
         {
             WhileLoop tested = (WhileLoop)ParseStatement("while(true) { }");
-            Assert.IsEmpty(tested.Statements, "The TweedleWhileLoop should have an empty list of statements.");
+            Assert.IsEmpty(tested.Body.Statements, "The TweedleWhileLoop should have an empty list of statements.");
         }
 
         [Test]
@@ -248,35 +255,35 @@ namespace Alice.Tweedle.Parsed
         public void ADoInOrderShouldHaveBlockOfStatements()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("doInOrder { }");
-            Assert.NotNull(tested.Statements, "The TweedleDoInOrder should have a list of statements.");
+            Assert.NotNull(tested.Body.Statements, "The TweedleDoInOrder should have a list of statements.");
         }
 
         [Test]
         public void ADoInOrderShouldHaveEmptyBlockOfStatements()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("doInOrder { }");
-            Assert.IsEmpty(tested.Statements, "The TweedleDoInOrder should have an empty list of statements.");
+			Assert.IsEmpty(tested.Body.Statements, "The TweedleDoInOrder should have an empty list of statements.");
         }
 
         [Test]
         public void ADoInOrderShouldHaveBlockOfTwoStatements()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("doInOrder { doInOrder {} return; }");
-            Assert.AreEqual(2, tested.Statements.Count, "The TweedleDoInOrder should have a list of 2 statements.");
+			Assert.AreEqual(2, tested.Body.Statements.Count, "The TweedleDoInOrder should have a list of 2 statements.");
         }
 
         [Test]
         public void ATweedleDoInOrdersFirstStatementShouldBeDoInOrder()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("doInOrder { doInOrder {} return; }");
-            Assert.IsInstanceOf<DoInOrder>(tested.Statements[0], "The block's first statement should be a TweedleDoInOrder.");
+			Assert.IsInstanceOf<DoInOrder>(tested.Body.Statements[0], "The block's first statement should be a TweedleDoInOrder.");
         }
 
         [Test]
         public void ADoInOrdersSecondStatementShouldBeReturn()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("doInOrder { doInOrder {} return; }");
-            Assert.IsInstanceOf<ReturnStatement>(tested.Statements[1], "The block's first statement should be a Return.");
+			Assert.IsInstanceOf<ReturnStatement>(tested.Body.Statements[1], "The block's first statement should be a Return.");
         }
 
         [Test]
@@ -297,35 +304,35 @@ namespace Alice.Tweedle.Parsed
         public void ADoTogetherShouldHaveBlockOfStatements()
         {
             DoTogether tested = (DoTogether)ParseStatement("doTogether { }");
-            Assert.NotNull(tested.Statements, "The TweedleDoTogether should have a list of statements.");
+			Assert.NotNull(tested.Body.Statements, "The TweedleDoTogether should have a list of statements.");
         }
 
         [Test]
         public void ADoTogetherShouldHaveEmptyBlockOfStatements()
         {
             DoTogether tested = (DoTogether)ParseStatement("doTogether { }");
-            Assert.IsEmpty(tested.Statements, "The TweedleDoTogether should have an empty list of statements.");
+			Assert.IsEmpty(tested.Body.Statements, "The TweedleDoTogether should have an empty list of statements.");
         }
 
         [Test]
         public void ADoTogetherShouldHaveBlockOfTwoStatements()
         {
             DoTogether tested = (DoTogether)ParseStatement("doTogether { doInOrder {} return; }");
-            Assert.AreEqual(2, tested.Statements.Count, "The TweedleDoTogether should have a list of 2 statements.");
+			Assert.AreEqual(2, tested.Body.Statements.Count, "The TweedleDoTogether should have a list of 2 statements.");
         }
 
         [Test]
         public void ADoTogethersFirstStatementShouldBeDoInOrder()
         {
             DoTogether tested = (DoTogether)ParseStatement("doTogether { doInOrder {} return; }");
-            Assert.IsInstanceOf<DoInOrder>(tested.Statements[0], "The block's first statement should be a DoInorder.");
+			Assert.IsInstanceOf<DoInOrder>(tested.Body.Statements[0], "The block's first statement should be a DoInorder.");
         }
 
         [Test]
         public void ADoTogethersSecondStatementShouldBeReturn()
         {
             DoTogether tested = (DoTogether)ParseStatement("doTogether { doInOrder {} return; }");
-            Assert.IsInstanceOf<ReturnStatement>(tested.Statements[1], "The block's first statement should be a Return.");
+			Assert.IsInstanceOf<ReturnStatement>(tested.Body.Statements[1], "The block's first statement should be a Return.");
         }
 
         [Test]
@@ -467,7 +474,7 @@ namespace Alice.Tweedle.Parsed
         public void NestedDoInOrdersInnerOneShouldBeEnabled()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("doInOrder { doInOrder {} }");
-            Assert.IsTrue(tested.Statements[0].IsEnabled, "The inner doInOrder should be enabled.");
+			Assert.IsTrue(tested.Body.Statements[0].IsEnabled, "The inner doInOrder should be enabled.");
         }
 
         [Test]
@@ -481,7 +488,7 @@ namespace Alice.Tweedle.Parsed
         public void DisabledNestedDoInOrdersInnerOneShouldBeEnabled()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("*< doInOrder { doInOrder {} } >*");
-            Assert.IsTrue(tested.Statements[0].IsEnabled, "The inner doInOrder should be enabled.");
+			Assert.IsTrue(tested.Body.Statements[0].IsEnabled, "The inner doInOrder should be enabled.");
         }
 
         [Test]
@@ -495,7 +502,7 @@ namespace Alice.Tweedle.Parsed
         public void DisabledInnerDoInOrdersInnerOneShouldBeDisabled()
         {
             DoInOrder tested = (DoInOrder)ParseStatement("doInOrder { *< doInOrder {} >* }");
-            Assert.IsFalse(tested.Statements[0].IsEnabled, "The inner doInOrder should be disabled.");
+			Assert.IsFalse(tested.Body.Statements[0].IsEnabled, "The inner doInOrder should be disabled.");
         }
     }
 }

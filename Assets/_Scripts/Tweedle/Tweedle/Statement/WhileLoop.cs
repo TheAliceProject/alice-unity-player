@@ -4,19 +4,16 @@ namespace Alice.Tweedle
 {
 	public class WhileLoop : AbstractLoop
 	{
-		private TweedleExpression runCondition;
+		TweedleExpression runCondition;
 
-        public TweedleExpression RunCondition
-        {
-            get
-            {
-                return runCondition;
-            }
-        }
-
-        public WhileLoop(TweedleExpression runCondition, List<TweedleStatement> body) : base(body)
+		public TweedleExpression RunCondition
 		{
-            this.runCondition = runCondition;
+			get { return runCondition; }
+		}
+
+		public WhileLoop(TweedleExpression runCondition, List<TweedleStatement> body) : base(body)
+		{
+			this.runCondition = runCondition;
 		}
 	}
 }

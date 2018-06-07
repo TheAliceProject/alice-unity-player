@@ -2,15 +2,23 @@
 
 namespace Alice.Tweedle
 {
-	public class DoInOrder : AbstractStatementWithBody
+	public class DoInOrder : TweedleStatement
 	{
-        public DoInOrder(List<TweedleStatement> body) : base(body)
+		BlockStatement body;
+
+		public BlockStatement Body
 		{
+			get { return body; }
+		}
+
+		public DoInOrder(List<TweedleStatement> statements)
+		{
+			body = new BlockStatement(statements);
 		}
 
 		public override void Execute(TweedleFrame frame)
 		{
-			throw new System.NotImplementedException();
+			body.ExecuteInSequence(frame);
 		}
 	}
 }
