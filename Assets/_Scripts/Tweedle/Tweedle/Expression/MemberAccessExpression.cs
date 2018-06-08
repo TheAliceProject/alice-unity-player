@@ -2,14 +2,11 @@
 {
 	abstract public class MemberAccessExpression : TweedleExpression
 	{
-		private TweedleExpression target;
+		TweedleExpression target;
 
 		public TweedleExpression Target
 		{
-			get
-			{
-				return target;
-			}
+			get { return target; }
 		}
 
 		public MemberAccessExpression(TweedleExpression target)

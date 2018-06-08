@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Alice.Tweedle
+﻿namespace Alice.Tweedle
 {
 	public class TweedleTypeReference : TweedleType, InvocableMethodHolder
 	{
@@ -23,11 +21,6 @@ namespace Alice.Tweedle
 		public TweedleMethod MethodNamed(string methodName)
 		{
 			throw new TweedleLinkException("Attempt to find the method " + methodName + " on an unlinked type " + Name);
-		}
-
-		public void Invoke(TweedleFrame frame, TweedleObject target, string methodName, Dictionary<string, TweedleValue> arguments)
-		{
-			throw new TweedleLinkException("Attempt to invoke the method " + methodName + " on an unlinked type " + Name);
 		}
 
 		override public bool Equals(object obj)

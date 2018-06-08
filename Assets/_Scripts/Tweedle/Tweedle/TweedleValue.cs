@@ -31,5 +31,10 @@
 		{
 			return Type.ValueToBoolean(this);
 		}
+
+		internal virtual TweedleMethod MethodNamed(string methodName)
+		{
+			throw new TweedleRuntimeException("Can not invoke method " + methodName + " on " + this);
+		}
 	}
 }

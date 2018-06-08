@@ -1,36 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
 	public class TweedleFrame
 	{
-		protected TweedleFrame parent;
-		private TweedleObject thisValue;
-		//private TweedleObject messageTarget;
-		//private TweedleValue returnValue = TweedleNull.NULL;
+		protected TweedleFrame Parent { get; }
+		TweedleValue thisValue;
+
+		Dictionary<TweedleValueHolderDeclaration, TweedleValue> localValues =
+			new Dictionary<TweedleValueHolderDeclaration, TweedleValue>();
 
 		protected Action<TweedleValue> nextStep;
 
 		public TweedleFrame()//Tweedle.TweedleObject instance)
 		{
-
 		}
 
 		internal TweedleFrame ParallelFrame(int count)
 		{
 			return new ParallelFrame(this, count);
 		}
-        
+
 		protected TweedleFrame(TweedleFrame parent)
 		{
-			this.parent = parent;
+			Parent = parent;
 		}
 
 		protected TweedleFrame(TweedleFrame parent, Action<TweedleValue> next)
-        {
-            this.parent = parent;
+		{
+			Parent = parent;
 			nextStep = next;
-        }
+		}
 
 		//internal SequentialFrame SequentialFrame(int count)
 		//{
@@ -38,41 +39,32 @@ namespace Alice.Tweedle
 		//}
 
 		public TweedleFrame ExecutionFrame(Action<TweedleValue> next)
-        {
-            return new TweedleFrame(this, next);
-        }
-
-		internal TweedleObject GetThis() {
-			return thisValue;
+		{
+			return new TweedleFrame(this, next);
 		}
 
-		//TweedleObject GetMessageTarget() {
-			//return messageTarget;
-		//}
-
-		//internal TweedleValue GetReturnValue()
-		//{
-		//	return returnValue;
-		//}
+		internal TweedleValue GetThis()
+		{
+			return thisValue;
+		}
 
 		internal void Next(TweedleValue val)
 		{
 			nextStep(val);
 		}
 
-        internal void Next()
+		internal void Next()
 		{
 			nextStep(TweedleNull.NULL);
-        }
+		}
 
-		//internal void SetReturnValue(TweedleValue tweedleValue)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		internal void SetParameterValue(Type type, TweedleValue tweedleValue)
+		internal void SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue tweedleValue)
 		{
-			throw new NotImplementedException();
+			// This will always go to the current frame
+			if (declaration.Type.AcceptsType(tweedleValue.Type))
+			{
+				localValues.Add(declaration, tweedleValue);
+			}
 		}
 
 		internal TweedleFrame PopMethod()
@@ -81,9 +73,13 @@ namespace Alice.Tweedle
 			throw new NotImplementedException();
 		}
 
-		internal TweedleFrame MethodCallFrame(TweedleMethod tweedleMethod)
+		internal TweedleFrame MethodCallFrame(TweedleValue target)
 		{
-            return new TweedleFrame(this);
+			// target may be an instance (object or enumValue) or type (class or enum)
+			return new TweedleFrame(this)
+			{
+				thisValue = target
+			};
 		}
 	}
 
@@ -100,10 +96,10 @@ namespace Alice.Tweedle
 
 	internal class ParallelFrame : TweedleFrame
 	{
-		private int count;
+		int count;
 
 		public ParallelFrame(TweedleFrame frame, int count)
-			:base(frame)
+			: base(frame)
 		{
 			this.count = count;
 			nextStep = ignored =>
@@ -111,21 +107,9 @@ namespace Alice.Tweedle
 				this.count--;
 				if (this.count == 0)
 				{
-					parent.Next();
+					Parent.Next();
 				}
 			};
 		}
-
-		/*private static Action<TweedleValue> CountDown()
-		{
-			return ignored =>
-			{
-				count--;
-                if (count == 0)
-				{
-					parent.Next(ignored);
-				}
-			};
-		}*/
 	}
 }

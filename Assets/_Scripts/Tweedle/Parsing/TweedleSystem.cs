@@ -84,8 +84,12 @@ namespace Alice.Tweedle.Parsed
 			TweedleClass prog;
 			if (Classes.TryGetValue("Program", out prog))
 			{
+				TypeValue progVal = new TypeValue(prog);
 				VirtualMachine vm = new VirtualMachine(this);
-				vm.Execute(new StaticMethodCallExpression(prog, "main", new Dictionary<string, TweedleExpression>()));
+				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
+				arguments.Add("args", new TweedleArray(new TweedleArrayType(TweedleTypes.TEXT_STRING),
+				                                       new List<TweedleValue>()));
+				vm.Execute(new MethodCallExpression(progVal, "main", arguments));
 			}
 		}
 

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
 	public class TweedleClass : TweedleTypeDeclaration, InvocableMethodHolder
 	{
-		private InvocableMethodHolder superClass;
-
+		InvocableMethodHolder superClass;
 
 		public string SuperClassName
 		{
@@ -37,32 +35,6 @@ namespace Alice.Tweedle
 			List<TweedleConstructor> constructors)
 			: this(name, new TweedleTypeReference(super), properties, methods, constructors)
 		{
-		}
-
-		public override void Invoke(TweedleFrame frame, TweedleObject target, string methodName, Dictionary<string, TweedleValue> arguments)
-		{
-			TweedleMethod method = MethodNamed(methodName);
-			if (methods != null)
-			{
-				method.Invoke(frame, target, arguments);
-			}
-			else
-			{
-				throw new System.Exception("No method named " + methodName + " on " + target);
-			}
-		}
-
-		public void Invoke(TweedleFrame frame, string staticMethodName, Dictionary<string, TweedleValue> arguments)
-		{
-			TweedleMethod method = MethodNamed(staticMethodName);
-			if (methods != null && method.IsStatic())
-			{
-				method.Invoke(frame, arguments);
-			}
-			else
-			{
-				throw new System.Exception("No static method named " + staticMethodName + " on class " + Name);
-			}
 		}
 
 		public TweedleObject Instantiate(TweedleFrame frame, TweedleValue[] args)

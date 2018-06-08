@@ -2,27 +2,21 @@
 {
 	public class ReturnStatement : TweedleStatement
 	{
-		private TweedleExpression expression;
+		TweedleExpression expression;
 
 		public TweedleExpression Expression
 		{
-			get
-			{
-				return expression;
-			}
+			get { return expression; }
 		}
 
 		public TweedleType Type
 		{
-			get
-			{
-				return expression.Type;
-			}
+			get { return expression.Type; }
 		}
 
 		public ReturnStatement()
 		{
-			this.expression = TweedleNull.NULL;
+			expression = TweedleNull.NULL;
 		}
 
 		public ReturnStatement(TweedleExpression expression)
@@ -41,7 +35,6 @@
 					// invoke next action with the value of the expression
 					caller.Next(val);
 				}));
-			//OLD frame.SetReturnValue(expression.Evaluate(frame));
 		}
 	}
 }

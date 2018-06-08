@@ -2,14 +2,11 @@
 {
 	public class FieldAccess : MemberAccessExpression
 	{
-		private string fieldName;
+		string fieldName;
 
 		public string FieldName
 		{
-			get
-			{
-				return fieldName;
-			}
+			get { return fieldName; }
 		}
 
 		public FieldAccess(TweedleExpression target, string fieldName)
@@ -26,6 +23,10 @@
 				{
 					TweedleObject obj = (TweedleObject)value;
 					frame.Next(obj.Get(fieldName));
+				}
+				else
+				{
+					throw new TweedleRuntimeException(value + " is not an Object. Can not access field " + fieldName);
 				}
 			}
 			));
