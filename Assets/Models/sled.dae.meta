@@ -11,20 +11,37 @@ ModelImporter:
     100006: sled_runners
     100008: sled_sled
     100010: sled_sledString
+    100012: HANDLE
+    100014: mesh0
+    100016: mesh1
+    100018: mesh2
+    100020: ROOT
     400000: handle
     400002: root
     400004: //RootNode
     400006: sled_runners
     400008: sled_sled
     400010: sled_sledString
+    400012: HANDLE
+    400014: mesh0
+    400016: mesh1
+    400018: mesh2
+    400020: ROOT
     2100000: sled_sled_shader
+    2100002: texture_1_shader
     4300000: sled_sled
     4300002: sled_sledString
     4300004: sled_runners
+    4300006: mesh0
+    4300008: mesh1
+    4300010: mesh2
     9500000: //RootNode
     13700000: sled_runners
     13700002: sled_sled
     13700004: sled_sledString
+    13700006: mesh0
+    13700008: mesh1
+    13700010: mesh2
   externalObjects: {}
   materials:
     importMaterials: 1
