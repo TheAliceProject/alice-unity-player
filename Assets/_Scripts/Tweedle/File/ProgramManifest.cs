@@ -7,7 +7,8 @@ namespace Alice.Tweedle.File
 		private List<Preference> preferences;
         //private List<Deprecated.StatementDescription> main; // TODO
 
-		public ProgramDescription(Manifest asset) : base(asset)
+		public ProgramDescription(Manifest asset) 
+			: base(asset)
 		{
 		}
 	}

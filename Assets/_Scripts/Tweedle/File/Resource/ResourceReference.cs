@@ -9,11 +9,11 @@ namespace Alice.Tweedle.File
 		{
 			get
 			{
-				string type = System.Text.RegularExpressions.Regex.Replace(contentType, @"([.,-][a-z]|\b[a-z])", m => m.Value.ToUpper());
-				type = type.Replace("-", string.Empty);
+				string type_regex = System.Text.RegularExpressions.Regex.Replace(type, @"([.,-][a-z]|\b[a-z])", m => m.Value.ToUpper());
+				type_regex = type_regex.Replace("-", string.Empty);
 				try
 				{
-					return (ContentType)System.Enum.Parse(typeof(ContentType), type);
+					return (ContentType)System.Enum.Parse(typeof(ContentType), type_regex);
 				}
 				catch (System.Exception)
 				{
@@ -22,37 +22,15 @@ namespace Alice.Tweedle.File
 			}
 		}
 
-		public FormatType FormatType
+		public string FormatType
 		{
-			get
-			{
-				string type = System.Text.RegularExpressions.Regex.Replace(format, @"([.,-][a-z]|\b[a-z])", m => m.Value.ToUpper());
-				type = type.Replace("-", string.Empty);
-				try
-				{
-					return (FormatType)System.Enum.Parse(typeof(FormatType), type);
-				}
-				catch (System.Exception)
-				{
-					return FormatType.NULL;
-				}
-			}
+			get { return format; }
 		}
+
 
 		public string id;
-		public string contentType;
+		public string type;
 		public string format;
 		public List<string> files;
-
-		public override string ToString()
-		{
-			string str = base.ToString();
-			str += "\n" + id;
-			str += "\n" + contentType;
-			str += "\n" + format;
-			for (int i = 0; i < files.Count; i++)
-				str += "\n" + files[i];
-			return str;
-		}
 	}
 }
