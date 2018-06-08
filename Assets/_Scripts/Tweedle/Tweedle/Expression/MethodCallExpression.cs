@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Alice.Tweedle
 {
@@ -16,6 +17,7 @@ namespace Alice.Tweedle
 		public MethodCallExpression(TweedleExpression target, string methodName, Dictionary<string, TweedleExpression> arguments)
 			: base(target)
 		{
+			Contract.Requires(arguments != null);
 			this.methodName = methodName;
 			this.arguments = arguments;
 		}
@@ -32,8 +34,17 @@ namespace Alice.Tweedle
 
 		Action<TweedleValue> InvokeMethod(TweedleFrame frame)
 		{
-			// Return an Action that takes the target of the method as a value and calls the method
-			return target => { };// TODO target.InvokeMethod(methodName, arguments, frame);
+			return target =>
+			{
+				TweedleMethod method = target.MethodNamed(methodName);
+				if (method == null)
+				{
+					throw new TweedleRuntimeException("No method matching " + target + "." + methodName + "()");
+				}
+				TweedleFrame methodFrame = frame.MethodCallFrame(target);
+				method.Invoke(methodFrame, arguments);
+				// TODO pop frame, invoke next operation
+			};
 		}
 	}
 }

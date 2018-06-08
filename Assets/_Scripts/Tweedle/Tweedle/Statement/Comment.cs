@@ -2,7 +2,7 @@
 {
 	public class Comment : TweedleStatement
 	{
-		private string text;
+		string text;
 
 		public Comment(string text)
 		{

@@ -8,30 +8,21 @@ namespace Alice.Tweedle
 
 		public TweedleExpression Condition
 		{
-			get
-			{
-				return condition;
-			}
+			get { return condition; }
 		}
 
 		BlockStatement thenBody;
 
 		public BlockStatement ThenBody
 		{
-			get
-			{
-				return thenBody;
-			}
+			get { return thenBody; }
 		}
 
 		BlockStatement elseBody;
 
 		public BlockStatement ElseBody
 		{
-			get
-			{
-				return elseBody;
-			}
+			get { return elseBody; }
 		}
 
 		public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)

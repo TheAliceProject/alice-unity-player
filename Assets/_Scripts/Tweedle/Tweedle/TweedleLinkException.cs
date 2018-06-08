@@ -4,7 +4,8 @@ namespace Alice.Tweedle
 {
 	public class TweedleLinkException : SystemException
 	{
-		public TweedleLinkException(string str)
+		public TweedleLinkException(string message)
+            : base(message)
 		{
 		}
 	}

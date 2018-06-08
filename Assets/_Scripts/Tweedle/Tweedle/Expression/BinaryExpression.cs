@@ -2,8 +2,8 @@
 {
 	public abstract class BinaryExpression : TweedleExpression
 	{
-		private TweedleExpression lhs;
-		private TweedleExpression rhs;
+		TweedleExpression lhs;
+		TweedleExpression rhs;
 
 		public BinaryExpression(TweedleExpression lhs, TweedleExpression rhs, TweedleType type)
 			: base(type)

@@ -2,7 +2,7 @@
 {
 	public class TweedleObject : TweedleValue
 	{
-		private readonly TweedleClass tweClass;
+		readonly TweedleClass tweClass;
 
 		public TweedleObject(TweedleClass aClass)
 			: base(aClass)
@@ -30,6 +30,11 @@
 			TweedleValue value = null;
 			Set(field, value);
 			return value;
+		}
+
+		internal override TweedleMethod MethodNamed(string methodName)
+		{
+			return tweClass.MethodNamed(methodName);
 		}
 	}
 }

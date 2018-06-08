@@ -96,7 +96,6 @@ namespace Alice.Tweedle.Parsed
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						UnityEngine.Debug.Log("Parsing classs: " + tweedleCode);
 						TweedleClass tweClass = (TweedleClass)tweedleParser.ParseType(tweedleCode);
 						system.AddClass(tweClass);
 					}
@@ -105,7 +104,6 @@ namespace Alice.Tweedle.Parsed
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						UnityEngine.Debug.Log("Parsing enum: " + tweedleCode);
 						TweedleEnum tweedleEnum = (TweedleEnum)tweedleParser.ParseType(tweedleCode);
 						system.AddEnum(tweedleEnum);
 					}
