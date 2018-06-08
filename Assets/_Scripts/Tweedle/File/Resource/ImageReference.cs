@@ -5,7 +5,7 @@
 	{
 		public override ContentType ContentType => ContentType.Image;
 
-		public System.Guid uuid; // TODO
+		public string uuid;
 		public float height;
 		public float width;
 	}

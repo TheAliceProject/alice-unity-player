@@ -42,30 +42,30 @@ ENUM:               'enum';
 EXTENDS:            'extends';
 FOR_EACH:           'forEach';
 EACH_TOGETHER:      'eachTogether';
-HIDE:               'hidden';
+COMPLETELY_HIDDEN:  'CompletelyHidden';
 IF:                 'if';
 IN:                 'in';
 LOOP:               'loop';
 MODELS:             'models';
 NEW:                'new';
 NUMBER:             'Number';
-PRIMETIME:          'primetime';
+PRIME_TIME:         'PrimeTime';
 RETURN:             'return';
 STATIC:             'static';
-STRING:             'String';
 SUPER:              'super';
 THIS:               'this';
-TUCKED_AWAY:        'tuckedAway';
+TEXT_STRING:        'TextString';
+TUCKED_AWAY:        'TuckedAway';
 VOID:               'void';
 WHILE:              'while';
 WHOLE_NUMBER:       'WholeNumber';
 
 // Literals
 
-DECIMAL_LITERAL:    ('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?;
+DECIMAL_LITERAL:    ('0' | [1-9] (Digits? | '_'+ Digits));
 
-FLOAT_LITERAL:      (Digits '.' Digits? | '.' Digits) ExponentPart? [fFdD]?
-             |       Digits (ExponentPart [fFdD]? | [fFdD])
+FLOAT_LITERAL:      (Digits '.' Digits? | '.' Digits) ExponentPart?
+             |       Digits ExponentPart
              ;
 
 BOOL_LITERAL:       'true'
@@ -125,6 +125,7 @@ ARROW:              '->';
 COLONCOLON:         '::';
 // Additional symbols not defined in the lexical specification
 AT:                 '@';
+CONCAT:             '..';
 ELLIPSIS:           '...';
 
 
@@ -133,7 +134,8 @@ LARROW:             '<-';
 WS:                 [ \t\r\n\u000C]+ -> channel(HIDDEN);
 COMMENT:            '/*' .*? '*/'    -> channel(HIDDEN);
 LINE_COMMENT:       '//' ~[\r\n]*    -> channel(HIDDEN);
-NODE_COMMENT:       '**';
+NODE_DISABLE:       '*<';
+NODE_ENABLE:        '>*';
 
 // Identifiers
 

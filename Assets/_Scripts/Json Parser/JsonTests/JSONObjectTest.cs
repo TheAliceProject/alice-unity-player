@@ -10,12 +10,6 @@ public class JSONObjectTest : MonoBehaviour {
 	{
 		JSONObject j = new JSONObject(encodedString);
 		accessData(j);
-
-		/*
-			string var = "aliceVersion";
-			JsonParser.SetValue(this, var, "1.1.1");
-			Debug.Log(this.GetType().GetField(var, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(this));
-		*/
 	}
 
 	private void accessData(JSONObject obj)
