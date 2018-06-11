@@ -6,6 +6,16 @@
 		{
 		}
 
+		internal override TweedleClass AsClass(TweedleFrame frame)
+		{
+			return frame.ClassNamed(Name);
+		}
+
+		internal override TweedleType AsDeclaredType(TweedleFrame frame)
+		{
+			return frame.TypeNamed(Name);
+		}
+
 		override public bool AcceptsType(TweedleType type)
 		{
 			if (this.Equals(type))

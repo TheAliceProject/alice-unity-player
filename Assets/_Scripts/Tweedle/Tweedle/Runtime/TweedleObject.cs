@@ -1,13 +1,18 @@
-﻿namespace Alice.Tweedle
+﻿using System.Collections.Generic;
+
+namespace Alice.Tweedle
 {
 	public class TweedleObject : TweedleValue
 	{
 		readonly TweedleClass tweClass;
 
+		internal Dictionary<string, ValueHolder> Attributes { get; }
+
 		public TweedleObject(TweedleClass aClass)
 			: base(aClass)
 		{
 			tweClass = aClass;
+			Attributes = new Dictionary<string, ValueHolder>();
 		}
 
 		public TweedleClass GetClass()
@@ -17,19 +22,18 @@
 
 		public TweedleValue Get(string fieldName)
 		{
-			return null;
+			return Attributes[fieldName].Value;
 		}
 
-		public void Set(TweedleField field, TweedleValue value)
+		public void Set(string fieldName, TweedleValue value)
 		{
-
+			Attributes[fieldName].Value = value;
 		}
 
-		public TweedleValue InitializeField(TweedleFrame frame, TweedleField field)
+		public void InitializeField(TweedleFrame frame, TweedleField field)
 		{
-			TweedleValue value = null;
-			Set(field, value);
-			return value;
+			field.InitializeValue(frame.ExecutionFrame(
+				val => Attributes.Add(field.Name, new ValueHolder(field.Type, val))));
 		}
 
 		internal override TweedleMethod MethodNamed(string methodName)

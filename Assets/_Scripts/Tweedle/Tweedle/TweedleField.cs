@@ -2,10 +2,9 @@
 
 namespace Alice.Tweedle
 {
-    public class TweedleField : TweedleValueHolderDeclaration
-    {
-        private List<string> modifiers;
-        private TweedleExpression initializer;
+	public class TweedleField : TweedleValueHolderDeclaration
+	{
+		List<string> modifiers;
 
 		public List<string> Modifiers
 		{
@@ -13,18 +12,17 @@ namespace Alice.Tweedle
 		}
 
 
-        public TweedleField(List<string> modifiers, TweedleType type, string name)
-            : base(type, name)
+		public TweedleField(List<string> modifiers, TweedleType type, string name)
+			: base(type, name)
 		{
-            this.modifiers = modifiers;
-        }
+			this.modifiers = modifiers;
+		}
 
 
-        public TweedleField(List<string> modifiers, TweedleType type, string name, TweedleExpression initializer)
-            : base(type, name)
-        {
-            this.modifiers = modifiers;
-            this.initializer = initializer;
-        }
+		public TweedleField(List<string> modifiers, TweedleType type, string name, TweedleExpression initializer)
+			: base(type, name, initializer)
+		{
+			this.modifiers = modifiers;
+		}
 	}
 }

@@ -1,20 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	public class TweedleFrame
 	{
 		protected TweedleFrame Parent { get; }
+		protected VirtualMachine VirtualMachine { get; }
 		TweedleValue thisValue;
 
-		Dictionary<TweedleValueHolderDeclaration, TweedleValue> localValues =
-			new Dictionary<TweedleValueHolderDeclaration, TweedleValue>();
+		Dictionary<string, ValueHolder> localValues =
+			new Dictionary<string, ValueHolder>();
+
+		internal TweedleClass ClassNamed(string name)
+		{
+			return VirtualMachine.Library.ClassNamed(name);
+		}
+
+		internal TweedleTypeDeclaration TypeNamed(string name)
+		{
+			return VirtualMachine.Library.TypeNamed(name);
+		}
 
 		protected Action<TweedleValue> nextStep;
 
-		public TweedleFrame()//Tweedle.TweedleObject instance)
+		public TweedleFrame(VirtualMachine vm)
 		{
+			VirtualMachine = vm;
 		}
 
 		internal TweedleFrame ParallelFrame(int count)
@@ -22,13 +35,20 @@ namespace Alice.Tweedle
 			return new ParallelFrame(this, count);
 		}
 
+		internal virtual ConstructorFrame ForInstantiation()
+		{
+			return new ConstructorFrame(this);
+		}
+
 		protected TweedleFrame(TweedleFrame parent)
 		{
+			VirtualMachine = parent.VirtualMachine;
 			Parent = parent;
 		}
 
 		protected TweedleFrame(TweedleFrame parent, Action<TweedleValue> next)
 		{
+			VirtualMachine = parent.VirtualMachine;
 			Parent = parent;
 			nextStep = next;
 		}
@@ -50,21 +70,58 @@ namespace Alice.Tweedle
 
 		internal void Next(TweedleValue val)
 		{
-			nextStep(val);
-		}
-
-		internal void Next()
-		{
-			nextStep(TweedleNull.NULL);
-		}
-
-		internal void SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue tweedleValue)
-		{
-			// This will always go to the current frame
-			if (declaration.Type.AcceptsType(tweedleValue.Type))
+			if (nextStep == null)
 			{
-				localValues.Add(declaration, tweedleValue);
+				Parent.Next(val);
+
 			}
+			else
+			{
+				nextStep(val);
+			}
+		}
+
+		internal virtual void Next()
+		{
+			Next(TweedleNull.NULL);
+		}
+
+		public void SetLocalValue(TweedleValueHolderDeclaration declaration)
+		{
+			declaration.InitializeValue(this.ExecutionFrame(val => SetLocalValue(declaration, val)));
+		}
+
+		public void SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue tweedleValue)
+		{
+			localValues.Add(declaration.Name, new ValueHolder(declaration.Type, tweedleValue));
+		}
+
+		public void SetValue(string varName, TweedleValue value)
+		{
+			if (localValues.ContainsKey(varName))
+			{
+				localValues[varName].Value = value;
+				return;
+			}
+			if (Parent != null)
+			{
+				Parent.SetValue(varName, value);
+				return;
+			}
+			throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
+		}
+
+		public TweedleValue GetValue(string varName)
+		{
+			if (localValues.ContainsKey(varName))
+			{
+				return localValues[varName].Value;
+			}
+			if (Parent != null)
+			{
+				return Parent.GetValue(varName);
+			}
+			throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
 		}
 
 		internal TweedleFrame PopMethod()
@@ -110,6 +167,26 @@ namespace Alice.Tweedle
 					Parent.Next();
 				}
 			};
+		}
+	}
+
+	internal class ConstructorFrame : TweedleFrame
+	{
+		internal TweedleObject instance;
+		internal TweedleClass highestClass;
+
+		public ConstructorFrame(TweedleFrame frame)
+			: base(frame)
+		{ }
+
+		internal override ConstructorFrame ForInstantiation()
+		{
+			return this;
+		}
+
+		internal override void Next()
+		{
+			Next(instance);
 		}
 	}
 }

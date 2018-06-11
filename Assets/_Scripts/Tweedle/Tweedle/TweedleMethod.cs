@@ -3,11 +3,11 @@
 namespace Alice.Tweedle
 {
 	public class TweedleMethod
-    {
+	{
 		public List<string> Modifiers { get; }
 		public string Name { get; }
-        public TweedleType Type { get; }
-        public List<TweedleRequiredParameter> RequiredParameters { get; }
+		public TweedleType Type { get; }
+		public List<TweedleRequiredParameter> RequiredParameters { get; }
 		public List<TweedleOptionalParameter> OptionalParameters { get; }
 		public BlockStatement Body { get; }
 
@@ -26,21 +26,33 @@ namespace Alice.Tweedle
 			Modifiers = modifiers;
 		}
 
-        internal void Invoke(TweedleFrame frame, Dictionary<string, TweedleExpression> arguments)
-        {
-            EvaluateArguments(frame, arguments);
+		public bool ExpectsArgs(Dictionary<string, TweedleExpression> arguments)
+		{
+			foreach (TweedleRequiredParameter param in RequiredParameters)
+			{
+				if (!arguments.ContainsKey(param.Name))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 
-            Dictionary<string, TweedleValue> argValues = new Dictionary<string, TweedleValue>();
-            foreach (KeyValuePair<string, TweedleExpression> pair in arguments)
-            {
+		internal void Invoke(TweedleFrame frame, Dictionary<string, TweedleExpression> arguments)
+		{
+			EvaluateArguments(frame, arguments);
+
+			Dictionary<string, TweedleValue> argValues = new Dictionary<string, TweedleValue>();
+			foreach (KeyValuePair<string, TweedleExpression> pair in arguments)
+			{
 				pair.Value.Evaluate(frame.ExecutionFrame(value => argValues.Add(pair.Key, value)));
-            }
+			}
 			Body.ExecuteInSequence(frame);
-        }
+		}
 
 		private void EvaluateArguments(TweedleFrame frame, Dictionary<string, TweedleExpression> arguments)
 		{
-			foreach(TweedleRequiredParameter req in RequiredParameters)
+			foreach (TweedleRequiredParameter req in RequiredParameters)
 			{
 				TweedleExpression argExp;
 				if (arguments.TryGetValue(req.Name, out argExp))
@@ -53,17 +65,17 @@ namespace Alice.Tweedle
 				}
 			}
 			foreach (TweedleOptionalParameter opt in OptionalParameters)
-            {
-                TweedleExpression argExp;
-                if (arguments.TryGetValue(opt.Name, out argExp))
-                {
-					argExp.Evaluate(frame.ExecutionFrame(value => frame.SetLocalValue(opt, value)));
-                }
-                else
+			{
+				TweedleExpression argExp;
+				if (arguments.TryGetValue(opt.Name, out argExp))
 				{
-					opt.GetInitializer().Evaluate(frame.ExecutionFrame(value => frame.SetLocalValue(opt, value)));
-                }
-            }
+					argExp.Evaluate(frame.ExecutionFrame(value => frame.SetLocalValue(opt, value)));
+				}
+				else
+				{
+					opt.Initializer.Evaluate(frame.ExecutionFrame(value => frame.SetLocalValue(opt, value)));
+				}
+			}
 		}
 
 		public bool IsStatic()

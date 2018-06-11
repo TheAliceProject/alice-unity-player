@@ -2,26 +2,17 @@
 {
 	public class IdentifierReference : TweedleExpression
 	{
-		private string name;
-
-		public string Name
-		{
-			get
-			{
-				return name;
-			}
-		}
+		public string Name { get; }
 
 		public IdentifierReference(string name)
 			: base(null)
 		{
-			this.name = name;
+			Name = name;
 		}
 
 		override public void Evaluate(TweedleFrame frame)
 		{
-			// TODO track on execution frame
-			// return frame.getValueFor(this);
+			frame.Next(frame.GetValue(Name));
 		}
 	}
 }

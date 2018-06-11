@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
@@ -37,9 +38,23 @@ namespace Alice.Tweedle
 		{
 		}
 
-		public TweedleObject Instantiate(TweedleFrame frame, TweedleValue[] args)
+		internal override TweedleClass AsClass(TweedleFrame frame)
 		{
-			return new TweedleObject(this);
+			return this;
+		}
+
+		internal TweedleClass SuperClass(TweedleFrame frame)
+		{
+			if (SuperClassName != null)
+			{
+				return frame.ClassNamed(SuperClassName);
+			}
+			return null;
+		}
+
+		internal TweedleConstructor ConstructorWithArgs(Dictionary<string, TweedleExpression> arguments)
+		{
+			return Constructors.FindLast(cstr => cstr.ExpectsArgs(arguments));
 		}
 
 

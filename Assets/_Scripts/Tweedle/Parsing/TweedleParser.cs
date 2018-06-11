@@ -396,7 +396,7 @@ namespace Alice.Tweedle.Parsed
 				}
 				else if (context.arguments() != null)
 				{
-					return new Instantiation((TweedleTypeReference)super.Type, TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
+					return new SuperInstantiation(TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
 				}
 				throw new System.Exception("Super suffix could not be constructed."); ;
 			}
