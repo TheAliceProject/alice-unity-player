@@ -2,27 +2,52 @@
 {
 	public class AssignmentExpression : TweedleExpression
 	{
-		private TweedleExpression assigneeExp;
-		private TweedleExpression valueExp;
+		TweedleExpression TargetExp { get; }
+		TweedleExpression ValueExp { get; }
+		string Identifier { get; }
 
 		public AssignmentExpression(TweedleExpression assigneeExp, TweedleExpression valueExp)
 			: base(valueExp.Type)
 		{
-			this.assigneeExp = assigneeExp;
-			this.valueExp = valueExp;
+			ValueExp = valueExp;
+			if (assigneeExp is IdentifierReference)
+			{
+				Identifier = ((IdentifierReference)assigneeExp).Name;
+				TargetExp = null;
+			}
+			else
+			{
+				if (assigneeExp is FieldAccess)
+				{
+					Identifier = ((FieldAccess)assigneeExp).FieldName;
+					TargetExp = ((FieldAccess)assigneeExp).Target;
+				}
+				else
+				{
+					throw new TweedleLinkException("Unable to handle assigment to " + assigneeExp);
+				}
+			}
 		}
 
 		public override void Evaluate(TweedleFrame frame)
 		{
-			valueExp.Evaluate(frame.ExecutionFrame(
-				// TODO add assignment/write frame and handle on identifier and field
-				value => assigneeExp.Evaluate(frame.ExecutionFrame(
-					assignee =>
+			ValueExp.Evaluate(frame.ExecutionFrame(
+				value =>
+			{
+				if (TargetExp == null)
+				{
+					frame.SetValue(Identifier, value);
+					frame.Next();
+				}
+				else
+				{
+					TargetExp.Evaluate(frame.ExecutionFrame(target =>
 					{
-						// TODO frame.SetValue(assignee, value);
+						((TweedleObject)target).Set(Identifier, value);
 						frame.Next();
-					}
-			))));
+					}));
+				}
+			}));
 		}
 	}
 }

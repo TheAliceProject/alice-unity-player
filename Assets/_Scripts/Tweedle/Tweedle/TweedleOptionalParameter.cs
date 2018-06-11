@@ -1,20 +1,10 @@
-﻿using System;
-
-namespace Alice.Tweedle
+﻿namespace Alice.Tweedle
 {
-    public class TweedleOptionalParameter : TweedleValueHolderDeclaration
-    {
-        private TweedleExpression initializer;
-
-        public TweedleOptionalParameter(TweedleType type, string name, TweedleExpression initializer)
-            : base(type, name)
-        {
-            this.initializer = initializer;
-        }
-
-		internal TweedleExpression GetInitializer()
+	public class TweedleOptionalParameter : TweedleValueHolderDeclaration
+	{
+		public TweedleOptionalParameter(TweedleType type, string name, TweedleExpression initializer)
+			: base(type, name, initializer)
 		{
-			return initializer;
 		}
 	}
 }

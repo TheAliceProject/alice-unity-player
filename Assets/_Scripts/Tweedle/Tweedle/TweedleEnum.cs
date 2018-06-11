@@ -24,13 +24,18 @@ namespace Alice.Tweedle
 		{
 			values.Add(value);
 		}
+
+		internal override TweedleEnum AsEnum(TweedleFrame frame)
+		{
+			return this;
+		}
 	}
 
 	public class TweedleEnumValue : TweedleValue
 	{
-        public string Name { get; }
+		public string Name { get; }
 		public TweedleEnum EnumType { get; }
-		Dictionary<string, TweedleExpression> arguments;  
+		Dictionary<string, TweedleExpression> arguments;
 
 		public TweedleEnumValue(TweedleEnum type, string name, Dictionary<string, TweedleExpression> arguments)
 			: base(type)

@@ -65,6 +65,29 @@ namespace Alice.Tweedle.Parsed
 
 		}
 
+		internal TweedleClass ClassNamed(string name)
+		{
+			return Classes[name];
+		}
+
+		internal TweedleEnum EnumNamed(string name)
+		{
+			return Enums[name];
+		}
+
+		internal TweedleTypeDeclaration TypeNamed(string name)
+		{
+			TweedleTypeDeclaration typeDeclaration = Classes[name];
+			if (typeDeclaration != null)
+			{
+				return typeDeclaration;
+			}
+			else
+			{
+				return EnumNamed(name);
+			}
+		}
+
 		public void AddEnum(TweedleEnum tweEnum)
 		{
 			Enums.Add(tweEnum.Name, tweEnum);
@@ -88,7 +111,7 @@ namespace Alice.Tweedle.Parsed
 				VirtualMachine vm = new VirtualMachine(this);
 				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
 				arguments.Add("args", new TweedleArray(new TweedleArrayType(TweedleTypes.TEXT_STRING),
-				                                       new List<TweedleValue>()));
+													   new List<TweedleValue>()));
 				vm.Execute(new MethodCallExpression(progVal, "main", arguments));
 			}
 		}
@@ -108,11 +131,6 @@ namespace Alice.Tweedle.Parsed
 		private void LinkStaticCalls()
 		{
 			// TODO Make static method calls hard refs to the method itself
-		}
-
-		TweedleFrame NewInvocationFrame()
-		{
-			return new TweedleFrame();
 		}
 	}
 }

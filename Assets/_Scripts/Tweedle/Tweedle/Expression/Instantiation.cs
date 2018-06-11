@@ -4,19 +4,26 @@ namespace Alice.Tweedle
 {
 	public class Instantiation : TweedleExpression
 	{
-		private InvocableMethodHolder invocable;
-		private Dictionary<string, TweedleExpression> arguments;
+		Dictionary<string, TweedleExpression> Arguments { get; }
 
 		public Instantiation(TweedleTypeReference type, Dictionary<string, TweedleExpression> arguments)
 			: base(type)
 		{
-			this.invocable = type;
-			this.arguments = arguments;
+			Arguments = arguments;
+			if (type == null)
+			{
+				UnityEngine.Debug.Log("Placeholder");
+			}
 		}
 
 		public override void Evaluate(TweedleFrame frame)
 		{
-			throw new System.NotImplementedException();
+			ConstructorFrame cFrame = frame.ForInstantiation();
+			cFrame.highestClass = Type.AsClass(frame);
+			cFrame.instance = new TweedleObject(cFrame.highestClass);
+			cFrame.highestClass
+				.ConstructorWithArgs(Arguments)
+				.Invoke(cFrame, Arguments);
 		}
 	}
 }

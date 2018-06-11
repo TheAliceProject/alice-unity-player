@@ -2,30 +2,30 @@
 {
 	public abstract class TweedleExpression
 	{
-		public TweedleType Type
-		{
-			get { return type; }
-		}
-
-		TweedleType type;
+		public TweedleType Type { get; }
 
 		protected TweedleExpression()
 		{
-			this.type = null;
+			Type = null;
 		}
 
 		protected TweedleExpression(TweedleType type)
 		{
-			this.type = type;
+			Type = type;
 		}
 
 		public abstract void Evaluate(TweedleFrame frame);
 
-		public TweedleValue EvaluateNow()
+		public TweedleValue EvaluateNow(TweedleFrame frame)
 		{
 			TweedleValue result = null;
-			Evaluate(new TweedleFrame().ExecutionFrame(val => result = val));
+			Evaluate(frame.ExecutionFrame(val => result = val));
 			return result;
+		}
+
+		public TweedleValue EvaluateNow()
+		{
+			return EvaluateNow(new TweedleFrame(null));
 		}
 
 		internal virtual bool IsLiteral()

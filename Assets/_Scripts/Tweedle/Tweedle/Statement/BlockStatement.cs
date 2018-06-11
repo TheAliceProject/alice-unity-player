@@ -4,16 +4,11 @@ namespace Alice.Tweedle
 {
 	public class BlockStatement
 	{
-		List<TweedleStatement> statements;
-
-		public List<TweedleStatement> Statements
-		{
-			get { return statements; }
-		}
+		public List<TweedleStatement> Statements { get; }
 
 		public BlockStatement(List<TweedleStatement> statements)
 		{
-			this.statements = statements;
+			Statements = statements;
 		}
 
 		public void ExecuteInSequence(TweedleFrame frame)
@@ -23,9 +18,10 @@ namespace Alice.Tweedle
 
 		void ExecuteStatement(int index, TweedleFrame frame)
 		{
-			if (index < statements.Count)
+			if (index < Statements.Count)
 			{
-				statements[index].Execute(frame); // TODO Call back with index+1
+				Statements[index].Execute(frame.ExecutionFrame(
+					val => ExecuteStatement(index + 1, frame)));
 			}
 			else
 			{
@@ -35,8 +31,8 @@ namespace Alice.Tweedle
 
 		public void ExecuteInParallel(TweedleFrame frame)
 		{
-			TweedleFrame allDone = frame.ParallelFrame(statements.Count);
-			foreach (TweedleStatement statement in statements)
+			TweedleFrame allDone = frame.ParallelFrame(Statements.Count);
+			foreach (TweedleStatement statement in Statements)
 			{
 				statement.Execute(allDone);
 			}

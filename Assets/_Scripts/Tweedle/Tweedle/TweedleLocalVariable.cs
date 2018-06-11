@@ -1,27 +1,15 @@
 ﻿namespace Alice.Tweedle
 {
-    public class TweedleLocalVariable : TweedleValueHolderDeclaration
-    {
-        private TweedleExpression initializer;
+	public class TweedleLocalVariable : TweedleValueHolderDeclaration
+	{
+		public TweedleLocalVariable(TweedleType type, string name, TweedleExpression initializer)
+			: base(type, name, initializer)
+		{
+		}
 
-        public TweedleExpression Initializer
-        {
-            get
-            {
-                return initializer;
-            }
-        }
-
-        public TweedleLocalVariable(TweedleType type, string name, TweedleExpression initializer)
-            : base(type, name)
-        {
-            this.initializer = initializer;
-        }
-
-        public TweedleLocalVariable(TweedleType type, string name)
-            : base(type, name)
-        {
-            this.initializer = null;
-        }
-    }
+		public TweedleLocalVariable(TweedleType type, string name)
+			: base(type, name)
+		{
+		}
+	}
 }

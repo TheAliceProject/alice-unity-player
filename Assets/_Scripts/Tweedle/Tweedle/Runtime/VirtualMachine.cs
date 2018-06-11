@@ -4,20 +4,20 @@ using Alice.Tweedle.Parsed;
 
 namespace Alice.VM
 {
-    public class VirtualMachine
+	public class VirtualMachine
 	{
-		private TweedleSystem tweedleSystem;
 		private TweedleFrame staticFrame;
+		public TweedleSystem Library { get; }
 
 		public VirtualMachine(TweedleSystem tweedleSystem)
 		{
-			this.tweedleSystem = tweedleSystem;
+			Library = tweedleSystem;
 			Initialize();
 		}
 
 		private void Initialize()
 		{
-			staticFrame = new TweedleFrame();
+			staticFrame = new TweedleFrame(this);
 			InstantiateEnums();
 			// TODO Evaluate static variables
 			// make enums hard refs?
@@ -30,14 +30,14 @@ namespace Alice.VM
 		}
 
 		public void Execute(TweedleExpression exp)
-        {
-			Execute(new ExpressionStatement(exp), val => {});
-        }
-  
+		{
+			Execute(new ExpressionStatement(exp), val => { });
+		}
+
 		public void Execute(TweedleStatement statement, Action<TweedleValue> next)
 		{
 			statement.Execute(staticFrame.ExecutionFrame(next));
 		}
-    }
- 
+	}
+
 }
