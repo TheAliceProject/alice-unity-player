@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class Comment : TweedleStatement
 	{
@@ -9,9 +11,9 @@
 			this.text = text;
 		}
 
-		public override void Execute(TweedleFrame frame)
+		public override void Execute(TweedleFrame frame, Action next)
 		{
-			frame.Next();
+			next();
 		}
 	}
 }

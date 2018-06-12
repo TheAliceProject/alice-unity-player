@@ -22,9 +22,9 @@ namespace Alice.Tweedle
 			this.arguments = arguments;
 		}
 
-		override public void Evaluate(TweedleFrame frame)
+		override public void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			Target.Evaluate(frame.ExecutionFrame(InvokeMethod(frame)));
+			Target.Evaluate(frame, InvokeMethod(frame, next));
 		}
 
 		public TweedleExpression GetArg(string argName)
@@ -32,18 +32,17 @@ namespace Alice.Tweedle
 			return arguments[argName];
 		}
 
-		Action<TweedleValue> InvokeMethod(TweedleFrame frame)
+		Action<TweedleValue> InvokeMethod(TweedleFrame frame, Action<TweedleValue> next)
 		{
 			return target =>
 			{
-				TweedleMethod method = target.MethodNamed(methodName);
+				TweedleMethod method = target.MethodNamed(frame, methodName);
 				if (method == null)
 				{
 					throw new TweedleRuntimeException("No method matching " + target + "." + methodName + "()");
 				}
-				TweedleFrame methodFrame = frame.MethodCallFrame(target);
+				TweedleFrame methodFrame = frame.MethodCallFrame(target, next);
 				method.Invoke(methodFrame, arguments);
-				// TODO pop frame, invoke next operation
 			};
 		}
 	}

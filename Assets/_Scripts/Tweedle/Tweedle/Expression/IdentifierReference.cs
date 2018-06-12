@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class IdentifierReference : TweedleExpression
 	{
@@ -10,9 +12,9 @@
 			Name = name;
 		}
 
-		override public void Evaluate(TweedleFrame frame)
+		override public void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			frame.Next(frame.GetValue(Name));
+			next(frame.GetValue(Name));
 		}
 	}
 }

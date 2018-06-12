@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
@@ -16,14 +17,10 @@ namespace Alice.Tweedle
 			}
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			ConstructorFrame cFrame = frame.ForInstantiation();
-			cFrame.highestClass = Type.AsClass(frame);
-			cFrame.instance = new TweedleObject(cFrame.highestClass);
-			cFrame.highestClass
-				.ConstructorWithArgs(Arguments)
-				.Invoke(cFrame, Arguments);
+			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame), next);
+			cFrame.Instantiate(Arguments);
 		}
 	}
 }

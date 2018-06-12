@@ -2,7 +2,7 @@
 
 namespace Alice.Tweedle
 {
-	public abstract class TweedleTypeDeclaration : TweedleType, InvocableMethodHolder
+	public abstract class TweedleTypeDeclaration : TweedleType
 	{
 		protected List<TweedleField> properties;
 		protected List<TweedleMethod> methods;
@@ -60,7 +60,7 @@ namespace Alice.Tweedle
 			this.constructors = constructors;
 		}
 
-		public virtual TweedleMethod MethodNamed(string methodName)
+		public virtual TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
         {
 			return Methods.Find((TweedleMethod method) => method.Name.Equals(methodName));
         }

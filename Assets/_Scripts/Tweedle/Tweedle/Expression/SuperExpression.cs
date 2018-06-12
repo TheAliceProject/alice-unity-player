@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class SuperExpression : TweedleExpression
 	{
@@ -7,7 +9,7 @@
 		{
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
 			//frame.GetThis().GetClass().GetSuper();
 		}

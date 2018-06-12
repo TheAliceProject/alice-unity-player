@@ -1,35 +1,32 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class FieldAccess : MemberAccessExpression
 	{
-		string fieldName;
-
-		public string FieldName
-		{
-			get { return fieldName; }
-		}
+		public string FieldName { get; }
 
 		public FieldAccess(TweedleExpression target, string fieldName)
 			: base(target)
 		{
-			this.fieldName = fieldName;
+			FieldName = fieldName;
 		}
 
-		override public void Evaluate(TweedleFrame frame)
+		override public void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			base.Evaluate(frame.ExecutionFrame(value =>
+			base.Evaluate(frame, value =>
 			{
 				if (value is TweedleObject)
 				{
 					TweedleObject obj = (TweedleObject)value;
-					frame.Next(obj.Get(fieldName));
+					next(obj.Get(FieldName));
 				}
 				else
 				{
-					throw new TweedleRuntimeException(value + " is not an Object. Can not access field " + fieldName);
+					throw new TweedleRuntimeException(value + " is not an Object. Can not access field " + FieldName);
 				}
 			}
-			));
+			);
 		}
 	}
 }

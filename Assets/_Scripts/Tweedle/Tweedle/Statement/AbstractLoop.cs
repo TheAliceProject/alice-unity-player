@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
@@ -16,7 +17,7 @@ namespace Alice.Tweedle
 			body = new BlockStatement(statements);
 		}
 
-		public override void Execute(TweedleFrame frame)
+		public override void Execute(TweedleFrame frame, Action next)
 		{
 			throw new System.NotImplementedException();
 		}

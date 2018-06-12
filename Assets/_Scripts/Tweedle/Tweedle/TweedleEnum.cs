@@ -45,9 +45,9 @@ namespace Alice.Tweedle
 			this.arguments = arguments;
 		}
 
-		internal override TweedleMethod MethodNamed(string methodName)
+		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
 		{
-			return EnumType.MethodNamed(methodName);
+			return EnumType.MethodNamed(frame, methodName);
 		}
 	}
 }

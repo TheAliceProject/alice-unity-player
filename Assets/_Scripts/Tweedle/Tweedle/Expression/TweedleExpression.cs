@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public abstract class TweedleExpression
 	{
@@ -14,12 +16,12 @@
 			Type = type;
 		}
 
-		public abstract void Evaluate(TweedleFrame frame);
+		public abstract void Evaluate(TweedleFrame frame, Action<TweedleValue> next);
 
 		public TweedleValue EvaluateNow(TweedleFrame frame)
 		{
 			TweedleValue result = null;
-			Evaluate(frame.ExecutionFrame(val => result = val));
+			Evaluate(frame, val => result = val);
 			return result;
 		}
 

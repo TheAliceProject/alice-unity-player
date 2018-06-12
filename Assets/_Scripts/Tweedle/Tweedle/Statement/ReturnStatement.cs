@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class ReturnStatement : TweedleStatement
 	{
@@ -24,17 +26,10 @@
 			this.expression = expression;
 		}
 
-		public override void Execute(TweedleFrame frame)
+		public override void Execute(TweedleFrame frame, Action next)
 		{
-			// evaluate expression, adding next step for it to call
-			expression.Evaluate(frame.ExecutionFrame(
-				val =>
-				{
-					// pop frames until a method frame
-					TweedleFrame caller = frame.PopMethod();
-					// invoke next action with the value of the expression
-					caller.Next(val);
-				}));
+			// Ignores next since method is finished
+			expression.Evaluate(frame, val => ((InvocationFrame)frame).Complete(val));
 		}
 	}
 }

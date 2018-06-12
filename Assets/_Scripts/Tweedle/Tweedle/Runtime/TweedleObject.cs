@@ -32,13 +32,14 @@ namespace Alice.Tweedle
 
 		public void InitializeField(TweedleFrame frame, TweedleField field)
 		{
-			field.InitializeValue(frame.ExecutionFrame(
-				val => Attributes.Add(field.Name, new ValueHolder(field.Type, val))));
+			field.InitializeValue(frame, val =>
+								  Attributes.Add(field.Name,
+												 new ValueHolder(field.Type.AsDeclaredType(frame), val)));
 		}
 
-		internal override TweedleMethod MethodNamed(string methodName)
+		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
 		{
-			return tweClass.MethodNamed(methodName);
+			return tweClass.MethodNamed(frame, methodName);
 		}
 	}
 }

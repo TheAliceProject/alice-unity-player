@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class AssignmentExpression : TweedleExpression
 	{
@@ -29,25 +31,23 @@
 			}
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			ValueExp.Evaluate(frame.ExecutionFrame(
-				value =>
+			ValueExp.Evaluate(frame, value =>
 			{
 				if (TargetExp == null)
 				{
-					frame.SetValue(Identifier, value);
-					frame.Next();
+					frame.SetValue(Identifier, value, next);
 				}
 				else
 				{
-					TargetExp.Evaluate(frame.ExecutionFrame(target =>
+					TargetExp.Evaluate(frame, target =>
 					{
 						((TweedleObject)target).Set(Identifier, value);
-						frame.Next();
-					}));
+						next(value);
+					});
 				}
-			}));
+			});
 		}
 	}
 }
