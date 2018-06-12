@@ -1,9 +1,11 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class ArrayIndexExpression : TweedleExpression
 	{
-		private TweedleExpression array;
-		private TweedleExpression index;
+		TweedleExpression array;
+		TweedleExpression index;
 
 		public ArrayIndexExpression(TweedleType type, TweedleExpression array, TweedleExpression index) 
 			: base(type)
@@ -12,7 +14,7 @@
 			this.index = index;
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
 			throw new System.NotImplementedException();
 		}

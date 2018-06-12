@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Alice.Tweedle
 {
@@ -11,30 +13,42 @@ namespace Alice.Tweedle
 			Statements = statements;
 		}
 
-		public void ExecuteInSequence(TweedleFrame frame)
+		public void ExecuteInParallel(TweedleFrame frame, Action next)
 		{
-			ExecuteStatement(0, frame);
+			Action allDone = WaitForAll(Statements.Count, next);
+			foreach (TweedleStatement statement in Statements)
+			{
+				statement.Execute(frame.ChildFrame(), allDone);
+			}
 		}
 
-		void ExecuteStatement(int index, TweedleFrame frame)
+		Action WaitForAll(int count, Action next)
+		{
+			int waiting = count;
+			return () =>
+			{
+				Interlocked.Decrement(ref waiting);
+				if (waiting == 0)
+				{
+					next();
+				}
+			};
+		}
+
+		internal void ExecuteInSequence(TweedleFrame frame, Action next)
+		{
+			ExecuteStatement(0, frame, next);
+		}
+
+		void ExecuteStatement(int index, TweedleFrame frame, Action next)
 		{
 			if (index < Statements.Count)
 			{
-				Statements[index].Execute(frame.ExecutionFrame(
-					val => ExecuteStatement(index + 1, frame)));
+				Statements[index].Execute(frame, () => ExecuteStatement(index + 1, frame, next));
 			}
 			else
 			{
-				frame.Next();
-			}
-		}
-
-		public void ExecuteInParallel(TweedleFrame frame)
-		{
-			TweedleFrame allDone = frame.ParallelFrame(Statements.Count);
-			foreach (TweedleStatement statement in Statements)
-			{
-				statement.Execute(allDone);
+				next();
 			}
 		}
 	}

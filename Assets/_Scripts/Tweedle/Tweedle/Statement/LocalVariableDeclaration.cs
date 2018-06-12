@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class LocalVariableDeclaration : TweedleStatement
 	{
@@ -11,22 +13,22 @@
 			Variable = variable;
 		}
 
-		public override void Execute(TweedleFrame frame)
+		public override void Execute(TweedleFrame frame, Action next)
 		{
 			if (Variable.Initializer != null)
 			{
-				Variable.Initializer.Evaluate(frame.ExecutionFrame(
+				Variable.Initializer.Evaluate(frame,
 					val =>
 					{
 						frame.SetLocalValue(Variable, val);
-						frame.Next();
-					}));
+						next();
+					});
 			}
 			else
 			{
 				// TODO Require initializer and eliminate NULL as invalid
 				frame.SetLocalValue(Variable, TweedleNull.NULL);
-				frame.Next();
+				next();
 			}
 		}
 	}

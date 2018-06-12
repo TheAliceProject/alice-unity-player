@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
-	public class TweedleClass : TweedleTypeDeclaration, InvocableMethodHolder
+	public class TweedleClass : TweedleTypeDeclaration
 	{
-		InvocableMethodHolder superClass;
+		TweedleType superClass;
 
 		public string SuperClassName
 		{
@@ -58,16 +58,16 @@ namespace Alice.Tweedle
 		}
 
 
-		public override TweedleMethod MethodNamed(string methodName)
+		public override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
 		{
-			TweedleMethod method = base.MethodNamed(methodName);
+			TweedleMethod method = base.MethodNamed(frame, methodName);
 			if (method != null)
 			{
 				return method;
 			}
 			if (superClass != null)
 			{
-				return superClass.MethodNamed(methodName);
+				return SuperClass(frame).MethodNamed(frame, methodName);
 			}
 			return null;
 		}

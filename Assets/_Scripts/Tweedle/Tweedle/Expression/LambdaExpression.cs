@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
@@ -24,7 +25,7 @@ namespace Alice.Tweedle
 			body = new BlockStatement(statements);
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
 			// TODO Add parameters to frame
 			//body.Execute(frame.LambdaFrame());

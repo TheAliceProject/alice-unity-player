@@ -1,24 +1,20 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	abstract public class MemberAccessExpression : TweedleExpression
 	{
-		TweedleExpression target;
-
-		public TweedleExpression Target
-		{
-			get { return target; }
-		}
+		public TweedleExpression Target { get; }
 
 		public MemberAccessExpression(TweedleExpression target)
 			: base(null)
 		{
-			this.target = target;
+			Target = target;
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			target.Evaluate(frame.ExecutionFrame(
-				value => frame.Next(value)));
+			Target.Evaluate(frame, value => next(value));
 		}
 	}
 }

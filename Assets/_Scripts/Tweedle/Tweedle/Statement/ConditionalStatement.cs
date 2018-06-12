@@ -1,52 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
 	public class ConditionalStatement : TweedleStatement
 	{
-		TweedleExpression condition;
-
-		public TweedleExpression Condition
-		{
-			get { return condition; }
-		}
-
-		BlockStatement thenBody;
-
-		public BlockStatement ThenBody
-		{
-			get { return thenBody; }
-		}
-
-		BlockStatement elseBody;
-
-		public BlockStatement ElseBody
-		{
-			get { return elseBody; }
-		}
+		public TweedleExpression Condition { get; }
+		public BlockStatement ThenBody { get; }
+		public BlockStatement ElseBody { get; }
 
 		public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
 		{
-			this.condition = condition;
-			this.thenBody = new BlockStatement(thenBody);
-			this.elseBody = new BlockStatement(elseBody);
+			Condition = condition;
+			ThenBody = new BlockStatement(thenBody);
+			ElseBody = new BlockStatement(elseBody);
 		}
 
-		public override void Execute(TweedleFrame frame)
+		public override void Execute(TweedleFrame frame, Action next)
 		{
-			condition.Evaluate(frame.ExecutionFrame(value => ExecuteBody(value, frame)));
-		}
-
-		void ExecuteBody(TweedleValue value, TweedleFrame frame)
-		{
-			if (value.ToBoolean())
+			Condition.Evaluate(frame, value =>
 			{
-				thenBody.ExecuteInSequence(frame);
-			}
-			else
-			{
-				elseBody.ExecuteInSequence(frame);
-			}
+				if (value.ToBoolean())
+				{
+					ThenBody.ExecuteInSequence(frame, next);
+				}
+				else
+				{
+					ElseBody.ExecuteInSequence(frame, next);
+				}
+			});
 		}
 	}
 }

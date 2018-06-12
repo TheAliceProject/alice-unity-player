@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
@@ -26,7 +27,7 @@ namespace Alice.Tweedle
             this.arguments = arguments;
         }
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
         {
             // TODO evaluate target to a lambda expression and evaluate it.
 			throw new System.NotImplementedException();

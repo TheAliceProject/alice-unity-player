@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class ThisExpression : TweedleExpression
 	{
@@ -7,9 +9,9 @@
 		{
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			frame.Next(frame.GetThis());
+			next(frame.GetThis());
 		}
 	}
 }

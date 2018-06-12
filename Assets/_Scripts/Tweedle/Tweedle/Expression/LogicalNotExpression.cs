@@ -1,19 +1,20 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
-    class LogicalNotExpression : TweedleExpression
-    {
-		private TweedleExpression expression;
+	class LogicalNotExpression : TweedleExpression
+	{
+		TweedleExpression expression;
 
-        public LogicalNotExpression(TweedleExpression expression)
-            : base(TweedleTypes.BOOLEAN)
-        {
-			this.expression = expression;
-        }
-
-        public override void Evaluate(TweedleFrame frame)
+		public LogicalNotExpression(TweedleExpression expression)
+			: base(TweedleTypes.BOOLEAN)
 		{
-			expression.Evaluate(frame.ExecutionFrame(
-				value => frame.Next(TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean()))));
-        }
-    }
+			this.expression = expression;
+		}
+
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
+		{
+			expression.Evaluate(frame, value => next(TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean())));
+		}
+	}
 }

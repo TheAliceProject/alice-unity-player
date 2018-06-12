@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public abstract class BinaryExpression : TweedleExpression
 	{
@@ -12,12 +14,11 @@
 			this.rhs = rhs;
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			lhs.Evaluate(frame.ExecutionFrame(
-				left => rhs.Evaluate(frame.ExecutionFrame(
-					right => frame.Next(Evaluate(left, right))
-				))));
+			lhs.Evaluate(frame,
+						 left => rhs.Evaluate(frame,
+											  right => next(Evaluate(left, right))));
 		}
 
 		protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);

@@ -6,7 +6,7 @@ namespace Alice.VM
 {
 	public class VirtualMachine
 	{
-		private TweedleFrame staticFrame;
+		TweedleFrame staticFrame;
 		public TweedleSystem Library { get; }
 
 		public VirtualMachine(TweedleSystem tweedleSystem)
@@ -15,7 +15,7 @@ namespace Alice.VM
 			Initialize();
 		}
 
-		private void Initialize()
+		void Initialize()
 		{
 			staticFrame = new TweedleFrame(this);
 			InstantiateEnums();
@@ -23,7 +23,7 @@ namespace Alice.VM
 			// make enums hard refs?
 		}
 
-		private void InstantiateEnums()
+		void InstantiateEnums()
 		{
 			// TODO add enums to the staticFrame
 			// throw new NotImplementedException();
@@ -31,12 +31,12 @@ namespace Alice.VM
 
 		public void Execute(TweedleExpression exp)
 		{
-			Execute(new ExpressionStatement(exp), val => { });
+			Execute(new ExpressionStatement(exp), () => { });
 		}
 
-		public void Execute(TweedleStatement statement, Action<TweedleValue> next)
+		public void Execute(TweedleStatement statement, Action next)
 		{
-			statement.Execute(staticFrame.ExecutionFrame(next));
+			statement.Execute(staticFrame, next);
 		}
 	}
 

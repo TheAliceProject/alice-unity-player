@@ -45,9 +45,9 @@ namespace Alice.Tweedle
 			Dictionary<string, TweedleValue> argValues = new Dictionary<string, TweedleValue>();
 			foreach (KeyValuePair<string, TweedleExpression> pair in arguments)
 			{
-				pair.Value.Evaluate(frame.ExecutionFrame(value => argValues.Add(pair.Key, value)));
+				pair.Value.Evaluate(frame, value => argValues.Add(pair.Key, value));
 			}
-			Body.ExecuteInSequence(frame);
+			Body.ExecuteInSequence(frame, () => { });
 		}
 
 		private void EvaluateArguments(TweedleFrame frame, Dictionary<string, TweedleExpression> arguments)
@@ -57,7 +57,7 @@ namespace Alice.Tweedle
 				TweedleExpression argExp;
 				if (arguments.TryGetValue(req.Name, out argExp))
 				{
-					argExp.Evaluate(frame.ExecutionFrame(value => frame.SetLocalValue(req, value)));
+					argExp.Evaluate(frame, value => frame.SetLocalValue(req, value));
 				}
 				else
 				{
@@ -69,11 +69,11 @@ namespace Alice.Tweedle
 				TweedleExpression argExp;
 				if (arguments.TryGetValue(opt.Name, out argExp))
 				{
-					argExp.Evaluate(frame.ExecutionFrame(value => frame.SetLocalValue(opt, value)));
+					argExp.Evaluate(frame, value => frame.SetLocalValue(opt, value));
 				}
 				else
 				{
-					opt.Initializer.Evaluate(frame.ExecutionFrame(value => frame.SetLocalValue(opt, value)));
+					opt.Initializer.Evaluate(frame, value => frame.SetLocalValue(opt, value));
 				}
 			}
 		}

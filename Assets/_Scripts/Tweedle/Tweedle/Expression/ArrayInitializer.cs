@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
-    public class ArrayInitializer : TweedleExpression
-    {
-        private List<TweedleExpression> elements;
-		private TweedleExpression initializeSize;
+	public class ArrayInitializer : TweedleExpression
+	{
+		List<TweedleExpression> elements;
+		TweedleExpression initializeSize;
 
-        public ArrayInitializer(TweedleArrayType arrayType, List<TweedleExpression> elements)
+		public ArrayInitializer(TweedleArrayType arrayType, List<TweedleExpression> elements)
 			: base(arrayType)
-        {
-            this.elements = elements;
-        }
+		{
+			this.elements = elements;
+		}
 
 		public ArrayInitializer(TweedleType elementType, List<TweedleExpression> elements)
 			: base(new TweedleArrayType(elementType))
@@ -37,8 +37,8 @@ namespace Alice.Tweedle
 			return null;
 		}
 
-		public override void Evaluate(TweedleFrame frame)
-        {
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
+		{
 			if (initializeSize != null)
 			{
 				// TODO update and restore
@@ -46,9 +46,9 @@ namespace Alice.Tweedle
 			}
 			// TODO update and restore
 			//return new TweedleArray(
-				//(TweedleArrayType)this.Type
-				//elements.Select(elem => elem?.Evaluate(frame)).ToList()
-				//);
-        }
-    }
+			//(TweedleArrayType)this.Type
+			//elements.Select(elem => elem?.Evaluate(frame)).ToList()
+			//);
+		}
+	}
 }

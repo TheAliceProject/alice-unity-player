@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
@@ -30,10 +31,10 @@ namespace Alice.Tweedle
 			body = new BlockStatement(statements);
 		}
 
-		public override void Execute(TweedleFrame frame)
+		public override void Execute(TweedleFrame frame, Action next)
 		{
 			// TODO make frames for each statement with values
-			body.ExecuteInParallel(frame);
+			body.ExecuteInParallel(frame, next);
 		}
 	}
 }

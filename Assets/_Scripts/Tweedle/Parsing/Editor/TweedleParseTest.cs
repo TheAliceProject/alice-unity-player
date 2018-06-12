@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
+using System;
 
 namespace Alice.Tweedle.Parsed
 {
@@ -206,7 +207,7 @@ namespace Alice.Tweedle.Parsed
         {
             TweedleClass tested = (TweedleClass)ParseType(commonProgram);
 
-            Assert.NotNull(tested.MethodNamed("getMyScene"), "There should be a method.");
+            Assert.NotNull(tested.MethodNamed(null, "getMyScene"), "There should be a method.");
         }
 
         [Test]
@@ -214,24 +215,23 @@ namespace Alice.Tweedle.Parsed
         {
             TweedleClass tested = (TweedleClass)ParseType(commonProgram);
 
-			Assert.NotNull(tested.MethodNamed("main"), "There should be a method.");
+			Assert.NotNull(tested.MethodNamed(null, "main"), "There should be a method.");
 		}
 
         [Test]
-
         public void NoConstructorAsMethodShouldBeCreatedForAProgram()
         {
             TweedleClass tested = (TweedleClass)ParseType(commonProgram);
-			Assert.Throws<TweedleLinkException>(delegate ()
+			Assert.Throws<NullReferenceException>(delegate ()
 			{
-                tested.MethodNamed("constructor");
+                tested.MethodNamed(null, "constructor");
             });
 		}
 
         [Test]
 		public void StaticModifierShouldNotBeOnGetMySceneMethod()
         {
-			TweedleMethod tested = ((TweedleClass)ParseType(commonProgram)).MethodNamed("getMyScene");
+			TweedleMethod tested = ((TweedleClass)ParseType(commonProgram)).MethodNamed(null, "getMyScene");
 
             Assert.IsFalse(tested.IsStatic(), "Method getMyScene should not be static.");
         }
@@ -239,7 +239,7 @@ namespace Alice.Tweedle.Parsed
         [Test]
         public void StaticModifierShouldBeOnMainMethod()
         {
-			TweedleMethod tested = ((TweedleClass)ParseType(commonProgram)).MethodNamed("main");
+			TweedleMethod tested = ((TweedleClass)ParseType(commonProgram)).MethodNamed(null, "main");
 
 			Assert.IsTrue(tested.IsStatic(), "Method main should be static.");
         }

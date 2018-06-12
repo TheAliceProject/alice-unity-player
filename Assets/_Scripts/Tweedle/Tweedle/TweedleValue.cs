@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public abstract class TweedleValue : TweedleExpression
 	{
@@ -7,9 +9,9 @@
 		{
 		}
 
-		public override void Evaluate(TweedleFrame frame)
+		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
-			frame.Next(this);
+			next(this);
 		}
 
 		internal double ToDouble()
@@ -32,7 +34,7 @@
 			return Type.ValueToBoolean(this);
 		}
 
-		internal virtual TweedleMethod MethodNamed(string methodName)
+		internal virtual TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
 		{
 			throw new TweedleRuntimeException("Can not invoke method " + methodName + " on " + this);
 		}
