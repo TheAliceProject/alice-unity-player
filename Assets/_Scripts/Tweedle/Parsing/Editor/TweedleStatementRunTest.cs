@@ -124,6 +124,14 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		public void CountLoopInnerDeclarationsShouldNotLeak()
+		{
+			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			ExecuteStatement("countUpTo( c < 3 ) { WholeNumber x <- c; }", frame);
+			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
+		}
+
+		[Test]
 		public void NestedCountLoopsShouldEvaluateNxNTimes()
 		{
 			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
@@ -155,14 +163,48 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		public void ForEachLoopInnerDeclarationsShouldNotLeak()
+		{
+			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			ExecuteStatement("forEach( WholeNumber c in new WholeNumber[] {5,2,3} ) { WholeNumber x <- c; }", frame);
+			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
+		}
+
+		[Test]
 		public void AWhileLoopShouldReevaluateEachLoop()
 		{
 			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
 			ExecuteStatement("WholeNumber x <- 0;", frame);
 
-			ExecuteStatement("while(x < 4) { x <- x+1 }", frame);
+			ExecuteStatement("while(x < 4) { x <- x+1; }", frame);
 
 			Assert.AreEqual(4, ((TweedlePrimitiveValue<int>)frame.GetValue("x")).Value);
+		}
+
+		[Test]
+		public void WhileLoopInnerDeclarationsShouldNotLeak()
+		{
+			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			ExecuteStatement("WholeNumber z <- 0;", frame);
+			ExecuteStatement("while(z < 2) { z <- z+1; WholeNumber x <- z; }", frame);
+			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
+		}
+
+		[Test]
+		public void EachTogetherShouldChangeParentValues()
+		{
+			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			ExecuteStatement("WholeNumber x <- 0;", frame);
+			ExecuteStatement("eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) { x <- x + c; }", frame);
+			Assert.AreEqual(10, ((TweedlePrimitiveValue<int>)frame.GetValue("x")).Value, "Should be 10");
+		}
+
+		[Test]
+		public void EachTogetherInnerDeclarationsShouldNotLeak()
+		{
+			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			ExecuteStatement("eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) { WholeNumber x <- c; }", frame);
+			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
 		}
 	}
 }

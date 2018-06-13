@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 			RunCondition.Evaluate(frame, value =>
 			{
 				if (((TweedlePrimitiveValue<bool>)value).Value)
-					Body.ExecuteInSequence(frame, () => Execute(frame, next));
+					Body.ExecuteInSequence(frame.ChildFrame(), () => Execute(frame, next));
 				else
 					next();
 			});

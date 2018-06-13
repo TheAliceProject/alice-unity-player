@@ -22,6 +22,15 @@ namespace Alice.Tweedle
 			}
 		}
 
+		internal void ExecuteFramesInParallel(List<TweedleFrame> frames, Action next)
+		{
+			Action allDone = WaitForAll(frames.Count, next);
+			foreach (TweedleFrame frame in frames)
+			{
+				ExecuteInSequence(frame, allDone);
+			}
+		}
+
 		Action WaitForAll(int count, Action next)
 		{
 			int waiting = count;

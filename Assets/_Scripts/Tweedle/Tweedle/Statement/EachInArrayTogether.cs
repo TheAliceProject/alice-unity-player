@@ -1,40 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Alice.Tweedle
 {
 	public class EachInArrayTogether : TweedleStatement
 	{
-		TweedleLocalVariable itemVariable;
-		TweedleExpression array;
-		BlockStatement body;
-
-		public TweedleLocalVariable ItemVariable
-		{
-			get { return itemVariable; }
-		}
-
-		public TweedleExpression Array
-		{
-			get { return array; }
-		}
-
-		public BlockStatement Body
-		{
-			get { return body; }
-		}
+		public TweedleLocalVariable ItemVariable { get; }
+		public TweedleExpression Array { get; }
+		public BlockStatement Body { get; }
 
 		public EachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> statements)
 		{
-			this.itemVariable = itemVariable;
-			this.array = array;
-			body = new BlockStatement(statements);
+			ItemVariable = itemVariable;
+			Array = array;
+			Body = new BlockStatement(statements);
 		}
 
 		public override void Execute(TweedleFrame frame, Action next)
 		{
-			// TODO make frames for each statement with values
-			body.ExecuteInParallel(frame, next);
+			Array.Evaluate(frame, items => ExecuteBody((TweedleArray)items, frame, next));
+		}
+
+		void ExecuteBody(TweedleArray items, TweedleFrame frame, Action next)
+		{
+			var frames = items.Values.Select(val => frame.ChildFrame(ItemVariable, val)).ToList();
+			Body.ExecuteFramesInParallel(frames, next);
 		}
 	}
 }

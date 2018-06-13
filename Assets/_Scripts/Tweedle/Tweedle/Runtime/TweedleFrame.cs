@@ -13,14 +13,14 @@ namespace Alice.Tweedle
 		Dictionary<string, ValueHolder> localValues =
 			new Dictionary<string, ValueHolder>();
 
-        public TweedleFrame(VirtualMachine vm)
-        {
-            this.vm = vm;
+		public TweedleFrame(VirtualMachine vm)
+		{
+			this.vm = vm;
 		}
 
-        protected TweedleFrame(TweedleFrame parent)
-        {
-            vm = parent.vm;
+		protected TweedleFrame(TweedleFrame parent)
+		{
+			vm = parent.vm;
 			this.parent = parent;
 		}
 
@@ -34,10 +34,10 @@ namespace Alice.Tweedle
 			return vm.Library.TypeNamed(name);
 		}
 
-        internal TweedleValue GetThis()
-        {
-            return thisValue;
-        }
+		internal TweedleValue GetThis()
+		{
+			return thisValue;
+		}
 
 		public void SetLocalValue(TweedleValueHolderDeclaration declaration)
 		{
@@ -47,7 +47,7 @@ namespace Alice.Tweedle
 		public void SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue tweedleValue)
 		{
 			localValues.Add(declaration.Name,
-			                new ValueHolder(declaration.Type.AsDeclaredType(this), tweedleValue));
+							new ValueHolder(declaration.Type.AsDeclaredType(this), tweedleValue));
 		}
 
 		public void SetValue(string varName, TweedleValue value, Action<TweedleValue> next)
@@ -84,19 +84,26 @@ namespace Alice.Tweedle
 			throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
 		}
 
-        public TweedleFrame ChildFrame()
-        {
-            return new TweedleFrame(this);
-        }
+		public TweedleFrame ChildFrame()
+		{
+			return new TweedleFrame(this);
+		}
 
-        internal virtual ConstructorFrame ForInstantiation(TweedleClass tweedleClass, Action<TweedleValue> next)
-        {
-            return new ConstructorFrame(vm, tweedleClass, next);
-        }
+		internal TweedleFrame ChildFrame(TweedleValueHolderDeclaration declaration, TweedleValue value)
+		{
+			var child = new TweedleFrame(this);
+			child.SetLocalValue(declaration, value);
+			return child;
+		}
+
+		internal virtual ConstructorFrame ForInstantiation(TweedleClass tweedleClass, Action<TweedleValue> next)
+		{
+			return new ConstructorFrame(vm, tweedleClass, next);
+		}
 
 		internal TweedleFrame MethodCallFrame(TweedleValue target, Action<TweedleValue> next)
 		{
-            return new MethodFrame(vm, target, next);
+			return new MethodFrame(vm, target, next);
 		}
 	}
 }
