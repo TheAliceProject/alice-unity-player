@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Alice.Tweedle
 {
@@ -41,14 +42,13 @@ namespace Alice.Tweedle
 		{
 			if (initializeSize != null)
 			{
-				// TODO update and restore
-				//this.elements = new List<TweedleExpression>(((TweedlePrimitiveValue<int>)initializeSize.Evaluate(frame)).Value);
+				initializeSize.Evaluate(frame, size =>
+				{
+					elements = new List<TweedleExpression>(size.ToInt());
+				});
 			}
-			// TODO update and restore
-			//return new TweedleArray(
-			//(TweedleArrayType)this.Type
-			//elements.Select(elem => elem?.Evaluate(frame)).ToList()
-			//);
+			next(new TweedleArray((TweedleArrayType)this.Type,
+			                      elements.Select(elem => elem?.EvaluateNow(frame)).ToList()));
 		}
 	}
 }
