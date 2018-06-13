@@ -24,9 +24,7 @@ namespace Alice.Tweedle
 		{
 			if (index < items.Length)
 			{
-				var loopFrame = frame.ChildFrame();
-				loopFrame.SetLocalValue(item, items[index]);
-				Body.ExecuteInSequence(loopFrame,
+				Body.ExecuteInSequence(frame.ChildFrame(item, items[index]),
 									   () => ExecuteBody(index + 1, items, frame, next));
 			}
 			else
