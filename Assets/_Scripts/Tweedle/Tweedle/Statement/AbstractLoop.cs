@@ -1,25 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
 	abstract public class AbstractLoop : TweedleStatement
 	{
-		BlockStatement body;
-
-		public BlockStatement Body
-		{
-			get { return body; }
-		}
+		public BlockStatement Body { get; }
 
 		public AbstractLoop(List<TweedleStatement> statements)
 		{
-			body = new BlockStatement(statements);
-		}
-
-		public override void Execute(TweedleFrame frame, Action next)
-		{
-			throw new System.NotImplementedException();
+			Body = new BlockStatement(statements);
 		}
 	}
 }

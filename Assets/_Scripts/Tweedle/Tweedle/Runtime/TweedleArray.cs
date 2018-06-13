@@ -4,8 +4,8 @@ namespace Alice.Tweedle
 {
     public class TweedleArray : TweedleValue
     {
-		private readonly TweedleArrayType arrayType;
-		private readonly List<TweedleValue> values;
+		readonly TweedleArrayType arrayType;
+		readonly List<TweedleValue> values;
 
         public int Length
         {
