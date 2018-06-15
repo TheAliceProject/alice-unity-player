@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -48,7 +49,46 @@ namespace Alice.Tweedle
 				});
 			}
 			next(new TweedleArray((TweedleArrayType)this.Type,
-			                      elements.Select(elem => elem?.EvaluateNow(frame)).ToList()));
+								  elements.Select(elem => elem?.EvaluateNow(frame)).ToList()));
+		}
+
+		internal override EvaluationStep AsStep(TweedleFrame frame)
+		{
+			List<EvaluationStep> steps = elements.Select(elem => elem?.AsStep(frame)).ToList();
+			if (initializeSize != null)
+			{
+				EvaluationStep sizeStep = initializeSize.AsStep(frame);
+				return new InitArrayStep((TweedleArrayType)this.Type, steps, sizeStep);
+			}
+			return new InitArrayStep((TweedleArrayType)this.Type, steps);
+
+		}
+	}
+
+	internal class InitArrayStep : EvaluationStep
+	{
+		List<EvaluationStep> elements;
+		TweedleArrayType type;
+		private EvaluationStep sizeStep;
+
+		public InitArrayStep(TweedleArrayType type, List<EvaluationStep> elements)
+			: base(new List<ExecutionStep>(elements))
+		{
+			this.type = type;
+			this.elements = elements;
+		}
+
+		public InitArrayStep(TweedleArrayType type, List<EvaluationStep> elements, EvaluationStep sizeStep) : this(type, elements)
+		{
+			// TODO
+			this.sizeStep = sizeStep;
+			AddBlockingStep(sizeStep);
+		}
+
+		internal override bool Execute()
+		{
+			result = new TweedleArray(type, elements.Select(el => el.Result).ToList());
+			return MarkCompleted();
 		}
 	}
 }

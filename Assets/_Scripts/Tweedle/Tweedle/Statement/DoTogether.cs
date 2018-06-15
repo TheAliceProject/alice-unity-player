@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	public class DoTogether : TweedleStatement
 	{
-		BlockStatement body;
-
-		public BlockStatement Body
-		{
-			get { return body; }
-		}
+		public BlockStatement Body { get; }
 
 		public DoTogether(List<TweedleStatement> statements)
 		{
-			body = new BlockStatement(statements);
+			Body = new BlockStatement(statements);
 		}
 
 		public override void Execute(TweedleFrame frame, Action next)
 		{
-			body.ExecuteInParallel(frame, next);
+			Body.ExecuteInParallel(frame, next);
+		}
+
+		internal override ExecutionStep AsStep(TweedleFrame frame)
+		{
+			return Body.ToParallelSteps(frame);
 		}
 	}
 }

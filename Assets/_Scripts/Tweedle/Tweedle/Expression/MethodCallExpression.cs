@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -44,6 +45,11 @@ namespace Alice.Tweedle
 				TweedleFrame methodFrame = frame.MethodCallFrame(target, next);
 				method.Invoke(methodFrame, arguments);
 			};
+		}
+
+		internal override EvaluationStep AsStep(TweedleFrame frame)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

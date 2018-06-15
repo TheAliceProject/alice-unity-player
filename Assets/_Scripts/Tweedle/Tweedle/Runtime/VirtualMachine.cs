@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using Alice.Tweedle;
 using Alice.Tweedle.Parsed;
+using UnityEngine;
 
 namespace Alice.VM
 {
-	public class VirtualMachine
+	public class VirtualMachine : MonoBehaviour
 	{
 		TweedleFrame staticFrame;
 		public TweedleSystem Library { get; }
+		ExecutionQueue executionQueue = new ExecutionQueue();
 
 		public VirtualMachine(TweedleSystem tweedleSystem)
 		{
@@ -37,6 +40,23 @@ namespace Alice.VM
 		public void Execute(TweedleStatement statement, Action next)
 		{
 			statement.Execute(staticFrame, next);
+		}
+
+		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
+		{
+			executionQueue.AddToQueue(statement.Execute(frame));
+			executionQueue.ProcessQueues();
+		}
+
+		public void Execute(TweedleStatement statement)
+		{
+			executionQueue.AddToQueue((ExecutionStep)statement.Execute(staticFrame));
+			StartQueueProcessing();
+		}
+
+		private void StartQueueProcessing()
+		{
+			StartCoroutine("ProcessQueue");
 		}
 	}
 

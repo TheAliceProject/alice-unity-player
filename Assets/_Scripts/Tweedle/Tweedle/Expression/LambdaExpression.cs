@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -29,6 +30,11 @@ namespace Alice.Tweedle
 		{
 			// TODO Add parameters to frame
 			//body.Execute(frame.LambdaFrame());
+			throw new System.NotImplementedException();
+		}
+
+		internal override EvaluationStep AsStep(TweedleFrame frame)
+		{
 			throw new System.NotImplementedException();
 		}
 	}

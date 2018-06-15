@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -24,15 +25,43 @@ namespace Alice.Tweedle
 		{
 			if (index < limit)
 			{
-				var loopFrame = frame.ChildFrame();
-				loopFrame.SetLocalValue(Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index));
-				Body.ExecuteInSequence(loopFrame,
-									   () => ExecuteBody(index + 1, limit, frame, next));
+				Body.ExecuteInSequence(
+					frame.ChildFrame(Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index)),
+					() => ExecuteBody(index + 1, limit, frame, next));
 			}
 			else
 			{
 				next();
 			}
+		}
+
+		internal override ExecutionStep AsStep(TweedleFrame frame)
+		{
+			return new CountLoopStep(this, frame, count.AsStep(frame));
+		}
+	}
+
+	internal class CountLoopStep : StatementStep<CountLoop>
+	{
+		EvaluationStep count;
+		int index = 0;
+
+		public CountLoopStep(CountLoop statement, TweedleFrame frame, EvaluationStep count)
+			: base(statement, frame, count)
+		{
+			this.count = count;
+		}
+
+		internal override bool Execute()
+		{
+			if (index < count.Result.ToInt())
+			{
+				var loopFrame = frame.ChildFrame(statement.Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index));
+				AddBlockingStep(statement.Body.ToSequentialStep(loopFrame));
+				index++;
+				return false;
+			}
+			return MarkCompleted();
 		}
 	}
 }

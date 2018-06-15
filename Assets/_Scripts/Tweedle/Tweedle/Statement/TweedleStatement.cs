@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -14,11 +16,25 @@ namespace Alice.Tweedle
 			}
 		}
 
-		abstract public void Execute(TweedleFrame frame, Action next);
-
 		internal void Disable()
 		{
 			enabled = false;
 		}
+
+		abstract public void Execute(TweedleFrame frame, Action next);
+
+		internal ExecutionStep Execute(TweedleFrame frame)
+		{
+			if (enabled)
+			{
+				return AsStep(frame);
+			}
+			else
+			{
+				return ExecutionStep.NOOP;
+			}
+		}
+
+		internal abstract ExecutionStep AsStep(TweedleFrame frame);
 	}
 }
