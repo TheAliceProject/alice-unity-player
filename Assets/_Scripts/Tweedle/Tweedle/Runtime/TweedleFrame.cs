@@ -50,6 +50,25 @@ namespace Alice.Tweedle
 							new ValueHolder(declaration.Type.AsDeclaredType(this), tweedleValue));
 		}
 
+		public void SetValue(string varName, TweedleValue value)
+		{
+			if (localValues.ContainsKey(varName))
+			{
+				localValues[varName].Value = value;
+			}
+			else
+			{
+				if (parent != null)
+				{
+					parent.SetValue(varName, value);
+				}
+				else
+				{
+					throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
+				}
+			}
+		}
+
 		public void SetValue(string varName, TweedleValue value, Action<TweedleValue> next)
 		{
 			if (localValues.ContainsKey(varName))

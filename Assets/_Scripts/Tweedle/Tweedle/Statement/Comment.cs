@@ -1,4 +1,5 @@
 ﻿using System;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -14,6 +15,11 @@ namespace Alice.Tweedle
 		public override void Execute(TweedleFrame frame, Action next)
 		{
 			next();
+		}
+
+		internal override ExecutionStep AsStep(TweedleFrame frame)
+		{
+			return ExecutionStep.NOOP;
 		}
 	}
 }

@@ -1,27 +1,25 @@
 ﻿using System;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	public class ExpressionStatement : TweedleStatement
 	{
-		TweedleExpression expression;
-
-		public TweedleExpression Expression
-		{
-			get
-			{
-				return expression;
-			}
-		}
+		public TweedleExpression Expression { get; }
 
 		public ExpressionStatement(TweedleExpression expression)
 		{
-			this.expression = expression;
+			Expression = expression;
 		}
 
 		public override void Execute(TweedleFrame frame, Action next)
 		{
-			expression.Evaluate(frame, val => next());
+			Expression.Evaluate(frame, val => next());
+		}
+
+		internal override ExecutionStep AsStep(TweedleFrame frame)
+		{
+			return Expression.AsStep(frame);
 		}
 	}
 }

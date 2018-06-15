@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -26,6 +27,35 @@ namespace Alice.Tweedle
 		{
 			var frames = items.Values.Select(val => frame.ChildFrame(ItemVariable, val)).ToList();
 			Body.ExecuteFramesInParallel(frames, next);
+		}
+
+		internal override ExecutionStep AsStep(TweedleFrame frame)
+		{
+			return new EachInArrayStep(this, frame, Array.AsStep(frame));
+		}
+	}
+
+	internal class EachInArrayStep : StatementStep<EachInArrayTogether>
+	{
+		EvaluationStep array;
+		bool started = false;
+
+		public EachInArrayStep(EachInArrayTogether statement, TweedleFrame frame, EvaluationStep array)
+			: base(statement, frame, array)
+		{
+			this.array = array;
+		}
+
+		internal override bool Execute()
+		{
+			if (started)
+			{
+				return MarkCompleted();
+			}
+			started = true;
+			var frames = ((TweedleArray)array.Result).Values.Select(val => frame.ChildFrame(statement.ItemVariable, val)).ToList();
+			AddBlockingStep(statement.Body.ExecuteFramesInParallel(frames));
+			return false;
 		}
 	}
 }

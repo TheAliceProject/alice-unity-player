@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Alice.VM;
+using System.Linq;
 
 namespace Alice.Tweedle
 {
@@ -58,6 +60,68 @@ namespace Alice.Tweedle
 			else
 			{
 				next();
+			}
+		}
+
+		internal ExecutionStep ToSequentialStep(TweedleFrame frame)
+		{
+			return new SequentialStepsStep(this, frame);
+		}
+
+		internal ExecutionStep ToParallelSteps(TweedleFrame frame)
+		{
+			var blockers = Statements.Select(stmt => stmt.AsStep(frame)).ToList();
+			return new ParallelStepsStep(blockers);
+		}
+
+		internal ExecutionStep ExecuteFramesInParallel(List<TweedleFrame> frames)
+		{
+			List<ExecutionStep> blockers = frames.Select(frame => new SequentialStepsStep(this, frame)).ToList<ExecutionStep>();
+			return new ParallelStepsStep(blockers);
+		}
+
+		internal class SequentialStepsStep : ExecutionStep
+		{
+			protected BlockStatement block;
+			protected TweedleFrame frame;
+			int index = 0;
+
+			public SequentialStepsStep(BlockStatement block, TweedleFrame frame)
+			{
+				this.block = block;
+				this.frame = frame;
+			}
+
+			internal override bool Execute()
+			{
+				if (index < block.Statements.Count)
+				{
+					AddBlockingStep(block.Statements[index].Execute(frame));
+					index++;
+					return false;
+				}
+				return MarkCompleted();
+			}
+		}
+
+		internal class ParallelStepsStep : ExecutionStep
+		{
+			public ParallelStepsStep(List<ExecutionStep> blockers)
+				: base(blockers)
+			{
+			}
+
+			public ParallelStepsStep(BlockStatement block, TweedleFrame frame)
+			{
+				foreach (TweedleStatement statement in block.Statements)
+				{
+					AddBlockingStep(statement.AsStep(frame));
+				}
+			}
+
+			internal override bool Execute()
+			{
+				return MarkCompleted();
 			}
 		}
 	}

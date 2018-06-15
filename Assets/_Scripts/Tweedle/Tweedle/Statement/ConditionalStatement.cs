@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -29,6 +30,46 @@ namespace Alice.Tweedle
 					ElseBody.ExecuteInSequence(frame, next);
 				}
 			});
+		}
+
+		internal override ExecutionStep AsStep(TweedleFrame frame)
+		{
+			return new ConditionalStep(this, frame, Condition.AsStep(frame));
+		}
+	}
+
+	internal class ConditionalStep : StatementStep<ConditionalStatement>
+	{
+		EvaluationStep condition;
+		ExecutionStep body;
+
+		public ConditionalStep(ConditionalStatement statement, TweedleFrame frame, EvaluationStep condition)
+			: base(statement, frame, condition)
+		{
+			this.condition = condition;
+		}
+
+		internal override bool Execute()
+		{
+			if (condition.Result.ToBoolean())
+			{
+				return ExecuteBodyOnceAndWait(statement.ThenBody);
+			}
+			else
+			{
+				return ExecuteBodyOnceAndWait(statement.ElseBody);
+			}
+		}
+
+		bool ExecuteBodyOnceAndWait(BlockStatement statement)
+		{
+			if (body == null)
+			{
+				body = statement.ToSequentialStep(frame);
+				AddBlockingStep(body);
+				return false;
+			}
+			return true;
 		}
 	}
 }

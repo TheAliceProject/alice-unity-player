@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -21,6 +22,11 @@ namespace Alice.Tweedle
 		{
 			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame), next);
 			cFrame.Instantiate(Arguments);
+		}
+
+		internal override EvaluationStep AsStep(TweedleFrame frame)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

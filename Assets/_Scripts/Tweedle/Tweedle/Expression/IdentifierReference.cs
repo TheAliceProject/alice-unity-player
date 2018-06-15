@@ -1,4 +1,5 @@
 ﻿using System;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -15,6 +16,11 @@ namespace Alice.Tweedle
 		override public void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
 		{
 			next(frame.GetValue(Name));
+		}
+
+		internal override EvaluationStep AsStep(TweedleFrame frame)
+		{
+			return new ValueStep(frame.GetValue(Name));
 		}
 	}
 }

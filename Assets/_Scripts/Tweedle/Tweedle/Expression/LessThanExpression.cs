@@ -2,10 +2,10 @@
 {
 	class LessThanExpression : BinaryNumToBoolExpression
 	{
-        public LessThanExpression(TweedleExpression lhs, TweedleExpression rhs)
-            : base(lhs, rhs)
-        {
-        }
+		public LessThanExpression(TweedleExpression lhs, TweedleExpression rhs)
+			: base(lhs, rhs)
+		{
+		}
 
 		protected override bool Evaluate(int left, int right)
 		{
