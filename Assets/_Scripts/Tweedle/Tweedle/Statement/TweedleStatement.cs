@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -9,19 +7,12 @@ namespace Alice.Tweedle
 		bool enabled = true;
 
 		public bool IsEnabled
-		{
-			get
-			{
-				return enabled;
-			}
-		}
+		{ get { return enabled; } }
 
 		internal void Disable()
 		{
 			enabled = false;
 		}
-
-		abstract public void Execute(TweedleFrame frame, Action next);
 
 		internal ExecutionStep Execute(TweedleFrame frame)
 		{

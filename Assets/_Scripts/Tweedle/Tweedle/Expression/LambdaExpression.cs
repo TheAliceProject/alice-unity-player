@@ -26,15 +26,10 @@ namespace Alice.Tweedle
 			body = new BlockStatement(statements);
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
+		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			// TODO Add parameters to frame
 			//body.Execute(frame.LambdaFrame());
-			throw new System.NotImplementedException();
-		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
 			throw new System.NotImplementedException();
 		}
 	}

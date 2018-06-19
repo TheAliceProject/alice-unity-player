@@ -17,7 +17,8 @@ namespace Alice.Tweedle
 
 		internal void Instantiate(Dictionary<string, TweedleExpression> arguments)
 		{
-			highestClass.ConstructorWithArgs(arguments).Invoke(this, arguments);
+			// TODO restore as ExecutionStep
+			//highestClass.ConstructorWithArgs(arguments).Invoke(this, arguments);
 		}
 
 		internal void SuperInstantiate(Dictionary<string, TweedleExpression> arguments)
@@ -25,7 +26,8 @@ namespace Alice.Tweedle
 			TweedleConstructor superConst = NextSuperConstructor(arguments);
 			if (superConst != null)
 			{
-				superConst.Invoke(this, arguments);
+				// TODO restore as ExecutionStep
+				//superConst.Invoke(this, arguments);
 			}
 			else
 			{

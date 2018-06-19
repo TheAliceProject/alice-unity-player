@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -12,21 +14,21 @@ namespace Alice.Tweedle
 			FieldName = fieldName;
 		}
 
-		override public void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
+		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			base.Evaluate(frame, value =>
-			{
-				if (value is TweedleObject)
+			return new SingleInputStep(
+				base.AsStep(frame),
+				target =>
 				{
-					TweedleObject obj = (TweedleObject)value;
-					next(obj.Get(FieldName));
-				}
-				else
-				{
-					throw new TweedleRuntimeException(value + " is not an Object. Can not access field " + FieldName);
-				}
-			}
-			);
+					if (target is TweedleObject)
+					{
+						return ((TweedleObject)target).Get(FieldName);
+					}
+					else
+					{
+						throw new TweedleRuntimeException(target + " is not an Object. Can not access field " + FieldName);
+					}
+				});
 		}
 	}
 }

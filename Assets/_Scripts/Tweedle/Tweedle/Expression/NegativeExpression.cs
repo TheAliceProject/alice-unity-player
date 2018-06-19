@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new NegativeStep(this, expression.AsStep(frame));
+			return new SingleInputStep(expression.AsStep(frame), value => Negate(value));
 		}
 
 		internal abstract TweedleValue Negate(TweedleValue value);
@@ -27,11 +27,6 @@ namespace Alice.Tweedle
 		public NegativeWholeExpression(TweedleExpression expression)
 			: base(TweedleTypes.WHOLE_NUMBER, expression)
 		{
-		}
-
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			expression.Evaluate(frame, value => next(Negate(value)));
 		}
 
 		internal override TweedleValue Negate(TweedleValue value)
@@ -48,34 +43,9 @@ namespace Alice.Tweedle
 		{
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			expression.Evaluate(frame, value => next(Negate(value)));
-		}
-
 		internal override TweedleValue Negate(TweedleValue value)
 		{
 			return TweedleTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble());
-		}
-	}
-
-	// TODO extract this and change Negate to a callback on the expression
-	internal class NegativeStep : EvaluationStep
-	{
-		NegativeExpression expression;
-		EvaluationStep expressionStep;
-
-		public NegativeStep(NegativeExpression expression, EvaluationStep expressionStep)
-			: base(expressionStep)
-		{
-			this.expression = expression;
-			this.expressionStep = expressionStep;
-		}
-
-		internal override bool Execute()
-		{
-			result = expression.Negate(expressionStep.Result);
-			return MarkCompleted();
 		}
 	}
 }

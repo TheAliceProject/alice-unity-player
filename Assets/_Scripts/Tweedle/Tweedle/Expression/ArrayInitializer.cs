@@ -39,19 +39,6 @@ namespace Alice.Tweedle
 			return null;
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			if (initializeSize != null)
-			{
-				initializeSize.Evaluate(frame, size =>
-				{
-					elements = new List<TweedleExpression>(size.ToInt());
-				});
-			}
-			next(new TweedleArray((TweedleArrayType)this.Type,
-								  elements.Select(elem => elem?.EvaluateNow(frame)).ToList()));
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			List<EvaluationStep> steps = elements.Select(elem => elem?.AsStep(frame)).ToList();

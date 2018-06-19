@@ -17,8 +17,6 @@ namespace Alice.Tweedle
 			Type = type;
 		}
 
-		public abstract void Evaluate(TweedleFrame frame, Action<TweedleValue> next);
-
 		public TweedleValue EvaluateNow(TweedleFrame frame)
 		{
 			return AsStep(frame).EvaluateNow();

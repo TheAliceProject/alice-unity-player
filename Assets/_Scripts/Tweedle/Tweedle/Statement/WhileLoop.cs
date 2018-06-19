@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -11,17 +10,6 @@ namespace Alice.Tweedle
 		public WhileLoop(TweedleExpression runCondition, List<TweedleStatement> body) : base(body)
 		{
 			RunCondition = runCondition;
-		}
-
-		public override void Execute(TweedleFrame frame, Action next)
-		{
-			RunCondition.Evaluate(frame, value =>
-			{
-				if (((TweedlePrimitiveValue<bool>)value).Value)
-					Body.ExecuteInSequence(frame.ChildFrame(), () => Execute(frame, next));
-				else
-					next();
-			});
 		}
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)

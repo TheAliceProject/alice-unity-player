@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Alice.VM;
+using NUnit.Framework;
 
 namespace Alice.Tweedle.Parsed
 {
@@ -14,7 +15,7 @@ namespace Alice.Tweedle.Parsed
 		private TweedleValue RunExpression(string src, TweedleFrame frame)
 		{
 			TweedleExpression expression = new TweedleParser().ParseExpression(src);
-			return expression.EvaluateNow(frame);
+			return new VirtualMachine(null).EvaluateToFinish(expression, frame);
 		}
 
 

@@ -39,28 +39,25 @@ namespace Alice.Tweedle
 			return thisValue;
 		}
 
-		public void SetLocalValue(TweedleValueHolderDeclaration declaration)
-		{
-			declaration.InitializeValue(this, val => SetLocalValue(declaration, val));
-		}
-
-		public void SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue tweedleValue)
+		public TweedleValue SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue value)
 		{
 			localValues.Add(declaration.Name,
-							new ValueHolder(declaration.Type.AsDeclaredType(this), tweedleValue));
+							new ValueHolder(declaration.Type.AsDeclaredType(this), value));
+			return value;
 		}
 
-		public void SetValue(string varName, TweedleValue value)
+		public TweedleValue SetValue(string varName, TweedleValue value)
 		{
 			if (localValues.ContainsKey(varName))
 			{
 				localValues[varName].Value = value;
+				return value;
 			}
 			else
 			{
 				if (parent != null)
 				{
-					parent.SetValue(varName, value);
+					return parent.SetValue(varName, value);
 				}
 				else
 				{
@@ -120,7 +117,7 @@ namespace Alice.Tweedle
 			return new ConstructorFrame(vm, tweedleClass, next);
 		}
 
-		internal TweedleFrame MethodCallFrame(TweedleValue target, Action<TweedleValue> next)
+		internal MethodFrame MethodCallFrame(TweedleValue target, Action<TweedleValue> next)
 		{
 			return new MethodFrame(vm, target, next);
 		}

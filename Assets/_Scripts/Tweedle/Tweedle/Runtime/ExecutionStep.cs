@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using Alice.Tweedle;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Alice.Tweedle;
 
 namespace Alice.VM
 {
@@ -9,6 +10,7 @@ namespace Alice.VM
 		public static ExecutionStep NOOP = new NoOpStep();
 
 		internal List<ExecutionStep> BlockingSteps { get; }
+		bool changed = true;
 		bool completed = false;
 
 		protected ExecutionStep()
@@ -29,6 +31,12 @@ namespace Alice.VM
 		protected void AddBlockingSteps(List<ExecutionStep> steps)
 		{
 			BlockingSteps.AddRange(steps);
+			Changed();
+		}
+
+		private void Changed()
+		{
+			changed = true;
 		}
 
 		internal List<ExecutionStep> IncompleteBlockingSteps()
@@ -44,6 +52,7 @@ namespace Alice.VM
 				throw new TweedleRuntimeException("Too many tasks for now.");
 			}
 			BlockingSteps.Add(step);
+			Changed();
 		}
 
 		internal bool IsBlocked()
@@ -56,6 +65,16 @@ namespace Alice.VM
 				}
 			}
 			return false;
+		}
+
+		internal bool IsChanged()
+		{
+			return changed;
+		}
+
+		internal bool MarkQueued()
+		{
+			return changed = false;
 		}
 
 		internal bool IsComplete()
@@ -93,6 +112,23 @@ namespace Alice.VM
 		internal override bool Execute()
 		{
 			return true;
+		}
+	}
+
+	internal class CompletionStep : ExecutionStep
+	{
+		internal CompletionStep()
+		{
+		}
+
+		protected CompletionStep(ExecutionStep blockingStep)
+			:base(blockingStep)
+        {
+        }
+
+		internal override bool Execute()
+		{
+			return MarkCompleted();
 		}
 	}
 }

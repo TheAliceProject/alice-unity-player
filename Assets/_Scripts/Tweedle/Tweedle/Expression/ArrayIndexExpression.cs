@@ -15,11 +15,6 @@ namespace Alice.Tweedle
 			this.index = index;
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			throw new System.NotImplementedException();
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			throw new System.NotImplementedException();

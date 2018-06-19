@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Alice.VM;
+using NUnit.Framework;
 
 namespace Alice.Tweedle.Parsed
 {
@@ -20,8 +21,9 @@ namespace Alice.Tweedle.Parsed
 		public void FrameShouldHoldLocalValueWithInitializer()
 		{
 			TweedleFrame frame = new TweedleFrame(null);
-			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x", TweedleTypes.WHOLE_NUMBER.Instantiate(12));
-			frame.SetLocalValue(xDec);
+			TweedleLocalVariable xVar = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x", TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			LocalVariableDeclaration xDec = new LocalVariableDeclaration(false, xVar);
+			new VirtualMachine(null).ExecuteToFinish(xDec, frame);
 
 			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
 			Assert.AreEqual(12, newVal.Value, "The VM should have returned 12.");

@@ -26,11 +26,19 @@ namespace Alice.VM
 			}
 			allQueuedSteps.Add(step);
 			//UnityEngine.Debug.Log("Step count " + allQueuedSteps.Count);
+			AddToCorrectQueue(step);
+		}
+
+		private void AddToCorrectQueue(ExecutionStep step)
+		{
 			if (step.CanRunThisFrame())
 			{
 				if (step.IsBlocked())
 				{
-					AddToQueue(step.IncompleteBlockingSteps());
+					if (step.IsChanged())
+					{
+						AddToQueue(step.IncompleteBlockingSteps());
+					}
 					//UnityEngine.Debug.Log("Queueing blocked step " + step);
 					blockedSteps.Enqueue(step);
 				}
@@ -71,28 +79,11 @@ namespace Alice.VM
 						//UnityEngine.Debug.Log("Dequeueing step ");
 						ProcessStep(stepsForThisFrame.Dequeue());
 					}
+					// Check each blocked step once
 					var blockedCount = blockedSteps.Count;
 					for (int i = 0; i < blockedCount; i++)
-					//while (blockedSteps.Count > 0)
 					{
-						var step = blockedSteps.Dequeue();
-						//UnityEngine.Debug.Log("Moving blocked step to this frame " + step);
-						if (step.CanRunThisFrame())
-						{
-							if (step.IsBlocked())
-							{
-								blockedSteps.Enqueue(step);
-							}
-							else
-							{
-								stepsForThisFrame.Enqueue(step);
-							}
-						}
-						else
-						{
-							//UnityEngine.Debug.Log("Requeueing next frame");
-							stepsForNextFrame.Enqueue(step);
-						}
+						AddToCorrectQueue(blockedSteps.Dequeue());
 					}
 				}
 				PrepForNextFrame();

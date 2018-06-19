@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -22,13 +22,18 @@ namespace Alice.Tweedle
 			Initializer = initializer;
 		}
 
-		internal void InitializeValue(TweedleFrame frame, Action<TweedleValue> next)
+		internal EvaluationStep InitializerStep(TweedleFrame frame)
 		{
 			if (Initializer == null)
 			{
-				throw new TweedleRuntimeException("Absent Initializer. Unable to initialize variable <" + Name + ">.");
+				return TweedleNull.NULL.AsStep(frame);
+				// OR
+				// throw new TweedleRuntimeException("Absent Initializer. Unable to initialize variable <" + Name + ">.");
 			}
-			Initializer.Evaluate(frame, val => next(val));
+			else
+			{
+				return Initializer.AsStep(frame);
+			}
 		}
 	}
 }

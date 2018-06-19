@@ -26,6 +26,7 @@ namespace Alice.Tweedle
 			Modifiers = modifiers;
 		}
 
+		// TODO use args for method identification not just call validation
 		public bool ExpectsArgs(Dictionary<string, TweedleExpression> arguments)
 		{
 			foreach (TweedleRequiredParameter param in RequiredParameters)
@@ -38,47 +39,7 @@ namespace Alice.Tweedle
 			return true;
 		}
 
-		internal void Invoke(TweedleFrame frame, Dictionary<string, TweedleExpression> arguments)
-		{
-			EvaluateArguments(frame, arguments);
-
-			Dictionary<string, TweedleValue> argValues = new Dictionary<string, TweedleValue>();
-			foreach (KeyValuePair<string, TweedleExpression> pair in arguments)
-			{
-				pair.Value.Evaluate(frame, value => argValues.Add(pair.Key, value));
-			}
-			Body.ExecuteInSequence(frame, () => { });
-		}
-
-		private void EvaluateArguments(TweedleFrame frame, Dictionary<string, TweedleExpression> arguments)
-		{
-			foreach (TweedleRequiredParameter req in RequiredParameters)
-			{
-				TweedleExpression argExp;
-				if (arguments.TryGetValue(req.Name, out argExp))
-				{
-					argExp.Evaluate(frame, value => frame.SetLocalValue(req, value));
-				}
-				else
-				{
-					throw new TweedleLinkException("Invalid method call on " + Name + ". Missing value for required parameter " + req.Name);
-				}
-			}
-			foreach (TweedleOptionalParameter opt in OptionalParameters)
-			{
-				TweedleExpression argExp;
-				if (arguments.TryGetValue(opt.Name, out argExp))
-				{
-					argExp.Evaluate(frame, value => frame.SetLocalValue(opt, value));
-				}
-				else
-				{
-					opt.Initializer.Evaluate(frame, value => frame.SetLocalValue(opt, value));
-				}
-			}
-		}
-
-		public bool IsStatic()
+		public virtual bool IsStatic()
 		{
 			return Modifiers.Contains("static");
 		}

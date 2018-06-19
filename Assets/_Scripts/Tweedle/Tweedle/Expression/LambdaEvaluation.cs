@@ -28,14 +28,9 @@ namespace Alice.Tweedle
 			this.arguments = arguments;
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			// TODO evaluate target to a lambda expression and evaluate it.
-			throw new System.NotImplementedException();
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
+			// TODO evaluate target to a lambda expression and evaluate it.
 			throw new System.NotImplementedException();
 		}
 	}

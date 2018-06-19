@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -25,16 +26,21 @@ namespace Alice.Tweedle
 			return Attributes[fieldName].Value;
 		}
 
-		public void Set(string fieldName, TweedleValue value)
+		public TweedleValue Set(string fieldName, TweedleValue value)
 		{
 			Attributes[fieldName].Value = value;
+			return value;
 		}
 
-		public void InitializeField(TweedleFrame frame, TweedleField field)
+		ExecutionStep InitializeFieldStep(TweedleFrame frame, TweedleField field)
 		{
-			field.InitializeValue(frame, val =>
-								  Attributes.Add(field.Name,
-												 new ValueHolder(field.Type.AsDeclaredType(frame), val)));
+			return new SingleInputStep(
+				field.InitializerStep(frame),
+				val =>
+				{
+					Attributes.Add(field.Name, new ValueHolder(field.Type.AsDeclaredType(frame), val));
+					return val;
+				});
 		}
 
 		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)

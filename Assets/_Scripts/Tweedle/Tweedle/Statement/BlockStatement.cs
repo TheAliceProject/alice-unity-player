@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using Alice.VM;
 using System.Linq;
 
@@ -15,57 +13,16 @@ namespace Alice.Tweedle
 			Statements = statements;
 		}
 
-		public void ExecuteInParallel(TweedleFrame frame, Action next)
-		{
-			Action allDone = WaitForAll(Statements.Count, next);
-			foreach (TweedleStatement statement in Statements)
-			{
-				statement.Execute(frame.ChildFrame(), allDone);
-			}
-		}
-
-		internal void ExecuteFramesInParallel(List<TweedleFrame> frames, Action next)
-		{
-			Action allDone = WaitForAll(frames.Count, next);
-			foreach (TweedleFrame frame in frames)
-			{
-				ExecuteInSequence(frame, allDone);
-			}
-		}
-
-		Action WaitForAll(int count, Action next)
-		{
-			int waiting = count;
-			return () =>
-			{
-				Interlocked.Decrement(ref waiting);
-				if (waiting == 0)
-				{
-					next();
-				}
-			};
-		}
-
-		internal void ExecuteInSequence(TweedleFrame frame, Action next)
-		{
-			ExecuteStatement(0, frame, next);
-		}
-
-		void ExecuteStatement(int index, TweedleFrame frame, Action next)
-		{
-			if (index < Statements.Count)
-			{
-				Statements[index].Execute(frame, () => ExecuteStatement(index + 1, frame, next));
-			}
-			else
-			{
-				next();
-			}
-		}
-
 		internal ExecutionStep ToSequentialStep(TweedleFrame frame)
 		{
-			return new SequentialStepsStep(this, frame);
+			ExecutionStep lastStep = ExecutionStep.NOOP;
+			foreach (TweedleStatement stmt in Statements)
+            {
+				ExecutionStep step = stmt.AsStep(frame);
+                step.AddBlockingStep(lastStep);
+                lastStep = step;
+            }
+            return lastStep;
 		}
 
 		internal ExecutionStep ToParallelSteps(TweedleFrame frame)

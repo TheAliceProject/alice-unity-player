@@ -32,6 +32,96 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		public void SomethingShouldBeCreatedForTrue()
+		{
+			TweedleExpression tested = ParseExpression("true");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void BoolPrimitiveShouldBeCreatedForTrue()
+		{
+			TweedleExpression tested = ParseExpression("true");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<bool>>(tested, "The parser should have returned a TweedlePrimitiveValue.");
+		}
+
+		[Test]
+		public void TruePrimitiveShouldBeCreatedForTrue()
+		{
+			TweedlePrimitiveValue<bool> tested = (TweedlePrimitiveValue<bool>)ParseExpression("true");
+			Assert.IsTrue(tested.Value, "The parser should have returned true.");
+		}
+
+		[Test]
+		public void SomethingShouldBeCreatedForNotTrue()
+		{
+			TweedleExpression tested = ParseExpression("!true");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void LogicalNotExpressionShouldBeCreatedForNotTrue()
+		{
+			TweedleExpression tested = ParseExpression("!true");
+			Assert.IsInstanceOf<LogicalNotExpression>(tested, "The parser should have returned a LogicalNotExpression.");
+		}
+
+		[Test]
+		public void FalsePrimitiveShouldBeCreatedForNotTrue()
+		{
+			LogicalNotExpression tested = (LogicalNotExpression)ParseExpression("!true");
+			Assert.IsFalse(((TweedlePrimitiveValue<bool>)tested.EvaluateNow()).Value,
+						   "The parser should have returned false.");
+		}
+
+		[Test]
+		public void SomethingShouldBeCreatedForFalse()
+		{
+			TweedleExpression tested = ParseExpression("false");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void BoolPrimitiveShouldBeCreatedForFalse()
+		{
+			TweedleExpression tested = ParseExpression("false");
+			Assert.IsInstanceOf<TweedlePrimitiveValue<bool>>(tested, "The parser should have returned a TweedlePrimitiveValue.");
+		}
+
+		[Test]
+		public void FalsePrimitiveShouldBeCreatedForFalse()
+		{
+			TweedlePrimitiveValue<bool> tested = (TweedlePrimitiveValue<bool>)ParseExpression("false");
+			Assert.IsFalse(tested.Value, "The parser should have returned false.");
+		}
+
+		[Test]
+		public void SomethingShouldBeCreatedForNotFalse()
+		{
+			TweedleExpression tested = ParseExpression("!false");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void LogicalNotExpressionShouldBeCreatedForNotFalse()
+		{
+			TweedleExpression tested = ParseExpression("!false");
+			Assert.IsInstanceOf<LogicalNotExpression>(tested, "The parser should have returned a LogicalNotExpression.");
+		}
+
+		[Test]
+		public void FalsePrimitiveShouldBeCreatedForNotFalse()
+		{
+			LogicalNotExpression tested = (LogicalNotExpression)ParseExpression("!false");
+			Assert.IsTrue(((TweedlePrimitiveValue<bool>)tested.EvaluateNow()).Value,
+						  "The parser should have returned true.");
+		}
+
+		[Test]
 		public void SomethingShouldBeCreatedForThis()
 		{
 			TweedleExpression tested = ParseExpression("this");
@@ -85,7 +175,7 @@ namespace Alice.Tweedle.Parsed
 			StringConcatenationExpression tested = (StringConcatenationExpression)ParseExpression("\"hello\" .. \" there\"");
 
 			Assert.AreEqual("hello there",
-			                ((TweedlePrimitiveValue<string>)tested.EvaluateNow()).Value,
+							((TweedlePrimitiveValue<string>)tested.EvaluateNow()).Value,
 							"The StringConcatenationExpression should evaluate correctly.");
 		}
 
@@ -96,6 +186,54 @@ namespace Alice.Tweedle.Parsed
 			Assert.AreEqual(TweedleTypes.TEXT_STRING,
 				tested.Type,
 				"The type should be TextString");
+		}
+
+		[Test]
+		public void SomethingShouldBeCreatedForWholeNumberNegation()
+		{
+			TweedleExpression tested = ParseExpression("-4");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void SomethingShouldBeCreatedForDecimalNegation()
+		{
+			TweedleExpression tested = ParseExpression("-3.74");
+
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void IntegerValueShouldBeCreatedFromNegative()
+		{
+			TweedleExpression tested = ParseExpression("-4");
+
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested, "The parser should have returned a TweedlePrimitiveValue.");
+		}
+
+		[Test]
+		public void DecimalValueShouldBeCreatedFromNegative()
+		{
+			TweedleExpression tested = ParseExpression("-3.74");
+
+			Assert.IsInstanceOf<TweedlePrimitiveValue<double>>(tested, "The parser should have returned a TweedlePrimitiveValue.");
+		}
+
+		[Test]
+		public void CreatedNegativeWholeNumberShouldEvaluateCorrectly()
+		{
+			TweedlePrimitiveValue<int> tested = (TweedlePrimitiveValue<int>)ParseExpression("-4");
+
+			Assert.AreEqual(-4, tested.Value);
+		}
+
+		[Test]
+		public void CreatedNegativeDecimalShouldEvaluateCorrectly()
+		{
+			TweedlePrimitiveValue<double> tested = (TweedlePrimitiveValue<double>)ParseExpression("-3.74");
+
+			Assert.AreEqual(-3.74, tested.Value);
 		}
 
 		[Test]
@@ -142,7 +280,7 @@ namespace Alice.Tweedle.Parsed
 			AdditionExpression tested = (AdditionExpression)ParseExpression("3 + 4");
 
 			Assert.AreEqual(7,
-			                ((TweedlePrimitiveValue<int>)tested.EvaluateNow()).Value,
+							((TweedlePrimitiveValue<int>)tested.EvaluateNow()).Value,
 				"The AdditionExpression should evaluate correctly.");
 		}
 
@@ -158,7 +296,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleExpression tested = ParseExpression("(1 + 1 + 1 + 1 - 1 * 2 + 2) / 2");
 			Assert.AreEqual(2,
-			                ((TweedlePrimitiveValue<int>)tested.EvaluateNow()).Value,
+							((TweedlePrimitiveValue<int>)tested.EvaluateNow()).Value,
 				"The compound expression should evaluate correctly to an int.");
 		}
 
@@ -167,7 +305,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			TweedleExpression tested = ParseExpression("(1 + 1 + 1.0 + 1 - 1 * 2 + 2) / 2");
 			Assert.AreEqual(2.0,
-			                ((TweedlePrimitiveValue<double>)tested.EvaluateNow()).Value,
+							((TweedlePrimitiveValue<double>)tested.EvaluateNow()).Value,
 				"The compound expression should evaluate correctly to a double.");
 		}
 
@@ -185,7 +323,7 @@ namespace Alice.Tweedle.Parsed
 			AdditionExpression tested = (AdditionExpression)ParseExpression("2.1 + 4.9");
 
 			Assert.AreEqual(7.0,
-			                ((TweedlePrimitiveValue<double>)tested.EvaluateNow()).Value,
+							((TweedlePrimitiveValue<double>)tested.EvaluateNow()).Value,
 				"The AdditionExpression should evaluate correctly.");
 		}
 
@@ -196,27 +334,27 @@ namespace Alice.Tweedle.Parsed
 			Assert.AreEqual(TweedleTypes.NUMBER, tested.Type, "The type should be Number");
 		}
 
-        [Test]
-        public void PlusFailsWithStringArgument()
-        {
-            Assert.Throws<System.Exception>(() => ParseExpression("3 + \"4.1\""));
+		[Test]
+		public void PlusFailsWithStringArgument()
+		{
+			Assert.Throws<System.Exception>(() => ParseExpression("3 + \"4.1\""));
 		}
 
-        [Test]
-        public void ConcatWorksWithNumericArgument()
-        {
+		[Test]
+		public void ConcatWorksWithNumericArgument()
+		{
 			TweedleExpression tested = ParseExpression("3 .. \"4.1\"");
-            Assert.AreEqual("34.1",
-			                ((TweedlePrimitiveValue<string>)tested.EvaluateNow()).Value,
-			                "The StringConcatenationExpression should evaluate correctly.");
+			Assert.AreEqual("34.1",
+							((TweedlePrimitiveValue<string>)tested.EvaluateNow()).Value,
+							"The StringConcatenationExpression should evaluate correctly.");
 		}
 
-        [Test]
-        public void ConcatWithNumericArgumentProducesString()
-        {
-            TweedleExpression tested = ParseExpression("3 .. \"4.1\"");
-            Assert.IsInstanceOf<StringConcatenationExpression>(tested, "The parser should have returned an StringConcatenationExpression.");
-        }
+		[Test]
+		public void ConcatWithNumericArgumentProducesString()
+		{
+			TweedleExpression tested = ParseExpression("3 .. \"4.1\"");
+			Assert.IsInstanceOf<StringConcatenationExpression>(tested, "The parser should have returned an StringConcatenationExpression.");
+		}
 
 		[Test]
 		public void SomethingShouldBeCreatedForStringConcat()
