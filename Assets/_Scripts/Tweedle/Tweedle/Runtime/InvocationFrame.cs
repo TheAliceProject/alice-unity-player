@@ -15,7 +15,13 @@ namespace Alice.Tweedle
 
 		internal void Complete(TweedleValue result)
 		{
-			nextAction(result);
+			//nextAction(result);
+			//FinishStep().Result = returnValueStep.Result;
+		}
+
+		internal EvaluationStep FinishStep()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

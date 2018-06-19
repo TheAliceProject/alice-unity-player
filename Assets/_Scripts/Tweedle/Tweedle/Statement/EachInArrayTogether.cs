@@ -18,17 +18,6 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		public override void Execute(TweedleFrame frame, Action next)
-		{
-			Array.Evaluate(frame, items => ExecuteBody((TweedleArray)items, frame, next));
-		}
-
-		void ExecuteBody(TweedleArray items, TweedleFrame frame, Action next)
-		{
-			var frames = items.Values.Select(val => frame.ChildFrame(ItemVariable, val)).ToList();
-			Body.ExecuteFramesInParallel(frames, next);
-		}
-
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return new EachInArrayStep(this, frame, Array.AsStep(frame));

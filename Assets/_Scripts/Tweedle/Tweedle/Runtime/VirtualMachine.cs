@@ -34,18 +34,21 @@ namespace Alice.VM
 
 		public void Execute(TweedleExpression exp)
 		{
-			Execute(new ExpressionStatement(exp), () => { });
-		}
-
-		public void Execute(TweedleStatement statement, Action next)
-		{
-			statement.Execute(staticFrame, next);
+			Execute(new ExpressionStatement(exp));
 		}
 
 		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
 		{
 			executionQueue.AddToQueue(statement.Execute(frame));
 			executionQueue.ProcessQueues();
+		}
+
+		public TweedleValue EvaluateToFinish(TweedleExpression expression, TweedleFrame frame)
+		{
+			EvaluationStep step = expression.AsStep(frame);
+			executionQueue.AddToQueue(step);
+			executionQueue.ProcessQueues();
+			return step.Result;
 		}
 
 		public void Execute(TweedleStatement statement)

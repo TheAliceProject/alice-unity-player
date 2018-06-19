@@ -12,11 +12,6 @@ namespace Alice.Tweedle
 			Expression = expression;
 		}
 
-		public override void Execute(TweedleFrame frame, Action next)
-		{
-			Expression.Evaluate(frame, val => next());
-		}
-
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return Expression.AsStep(frame);

@@ -6,7 +6,7 @@ namespace Alice.Tweedle
 {
 	public class Instantiation : TweedleExpression
 	{
-		Dictionary<string, TweedleExpression> Arguments { get; }
+		internal Dictionary<string, TweedleExpression> Arguments { get; }
 
 		public Instantiation(TweedleTypeReference type, Dictionary<string, TweedleExpression> arguments)
 			: base(type)
@@ -18,15 +18,30 @@ namespace Alice.Tweedle
 			}
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame), next);
-			cFrame.Instantiate(Arguments);
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			throw new NotImplementedException();
+			return new ConstructorStep(Type.AsClass(frame), frame, this);
+		}
+	}
+
+	internal class ConstructorStep : EvaluationStep // MethodStep?
+	{
+		private TweedleClass tweedleClass;
+		private TweedleFrame frame;
+		private Instantiation instantiation;
+
+		public ConstructorStep(TweedleClass tweedleClass, TweedleFrame frame, Instantiation instantiation)
+		{
+			this.tweedleClass = tweedleClass;
+			this.frame = frame;
+			this.instantiation = instantiation;
+		}
+
+		internal override bool Execute()
+		{
+			ConstructorFrame cFrame = frame.ForInstantiation(tweedleClass, null);//next);
+			cFrame.Instantiate(instantiation.Arguments);
+			return false;
 		}
 	}
 }

@@ -17,59 +17,17 @@ namespace Alice.Tweedle
 			ElseBody = new BlockStatement(elseBody);
 		}
 
-		public override void Execute(TweedleFrame frame, Action next)
-		{
-			Condition.Evaluate(frame, value =>
-			{
-				if (value.ToBoolean())
-				{
-					ThenBody.ExecuteInSequence(frame, next);
-				}
-				else
-				{
-					ElseBody.ExecuteInSequence(frame, next);
-				}
-			});
-		}
-
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			return new ConditionalStep(this, frame, Condition.AsStep(frame));
-		}
-	}
-
-	internal class ConditionalStep : StatementStep<ConditionalStatement>
-	{
-		EvaluationStep condition;
-		ExecutionStep body;
-
-		public ConditionalStep(ConditionalStatement statement, TweedleFrame frame, EvaluationStep condition)
-			: base(statement, frame, condition)
-		{
-			this.condition = condition;
-		}
-
-		internal override bool Execute()
-		{
-			if (condition.Result.ToBoolean())
-			{
-				return ExecuteBodyOnceAndWait(statement.ThenBody);
-			}
-			else
-			{
-				return ExecuteBodyOnceAndWait(statement.ElseBody);
-			}
-		}
-
-		bool ExecuteBodyOnceAndWait(BlockStatement statement)
-		{
-			if (body == null)
-			{
-				body = statement.ToSequentialStep(frame);
-				AddBlockingStep(body);
-				return false;
-			}
-			return true;
+			ExecutionStep completion = new CompletionStep();
+			completion.AddBlockingStep(new SingleInputStep( // TODO replace with Execution step to avoid null return
+				Condition.AsStep(frame),
+				condition =>
+				{
+					completion.AddBlockingStep((condition.ToBoolean() ? ThenBody : ElseBody).ToSequentialStep(frame));
+					return TweedleNull.NULL;
+				}));
+			return completion;
 		}
 	}
 }

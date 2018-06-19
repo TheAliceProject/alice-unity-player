@@ -13,14 +13,9 @@ namespace Alice.Tweedle
 			Name = name;
 		}
 
-		override public void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			next(frame.GetValue(Name));
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new ValueStep(frame.GetValue(Name));
+			return new SimpleStep(() => frame.GetValue(Name));
 		}
 	}
 }

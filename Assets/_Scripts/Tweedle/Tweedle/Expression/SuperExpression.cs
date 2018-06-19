@@ -10,13 +10,9 @@ namespace Alice.Tweedle
 		{
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			//frame.GetThis().GetClass().GetSuper();
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
+			//frame.GetThis().GetClass().GetSuper();
 			throw new NotImplementedException();
 		}
 	}

@@ -14,14 +14,10 @@ namespace Alice.Tweedle
 			Arguments = arguments;
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			ConstructorFrame cFrame = (ConstructorFrame) frame;
-			cFrame.SuperInstantiate(Arguments);
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
+			//ConstructorFrame cFrame = (ConstructorFrame)frame;
+			//cFrame.SuperInstantiate(Arguments);
 			throw new NotImplementedException();
 		}
 	}

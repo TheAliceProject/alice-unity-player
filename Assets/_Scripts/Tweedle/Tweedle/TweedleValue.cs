@@ -11,11 +11,6 @@ namespace Alice.Tweedle
 		{
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			next(this);
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			return new ValueStep(this);

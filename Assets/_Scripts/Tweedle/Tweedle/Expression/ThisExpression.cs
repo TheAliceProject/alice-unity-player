@@ -10,14 +10,9 @@ namespace Alice.Tweedle
 		{
 		}
 
-		public override void Evaluate(TweedleFrame frame, Action<TweedleValue> next)
-		{
-			next(frame.GetThis());
-		}
-
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			throw new NotImplementedException();
+			return new ValueStep(frame.GetThis());
 		}
 	}
 }

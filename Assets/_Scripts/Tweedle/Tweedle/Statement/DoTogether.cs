@@ -13,11 +13,6 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		public override void Execute(TweedleFrame frame, Action next)
-		{
-			Body.ExecuteInParallel(frame, next);
-		}
-
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return Body.ToParallelSteps(frame);

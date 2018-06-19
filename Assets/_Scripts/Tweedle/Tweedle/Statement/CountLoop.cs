@@ -16,25 +16,6 @@ namespace Alice.Tweedle
 			this.count = count;
 		}
 
-		public override void Execute(TweedleFrame frame, Action next)
-		{
-			count.Evaluate(frame, value => ExecuteBody(0, ((TweedlePrimitiveValue<int>)value).Value, frame, next));
-		}
-
-		void ExecuteBody(int index, int limit, TweedleFrame frame, Action next)
-		{
-			if (index < limit)
-			{
-				Body.ExecuteInSequence(
-					frame.ChildFrame(Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index)),
-					() => ExecuteBody(index + 1, limit, frame, next));
-			}
-			else
-			{
-				next();
-			}
-		}
-
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return new CountLoopStep(this, frame, count.AsStep(frame));
