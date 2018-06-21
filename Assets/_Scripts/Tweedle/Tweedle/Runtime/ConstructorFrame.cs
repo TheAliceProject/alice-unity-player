@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Alice.Tweedle;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -44,6 +47,23 @@ namespace Alice.Tweedle
 				superClass = superClass.SuperClass(this);
 			}
 			throw new TweedleRuntimeException("No super constructor on" + tweedleClass + " with args " + arguments);
+		}
+
+		internal override EvaluationStep InvokeStep()
+		{
+			EvaluationStep invocation = base.InvokeStep();
+			invocation.AddBlockingStep(InitializeObjectStep());
+			return invocation;
+		}
+
+		private ExecutionStep InitializeObjectStep()
+		{
+			var initObjectStep = new CompletionStep();
+			foreach (ExecutionStep initFieldStep in ((TweedleObject)thisValue).InitializationSteps(this))
+			{
+				initObjectStep.AddBlockingStep(initFieldStep);
+			}
+			return initObjectStep;
 		}
 	}
 }

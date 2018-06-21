@@ -3,16 +3,16 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	internal class SimpleStep : EvaluationStep
+	internal class ContextEvaluationStep : EvaluationStep
 	{
 		Func<TweedleValue> body;
 
-		public SimpleStep(Func<TweedleValue> body)
+		public ContextEvaluationStep(Func<TweedleValue> body)
 		{
 			this.body = body;
 		}
 
-		public SimpleStep(ExecutionStep blockingStep, Func<TweedleValue> body)
+		public ContextEvaluationStep(ExecutionStep blockingStep, Func<TweedleValue> body)
 			: base(blockingStep)
 		{
 			this.body = body;

@@ -1,5 +1,4 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -15,7 +14,7 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new SimpleStep(() => frame.GetValue(Name));
+			return new ContextEvaluationStep(() => frame.GetValue(Name));
 		}
 	}
 }

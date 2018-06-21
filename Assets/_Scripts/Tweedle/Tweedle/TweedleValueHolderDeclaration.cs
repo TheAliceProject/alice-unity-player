@@ -36,9 +36,9 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal bool Accepts(TweedleValue value)
+		internal bool Accepts(TweedleValue value, TweedleFrame frame)
 		{
-			return value != null && Type.AcceptsType(value.Type);
+			return value != null && Type.AsDeclaredType(frame).AcceptsType(value.Type);
 		}
 	}
 }

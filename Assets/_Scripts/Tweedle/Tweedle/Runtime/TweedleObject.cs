@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -21,15 +22,36 @@ namespace Alice.Tweedle
 			return tweClass;
 		}
 
-		public TweedleValue Get(string fieldName)
+		internal override bool HasField(string fieldName)
 		{
-			return Attributes[fieldName].Value;
+			return tweClass.Field(fieldName) != null;
 		}
 
-		internal override bool Set(string fieldName, TweedleValue value)
+		internal override bool HasSetField(string fieldName)
+		{
+			return Attributes.ContainsKey(fieldName);
+		}
+
+		public override TweedleValue Get(string fieldName)
+		{
+			if (HasSetField(fieldName))
+			{
+				return Attributes[fieldName].Value;
+			}
+			if (HasField(fieldName))
+			{
+				throw new TweedleRuntimeException("Attempt to read uninitialized field" + this + "." + fieldName);
+			}
+			else
+			{
+				throw new TweedleRuntimeException("Attempt to read nonexistent field" + this + "." + fieldName);
+			}
+		}
+
+		internal override bool Set(string fieldName, TweedleValue value, TweedleFrame frame)
 		{
 			TweedleField field = tweClass.Field(fieldName);
-			if (field != null & field.Accepts(value))
+			if (field != null & field.Accepts(value, frame))
 			{
 				if (Attributes.ContainsKey(fieldName))
 				{
@@ -37,8 +59,7 @@ namespace Alice.Tweedle
 				}
 				else
 				{
-					// TODO use frame to clarify type?
-					Attributes.Add(field.Name, new ValueHolder(field.Type, value));
+					Attributes.Add(field.Name, new ValueHolder(field.Type.AsDeclaredType(frame), value));
 				}
 				return true;
 			}
@@ -47,18 +68,21 @@ namespace Alice.Tweedle
 
 		ExecutionStep InitializeFieldStep(TweedleFrame frame, TweedleField field)
 		{
-			return new SingleInputStep(
+			return new SingleInputActionStep(
 				field.InitializerStep(frame),
-				val =>
-				{
-					Attributes.Add(field.Name, new ValueHolder(field.Type.AsDeclaredType(frame), val));
-					return val;
-				});
+				val => Attributes.Add(field.Name, new ValueHolder(field.Type.AsDeclaredType(frame), val)));
 		}
 
 		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
 		{
 			return tweClass.MethodNamed(frame, methodName);
+		}
+
+		internal IEnumerable<ExecutionStep> InitializationSteps(ConstructorFrame frame)
+		{
+			List<ExecutionStep> steps = new List<ExecutionStep>();
+			tweClass.AddInitializationSteps(steps, frame, this);
+			return steps;
 		}
 	}
 }

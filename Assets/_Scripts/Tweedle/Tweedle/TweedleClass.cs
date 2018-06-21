@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -84,6 +85,23 @@ namespace Alice.Tweedle
 			for (int i = 0; i < constructors.Count; i++)
 				str += constructors[i].Name + " ";
 			return str;
+		}
+
+		// NB There is no guaranteed order for the execution of steps.
+		//    Make sure they do not conflict or change this to enforce order, most likely by class hierarchy.
+		internal void AddInitializationSteps(List<ExecutionStep> steps, ConstructorFrame frame, TweedleObject tweedleObject)
+		{
+			if (superClass != null)
+			{
+				SuperClass(frame).AddInitializationSteps(steps, frame, tweedleObject);
+			}
+			foreach (TweedleField field in Properties)
+			{
+				if (field.Initializer != null)
+				{
+					steps.Add(field.InitializeFieldStep(frame, tweedleObject));
+				}
+			}
 		}
 	}
 }

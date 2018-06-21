@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -20,13 +19,9 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			ExecutionStep completion = new CompletionStep();
-			completion.AddBlockingStep(new SingleInputStep( // TODO replace with Execution step to avoid null return
+			completion.AddBlockingStep(new SingleInputActionStep(
 				Condition.AsStep(frame),
-				condition =>
-				{
-					completion.AddBlockingStep((condition.ToBoolean() ? ThenBody : ElseBody).ToSequentialStep(frame));
-					return TweedleNull.NULL;
-				}));
+				condition => completion.AddBlockingStep((condition.ToBoolean() ? ThenBody : ElseBody).ToSequentialStep(frame))));
 			return completion;
 		}
 	}

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -23,6 +25,13 @@ namespace Alice.Tweedle
 			: base(type, name, initializer)
 		{
 			this.modifiers = modifiers;
+		}
+
+		internal ExecutionStep InitializeFieldStep(ConstructorFrame frame, TweedleObject tweedleObject)
+		{
+			return new SingleInputActionStep(
+				InitializerStep(frame),
+				value => tweedleObject.Set(Name, value, frame));
 		}
 	}
 }

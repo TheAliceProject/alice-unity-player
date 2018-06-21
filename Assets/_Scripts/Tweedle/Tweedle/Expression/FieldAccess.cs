@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -18,17 +16,7 @@ namespace Alice.Tweedle
 		{
 			return new SingleInputStep(
 				base.AsStep(frame),
-				target =>
-				{
-					if (target is TweedleObject)
-					{
-						return ((TweedleObject)target).Get(FieldName);
-					}
-					else
-					{
-						throw new TweedleRuntimeException(target + " is not an Object. Can not access field " + FieldName);
-					}
-				});
+				target => target.Get(FieldName));
 		}
 	}
 }
