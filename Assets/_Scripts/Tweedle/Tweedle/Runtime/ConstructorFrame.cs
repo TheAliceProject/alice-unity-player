@@ -16,6 +16,7 @@ namespace Alice.Tweedle
 			thisValue = new TweedleObject(tweedleClass);
 			Result = thisValue;
 			FindConstructor(arguments);
+			callStackEntry = "new " + tweedleClass.Name;
 			CreateArgumentSteps(arguments);
 		}
 
@@ -26,6 +27,7 @@ namespace Alice.Tweedle
 			thisValue = constructorFrame.thisValue;
 			Result = thisValue;
 			Method = constructor;
+			callStackEntry = "super() => " + tweedleClass.Name;
 			CreateArgumentSteps(arguments);
 		}
 

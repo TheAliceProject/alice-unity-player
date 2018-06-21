@@ -66,7 +66,7 @@ namespace Alice.Tweedle.Parsed
 		public void Init()
 		{
 			vm = new VirtualMachine(NewSystem());
-			frame = new TweedleFrame(vm);
+			frame = new TweedleFrame("Test", vm);
 		}
 
 		void ExecuteStatement(string src)
@@ -208,6 +208,17 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		public void CreatedParentObjectShouldHaveDefaultObjectFieldSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Parent parent <- new Parent();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("myThing"));
+
+			Assert.AreEqual(5, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
 		public void CreatedParentObjectShouldHaveConstructorObjectFieldSet()
 		{
 			Init();
@@ -215,6 +226,143 @@ namespace Alice.Tweedle.Parsed
 			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("myConstructedThing"));
+		}
+
+		[Test]
+		public void CreatedParentObjectShouldHaveConstructorObjectFieldSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Parent parent <- new Parent();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("myConstructedThing"));
+
+			Assert.AreEqual(27, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
+		public void CreatedParentObjectShouldHaveConstructorObjectFieldOverrideSet()
+		{
+			Init();
+			ExecuteStatement("Parent parent <- new Parent();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+
+			Assert.IsInstanceOf<TweedleObject>(tested.Get("myReplacedThing"));
+		}
+
+		[Test]
+		public void CreatedParentObjectShouldHaveConstructorObjectFieldOverrideSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Parent parent <- new Parent();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("myReplacedThing"));
+
+			Assert.AreEqual(-5, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
+		public void CreatedParentObjectShouldHaveComputedFieldSet()
+		{
+			Init();
+			ExecuteStatement("Parent parent <- new Parent();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+
+			Assert.IsInstanceOf<TweedleObject>(tested.Get("mySpecialThing"));
+		}
+
+		[Test]
+		public void CreatedParentObjectShouldHaveComputedFieldSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Parent parent <- new Parent();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("mySpecialThing"));
+
+			Assert.AreEqual(97, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveDefaultObjectFieldSet()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+
+			Assert.IsInstanceOf<TweedleObject>(tested.Get("myThing"));
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveDefaultObjectFieldSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("myThing"));
+
+			Assert.AreEqual(5, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveConstructorObjectFieldSet()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+
+			Assert.IsInstanceOf<TweedleObject>(tested.Get("myConstructedThing"));
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveConstructorObjectFieldSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("myConstructedThing"));
+
+			Assert.AreEqual(27, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveConstructorObjectFieldOverrideSet()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+
+			Assert.IsInstanceOf<TweedleObject>(tested.Get("myReplacedThing"));
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveConstructorObjectFieldOverrideSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("myReplacedThing"));
+
+			Assert.AreEqual(1000, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveComputedFieldSet()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+
+			Assert.IsInstanceOf<TweedleObject>(tested.Get("mySpecialThing"));
+		}
+
+		[Test]
+		public void CreatedChildObjectShouldHaveComputedFieldSetWithCorrectValue()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject fieldObject = ((TweedleObject)tested.Get("mySpecialThing"));
+
+			Assert.AreEqual(97, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
 		}
 	}
 }

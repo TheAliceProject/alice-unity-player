@@ -45,7 +45,7 @@ namespace Alice.Tweedle
 			if (condition.Result.ToBoolean())
 			{
 				BlockingSteps.Clear();
-				AddBlockingStep(statement.Body.ToSequentialStep(frame.ChildFrame()));
+				AddBlockingStep(statement.Body.ToSequentialStep(frame.ChildFrame("While loop")));
 				return false;
 			}
 			return MarkCompleted();

@@ -24,7 +24,7 @@ namespace Alice.Tweedle
 
 		internal override bool HasField(string fieldName)
 		{
-			return tweClass.Field(fieldName) != null;
+			return tweClass.Field(null, fieldName) != null;
 		}
 
 		internal override bool HasSetField(string fieldName)
@@ -50,8 +50,8 @@ namespace Alice.Tweedle
 
 		internal override bool Set(string fieldName, TweedleValue value, TweedleFrame frame)
 		{
-			TweedleField field = tweClass.Field(fieldName);
-			if (field != null & field.Accepts(value, frame))
+			TweedleField field = tweClass.Field(frame, fieldName);
+			if (field != null && field.Accepts(value, frame))
 			{
 				if (Attributes.ContainsKey(fieldName))
 				{

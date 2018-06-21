@@ -24,12 +24,18 @@ namespace Alice.Tweedle
 
 		public TweedleValue EvaluateNow()
 		{
-			return EvaluateNow(new TweedleFrame(null));
+			return EvaluateNow(new TweedleFrame("EvaluateNow"));
 		}
 
 		internal virtual bool IsLiteral()
 		{
 			return false;
+		}
+
+		internal virtual string ToTweedle()
+		{
+			// TODO Override in all subclasses and make this abstract
+			return ToString();
 		}
 
 		internal abstract EvaluationStep AsStep(TweedleFrame frame);

@@ -11,7 +11,7 @@ namespace Alice.Tweedle
 		public TweedleValue Result { get; internal set; }
 
 		public InvocationFrame(TweedleFrame frame)
-			: base(frame.vm)
+			: base("Invocation", frame.vm)
 		{
 			callingFrame = frame;
 		}
@@ -44,6 +44,12 @@ namespace Alice.Tweedle
 					argumentSteps.Add(opt, argStep);
 				}
 			}
+		}
+
+
+		internal override string StackWith(string stackTop)
+		{
+			return callingFrame.StackWith(stackTop + "\n" + callStackEntry);
 		}
 
 		internal virtual EvaluationStep InvokeStep()

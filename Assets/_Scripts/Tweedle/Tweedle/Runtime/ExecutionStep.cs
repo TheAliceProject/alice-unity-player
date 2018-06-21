@@ -12,6 +12,7 @@ namespace Alice.VM
 		internal List<ExecutionStep> BlockingSteps { get; }
 		bool changed = true;
 		bool completed = false;
+		internal string callStack;
 
 		protected ExecutionStep()
 		{
@@ -100,6 +101,11 @@ namespace Alice.VM
 		// Return true if complete, false if it should be run again next frame
 		// TODO check for blocking here and prevent improper execution
 		internal abstract bool Execute();
+
+		internal string CallStack()
+		{
+			return callStack;
+		}
 	}
 
 	internal class NoOpStep : ExecutionStep
@@ -122,9 +128,9 @@ namespace Alice.VM
 		}
 
 		protected CompletionStep(ExecutionStep blockingStep)
-			:base(blockingStep)
-        {
-        }
+			: base(blockingStep)
+		{
+		}
 
 		internal override bool Execute()
 		{

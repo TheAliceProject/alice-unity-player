@@ -20,7 +20,7 @@ namespace Alice.VM
 
 		void Initialize()
 		{
-			staticFrame = new TweedleFrame(this);
+			staticFrame = new TweedleFrame("VM", this);
 			InstantiateEnums();
 			// TODO Evaluate static variables
 			// make enums hard refs?

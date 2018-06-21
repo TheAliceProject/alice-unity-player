@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new SingleInputStep(
+			return new SingleInputStep(frame.StackWith("Get " + FieldName),
 				base.AsStep(frame),
 				target => target.Get(FieldName));
 		}

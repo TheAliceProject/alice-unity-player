@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new SingleInputStep(
+			return new SingleInputStep(frame.StackWith("!" + expression.ToTweedle()),
 				expression.AsStep(frame),
 				value => TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean()));
 		}

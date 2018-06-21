@@ -38,12 +38,12 @@ namespace Alice.Tweedle
 		{
 			if (items == null)
 			{
-				items = (TweedleArray) array.Result;
+				items = (TweedleArray)array.Result;
 			}
 			if (index < items.Length)
 			{
 				BlockingSteps.Clear();
-				var loopFrame = frame.ChildFrame(statement.item, items[index]);
+				var loopFrame = frame.ChildFrame("ForEach loop", statement.item, items[index]);
 				AddBlockingStep(statement.Body.ToSequentialStep(loopFrame));
 				index++;
 				return false;

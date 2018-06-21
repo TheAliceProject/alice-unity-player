@@ -37,7 +37,7 @@ namespace Alice.Tweedle
 		{
 			if (index < count.Result.ToInt())
 			{
-				var loopFrame = frame.ChildFrame(statement.Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index));
+				var loopFrame = frame.ChildFrame("Count loop", statement.Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index));
 				AddBlockingStep(statement.Body.ToSequentialStep(loopFrame));
 				index++;
 				return false;

@@ -37,6 +37,7 @@ namespace Alice.Tweedle
 					{
 						throw new TweedleRuntimeException("No method matching " + target + "." + MethodName + "()");
 					}
+					methodFrame.callStackEntry = MethodName;
 					methodFrame.CreateArgumentSteps(arguments);
 				});
 			return new StartStep(prepMethodStep, () => methodFrame.InvokeStep());

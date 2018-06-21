@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new SingleInputStep(expression.AsStep(frame), value => Negate(value));
+			return new SingleInputStep(frame.StackWith("-" + expression.ToTweedle()), expression.AsStep(frame), value => Negate(value));
 		}
 
 		internal abstract TweedleValue Negate(TweedleValue value);

@@ -9,13 +9,20 @@ namespace Alice.Tweedle
 		TweedleFrame parent;
 		protected internal VirtualMachine vm;
 		protected TweedleValue thisValue;
+		protected internal string callStackEntry;
 
 		Dictionary<string, ValueHolder> localValues =
 			new Dictionary<string, ValueHolder>();
 
-		public TweedleFrame(VirtualMachine vm)
+		public TweedleFrame(string stackEntry)
+		{
+			callStackEntry = stackEntry;
+		}
+
+		public TweedleFrame(string stackEntry, VirtualMachine vm)
 		{
 			this.vm = vm;
+			callStackEntry = stackEntry;
 		}
 
 		protected TweedleFrame(TweedleFrame parent)
@@ -41,6 +48,19 @@ namespace Alice.Tweedle
 				return new TypeValue(libraryType);
 			// TODO Add catch for System Primitive types
 			return null;
+		}
+
+		internal virtual string StackWith(string stackTop)
+		{
+			string stack = stackTop + "\n" + callStackEntry;
+			if (parent == null)
+			{
+				return stack;
+			}
+			else
+			{
+				return parent.StackWith(stack);
+			}
 		}
 
 		internal TweedleValue GetThis()
@@ -118,10 +138,18 @@ namespace Alice.Tweedle
 			return new TweedleFrame(this);
 		}
 
-		internal TweedleFrame ChildFrame(TweedleValueHolderDeclaration declaration, TweedleValue value)
+		public TweedleFrame ChildFrame(string stackEntry)
+		{
+			TweedleFrame child = new TweedleFrame(this);
+			child.callStackEntry = stackEntry;
+			return child;
+		}
+
+		internal TweedleFrame ChildFrame(string stackEntry, TweedleValueHolderDeclaration declaration, TweedleValue value)
 		{
 			var child = new TweedleFrame(this);
 			child.SetLocalValue(declaration, value);
+			child.callStackEntry = stackEntry;
 			return child;
 		}
 
