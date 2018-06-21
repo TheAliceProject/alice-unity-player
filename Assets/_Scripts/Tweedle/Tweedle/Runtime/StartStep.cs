@@ -9,9 +9,10 @@ namespace Alice.Tweedle
 		private Func<EvaluationStep> generator;
 		EvaluationStep child;
 
-		public StartStep(Func<EvaluationStep> generator)
+		public StartStep(string callStack, Func<EvaluationStep> generator)
 		{
 			this.generator = generator;
+			this.callStack = callStack;
 		}
 
 		public StartStep(ExecutionStep blockingStep, Func<EvaluationStep> generator)

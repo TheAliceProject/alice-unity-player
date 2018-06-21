@@ -58,6 +58,20 @@ namespace Alice.Tweedle
 			return Constructors.FindLast(cstr => cstr.ExpectsArgs(arguments));
 		}
 
+		internal override TweedleField Field(TweedleFrame frame, string fieldName)
+		{
+			TweedleField field = base.Field(frame, fieldName);
+			if (field != null)
+			{
+				return field;
+			}
+			if (superClass != null)
+			{
+				return SuperClass(frame).Field(frame, fieldName);
+			}
+			return null;
+		}
+
 
 		public override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
 		{

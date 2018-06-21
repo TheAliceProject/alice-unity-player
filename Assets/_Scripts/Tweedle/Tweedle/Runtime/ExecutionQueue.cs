@@ -127,11 +127,29 @@ namespace Alice.VM
 			else
 			{
 				allQueuedSteps.Remove(step);
-				if (!step.Execute())
+				if (StepExecutionFinishes(step))
 				{
 					//UnityEngine.Debug.Log("Requeueing");
 					AddToQueue(step);
 				}
+			}
+		}
+
+		private static bool StepExecutionFinishes(ExecutionStep step)
+		{
+			try
+			{
+				return !step.Execute();
+			}
+			catch (TweedleRuntimeException tre)
+			{
+				UnityEngine.Debug.Log("--------------------------------------------------");
+				UnityEngine.Debug.Log(tre.Message);
+				UnityEngine.Debug.Log("--------------Tweedle Stack-----------------------");
+				UnityEngine.Debug.Log(step.CallStack());
+				UnityEngine.Debug.Log("--------------Tweedle Stack-----------------------");
+				// TODO decide how best to handle errors in steps
+				throw tre;
 			}
 		}
 	}

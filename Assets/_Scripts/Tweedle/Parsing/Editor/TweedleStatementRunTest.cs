@@ -15,14 +15,18 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void EmptyDoInOrderShouldExecute()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
-			ExecuteStatement("doInOrder {}", frame);
+			ExecuteStatement("doInOrder {}", GetTestFrame());
+		}
+
+		private static TweedleFrame GetTestFrame()
+		{
+			return new TweedleFrame("Test", new VirtualMachine(new TweedleSystem()));
 		}
 
 		[Test]
 		public void LocalDeclarationShouldUpdateTheFrame()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 3;", frame);
 
 			Assert.NotNull(frame.GetValue("x"));
@@ -31,7 +35,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void LocalDeclarationShouldSetTheValueOnTheFrame()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 3;", frame);
 
 			Assert.AreEqual(3, ((TweedlePrimitiveValue<int>)frame.GetValue("x")).Value, "Should be 3");
@@ -40,7 +44,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void DoInOrderSingletonShouldUpdateParentValues()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 3;", frame);
 
 			ExecuteStatement("doInOrder { x <- 4; }", frame);
@@ -51,7 +55,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void DoInOrderSequenceShouldUpdateParentValues()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 3;", frame);
 
 			ExecuteStatement("doInOrder { x <- 4; x <- 34; x <- 12; }", frame);
@@ -62,7 +66,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void DoInOrderSequenceShouldReadPreviousValues()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 3;", frame);
 
 			ExecuteStatement("doInOrder { x <- x * 4; WholeNumber y <- 2; x <- x + y; }", frame);
@@ -73,7 +77,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void DoTogetherSingletonShouldUpdateParentValues()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 3;", frame);
 
 			ExecuteStatement("doTogether { x <- 4; }", frame);
@@ -84,7 +88,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void DoTogetherSequenceShouldUpdateParentValuesInSomeOrder()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 3;", frame);
 
 			ExecuteStatement("doTogether { x <- 4; x <- 34; x <- 12; }", frame);
@@ -95,7 +99,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void ConditionalTrueShouldEvaluateThen()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 2;", frame);
 			ExecuteStatement("if( true ) { x <- 5; } else { x <- 17; }", frame);
 
@@ -105,7 +109,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void ConditionalFalseShouldEvaluateElse()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 2;", frame);
 			ExecuteStatement("if( false ) { x <- 5; } else { x <- 17; }", frame);
 
@@ -115,7 +119,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void CountLoopShouldEvaluateNTimes()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 0;", frame);
 			ExecuteStatement("countUpTo( c < 3 ) { x <- x + c; }", frame);
 
@@ -125,7 +129,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void CountLoopInnerDeclarationsShouldNotLeak()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("countUpTo( c < 3 ) { WholeNumber x <- c; }", frame);
 			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
 		}
@@ -133,7 +137,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void NestedCountLoopsShouldEvaluateNxNTimes()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 0;", frame);
 			ExecuteStatement("countUpTo( a < 3 ) { countUpTo( b < 3 ) { x <- x + 1; } }", frame);
 
@@ -143,7 +147,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void NestedCountLoopsShouldEvaluateNxNxNTimes()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 0;", frame);
 			ExecuteStatement("countUpTo( a < 10 ) { countUpTo( b < 10 ) { countUpTo( c < 10 ) { x <- x + 1; } } }", frame);
 
@@ -153,7 +157,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void ForEachLoopShouldEvaluateNTimes()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 0;", frame);
 			ExecuteStatement("forEach( WholeNumber c in new WholeNumber[] {5,2,3} ) { x <- x + c; }", frame);
 
@@ -163,7 +167,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void ForEachLoopInnerDeclarationsShouldNotLeak()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("forEach( WholeNumber c in new WholeNumber[] {5,2,3} ) { WholeNumber x <- c; }", frame);
 			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
 		}
@@ -171,7 +175,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void AWhileLoopShouldReevaluateEachLoop()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 0;", frame);
 
 			ExecuteStatement("while(x < 4) { x <- x+1; }", frame);
@@ -182,7 +186,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void WhileLoopInnerDeclarationsShouldNotLeak()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber z <- 0;", frame);
 			ExecuteStatement("while(z < 2) { z <- z+1; WholeNumber x <- z; }", frame);
 			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
@@ -191,7 +195,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void EachTogetherShouldChangeParentValues()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("WholeNumber x <- 0;", frame);
 			ExecuteStatement("eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) { x <- x + c; }", frame);
 			Assert.AreNotEqual(0, ((TweedlePrimitiveValue<int>)frame.GetValue("x")).Value);
@@ -200,7 +204,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void EachTogetherInnerDeclarationsShouldNotLeak()
 		{
-			TweedleFrame frame = new TweedleFrame(new VirtualMachine(new TweedleSystem()));
+			TweedleFrame frame = GetTestFrame();
 			ExecuteStatement("eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) { WholeNumber x <- c; }", frame);
 			Assert.Throws<TweedleRuntimeException>(() => frame.GetValue("x"));
 		}

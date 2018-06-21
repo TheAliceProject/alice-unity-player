@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class TweedleLocalVariable : TweedleValueHolderDeclaration
 	{

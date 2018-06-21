@@ -9,7 +9,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldHoldLocalValue()
 		{
-			TweedleFrame frame = new TweedleFrame(null);
+			TweedleFrame frame = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 
@@ -20,7 +20,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldHoldLocalValueWithInitializer()
 		{
-			TweedleFrame frame = new TweedleFrame(null);
+			TweedleFrame frame = new TweedleFrame("Test");
 			TweedleLocalVariable xVar = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x", TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			LocalVariableDeclaration xDec = new LocalVariableDeclaration(false, xVar);
 			new VirtualMachine(null).ExecuteToFinish(xDec, frame);
@@ -32,7 +32,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldRejectSettingOfUnitializedLocalValue()
 		{
-			TweedleFrame frame = new TweedleFrame(null);
+			TweedleFrame frame = new TweedleFrame("Test");
 
 			Assert.Throws<TweedleRuntimeException>(
 				() => frame.SetValue("x", TweedleTypes.TEXT_STRING.Instantiate("twelve")));
@@ -41,7 +41,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldRejectLocalValueOfWrongType()
 		{
-			TweedleFrame frame = new TweedleFrame(null);
+			TweedleFrame frame = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 
 			Assert.Throws<TweedleRuntimeException>(
@@ -51,7 +51,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldRejectNullForPrimitiveValue()
 		{
-			TweedleFrame frame = new TweedleFrame(null);
+			TweedleFrame frame = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 
 			Assert.Throws<TweedleRuntimeException>(
@@ -61,7 +61,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldRejectNullForObjectValue()
 		{
-			TweedleFrame frame = new TweedleFrame(null);
+			TweedleFrame frame = new TweedleFrame("Test");
 			TweedleClass cls = new TweedleClass("Dummy",
 												new System.Collections.Generic.List<TweedleField>(),
 												new System.Collections.Generic.List<TweedleMethod>(),
@@ -74,7 +74,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldReadParentValue()
 		{
-			TweedleFrame parent = new TweedleFrame(null);
+			TweedleFrame parent = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			parent.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			TweedleFrame frame = parent.ChildFrame();
@@ -86,7 +86,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldWriteValueInitializedOnParent()
 		{
-			TweedleFrame parent = new TweedleFrame(null);
+			TweedleFrame parent = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			parent.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			TweedleFrame frame = parent.ChildFrame();
@@ -99,7 +99,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldWriteToParentValue()
 		{
-			TweedleFrame parent = new TweedleFrame(null);
+			TweedleFrame parent = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			parent.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			TweedleFrame frame = parent.ChildFrame();
@@ -112,7 +112,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldAllowBlockingOfParentValue()
 		{
-			TweedleFrame parent = new TweedleFrame(null);
+			TweedleFrame parent = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			parent.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			TweedleFrame frame = parent.ChildFrame();
@@ -125,7 +125,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void FrameShouldChangeParentValue()
 		{
-			TweedleFrame parent = new TweedleFrame(null);
+			TweedleFrame parent = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			parent.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			TweedleFrame frame = parent.ChildFrame();

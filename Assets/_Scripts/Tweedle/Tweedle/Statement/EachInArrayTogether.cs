@@ -42,7 +42,7 @@ namespace Alice.Tweedle
 				return MarkCompleted();
 			}
 			started = true;
-			var frames = ((TweedleArray)array.Result).Values.Select(val => frame.ChildFrame(statement.ItemVariable, val)).ToList();
+			var frames = ((TweedleArray)array.Result).Values.Select(val => frame.ChildFrame("EachInArrayTogether", statement.ItemVariable, val)).ToList();
 			AddBlockingStep(statement.Body.ExecuteFramesInParallel(frames));
 			return false;
 		}

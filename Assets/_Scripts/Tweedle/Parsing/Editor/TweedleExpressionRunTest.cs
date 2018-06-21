@@ -37,7 +37,7 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void AnAssignmentExpressionShouldUpdateTheFrame()
 		{
-			TweedleFrame frame = new TweedleFrame(null);
+			TweedleFrame frame = new TweedleFrame("Test");
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 

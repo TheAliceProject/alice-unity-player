@@ -40,5 +40,17 @@ namespace Alice.Tweedle
 		{
 			return value != null && Type.AsDeclaredType(frame).AcceptsType(value.Type);
 		}
+
+		internal string ToTweedle()
+		{
+			if (Initializer == null)
+			{
+				return Type.Name + " " + Name;
+			}
+			else
+			{
+				return Type.Name + " " + Name + " <- " + Initializer;
+			}
+		}
 	}
 }
