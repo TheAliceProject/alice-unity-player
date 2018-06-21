@@ -40,6 +40,11 @@ namespace Alice.Tweedle
 		{
 			throw new TweedleRuntimeException("Can not invoke method " + methodName + " on " + this);
 		}
+
+		internal virtual bool Set(string varName, TweedleValue value)
+		{
+			return false;
+		}
 	}
 
 	internal class ValueStep : EvaluationStep

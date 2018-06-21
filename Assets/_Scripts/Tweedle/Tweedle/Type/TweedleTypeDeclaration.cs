@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Alice.Tweedle
 {
@@ -35,7 +36,7 @@ namespace Alice.Tweedle
 		public TweedleTypeDeclaration(string name, TweedleTypeReference super,
 			List<TweedleField> properties,
 			List<TweedleMethod> methods,
-			List<TweedleConstructor> constructors) 
+			List<TweedleConstructor> constructors)
 			: base(name, super)
 		{
 			DeclarationListInitializer(properties, methods, constructors);
@@ -60,9 +61,14 @@ namespace Alice.Tweedle
 			this.constructors = constructors;
 		}
 
+		internal TweedleField Field(string fieldName)
+		{
+			return properties.First(prop => prop.Name.Equals(fieldName));
+		}
+
 		public virtual TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
-        {
+		{
 			return Methods.Find((TweedleMethod method) => method.Name.Equals(methodName));
-        }
+		}
 	}
 }

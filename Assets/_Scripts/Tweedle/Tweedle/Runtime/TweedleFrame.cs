@@ -7,7 +7,7 @@ namespace Alice.Tweedle
 	public class TweedleFrame
 	{
 		TweedleFrame parent;
-		VirtualMachine vm;
+		protected internal VirtualMachine vm;
 		protected TweedleValue thisValue;
 
 		Dictionary<string, ValueHolder> localValues =
@@ -26,12 +26,21 @@ namespace Alice.Tweedle
 
 		internal TweedleClass ClassNamed(string name)
 		{
-			return vm.Library.ClassNamed(name);
+			return vm?.Library?.ClassNamed(name);
 		}
 
 		internal TweedleTypeDeclaration TypeNamed(string name)
 		{
-			return vm.Library.TypeNamed(name);
+			return vm?.Library?.TypeNamed(name);
+		}
+
+		private TypeValue GetTypeNamed(string name)
+		{
+			TweedleTypeDeclaration libraryType = TypeNamed(name);
+			if (libraryType != null)
+				return new TypeValue(libraryType);
+			// TODO Add catch for System Primitive types
+			return null;
 		}
 
 		internal TweedleValue GetThis()
@@ -48,47 +57,47 @@ namespace Alice.Tweedle
 
 		public TweedleValue SetValue(string varName, TweedleValue value)
 		{
-			if (localValues.ContainsKey(varName))
+			if (UpdateFrameValue(varName, value) || SetValueOnThis(varName, value))
 			{
-				localValues[varName].Value = value;
 				return value;
 			}
-			else
-			{
-				if (parent != null)
-				{
-					return parent.SetValue(varName, value);
-				}
-				else
-				{
-					throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
-				}
-			}
+			throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
 		}
 
-		public void SetValue(string varName, TweedleValue value, Action<TweedleValue> next)
+		public bool UpdateFrameValue(string varName, TweedleValue value)
 		{
 			if (localValues.ContainsKey(varName))
 			{
+				// TODO handle on property objects for animation and delay
 				localValues[varName].Value = value;
-				// TODO hand next in to property objects for animation and delay
-				next(value);
+				return true;
 			}
 			else
 			{
 				if (parent != null)
 				{
-					parent.SetValue(varName, value, next);
-				}
-				else
-				{
-					throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
+					return parent.UpdateFrameValue(varName, value);
 				}
 			}
+			return false;
+		}
+
+		bool SetValueOnThis(string varName, TweedleValue value)
+		{
+			if (thisValue == null)
+			{
+				return false;
+			}
+			return thisValue.Set(varName, value);
 		}
 
 		public TweedleValue GetValue(string varName)
 		{
+			TypeValue type = GetTypeNamed(varName);
+			if (type != null)
+			{
+				return type;
+			}
 			if (localValues.ContainsKey(varName))
 			{
 				return localValues[varName].Value;
@@ -112,14 +121,14 @@ namespace Alice.Tweedle
 			return child;
 		}
 
-		internal virtual ConstructorFrame ForInstantiation(TweedleClass tweedleClass, Action<TweedleValue> next)
+		internal ConstructorFrame ForInstantiation(TweedleClass tweedleClass, Dictionary<string, TweedleExpression> arguments)
 		{
-			return new ConstructorFrame(vm, tweedleClass, next);
+			return new ConstructorFrame(this, tweedleClass, arguments);
 		}
 
-		internal MethodFrame MethodCallFrame(TweedleValue target, Action<TweedleValue> next)
+		internal MethodFrame MethodCallFrame()
 		{
-			return new MethodFrame(vm, target, next);
+			return new MethodFrame(this);
 		}
 	}
 }

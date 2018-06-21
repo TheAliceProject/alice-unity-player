@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -18,30 +17,10 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override EvaluationStep AsStep(TweedleFrame frame)
+        internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new ConstructorStep(Type.AsClass(frame), frame, this);
-		}
-	}
-
-	internal class ConstructorStep : EvaluationStep // MethodStep?
-	{
-		private TweedleClass tweedleClass;
-		private TweedleFrame frame;
-		private Instantiation instantiation;
-
-		public ConstructorStep(TweedleClass tweedleClass, TweedleFrame frame, Instantiation instantiation)
-		{
-			this.tweedleClass = tweedleClass;
-			this.frame = frame;
-			this.instantiation = instantiation;
-		}
-
-		internal override bool Execute()
-		{
-			ConstructorFrame cFrame = frame.ForInstantiation(tweedleClass, null);//next);
-			cFrame.Instantiate(instantiation.Arguments);
-			return false;
+			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame), Arguments);
+			return cFrame.InvokeStep();
 		}
 	}
 }

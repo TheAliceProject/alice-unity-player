@@ -14,21 +14,24 @@
 
 			set
 			{
-				if (Type.AcceptsType(value.Type))
-				{
-					tweedleValue = value;
-				}
-				else
-				{
-					throw new TweedleRuntimeException("Unable to treat " + value + " as type " + Type);
-				}
+				CheckType(Type, value);
+				tweedleValue = value;
 			}
 		}
 
 		public ValueHolder(TweedleType type, TweedleValue tweedleValue)
 		{
+			CheckType(type, tweedleValue);
 			Type = type;
-			Value = tweedleValue;
+			this.tweedleValue = tweedleValue;
 		}
+
+        void CheckType(TweedleType type, TweedleValue value)
+        {
+            if (!type.AcceptsType(value.Type))
+            {
+                throw new TweedleRuntimeException("Unable to treat " + value + " as type " + Type);
+            }
+        }
 	}
 }

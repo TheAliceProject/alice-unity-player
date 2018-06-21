@@ -26,10 +26,23 @@ namespace Alice.Tweedle
 			return Attributes[fieldName].Value;
 		}
 
-		public TweedleValue Set(string fieldName, TweedleValue value)
+		internal override bool Set(string fieldName, TweedleValue value)
 		{
-			Attributes[fieldName].Value = value;
-			return value;
+			TweedleField field = tweClass.Field(fieldName);
+			if (field != null & field.Accepts(value))
+			{
+				if (Attributes.ContainsKey(fieldName))
+				{
+					Attributes[fieldName].Value = value;
+				}
+				else
+				{
+					// TODO use frame to clarify type?
+					Attributes.Add(field.Name, new ValueHolder(field.Type, value));
+				}
+				return true;
+			}
+			return false;
 		}
 
 		ExecutionStep InitializeFieldStep(TweedleFrame frame, TweedleField field)

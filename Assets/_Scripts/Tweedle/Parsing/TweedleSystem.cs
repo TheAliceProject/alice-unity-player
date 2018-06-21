@@ -77,15 +77,15 @@ namespace Alice.Tweedle.Parsed
 
 		internal TweedleTypeDeclaration TypeNamed(string name)
 		{
-			TweedleTypeDeclaration typeDeclaration = Classes[name];
-			if (typeDeclaration != null)
+			if (Classes.ContainsKey(name))
 			{
-				return typeDeclaration;
+				return Classes[name];
 			}
-			else
-			{
-				return EnumNamed(name);
-			}
+			if (Enums.ContainsKey(name))
+            {
+				return Enums[name];
+            }
+			return null;
 		}
 
 		public void AddEnum(TweedleEnum tweEnum)

@@ -1,27 +1,59 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	abstract class InvocationFrame : TweedleFrame
 	{
-		Action<TweedleValue> nextAction;
+		TweedleFrame callingFrame;
+		internal TweedleMethod Method { get; set; }
+		protected Dictionary<TweedleValueHolderDeclaration, EvaluationStep> argumentSteps;
+		public TweedleValue Result { get; internal set; }
 
-		internal InvocationFrame(VirtualMachine vm, Action<TweedleValue> next)
-			: base(vm)
+		public InvocationFrame(TweedleFrame frame)
+			: base(frame.vm)
 		{
-			nextAction = next;
+			callingFrame = frame;
 		}
 
-		internal void Complete(TweedleValue result)
+		internal void CreateArgumentSteps(Dictionary<string, TweedleExpression> arguments)
 		{
-			//nextAction(result);
-			//FinishStep().Result = returnValueStep.Result;
+			argumentSteps = new Dictionary<TweedleValueHolderDeclaration, EvaluationStep>();
+			foreach (TweedleRequiredParameter req in Method.RequiredParameters)
+			{
+				if (arguments.ContainsKey(req.Name))
+				{
+					EvaluationStep argStep = arguments[req.Name].AsStep(callingFrame);
+					argumentSteps.Add(req, argStep);
+				}
+				else
+				{
+					throw new TweedleLinkException("Invalid method call on " + Method.Name + ". Missing value for required parameter " + req.Name);
+				}
+				foreach (TweedleOptionalParameter opt in Method.OptionalParameters)
+				{
+					EvaluationStep argStep;
+					if (arguments.ContainsKey(opt.Name))
+					{
+						argStep = arguments[req.Name].AsStep(callingFrame);
+					}
+					else
+					{
+						argStep = opt.Initializer.AsStep(callingFrame);
+					}
+					argumentSteps.Add(opt, argStep);
+				}
+			}
 		}
 
-		internal EvaluationStep FinishStep()
+		internal EvaluationStep InvokeStep()
 		{
-			throw new NotImplementedException();
+			SimpleStep invokeMethod = new SimpleStep(Method.Body.ToSequentialStep(this), () => Result);
+			foreach (ExecutionStep step in argumentSteps.Values)
+			{
+				invokeMethod.AddBlockingStep(step);
+			}
+			return invokeMethod;
 		}
 	}
 }
