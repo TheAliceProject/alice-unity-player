@@ -1,51 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.VM;
+﻿using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
 	class ConstructorFrame : InvocationFrame
 	{
-		internal TweedleClass highestClass;
+		internal TweedleClass tweedleClass;
 
-		internal ConstructorFrame(VirtualMachine vm, TweedleClass tweedleClass, Action<TweedleValue> next)
-			: base(vm, next)
+		internal ConstructorFrame(TweedleFrame caller, TweedleClass tweedleClass, Dictionary<string, TweedleExpression> arguments)
+			: base(caller)
 		{
-			highestClass = tweedleClass;
+			this.tweedleClass = tweedleClass;
 			thisValue = new TweedleObject(tweedleClass);
+			Result = thisValue;
+			FindConstructor(arguments);
+			CreateArgumentSteps(arguments);
 		}
 
-		internal void Instantiate(Dictionary<string, TweedleExpression> arguments)
+		private ConstructorFrame(ConstructorFrame constructorFrame, TweedleClass superClass, TweedleConstructor constructor, Dictionary<string, TweedleExpression> arguments)
+			: base(constructorFrame)
 		{
-			// TODO restore as ExecutionStep
-			//highestClass.ConstructorWithArgs(arguments).Invoke(this, arguments);
+			tweedleClass = superClass;
+			thisValue = constructorFrame.thisValue;
+			Result = thisValue;
+			Method = constructor;
+			CreateArgumentSteps(arguments);
 		}
 
-		internal void SuperInstantiate(Dictionary<string, TweedleExpression> arguments)
+		void FindConstructor(Dictionary<string, TweedleExpression> arguments)
 		{
-			TweedleConstructor superConst = NextSuperConstructor(arguments);
-			if (superConst != null)
-			{
-				// TODO restore as ExecutionStep
-				//superConst.Invoke(this, arguments);
-			}
-			else
-			{
-				// TODO test and fix. There may be more steps after call to super()
-				Complete(thisValue);
-			}
+			Method = tweedleClass.ConstructorWithArgs(arguments);
 		}
 
-		TweedleConstructor NextSuperConstructor(Dictionary<string, TweedleExpression> arguments)
+		internal ConstructorFrame SuperFrame(Dictionary<string, TweedleExpression> arguments)
 		{
-			TweedleConstructor superConst = null;
-			while (superConst == null && highestClass != null)
+			TweedleClass superClass = tweedleClass.SuperClass(this);
+			while (superClass != null)
 			{
-				highestClass = highestClass.SuperClass(this);
-				superConst = highestClass?.ConstructorWithArgs(arguments);
+				TweedleConstructor superConst = superClass?.ConstructorWithArgs(arguments);
+				if (superConst != null)
+				{
+					return new ConstructorFrame(this, superClass, superConst, arguments);
+				}
+				superClass = superClass.SuperClass(this);
 			}
-
-			return superConst;
+			throw new TweedleRuntimeException("No super constructor on" + tweedleClass + " with args " + arguments);
 		}
 	}
 }

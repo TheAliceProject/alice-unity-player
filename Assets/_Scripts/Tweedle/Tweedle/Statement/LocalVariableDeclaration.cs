@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {

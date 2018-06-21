@@ -4,7 +4,7 @@
 	{
 		TweedleTypeDeclaration type;
 
-		public TypeValue(TweedleClass type)
+		public TypeValue(TweedleTypeDeclaration type)
 			: base(null) // Until there is a metaclass to replace null
 		{
 			this.type = type;

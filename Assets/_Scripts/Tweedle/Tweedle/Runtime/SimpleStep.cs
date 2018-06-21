@@ -12,6 +12,12 @@ namespace Alice.VM
 			this.body = body;
 		}
 
+		public SimpleStep(ExecutionStep blockingStep, Func<TweedleValue> body)
+			: base(blockingStep)
+		{
+			this.body = body;
+		}
+
 		internal override bool Execute()
 		{
 			result = body.Invoke();

@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 			this.generator = generator;
 		}
 
-		protected StartStep(ExecutionStep blockingStep, Func<EvaluationStep> generator)
+		public StartStep(ExecutionStep blockingStep, Func<EvaluationStep> generator)
 			: base(blockingStep)
 		{
 			this.generator = generator;

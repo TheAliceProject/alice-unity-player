@@ -1,15 +1,23 @@
-﻿using System;
-using Alice.VM;
-
-namespace Alice.Tweedle
+﻿namespace Alice.Tweedle
 {
-	internal class MethodFrame : InvocationFrame
+	class MethodFrame : InvocationFrame
 	{
-		internal MethodFrame(VirtualMachine vm, TweedleValue target, Action<TweedleValue> next)
-			: base(vm, next)
+
+		public MethodFrame(TweedleFrame frame)
+			: base(frame)
+		{
+		}
+
+		internal void SetThis(TweedleValue target)
 		{
 			// target may be an instance (object or enumValue) or type (class or enum)
 			thisValue = target;
+		}
+
+		internal void Return(TweedleValue result)
+		{
+			Result = result;
+			// TODO prevent further steps and return
 		}
 	}
 }

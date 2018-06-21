@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -16,9 +15,8 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			//ConstructorFrame cFrame = (ConstructorFrame)frame;
-			//cFrame.SuperInstantiate(Arguments);
-			throw new NotImplementedException();
+			ConstructorFrame superFrame = ((ConstructorFrame)frame).SuperFrame(Arguments);
+			return superFrame.InvokeStep();
 		}
 	}
 }

@@ -35,7 +35,7 @@ namespace Alice.Tweedle.Parsed
 			TweedleFrame frame = new TweedleFrame(null);
 
 			Assert.Throws<TweedleRuntimeException>(
-				() => frame.SetValue("x", TweedleTypes.TEXT_STRING.Instantiate("twelve"), value => { }));
+				() => frame.SetValue("x", TweedleTypes.TEXT_STRING.Instantiate("twelve")));
 		}
 
 		[Test]
@@ -90,7 +90,7 @@ namespace Alice.Tweedle.Parsed
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			parent.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			TweedleFrame frame = parent.ChildFrame();
-			frame.SetValue("x", TweedleTypes.WHOLE_NUMBER.Instantiate(77), value => { });
+			frame.SetValue("x", TweedleTypes.WHOLE_NUMBER.Instantiate(77));
 
 			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
 			Assert.AreEqual(77, newVal.Value, "The VM should have returned 77.");
@@ -103,7 +103,7 @@ namespace Alice.Tweedle.Parsed
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			parent.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			TweedleFrame frame = parent.ChildFrame();
-			frame.SetValue("x", TweedleTypes.WHOLE_NUMBER.Instantiate(77), value => { });
+			frame.SetValue("x", TweedleTypes.WHOLE_NUMBER.Instantiate(77));
 
 			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)parent.GetValue("x");
 			Assert.AreEqual(77, newVal.Value, "The VM should have returned 77.");

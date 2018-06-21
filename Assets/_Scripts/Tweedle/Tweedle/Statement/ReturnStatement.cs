@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -34,8 +32,7 @@ namespace Alice.Tweedle
 				expression.AsStep(frame),
 				result =>
 				{
-					// TODO Make this work
-					((InvocationFrame)frame).Complete(result);
+					((MethodFrame)frame).Return(result);
 					return result;
 				});
 		}

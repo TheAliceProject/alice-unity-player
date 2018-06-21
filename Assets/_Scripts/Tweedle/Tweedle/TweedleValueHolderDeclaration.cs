@@ -35,5 +35,10 @@ namespace Alice.Tweedle
 				return Initializer.AsStep(frame);
 			}
 		}
+
+		internal bool Accepts(TweedleValue value)
+		{
+			return value != null && Type.AcceptsType(value.Type);
+		}
 	}
 }

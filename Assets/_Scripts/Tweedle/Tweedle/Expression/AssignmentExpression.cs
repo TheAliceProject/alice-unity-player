@@ -49,7 +49,11 @@ namespace Alice.Tweedle
 					return new DoubleInputStep(
 						TargetExp.AsStep(frame),
 						ValueExp.AsStep(frame),
-						(target, value) => ((TweedleObject)target).Set(Identifier, value));
+						(target, value) =>
+						{
+							((TweedleObject)target).Set(Identifier, value);
+							return value;
+						});
 				});
 			}
 		}
