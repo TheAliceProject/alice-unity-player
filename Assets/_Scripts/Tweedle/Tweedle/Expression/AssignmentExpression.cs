@@ -35,26 +35,20 @@ namespace Alice.Tweedle
 		{
 			if (TargetExp == null)
 			{
-				return new StartStep(() =>
-				{
-					return new SingleInputStep(
-						ValueExp.AsStep(frame),
-						value => frame.SetValue(Identifier, value));
-				});
+				return new StartStep(() => new SingleInputStep(
+					ValueExp.AsStep(frame),
+					value => frame.SetValue(Identifier, value)));
 			}
 			else
 			{
-				return new StartStep(() =>
-				{
-					return new DoubleInputStep(
-						TargetExp.AsStep(frame),
-						ValueExp.AsStep(frame),
-						(target, value) =>
-						{
-							((TweedleObject)target).Set(Identifier, value);
-							return value;
-						});
-				});
+				return new StartStep(() => new DoubleInputStep(
+					TargetExp.AsStep(frame),
+					ValueExp.AsStep(frame),
+					(target, value) =>
+					{
+						target.Set(Identifier, value, frame);
+						return value;
+					}));
 			}
 		}
 	}

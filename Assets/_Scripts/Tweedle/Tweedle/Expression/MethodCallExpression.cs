@@ -27,7 +27,7 @@ namespace Alice.Tweedle
 		{
 			MethodFrame methodFrame = frame.MethodCallFrame();
 			EvaluationStep targetStep = base.AsStep(frame);
-			EvaluationStep prepMethodStep = new SingleInputStep(
+			ExecutionStep prepMethodStep = new SingleInputActionStep(
 				targetStep,
 				target =>
 				{
@@ -38,7 +38,6 @@ namespace Alice.Tweedle
 						throw new TweedleRuntimeException("No method matching " + target + "." + MethodName + "()");
 					}
 					methodFrame.CreateArgumentSteps(arguments);
-					return null;
 				});
 			return new StartStep(prepMethodStep, () => methodFrame.InvokeStep());
 		}

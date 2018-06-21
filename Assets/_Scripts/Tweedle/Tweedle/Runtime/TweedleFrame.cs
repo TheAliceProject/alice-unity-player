@@ -88,7 +88,7 @@ namespace Alice.Tweedle
 			{
 				return false;
 			}
-			return thisValue.Set(varName, value);
+			return thisValue.Set(varName, value, this);
 		}
 
 		public TweedleValue GetValue(string varName)
@@ -105,6 +105,10 @@ namespace Alice.Tweedle
 			if (parent != null)
 			{
 				return parent.GetValue(varName);
+			}
+			if (thisValue != null && thisValue.HasSetField(varName))
+			{
+				return thisValue.Get(varName);
 			}
 			throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
 		}

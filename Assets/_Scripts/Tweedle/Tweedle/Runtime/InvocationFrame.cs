@@ -46,14 +46,27 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal EvaluationStep InvokeStep()
+		internal virtual EvaluationStep InvokeStep()
 		{
-			SimpleStep invokeMethod = new SimpleStep(Method.Body.ToSequentialStep(this), () => Result);
+			return new StartStep(
+				StoreArgsStep(),
+				() => new ContextEvaluationStep(Method.Body.ToSequentialStep(this), () => Result));
+		}
+
+		ExecutionStep StoreArgsStep()
+		{
+			ExecutionStep storeArgs = new ActionStep(() =>
+			{
+				foreach (KeyValuePair<TweedleValueHolderDeclaration, EvaluationStep> pair in argumentSteps)
+				{
+					SetLocalValue(pair.Key, pair.Value.Result);
+				}
+			});
 			foreach (ExecutionStep step in argumentSteps.Values)
 			{
-				invokeMethod.AddBlockingStep(step);
+				storeArgs.AddBlockingStep(step);
 			}
-			return invokeMethod;
+			return storeArgs;
 		}
 	}
 }
