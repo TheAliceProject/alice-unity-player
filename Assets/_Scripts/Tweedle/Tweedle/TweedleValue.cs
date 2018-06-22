@@ -39,6 +39,11 @@ namespace Alice.Tweedle
 			throw new TweedleRuntimeException("Can not invoke method " + methodName + " on " + this);
 		}
 
+		internal virtual TweedleMethod SuperMethodNamed(TweedleFrame frame, string methodName)
+		{
+			throw new TweedleRuntimeException("Can not invoke super." + methodName + " on " + this);
+		}
+
 		internal virtual bool Set(string fieldName, TweedleValue value, TweedleFrame frame)
 		{
 			return false;

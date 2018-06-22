@@ -28,9 +28,17 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			return new SingleInputActionStep(
-				expression.AsStep(frame),
-				result => ((MethodFrame)frame).Return(result));
+			return new StartStep(frame.StackWith("return " + expression.ToTweedle()), () =>
+			{
+				return new SingleInputStep(
+					frame.StackWith("return " + expression.ToTweedle()),
+					expression.AsStep(frame),
+					result =>
+					{
+						((MethodFrame)frame).Return(result);
+						return TweedleNull.NULL;
+					});
+			});
 		}
 	}
 }

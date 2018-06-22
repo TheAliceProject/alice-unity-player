@@ -52,11 +52,11 @@ namespace Alice.Tweedle
 			return callingFrame.StackWith(stackTop + "\n" + callStackEntry);
 		}
 
-		internal virtual EvaluationStep InvokeStep()
+		internal virtual EvaluationStep InvokeStep(string callStack)
 		{
 			return new StartStep(
 				StoreArgsStep(),
-				() => new ContextEvaluationStep(Method.Body.ToSequentialStep(this), () => Result));
+				() => new ContextEvaluationStep(callStack, Method.Body.ToSequentialStep(this), () => Result));
 		}
 
 		ExecutionStep StoreArgsStep()

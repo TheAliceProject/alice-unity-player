@@ -18,7 +18,7 @@ namespace Alice.Tweedle
 			ExecutionStep lastStep = ExecutionStep.NOOP;
 			foreach (TweedleStatement stmt in Statements)
             {
-				ExecutionStep step = stmt.AsStep(frame);
+				ExecutionStep step = stmt.RootStep(frame);
                 step.AddBlockingStep(lastStep);
                 lastStep = step;
             }
@@ -27,7 +27,7 @@ namespace Alice.Tweedle
 
 		internal ExecutionStep ToParallelSteps(TweedleFrame frame)
 		{
-			var blockers = Statements.Select(stmt => stmt.AsStep(frame)).ToList();
+			var blockers = Statements.Select(stmt => stmt.RootStep(frame)).ToList();
 			return new ParallelStepsStep(blockers);
 		}
 
@@ -53,7 +53,7 @@ namespace Alice.Tweedle
 			{
 				if (index < block.Statements.Count)
 				{
-					AddBlockingStep(block.Statements[index].Execute(frame));
+					AddBlockingStep(block.Statements[index].RootStep(frame));
 					index++;
 					return false;
 				}
@@ -72,7 +72,7 @@ namespace Alice.Tweedle
 			{
 				foreach (TweedleStatement statement in block.Statements)
 				{
-					AddBlockingStep(statement.AsStep(frame));
+					AddBlockingStep(statement.RootStep(frame));
 				}
 			}
 

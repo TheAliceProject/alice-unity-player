@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new ContextEvaluationStep(() => frame.GetValue(Name));
+			return new ContextEvaluationStep(frame.StackWith("Get Identifier " + Name), () => frame.GetValue(Name));
 		}
 	}
 }

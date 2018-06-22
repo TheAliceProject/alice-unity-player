@@ -51,9 +51,9 @@ namespace Alice.Tweedle
 			throw new TweedleRuntimeException("No super constructor on" + tweedleClass + " with args " + arguments);
 		}
 
-		internal override EvaluationStep InvokeStep()
+		internal override EvaluationStep InvokeStep(string callStack)
 		{
-			EvaluationStep invocation = base.InvokeStep();
+			EvaluationStep invocation = base.InvokeStep(callStack);
 			invocation.AddBlockingStep(InitializeObjectStep());
 			return invocation;
 		}

@@ -24,6 +24,9 @@ namespace Alice.Tweedle.Parsed
 			+ "  WholeNumber threeMore() {\n"
 			+ "    return 3 + x;\n"
 			+ "  }\n"
+			+ "  WholeNumber thisless() {\n"
+			+ "    return threeMore();\n"
+			+ "  }\n"
 			+ "}";
 
 		static string parentClass =
@@ -49,6 +52,10 @@ namespace Alice.Tweedle.Parsed
 			"class Child extends Parent {\n"
 			+ "  Child()\n{ super();"
 			+ "    myReplacedThing.x <- 1000;}\n"
+			+ "ClassToHave getMyThing() {\n"
+			+ "  ClassToHave par <- super.getMyThing();\n"
+			+ "  par.x <- par.x + 10;\n"
+			+ "  return par;\n }\n"
 			+ "\n}";
 
 		TweedleSystem NewSystem()
@@ -192,6 +199,28 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 			ExecuteStatement("WholeNumber val  <- obj.threeMore();");
+			TweedleValue tested = frame.GetValue("val");
+
+			Assert.AreEqual(8, ((TweedlePrimitiveValue<int>)tested).Value);
+		}
+
+		[Test]
+		public void MethodWithImplicitThisShouldProduceResult()
+		{
+			Init();
+			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+			ExecuteStatement("WholeNumber val  <- obj.thisless();");
+			TweedleValue tested = frame.GetValue("val");
+
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested);
+		}
+
+		[Test]
+		public void MethodWithImplicitThisShouldProduceCorrectResult()
+		{
+			Init();
+			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+			ExecuteStatement("WholeNumber val  <- obj.thisless();");
 			TweedleValue tested = frame.GetValue("val");
 
 			Assert.AreEqual(8, ((TweedlePrimitiveValue<int>)tested).Value);
@@ -363,6 +392,17 @@ namespace Alice.Tweedle.Parsed
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("mySpecialThing"));
 
 			Assert.AreEqual(97, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
+		}
+
+		[Test]
+		public void ChildShouldCallSuperInMethod()
+		{
+			Init();
+			ExecuteStatement("Child child <- new Child();");
+			ExecuteStatement("ClassToHave obj <- child.getMyThing();");
+			TweedleObject tested = (TweedleObject)frame.GetValue("obj");
+
+			Assert.AreEqual(15, ((TweedlePrimitiveValue<int>)tested.Get("x")).Value);
 		}
 	}
 }

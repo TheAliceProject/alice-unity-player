@@ -29,7 +29,7 @@ namespace Alice.Tweedle
 
 		internal ExecutionStep InitializeFieldStep(ConstructorFrame frame, TweedleObject tweedleObject)
 		{
-			return new SingleInputActionStep(
+			return new SingleInputActionStep(frame.StackWith("Initialize " + Name + " <- "+ Initializer.ToTweedle()),
 				InitializerStep(frame),
 				value => tweedleObject.Set(Name, value, frame));
 		}

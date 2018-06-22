@@ -66,16 +66,14 @@ namespace Alice.Tweedle
 			return false;
 		}
 
-		ExecutionStep InitializeFieldStep(TweedleFrame frame, TweedleField field)
-		{
-			return new SingleInputActionStep(
-				field.InitializerStep(frame),
-				val => Attributes.Add(field.Name, new ValueHolder(field.Type.AsDeclaredType(frame), val)));
-		}
-
 		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
 		{
 			return tweClass.MethodNamed(frame, methodName);
+		}
+
+		internal override TweedleMethod SuperMethodNamed(TweedleFrame frame, string methodName)
+		{
+			return tweClass.SuperClass(frame).MethodNamed(frame, methodName);
 		}
 
 		internal IEnumerable<ExecutionStep> InitializationSteps(ConstructorFrame frame)
