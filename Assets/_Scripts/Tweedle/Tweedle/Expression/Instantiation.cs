@@ -20,7 +20,7 @@ namespace Alice.Tweedle
         internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame), Arguments);
-			return cFrame.InvokeStep();
+			return cFrame.InvokeStep(frame.StackWith("Instantiation"));
 		}
 	}
 }

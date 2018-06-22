@@ -39,7 +39,7 @@ namespace Alice.VM
 
 		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
 		{
-			executionQueue.AddToQueue(statement.Execute(frame));
+			executionQueue.AddToQueue(statement.RootStep(frame));
 			executionQueue.ProcessQueues();
 		}
 
@@ -53,7 +53,7 @@ namespace Alice.VM
 
 		public void Execute(TweedleStatement statement)
 		{
-			executionQueue.AddToQueue((ExecutionStep)statement.Execute(staticFrame));
+			executionQueue.AddToQueue((ExecutionStep)statement.RootStep(staticFrame));
 			StartQueueProcessing();
 		}
 

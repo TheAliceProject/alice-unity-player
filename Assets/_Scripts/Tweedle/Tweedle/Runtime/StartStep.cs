@@ -6,7 +6,7 @@ namespace Alice.Tweedle
 	internal class StartStep : EvaluationStep
 	{
 		bool started = false;
-		private Func<EvaluationStep> generator;
+		Func<EvaluationStep> generator;
 		EvaluationStep child;
 
 		public StartStep(string callStack, Func<EvaluationStep> generator)

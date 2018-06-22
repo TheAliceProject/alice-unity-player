@@ -14,5 +14,12 @@ namespace Alice.Tweedle
 			this.statement = statement;
 			this.frame = frame;
 		}
+
+		public StatementStep(T statement, TweedleFrame frame)
+			: base()
+		{
+			this.statement = statement;
+			this.frame = frame;
+		}
 	}
 }

@@ -18,24 +18,30 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			return new CountLoopStep(this, frame, count.AsStep(frame));
+			return new StartExecutionStep(
+				frame.StackWith("Count loop"),
+				() =>
+				{
+					EvaluationStep countStep = count.AsStep(frame);
+					return new StartExecutionStep(countStep, () => new CountLoopStep(this, frame, countStep));
+				});
 		}
 	}
 
 	internal class CountLoopStep : StatementStep<CountLoop>
 	{
-		EvaluationStep count;
+		int maxCount;
 		int index = 0;
 
-		public CountLoopStep(CountLoop statement, TweedleFrame frame, EvaluationStep count)
-			: base(statement, frame, count)
+		public CountLoopStep(CountLoop statement, TweedleFrame frame, EvaluationStep countStep)
+			: base(statement, frame)
 		{
-			this.count = count;
+			maxCount = countStep.Result.ToInt();
 		}
 
 		internal override bool Execute()
 		{
-			if (index < count.Result.ToInt())
+			if (index < maxCount)
 			{
 				var loopFrame = frame.ChildFrame("Count loop", statement.Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index));
 				AddBlockingStep(statement.Body.ToSequentialStep(loopFrame));

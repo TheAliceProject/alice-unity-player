@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 			enabled = false;
 		}
 
-		internal ExecutionStep Execute(TweedleFrame frame)
+		internal ExecutionStep RootStep(TweedleFrame frame)
 		{
 			if (enabled)
 			{

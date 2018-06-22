@@ -9,7 +9,7 @@ namespace Alice.Tweedle.Parsed
 		void ExecuteStatement(string src, TweedleFrame frame)
 		{
 			TweedleStatement stmt = new TweedleParser().ParseStatement(src);
-			new VirtualMachine(null).ExecuteToFinish(stmt, frame);
+			frame.vm.ExecuteToFinish(stmt, frame);
 		}
 
 		[Test]
@@ -142,6 +142,16 @@ namespace Alice.Tweedle.Parsed
 			ExecuteStatement("countUpTo( a < 3 ) { countUpTo( b < 3 ) { x <- x + 1; } }", frame);
 
 			Assert.AreEqual(9, ((TweedlePrimitiveValue<int>)frame.GetValue("x")).Value);
+		}
+
+		[Test]
+		public void NestedCountLoopsShouldEvaluate64Times()
+		{
+			TweedleFrame frame = GetTestFrame();
+			ExecuteStatement("WholeNumber x <- 0;", frame);
+			ExecuteStatement("countUpTo( a < 4 ) { countUpTo( b < 4 ) { countUpTo( c < 4 ) { x <- x + 1; } } }", frame);
+
+			Assert.AreEqual(64, ((TweedlePrimitiveValue<int>)frame.GetValue("x")).Value);
 		}
 
 		[Test]

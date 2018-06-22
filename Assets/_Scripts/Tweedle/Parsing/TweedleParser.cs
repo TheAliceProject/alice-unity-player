@@ -382,16 +382,15 @@ namespace Alice.Tweedle.Parsed
 
 			public override TweedleExpression VisitSuperSuffix([NotNull] Tweedle.TweedleParser.SuperSuffixContext context)
 			{
-				SuperExpression super = new SuperExpression(null);
 				if (context.IDENTIFIER() != null)
 				{
 					if (context.arguments() != null)
 					{
-						return new MethodCallExpression(super, context.IDENTIFIER().GetText(), TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
+						return MethodCallExpression.Super(context.IDENTIFIER().GetText(), TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
 					}
 					else
 					{
-						return new FieldAccess(super, context.IDENTIFIER().GetText());
+						return FieldAccess.Super(context.IDENTIFIER().GetText());
 					}
 				}
 				else if (context.arguments() != null)
@@ -414,8 +413,7 @@ namespace Alice.Tweedle.Parsed
 
 			public override TweedleExpression VisitMethodCall([NotNull] Tweedle.TweedleParser.MethodCallContext context)
 			{
-				return new MethodCallExpression(new ThisExpression(),
-												context.IDENTIFIER().GetText(),
+				return new MethodCallExpression(context.IDENTIFIER().GetText(),
 												TweedleParser.VisitLabeledArguments(context.labeledExpressionList()));
 			}
 

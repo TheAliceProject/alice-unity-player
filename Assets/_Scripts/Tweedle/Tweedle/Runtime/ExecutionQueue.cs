@@ -72,8 +72,10 @@ namespace Alice.VM
 				while (IsTimeLeftInFrame() && (stepsForThisFrame.Count > 0 || blockedSteps.Count > 0))
 				{
 					loopCount++;
-					if (loopCount > 5000)
-						return null;
+					if (loopCount > 10000)
+					{
+						throw new System.Exception("Exceeded loop count limit");
+					}
 					while (stepsForThisFrame.Count > 0)
 					{
 						//UnityEngine.Debug.Log("Dequeueing step ");
@@ -143,11 +145,13 @@ namespace Alice.VM
 			}
 			catch (TweedleRuntimeException tre)
 			{
-				UnityEngine.Debug.Log("--------------------------------------------------");
+				UnityEngine.Debug.Log("*------------------------Exception------------------------*");
 				UnityEngine.Debug.Log(tre.Message);
-				UnityEngine.Debug.Log("--------------Tweedle Stack-----------------------");
+				UnityEngine.Debug.Log("*----------------------System Stack-----------------------*");
+				UnityEngine.Debug.Log(tre.StackTrace);
+				UnityEngine.Debug.Log("*----------------------Tweedle Stack----------------------*");
 				UnityEngine.Debug.Log(step.CallStack());
-				UnityEngine.Debug.Log("--------------Tweedle Stack-----------------------");
+				UnityEngine.Debug.Log("*---------------------------------------------------------*");
 				// TODO decide how best to handle errors in steps
 				throw tre;
 			}

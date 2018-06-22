@@ -3,22 +3,23 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-    internal class SingleInputActionStep : ExecutionStep
-    {
-        EvaluationStep blockingValue;
-        Action<TweedleValue> body;
+	internal class SingleInputActionStep : ExecutionStep
+	{
+		EvaluationStep blockingValue;
+		Action<TweedleValue> body;
 
-        public SingleInputActionStep(EvaluationStep blockingValue, Action<TweedleValue> body)
-            : base(blockingValue)
-        {
-            this.body = body;
-            this.blockingValue = blockingValue;
-        }
+		public SingleInputActionStep(string callStack, EvaluationStep blockingValue, Action<TweedleValue> body)
+			: base(blockingValue)
+		{
+			this.callStack = callStack;
+			this.body = body;
+			this.blockingValue = blockingValue;
+		}
 
-        internal override bool Execute()
-        {
-            body.Invoke(blockingValue.Result);
-            return MarkCompleted();
-        }
-    }
+		internal override bool Execute()
+		{
+			body.Invoke(blockingValue.Result);
+			return MarkCompleted();
+		}
+	}
 }

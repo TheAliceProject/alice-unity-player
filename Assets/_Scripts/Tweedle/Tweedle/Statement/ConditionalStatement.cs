@@ -19,7 +19,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			ExecutionStep completion = new CompletionStep();
-			completion.AddBlockingStep(new SingleInputActionStep(
+			completion.AddBlockingStep(new SingleInputActionStep(frame.StackWith("if " + Condition.ToTweedle()),
 				Condition.AsStep(frame),
 				condition => completion.AddBlockingStep((condition.ToBoolean() ? ThenBody : ElseBody).ToSequentialStep(frame))));
 			return completion;

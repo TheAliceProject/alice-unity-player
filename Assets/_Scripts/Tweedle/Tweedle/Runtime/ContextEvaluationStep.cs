@@ -7,15 +7,17 @@ namespace Alice.VM
 	{
 		Func<TweedleValue> body;
 
-		public ContextEvaluationStep(Func<TweedleValue> body)
+		public ContextEvaluationStep(string callStack, Func<TweedleValue> body)
 		{
 			this.body = body;
+			this.callStack = callStack;
 		}
 
-		public ContextEvaluationStep(ExecutionStep blockingStep, Func<TweedleValue> body)
+		public ContextEvaluationStep(string callStack, ExecutionStep blockingStep, Func<TweedleValue> body)
 			: base(blockingStep)
 		{
 			this.body = body;
+			this.callStack = callStack;
 		}
 
 		internal override bool Execute()
