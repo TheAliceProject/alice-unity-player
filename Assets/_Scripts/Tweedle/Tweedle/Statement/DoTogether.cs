@@ -16,10 +16,5 @@ namespace Alice.Tweedle
 		{
 			Body.AddParallelSteps(parent, frame);
 		}
-
-		internal override ExecutionStep AsStep(TweedleFrame frame)
-		{
-			return Body.ToParallelSteps(frame);
-		}
 	}
 }

@@ -17,38 +17,9 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
-		{
-			return new EachInArrayStep(this, frame, Array.AsStep(frame));
-		}
-
 		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
 		{
 			Array.AddStep(new EachInArrayNotifyingStep(this, frame, parent), frame);
-		}
-	}
-
-	internal class EachInArrayStep : StatementStep<EachInArrayTogether>
-	{
-		EvaluationStep array;
-		bool started = false;
-
-		public EachInArrayStep(EachInArrayTogether statement, TweedleFrame frame, EvaluationStep array)
-			: base(statement, frame, array)
-		{
-			this.array = array;
-		}
-
-		internal override bool Execute()
-		{
-			if (started)
-			{
-				return MarkCompleted();
-			}
-			started = true;
-			var frames = ((TweedleArray)array.Result).Values.Select(val => frame.ChildFrame("EachInArrayTogether", statement.ItemVariable, val)).ToList();
-			AddBlockingStep(statement.Body.ExecuteFramesInParallel(frames));
-			return false;
 		}
 	}
 

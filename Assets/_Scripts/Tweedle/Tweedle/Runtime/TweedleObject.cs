@@ -75,13 +75,6 @@ namespace Alice.Tweedle
 			return tweClass.SuperClass(frame).MethodNamed(frame, methodName);
 		}
 
-		internal IEnumerable<ExecutionStep> InitializationSteps(ConstructorFrame frame)
-		{
-			List<ExecutionStep> steps = new List<ExecutionStep>();
-			tweClass.AddInitializationSteps(steps, frame, this);
-			return steps;
-		}
-
 		internal IEnumerable<NotifyingStep> InitializationNotifyingSteps(ConstructorFrame frame)
 		{
 			List<NotifyingStep> steps = new List<NotifyingStep>();

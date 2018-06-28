@@ -1,5 +1,4 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -57,27 +56,6 @@ namespace Alice.Tweedle
 						target.Set(Identifier, value, frame);
 						return value;
 					});
-			}
-		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			if (TargetExp == null)
-			{
-				return new StartStep(frame.StackWith(ToTweedle()), () => new SingleInputStep(frame.StackWith(ToTweedle()),
-					ValueExp.AsStep(frame),
-					value => frame.SetValue(Identifier, value)));
-			}
-			else
-			{
-				return new StartStep(frame.StackWith(ToTweedle()), () => new DoubleInputStep(
-					TargetExp.AsStep(frame),
-					ValueExp.AsStep(frame),
-					(target, value) =>
-					{
-						target.Set(Identifier, value, frame);
-						return value;
-					}));
 			}
 		}
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -22,11 +21,6 @@ namespace Alice.Tweedle
 					parent,
 					value => Negate(value)),
 				frame);
-		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			return new SingleInputStep(frame.StackWith("-" + expression.ToTweedle()), expression.AsStep(frame), value => Negate(value));
 		}
 
 		internal abstract TweedleValue Negate(TweedleValue value);

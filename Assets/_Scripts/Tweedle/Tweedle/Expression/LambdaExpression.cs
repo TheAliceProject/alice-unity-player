@@ -28,14 +28,9 @@ namespace Alice.Tweedle
 
 		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
 		{
-			throw new NotImplementedException();
-		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
 			// TODO Add parameters to frame
 			//body.Execute(frame.LambdaFrame());
-			throw new System.NotImplementedException();
+			throw new NotImplementedException();
 		}
 	}
 }

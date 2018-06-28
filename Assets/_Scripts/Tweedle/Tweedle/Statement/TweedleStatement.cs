@@ -22,20 +22,6 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal ExecutionStep RootStep(TweedleFrame frame)
-		{
-			if (enabled)
-			{
-				return AsStep(frame);
-			}
-			else
-			{
-				return ExecutionStep.NOOP;
-			}
-		}
-
-		internal abstract ExecutionStep AsStep(TweedleFrame frame);
-
 		internal abstract void AddStep(NotifyingStep parent, TweedleFrame frame);
 	}
 }

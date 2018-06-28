@@ -45,8 +45,6 @@ namespace Alice.Tweedle
 			return ToString();
 		}
 
-		internal abstract EvaluationStep AsStep(TweedleFrame frame);
-
 		internal abstract NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame);
 
 		internal virtual NotifyingEvaluationStep AsStep(NotifyingStep parent)
