@@ -114,7 +114,7 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-		public void FalsePrimitiveShouldBeCreatedForNotFalse()
+		public void TruePrimitiveShouldBeCreatedForNotFalse()
 		{
 			LogicalNotExpression tested = (LogicalNotExpression)ParseExpression("!false");
 			Assert.IsTrue(((TweedlePrimitiveValue<bool>)tested.EvaluateNow()).Value,

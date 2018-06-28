@@ -14,6 +14,14 @@ namespace Alice.Tweedle
 			enabled = false;
 		}
 
+		internal void AddChildStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			if (enabled)
+			{
+				AddStep(parent, frame);
+			}
+		}
+
 		internal ExecutionStep RootStep(TweedleFrame frame)
 		{
 			if (enabled)
@@ -27,5 +35,7 @@ namespace Alice.Tweedle
 		}
 
 		internal abstract ExecutionStep AsStep(TweedleFrame frame);
+
+		internal abstract void AddStep(NotifyingStep parent, TweedleFrame frame);
 	}
 }

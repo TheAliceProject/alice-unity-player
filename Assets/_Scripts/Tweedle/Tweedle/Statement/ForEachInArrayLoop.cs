@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -14,6 +13,11 @@ namespace Alice.Tweedle
 		{
 			this.item = item;
 			this.array = array;
+		}
+
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			array.AddStep(new ForEachInArrayNotifyingStep(this, frame, parent), frame);
 		}
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)
@@ -49,6 +53,39 @@ namespace Alice.Tweedle
 				return false;
 			}
 			return MarkCompleted();
+		}
+	}
+
+	internal class ForEachInArrayNotifyingStep : NotifyingStatementStep<ForEachInArrayLoop>
+	{
+		TweedleArray items;
+		int index = 0;
+
+		public ForEachInArrayNotifyingStep(ForEachInArrayLoop statement, TweedleFrame frame, NotifyingStep parent)
+			: base(statement, frame, new NotifyingStep(frame, parent))
+		{
+		}
+
+		internal override void BlockerFinished(NotifyingStep notifyingStep)
+		{
+			base.BlockerFinished(notifyingStep);
+			if (items == null)
+			{
+				items = (TweedleArray)((NotifyingEvaluationStep)notifyingStep).Result;
+			}
+		}
+
+		internal override void Execute()
+		{
+			if (index < items.Length)
+			{
+				var loopFrame = frame.ChildFrame("ForEach loop", statement.item, items[index++]);
+				statement.Body.AddSequentialStep(this, loopFrame);
+			}
+			else
+			{
+				MarkCompleted();
+			}
 		}
 	}
 }

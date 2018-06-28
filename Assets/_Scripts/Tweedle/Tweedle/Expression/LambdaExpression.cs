@@ -26,6 +26,11 @@ namespace Alice.Tweedle
 			body = new BlockStatement(statements);
 		}
 
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			throw new NotImplementedException();
+		}
+
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			// TODO Add parameters to frame

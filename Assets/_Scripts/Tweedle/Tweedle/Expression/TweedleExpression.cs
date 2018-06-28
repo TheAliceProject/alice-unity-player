@@ -1,5 +1,4 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -19,7 +18,15 @@ namespace Alice.Tweedle
 
 		public TweedleValue EvaluateNow(TweedleFrame frame)
 		{
-			return AsStep(frame).EvaluateNow();
+			TweedleValue result = null;
+			AsStep(
+				new SingleInputActionNotificationStep(
+					"EvaluateNow",
+					frame,
+					null,
+					value => result = value),
+				frame).EvaluateNow();
+			return result;
 		}
 
 		public TweedleValue EvaluateNow()
@@ -39,5 +46,17 @@ namespace Alice.Tweedle
 		}
 
 		internal abstract EvaluationStep AsStep(TweedleFrame frame);
+
+		internal abstract NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame);
+
+		internal virtual NotifyingEvaluationStep AsStep(NotifyingStep parent)
+		{
+			return AsStep(parent, parent.frame);
+		}
+
+		internal void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			frame.vm.AddStep(AsStep(parent, frame));
+		}
 	}
 }

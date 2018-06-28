@@ -17,7 +17,13 @@ namespace Alice.Tweedle
 			}
 		}
 
-        internal override EvaluationStep AsStep(TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame), Arguments);
+			return cFrame.InvocationStep(frame.StackWith("Instantiation"), parent, Arguments);
+		}
+
+		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame), Arguments);
 			return cFrame.InvokeStep(frame.StackWith("Instantiation"));

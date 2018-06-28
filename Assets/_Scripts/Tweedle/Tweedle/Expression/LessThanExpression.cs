@@ -16,5 +16,10 @@
 		{
 			return left < right;
 		}
+
+		internal override string Operator()
+		{
+			return "<";
+		}
 	}
 }

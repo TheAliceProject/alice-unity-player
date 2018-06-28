@@ -22,6 +22,18 @@ namespace Alice.Tweedle
 			Initializer = initializer;
 		}
 
+		internal void AddInitializerStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			if (Initializer == null)
+			{
+				throw new TweedleRuntimeException("Absent Initializer. Unable to initialize variable <" + Name + ">.");
+			}
+			else
+			{
+				Initializer.AddStep(parent, frame);
+			}
+		}
+
 		internal EvaluationStep InitializerStep(TweedleFrame frame)
 		{
 			if (Initializer == null)

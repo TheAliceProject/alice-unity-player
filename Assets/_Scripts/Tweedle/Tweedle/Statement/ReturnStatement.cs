@@ -26,6 +26,17 @@ namespace Alice.Tweedle
 			this.expression = expression;
 		}
 
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			expression.AddStep(
+				new SingleInputActionNotificationStep(
+					frame.StackWith("return " + expression.ToTweedle()),
+					frame,
+					parent,
+					result => ((MethodFrame)frame).Return(result)),
+				frame);
+		}
+
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return new StartStep(frame.StackWith("return " + expression.ToTweedle()), () =>

@@ -17,7 +17,12 @@ namespace Alice.Tweedle
 
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
-			throw new System.NotImplementedException();
+			throw new NotImplementedException();
+		}
+
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

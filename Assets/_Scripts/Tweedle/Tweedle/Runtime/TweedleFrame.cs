@@ -7,7 +7,7 @@ namespace Alice.Tweedle
 	public class TweedleFrame
 	{
 		TweedleFrame parent;
-		protected internal VirtualMachine vm;
+		public VirtualMachine vm;
 		protected TweedleValue thisValue;
 		protected internal string callStackEntry;
 
@@ -17,6 +17,7 @@ namespace Alice.Tweedle
 		public TweedleFrame(string stackEntry)
 		{
 			callStackEntry = stackEntry;
+			vm = new VirtualMachine(null);
 		}
 
 		public TweedleFrame(string stackEntry, VirtualMachine vm)

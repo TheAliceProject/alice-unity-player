@@ -13,6 +13,17 @@ namespace Alice.Tweedle
 			Variable = variable;
 		}
 
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			Variable.AddInitializerStep(
+				new SingleInputActionNotificationStep(
+					frame.StackWith(Variable.ToTweedle()),
+					frame,
+					parent,
+					value => frame.SetLocalValue(Variable, value)),
+				frame);
+		}
+
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return new StartStep(frame.StackWith(Variable.ToTweedle()), () =>

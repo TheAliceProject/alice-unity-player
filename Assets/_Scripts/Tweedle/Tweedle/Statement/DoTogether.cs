@@ -12,6 +12,11 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			Body.AddParallelSteps(parent, frame);
+		}
+
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return Body.ToParallelSteps(frame);

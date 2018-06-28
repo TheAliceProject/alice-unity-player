@@ -15,6 +15,11 @@ namespace Alice.Tweedle
 			invokeSuper = false;
 		}
 
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			return Target.AsStep(parent, frame);
+		}
+
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			return Target.AsStep(frame);

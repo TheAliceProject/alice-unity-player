@@ -6,6 +6,15 @@ namespace Alice.Tweedle.Parsed
 	[TestFixture]
 	public class TweedleExpressionRunTest
 	{
+		VirtualMachine vm;
+		TweedleFrame frame;
+
+		private void Init()
+		{
+			vm = new VirtualMachine(null);
+			frame = new TweedleFrame("Test", vm);
+		}
+
 		private TweedleValue RunExpression(string src)
 		{
 			TweedleExpression expression = new TweedleParser().ParseExpression(src);
@@ -15,7 +24,7 @@ namespace Alice.Tweedle.Parsed
 		private TweedleValue RunExpression(string src, TweedleFrame frame)
 		{
 			TweedleExpression expression = new TweedleParser().ParseExpression(src);
-			return new VirtualMachine(null).EvaluateToFinish(expression, frame);
+			return vm.EvaluateToFinish(expression, frame);
 		}
 
 
@@ -37,16 +46,13 @@ namespace Alice.Tweedle.Parsed
 		[Test]
 		public void AnAssignmentExpressionShouldUpdateTheFrame()
 		{
-			TweedleFrame frame = new TweedleFrame("Test");
+			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 
 			TweedleValue noResult = RunExpression("x <- 3", frame);
-			UnityEngine.Debug.Log("Null? " + noResult);
-			//TweedlePrimitiveValue<int> tested = (TweedlePrimitiveValue<int>) RunExpression("x <- 3", frame);
 
 			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
-			UnityEngine.Debug.Log("Assignment " + newVal);
 			Assert.AreEqual(3, newVal.Value, "The VM should have returned 3.");
 		}
 	}
