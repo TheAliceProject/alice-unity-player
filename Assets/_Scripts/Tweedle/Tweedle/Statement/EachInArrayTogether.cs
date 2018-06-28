@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Alice.VM;
 
@@ -21,6 +20,11 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return new EachInArrayStep(this, frame, Array.AsStep(frame));
+		}
+
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			Array.AddStep(new EachInArrayNotifyingStep(this, frame, parent), frame);
 		}
 	}
 
@@ -45,6 +49,30 @@ namespace Alice.Tweedle
 			var frames = ((TweedleArray)array.Result).Values.Select(val => frame.ChildFrame("EachInArrayTogether", statement.ItemVariable, val)).ToList();
 			AddBlockingStep(statement.Body.ExecuteFramesInParallel(frames));
 			return false;
+		}
+	}
+
+	internal class EachInArrayNotifyingStep : NotifyingStatementStep<EachInArrayTogether>
+	{
+		NotifyingStep arrayStep;
+
+		public EachInArrayNotifyingStep(EachInArrayTogether statement, TweedleFrame frame, NotifyingStep parent)
+			: base(statement, frame, new NotifyingStep(frame, parent))
+		{
+		}
+		internal override void BlockerFinished(NotifyingStep notifyingStep)
+		{
+			base.BlockerFinished(notifyingStep);
+			if (arrayStep == null)
+			{
+				arrayStep = notifyingStep;
+			}
+		}
+
+		internal override void Execute()
+		{
+			var frames = ((TweedleArray)((NotifyingEvaluationStep)arrayStep).Result).Values.Select(val => frame.ChildFrame("EachInArrayTogether", statement.ItemVariable, val)).ToList();
+			statement.Body.AddParallelSteps(this.waitingStep, frames);
 		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -10,6 +9,11 @@ namespace Alice.Tweedle
 		public ExpressionStatement(TweedleExpression expression)
 		{
 			Expression = expression;
+		}
+
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			Expression.AddStep(parent, frame);
 		}
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)

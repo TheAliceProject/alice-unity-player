@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -11,6 +10,11 @@ namespace Alice.Tweedle
 		public DoInOrder(List<TweedleStatement> statements)
 		{
 			Body = new BlockStatement(statements);
+		}
+
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			Body.AddSequentialStep(parent, frame);
 		}
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)

@@ -1,5 +1,4 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -10,6 +9,10 @@ namespace Alice.Tweedle
 		public Comment(string text)
 		{
 			this.text = text;
+		}
+
+		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		{
 		}
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)

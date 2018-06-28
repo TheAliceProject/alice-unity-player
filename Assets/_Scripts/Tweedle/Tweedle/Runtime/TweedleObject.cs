@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -79,6 +78,13 @@ namespace Alice.Tweedle
 		internal IEnumerable<ExecutionStep> InitializationSteps(ConstructorFrame frame)
 		{
 			List<ExecutionStep> steps = new List<ExecutionStep>();
+			tweClass.AddInitializationSteps(steps, frame, this);
+			return steps;
+		}
+
+		internal IEnumerable<NotifyingStep> InitializationNotifyingSteps(ConstructorFrame frame)
+		{
+			List<NotifyingStep> steps = new List<NotifyingStep>();
 			tweClass.AddInitializationSteps(steps, frame, this);
 			return steps;
 		}

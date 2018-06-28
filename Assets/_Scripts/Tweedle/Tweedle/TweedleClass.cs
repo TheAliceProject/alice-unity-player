@@ -117,5 +117,20 @@ namespace Alice.Tweedle
 				}
 			}
 		}
+
+		internal void AddInitializationSteps(List<NotifyingStep> steps, ConstructorFrame frame, TweedleObject tweedleObject)
+		{
+			if (superClass != null)
+			{
+				SuperClass(frame).AddInitializationSteps(steps, frame, tweedleObject);
+			}
+			foreach (TweedleField field in Properties)
+			{
+				if (field.Initializer != null)
+				{
+					steps.Add(field.InitializeField(frame, tweedleObject));
+				}
+			}
+		}
 	}
 }

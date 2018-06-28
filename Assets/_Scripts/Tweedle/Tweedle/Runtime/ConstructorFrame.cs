@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.Tweedle;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -20,7 +18,7 @@ namespace Alice.Tweedle
 			CreateArgumentSteps(arguments);
 		}
 
-		private ConstructorFrame(ConstructorFrame constructorFrame, TweedleClass superClass, TweedleConstructor constructor, Dictionary<string, TweedleExpression> arguments)
+		ConstructorFrame(ConstructorFrame constructorFrame, TweedleClass superClass, TweedleConstructor constructor, Dictionary<string, TweedleExpression> arguments)
 			: base(constructorFrame)
 		{
 			tweedleClass = superClass;
@@ -56,6 +54,20 @@ namespace Alice.Tweedle
 			EvaluationStep invocation = base.InvokeStep(callStack);
 			invocation.AddBlockingStep(InitializeObjectStep());
 			return invocation;
+		}
+
+		protected override void AddSteps(SequentialStepsEvaluation main, Dictionary<string, TweedleExpression> arguments)
+		{
+			AddFieldSteps(main);
+			base.AddSteps(main, arguments);
+		}
+
+		private void AddFieldSteps(SequentialStepsEvaluation main)
+		{
+			foreach (NotifyingStep initFieldStep in ((TweedleObject)thisValue).InitializationNotifyingSteps(this))
+			{
+				main.AddStep(initFieldStep);
+			}
 		}
 
 		private ExecutionStep InitializeObjectStep()

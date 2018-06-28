@@ -1,5 +1,4 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -13,6 +12,11 @@ namespace Alice.Tweedle
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			return new ValueStep(frame.GetThis());
+		}
+
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			return new NotifyingValueStep(frame, parent, frame.GetThis());
 		}
 	}
 }

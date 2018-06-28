@@ -14,6 +14,11 @@ namespace Alice.Tweedle
 			return new ValueStep(this);
 		}
 
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			return new NotifyingValueStep(frame, parent, this);
+		}
+
 		internal double ToDouble()
 		{
 			return Type.ValueToDouble(this);
@@ -62,6 +67,20 @@ namespace Alice.Tweedle
 		public virtual TweedleValue Get(string fieldName)
 		{
 			throw new TweedleRuntimeException(this + " is not an Object. Can not access field " + fieldName);
+		}
+	}
+
+	internal class NotifyingValueStep : NotifyingEvaluationStep
+	{
+		public NotifyingValueStep(TweedleFrame frame, NotifyingStep parent, TweedleValue tweedleValue)
+			: base(frame, parent)
+		{
+			result = tweedleValue;
+		}
+
+		internal override void Execute()
+		{
+			base.Execute();
 		}
 	}
 

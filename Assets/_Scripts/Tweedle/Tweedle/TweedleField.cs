@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -29,9 +28,16 @@ namespace Alice.Tweedle
 
 		internal ExecutionStep InitializeFieldStep(ConstructorFrame frame, TweedleObject tweedleObject)
 		{
-			return new SingleInputActionStep(frame.StackWith("Initialize " + Name + " <- "+ Initializer.ToTweedle()),
+			return new SingleInputActionStep(frame.StackWith("Initialize " + Name + " <- " + Initializer.ToTweedle()),
 				InitializerStep(frame),
 				value => tweedleObject.Set(Name, value, frame));
+		}
+
+		internal NotifyingStep InitializeField(ConstructorFrame frame, TweedleObject tweedleObject)
+		{
+			return Initializer.AsStep(
+				new SingleInputActionNotificationStep("", frame, null, value => tweedleObject.Set(Name, value, frame)),
+				frame);
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -16,6 +14,17 @@ namespace Alice.Tweedle
 			this.rhs = rhs;
 		}
 
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			return new DoubleInputEvalStep(
+				frame.StackWith(ToTweedle()),
+				frame,
+				parent,
+				lhs,
+				rhs,
+				(l, r) => Evaluate(l, r));
+		}
+
 		internal override EvaluationStep AsStep(TweedleFrame frame)
 		{
 			return new DoubleInputStep(lhs.AsStep(frame),
@@ -26,6 +35,13 @@ namespace Alice.Tweedle
 		{
 			return Evaluate(left, right);
 		}
+
+		internal override string ToTweedle()
+		{
+			return lhs.ToTweedle() + " " + Operator() + " " + rhs.ToTweedle();
+		}
+
+		internal abstract string Operator();
 
 		protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);
 	}

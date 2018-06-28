@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Alice.Tweedle;
+﻿using Alice.Tweedle;
 using Alice.Tweedle.Parsed;
 using UnityEngine;
 
@@ -10,7 +8,7 @@ namespace Alice.VM
 	{
 		TweedleFrame staticFrame;
 		public TweedleSystem Library { get; }
-		ExecutionQueue executionQueue = new ExecutionQueue();
+		public NotifyingStepExecutionQueue executionQueue = new NotifyingStepExecutionQueue();
 
 		public VirtualMachine(TweedleSystem tweedleSystem)
 		{
@@ -39,13 +37,13 @@ namespace Alice.VM
 
 		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
 		{
-			executionQueue.AddToQueue(statement.RootStep(frame));
+			statement.AddStep(null, frame);
 			executionQueue.ProcessQueues();
 		}
 
 		public TweedleValue EvaluateToFinish(TweedleExpression expression, TweedleFrame frame)
 		{
-			EvaluationStep step = expression.AsStep(frame);
+			NotifyingEvaluationStep step = expression.AsStep(null, frame);
 			executionQueue.AddToQueue(step);
 			executionQueue.ProcessQueues();
 			return step.Result;
@@ -53,8 +51,14 @@ namespace Alice.VM
 
 		public void Execute(TweedleStatement statement)
 		{
-			executionQueue.AddToQueue((ExecutionStep)statement.RootStep(staticFrame));
+			statement.AddStep(null, staticFrame);
 			StartQueueProcessing();
+		}
+
+		public void AddStep(NotifyingStep step)
+		{
+			executionQueue.AddToQueue(step);
+			executionQueue.ProcessQueues();
 		}
 
 		private void StartQueueProcessing()

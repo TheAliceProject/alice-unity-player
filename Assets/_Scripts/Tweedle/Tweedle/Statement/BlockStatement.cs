@@ -13,16 +13,42 @@ namespace Alice.Tweedle
 			Statements = statements;
 		}
 
+		internal void AddSequentialStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			frame.vm.AddStep(AsSequentialStep(parent, frame));
+		}
+
+		internal SequentialSteps AsSequentialStep(NotifyingStep parent, TweedleFrame frame)
+		{
+			return new SequentialSteps(parent, this, frame);
+		}
+
+		internal void AddParallelSteps(NotifyingStep parent, TweedleFrame frame)
+		{
+			foreach (TweedleStatement statement in Statements)
+			{
+				statement.AddChildStep(parent, frame.ChildFrame());
+			}
+		}
+
+		internal void AddParallelSteps(NotifyingStep parent, List<TweedleFrame> frames)
+		{
+			foreach (TweedleFrame frame in frames)
+			{
+				AddSequentialStep(parent, frame);
+			}
+		}
+
 		internal ExecutionStep ToSequentialStep(TweedleFrame frame)
 		{
 			ExecutionStep lastStep = ExecutionStep.NOOP;
 			foreach (TweedleStatement stmt in Statements)
-            {
+			{
 				ExecutionStep step = stmt.RootStep(frame);
-                step.AddBlockingStep(lastStep);
-                lastStep = step;
-            }
-            return lastStep;
+				step.AddBlockingStep(lastStep);
+				lastStep = step;
+			}
+			return lastStep;
 		}
 
 		internal ExecutionStep ToParallelSteps(TweedleFrame frame)
@@ -35,6 +61,30 @@ namespace Alice.Tweedle
 		{
 			List<ExecutionStep> blockers = frames.Select(frame => new SequentialStepsStep(this, frame)).ToList<ExecutionStep>();
 			return new ParallelStepsStep(blockers);
+		}
+
+		internal class SequentialSteps : NotifyingStep
+		{
+			protected BlockStatement block;
+			int index = 0;
+
+			public SequentialSteps(NotifyingStep parent, BlockStatement block, TweedleFrame frame)
+				: base(frame, parent)
+			{
+				this.block = block;
+			}
+
+			internal override void Execute()
+			{
+				if (index < block.Statements.Count)
+				{
+					block.Statements[index++].AddChildStep(this, frame);
+				}
+				else
+				{
+					MarkCompleted();
+				}
+			}
 		}
 
 		internal class SequentialStepsStep : ExecutionStep
@@ -53,8 +103,7 @@ namespace Alice.Tweedle
 			{
 				if (index < block.Statements.Count)
 				{
-					AddBlockingStep(block.Statements[index].RootStep(frame));
-					index++;
+					AddBlockingStep(block.Statements[index++].RootStep(frame));
 					return false;
 				}
 				return MarkCompleted();
