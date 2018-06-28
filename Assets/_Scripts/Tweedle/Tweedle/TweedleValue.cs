@@ -9,11 +9,6 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			return new ValueStep(this);
-		}
-
 		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
 		{
 			return new NotifyingValueStep(frame, parent, this);
@@ -70,7 +65,7 @@ namespace Alice.Tweedle
 		}
 	}
 
-	internal class NotifyingValueStep : NotifyingEvaluationStep
+	class NotifyingValueStep : NotifyingEvaluationStep
 	{
 		public NotifyingValueStep(TweedleFrame frame, NotifyingStep parent, TweedleValue tweedleValue)
 			: base(frame, parent)
@@ -81,20 +76,6 @@ namespace Alice.Tweedle
 		internal override void Execute()
 		{
 			base.Execute();
-		}
-	}
-
-	internal class ValueStep : EvaluationStep
-	{
-		public ValueStep(TweedleValue tweedleValue)
-		{
-			result = tweedleValue;
-			MarkCompleted();
-		}
-
-		internal override bool Execute()
-		{
-			return true;
 		}
 	}
 }

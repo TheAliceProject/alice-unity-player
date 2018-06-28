@@ -18,11 +18,5 @@ namespace Alice.Tweedle
 			ConstructorFrame superFrame = ((ConstructorFrame)frame).SuperFrame(Arguments);
 			return superFrame.InvocationStep(frame.StackWith("super()"), parent, Arguments);
 		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			ConstructorFrame superFrame = ((ConstructorFrame)frame).SuperFrame(Arguments);
-			return superFrame.InvokeStep(frame.StackWith("super()"));
-		}
 	}
 }

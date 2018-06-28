@@ -1,12 +1,11 @@
-﻿using System;
-using Alice.VM;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	abstract public class MemberAccessExpression : TweedleExpression
 	{
 		public TweedleExpression Target { get; }
-        internal protected bool invokeSuper;
+		internal protected bool invokeSuper;
 
 		public MemberAccessExpression(TweedleExpression target)
 			: base(null)
@@ -18,11 +17,6 @@ namespace Alice.Tweedle
 		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
 		{
 			return Target.AsStep(parent, frame);
-		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			return Target.AsStep(frame);
 		}
 	}
 }

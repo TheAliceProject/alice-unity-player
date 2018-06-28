@@ -154,9 +154,9 @@ namespace Alice.Tweedle
 			return child;
 		}
 
-		internal ConstructorFrame ForInstantiation(TweedleClass tweedleClass, Dictionary<string, TweedleExpression> arguments)
+		internal ConstructorFrame ForInstantiation(TweedleClass tweedleClass)
 		{
-			return new ConstructorFrame(this, tweedleClass, arguments);
+			return new ConstructorFrame(this, tweedleClass);
 		}
 
 		internal MethodFrame MethodCallFrame()

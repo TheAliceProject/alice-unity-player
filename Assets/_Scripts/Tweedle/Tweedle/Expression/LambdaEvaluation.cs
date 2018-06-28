@@ -6,8 +6,8 @@ namespace Alice.Tweedle
 {
 	public class LambdaEvaluation : TweedleExpression
 	{
-		private TweedleExpression target;
-		private List<TweedleExpression> arguments;
+		TweedleExpression target;
+		List<TweedleExpression> arguments;
 
 		public List<TweedleExpression> Arguments
 		{
@@ -30,13 +30,8 @@ namespace Alice.Tweedle
 
 		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
 		{
-			throw new NotImplementedException();
-		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
 			// TODO evaluate target to a lambda expression and evaluate it.
-			throw new System.NotImplementedException();
+			throw new NotImplementedException();
 		}
 	}
 }

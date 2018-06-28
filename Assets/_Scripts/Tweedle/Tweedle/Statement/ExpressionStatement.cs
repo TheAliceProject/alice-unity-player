@@ -15,10 +15,5 @@ namespace Alice.Tweedle
 		{
 			Expression.AddStep(parent, frame);
 		}
-
-		internal override ExecutionStep AsStep(TweedleFrame frame)
-		{
-			return Expression.AsStep(frame);
-		}
 	}
 }

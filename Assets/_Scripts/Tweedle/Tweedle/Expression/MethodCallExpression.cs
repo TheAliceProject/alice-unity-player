@@ -59,25 +59,5 @@ namespace Alice.Tweedle
 
 			return base.AsStep(prepMethodStep, frame);
 		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			MethodFrame methodFrame = frame.MethodCallFrame();
-			EvaluationStep targetStep = base.AsStep(frame);
-			ExecutionStep prepMethodStep = new SingleInputActionStep(frame.StackWith("Invocation"),
-				targetStep,
-				target =>
-				{
-					methodFrame.SetThis(target);
-					methodFrame.Method = invokeSuper ? target.SuperMethodNamed(frame, MethodName) : target.MethodNamed(frame, MethodName);
-					if (methodFrame.Method == null)//|| !method.ExpectsArgs(callExpression.arguments))
-					{
-						throw new TweedleRuntimeException("No method matching " + target + "." + MethodName + "()");
-					}
-					methodFrame.callStackEntry = MethodName;
-					methodFrame.CreateArgumentSteps(arguments);
-				});
-			return new StartStep(prepMethodStep, () => methodFrame.InvokeStep(frame.StackWith("Invocation")));
-		}
 	}
 }

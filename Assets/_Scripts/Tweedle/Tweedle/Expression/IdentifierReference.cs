@@ -14,12 +14,8 @@ namespace Alice.Tweedle
 
 		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
 		{
+			// stack? frame.StackWith("Get Identifier " + Name)
 			return new NotifyingValueStep(frame, parent, frame.GetValue(Name));
-		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			return new ContextEvaluationStep(frame.StackWith("Get Identifier " + Name), () => frame.GetValue(Name));
 		}
 	}
 }

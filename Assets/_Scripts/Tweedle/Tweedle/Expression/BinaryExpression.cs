@@ -25,16 +25,12 @@ namespace Alice.Tweedle
 				(l, r) => Evaluate(l, r));
 		}
 
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			return new DoubleInputStep(lhs.AsStep(frame),
-									   rhs.AsStep(frame),
-									   (l, r) => Evaluate(l, r));
-		}
 		public TweedleValue EvaluateStep(TweedleValue left, TweedleValue right)
 		{
 			return Evaluate(left, right);
 		}
+
+		protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);
 
 		internal override string ToTweedle()
 		{
@@ -42,7 +38,5 @@ namespace Alice.Tweedle
 		}
 
 		internal abstract string Operator();
-
-		protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);
 	}
 }

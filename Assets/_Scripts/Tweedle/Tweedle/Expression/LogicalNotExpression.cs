@@ -22,12 +22,5 @@ namespace Alice.Tweedle
 					value => TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean())),
 				frame);
 		}
-
-		internal override EvaluationStep AsStep(TweedleFrame frame)
-		{
-			return new SingleInputStep(frame.StackWith("!" + expression.ToTweedle()),
-				expression.AsStep(frame),
-				value => TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean()));
-		}
 	}
 }

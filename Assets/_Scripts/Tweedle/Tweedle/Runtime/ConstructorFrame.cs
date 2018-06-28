@@ -7,18 +7,16 @@ namespace Alice.Tweedle
 	{
 		internal TweedleClass tweedleClass;
 
-		internal ConstructorFrame(TweedleFrame caller, TweedleClass tweedleClass, Dictionary<string, TweedleExpression> arguments)
+		internal ConstructorFrame(TweedleFrame caller, TweedleClass tweedleClass)
 			: base(caller)
 		{
 			this.tweedleClass = tweedleClass;
 			thisValue = new TweedleObject(tweedleClass);
 			Result = thisValue;
-			FindConstructor(arguments);
 			callStackEntry = "new " + tweedleClass.Name;
-			CreateArgumentSteps(arguments);
 		}
 
-		ConstructorFrame(ConstructorFrame constructorFrame, TweedleClass superClass, TweedleConstructor constructor, Dictionary<string, TweedleExpression> arguments)
+		ConstructorFrame(ConstructorFrame constructorFrame, TweedleClass superClass, TweedleConstructor constructor)
 			: base(constructorFrame)
 		{
 			tweedleClass = superClass;
@@ -26,12 +24,12 @@ namespace Alice.Tweedle
 			Result = thisValue;
 			Method = constructor;
 			callStackEntry = "super() => " + tweedleClass.Name;
-			CreateArgumentSteps(arguments);
 		}
 
-		void FindConstructor(Dictionary<string, TweedleExpression> arguments)
+		internal override NotifyingEvaluationStep InvocationStep(string callStack, NotifyingStep parent, Dictionary<string, TweedleExpression> arguments)
 		{
 			Method = tweedleClass.ConstructorWithArgs(arguments);
+			return base.InvocationStep(callStack, parent, arguments);
 		}
 
 		internal ConstructorFrame SuperFrame(Dictionary<string, TweedleExpression> arguments)
@@ -42,18 +40,11 @@ namespace Alice.Tweedle
 				TweedleConstructor superConst = superClass?.ConstructorWithArgs(arguments);
 				if (superConst != null)
 				{
-					return new ConstructorFrame(this, superClass, superConst, arguments);
+					return new ConstructorFrame(this, superClass, superConst);
 				}
 				superClass = superClass.SuperClass(this);
 			}
 			throw new TweedleRuntimeException("No super constructor on" + tweedleClass + " with args " + arguments);
-		}
-
-		internal override EvaluationStep InvokeStep(string callStack)
-		{
-			EvaluationStep invocation = base.InvokeStep(callStack);
-			invocation.AddBlockingStep(InitializeObjectStep());
-			return invocation;
 		}
 
 		protected override void AddSteps(SequentialStepsEvaluation main, Dictionary<string, TweedleExpression> arguments)
@@ -62,22 +53,12 @@ namespace Alice.Tweedle
 			base.AddSteps(main, arguments);
 		}
 
-		private void AddFieldSteps(SequentialStepsEvaluation main)
+		void AddFieldSteps(SequentialStepsEvaluation main)
 		{
 			foreach (NotifyingStep initFieldStep in ((TweedleObject)thisValue).InitializationNotifyingSteps(this))
 			{
 				main.AddStep(initFieldStep);
 			}
-		}
-
-		private ExecutionStep InitializeObjectStep()
-		{
-			var initObjectStep = new CompletionStep();
-			foreach (ExecutionStep initFieldStep in ((TweedleObject)thisValue).InitializationSteps(this))
-			{
-				initObjectStep.AddBlockingStep(initFieldStep);
-			}
-			return initObjectStep;
 		}
 	}
 }

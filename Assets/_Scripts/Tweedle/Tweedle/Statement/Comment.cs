@@ -14,10 +14,5 @@ namespace Alice.Tweedle
 		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
 		{
 		}
-
-		internal override ExecutionStep AsStep(TweedleFrame frame)
-		{
-			return ExecutionStep.NOOP;
-		}
 	}
 }
