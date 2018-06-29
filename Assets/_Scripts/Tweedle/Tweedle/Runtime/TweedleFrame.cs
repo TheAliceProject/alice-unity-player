@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 		public TweedleFrame(string stackEntry)
 		{
 			callStackEntry = stackEntry;
-			vm = new VirtualMachine(null);
+			vm = new VirtualMachine();
 		}
 
 		public TweedleFrame(string stackEntry, VirtualMachine vm)

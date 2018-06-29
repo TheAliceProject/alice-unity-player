@@ -11,7 +11,7 @@ namespace Alice.Tweedle.Parsed
 
 		public void Init()
 		{
-			vm = new VirtualMachine(null);
+			vm = new VirtualMachine();
 			frame = new TweedleFrame("Test", vm);
 		}
 

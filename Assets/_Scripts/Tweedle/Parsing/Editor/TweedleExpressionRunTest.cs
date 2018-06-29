@@ -27,7 +27,6 @@ namespace Alice.Tweedle.Parsed
 			return vm.EvaluateToFinish(expression, frame);
 		}
 
-
 		[Test]
 		public void ResultShouldBeCreatedForAddition()
 		{
