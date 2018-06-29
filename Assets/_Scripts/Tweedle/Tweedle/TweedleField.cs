@@ -19,10 +19,10 @@ namespace Alice.Tweedle
 			Modifiers = modifiers;
 		}
 
-		internal NotifyingStep InitializeField(ConstructorFrame frame, TweedleObject tweedleObject)
+		internal NotifyingStep InitializeField(TweedleFrame frame, TweedleObject tweedleObject)
 		{
 			return Initializer.AsStep(
-				new SingleInputActionNotificationStep("", frame, null, value => tweedleObject.Set(Name, value, frame)),
+				new SingleInputActionNotificationStep("", frame, value => tweedleObject.Set(Name, value, frame), null),
 				frame);
 		}
 	}

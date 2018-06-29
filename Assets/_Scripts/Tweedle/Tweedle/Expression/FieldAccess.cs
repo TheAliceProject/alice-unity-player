@@ -25,14 +25,14 @@ namespace Alice.Tweedle
 			return access;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep next, TweedleFrame frame)
 		{
 			return base.AsStep(
 				new SingleInputNotificationStep(
 					frame.StackWith("Get Field " + FieldName),
 					frame,
-					parent,
-					target => target.Get(FieldName)),
+					target => target.Get(FieldName),
+					next),
 				frame);
 		}
 	}

@@ -8,14 +8,14 @@ namespace Alice.VM
 		TweedleValue initialValue;
 		Func<TweedleValue, TweedleValue> body;
 
-		public SingleInputNotificationStep(string callStack, TweedleFrame frame, NotifyingStep next, Func<TweedleValue, TweedleValue> body)
+		public SingleInputNotificationStep(string callStack, TweedleFrame frame, Func<TweedleValue, TweedleValue> body, NotifyingStep next)
 			: base(frame, next)
 		{
 			this.body = body;
 			this.callStack = callStack;
 		}
 
-		public SingleInputNotificationStep(NotifyingStep next, Func<TweedleValue, TweedleValue> body)
+		public SingleInputNotificationStep(Func<TweedleValue, TweedleValue> body, NotifyingStep next)
 			: base(next.frame, next)
 		{
 			this.body = body;

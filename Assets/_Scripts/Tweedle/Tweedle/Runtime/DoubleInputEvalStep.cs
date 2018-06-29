@@ -27,11 +27,7 @@ namespace Alice.VM
 
 		SingleInputActionNotificationStep HandleValueStep(Action<TweedleValue> handler)
 		{
-			return new SingleInputActionNotificationStep(
-									callStack,
-									frame,
-									this,
-									handler);
+			return new SingleInputActionNotificationStep(callStack, frame, handler, this);
 		}
 
 		internal override void Execute()

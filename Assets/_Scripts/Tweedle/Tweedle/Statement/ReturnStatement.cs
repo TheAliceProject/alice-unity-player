@@ -26,14 +26,14 @@ namespace Alice.Tweedle
 			this.expression = expression;
 		}
 
-		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		internal override void AddStep(NotifyingStep next, TweedleFrame frame)
 		{
 			expression.AddStep(
 				new SingleInputActionNotificationStep(
 					frame.StackWith("return " + expression.ToTweedle()),
 					frame,
-					parent,
-					result => ((MethodFrame)frame).Return(result)),
+					result => ((MethodFrame)frame).Return(result),
+					next),
 				frame);
 		}
 	}

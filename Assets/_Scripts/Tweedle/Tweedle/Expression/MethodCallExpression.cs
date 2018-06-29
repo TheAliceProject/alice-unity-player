@@ -45,7 +45,6 @@ namespace Alice.Tweedle
 			NotifyingStep prepMethodStep = new SingleInputActionNotificationStep(
 				frame.StackWith("Invocation Prep"),
 				frame,
-				new ActionNotifyingStep("InvPrep", methodFrame, null, () => methodFrame.QueueInvocationStep(frame.StackWith("Invocation"), parent, arguments)),
 				target =>
 				{
 					methodFrame.SetThis(target);
@@ -55,7 +54,8 @@ namespace Alice.Tweedle
 						throw new TweedleRuntimeException("No method matching " + target + "." + MethodName + "()");
 					}
 					methodFrame.callStackEntry = MethodName;
-				});
+				},
+				new ActionNotifyingStep("InvPrep", methodFrame, null, () => methodFrame.QueueInvocationStep(frame.StackWith("Invocation"), parent, arguments)));
 
 			return base.AsStep(prepMethodStep, frame);
 		}

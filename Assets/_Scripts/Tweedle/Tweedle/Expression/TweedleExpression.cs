@@ -23,8 +23,8 @@ namespace Alice.Tweedle
 				new SingleInputActionNotificationStep(
 					"EvaluateNow",
 					frame,
-					null,
-					value => result = value),
+					value => result = value,
+					null),
 				frame).EvaluateNow();
 			return result;
 		}

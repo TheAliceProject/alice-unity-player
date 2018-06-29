@@ -14,13 +14,6 @@ namespace Alice.VM
 			this.callStack = callStack;
 		}
 
-		public ActionNotifyingStep(NotifyingStep next, Action body)
-			: base(next.frame, next)
-		{
-			this.body = body;
-			this.callStack = next.callStack;
-		}
-
 		internal override void Execute()
 		{
 			body.Invoke();
