@@ -1,24 +1,29 @@
-﻿using Alice.Tweedle;
+﻿using System.Collections;
+using Alice.Tweedle;
 using Alice.Tweedle.Parsed;
-using UnityEngine;
 
 namespace Alice.VM
 {
-	public class VirtualMachine : MonoBehaviour
+	public class VirtualMachine // : MonoBehaviour
 	{
 		TweedleFrame staticFrame;
-		public TweedleSystem Library { get; }
+		public TweedleSystem Library { get; private set; }
 		public NotifyingStepExecutionQueue executionQueue = new NotifyingStepExecutionQueue();
+
+		public VirtualMachine()
+		{
+			staticFrame = new TweedleFrame("VM", this);
+		}
 
 		public VirtualMachine(TweedleSystem tweedleSystem)
 		{
-			Library = tweedleSystem;
-			Initialize();
+			staticFrame = new TweedleFrame("VM", this);
+			Initialize(tweedleSystem);
 		}
 
-		void Initialize()
+		internal void Initialize(TweedleSystem tweedleSystem)
 		{
-			staticFrame = new TweedleFrame("VM", this);
+			Library = tweedleSystem;
 			InstantiateEnums();
 			// TODO Evaluate static variables
 			// make enums hard refs?
@@ -30,40 +35,42 @@ namespace Alice.VM
 			// throw new NotImplementedException();
 		}
 
-		public void Execute(TweedleExpression exp)
+		public void Queue(TweedleExpression exp)
 		{
-			Execute(new ExpressionStatement(exp));
+			Queue(new ExpressionStatement(exp));
 		}
 
+		public void Queue(TweedleStatement statement)
+		{
+			statement.AddStep(new NotifyingStep(staticFrame), staticFrame);
+		}
+
+		// Used by tests
 		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
 		{
 			statement.AddStep(null, frame);
-			executionQueue.ProcessQueues();
+			executionQueue.ProcessOneFrame();
 		}
 
+		// Used by tests
 		public TweedleValue EvaluateToFinish(TweedleExpression expression, TweedleFrame frame)
 		{
 			NotifyingEvaluationStep step = expression.AsStep(null, frame);
 			executionQueue.AddToQueue(step);
-			executionQueue.ProcessQueues();
+			executionQueue.ProcessOneFrame();
 			return step.Result;
-		}
-
-		public void Execute(TweedleStatement statement)
-		{
-			statement.AddStep(null, staticFrame);
-			StartQueueProcessing();
 		}
 
 		public void AddStep(NotifyingStep step)
 		{
 			executionQueue.AddToQueue(step);
-			executionQueue.ProcessQueues();
+			executionQueue.ProcessOneFrame();
 		}
 
-		private void StartQueueProcessing()
+		internal IEnumerator ProcessQueue()
 		{
-			StartCoroutine("ProcessQueue");
+			executionQueue.ProcessOneFrame();
+			yield return null;
 		}
 	}
 

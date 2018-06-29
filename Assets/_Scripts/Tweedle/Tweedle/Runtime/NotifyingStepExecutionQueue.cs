@@ -46,37 +46,34 @@ namespace Alice.VM
 			}
 		}
 
-		internal IEnumerator<NotifyingStep> ProcessQueues()
+		internal void ProcessOneFrame()
 		{
-			if (isProcessing)
+			if (!isProcessing)
 			{
-				return null;
+				isProcessing = true;
+				BeginProcessing();
+				isProcessing = false;
 			}
-			isProcessing = true;
-			// loop count is temporary hack to prevent run away code
-			var loopCount = 0;
-			while (IsRunning())
-			{
-				while (IsTimeLeftInFrame() && (stepsForThisFrame.Count > 0))
-				{
-					loopCount++;
-					if (loopCount > 100000)
-					{
-						throw new System.Exception("Exceeded loop count limit");
-					}
-					ProcessStep(stepsForThisFrame.Dequeue());
-				}
-				PrepForNextFrame();
-				//yield return null;
-			}
-			isProcessing = false;
-			return null;
 		}
 
-		bool IsRunning()
+		void BeginProcessing()
 		{
-			// stop running and wait for event to start up again
-			return stepsForThisFrame.Count > 0 || stepsForNextFrame.Count > 0;
+			// loop count is temporary hack to prevent run away code
+			var loopCount = 0;
+			while (IsTimeLeftInFrame() && (stepsForThisFrame.Count > 0))
+			{
+				loopCount++;
+				if (loopCount > 100000)
+				{
+					throw new System.Exception("Exceeded loop count limit");
+				}
+				ProcessStep(stepsForThisFrame.Dequeue());
+			}
+			PrepForNextFrame();
+			if (loopCount > 10)
+			{
+				UnityEngine.Debug.Log("Loop count " + loopCount);
+			}
 		}
 
 		bool IsTimeLeftInFrame()
@@ -109,13 +106,11 @@ namespace Alice.VM
 			}
 			catch (TweedleRuntimeException tre)
 			{
-				UnityEngine.Debug.Log("*------------------------Exception------------------------*");
-				UnityEngine.Debug.Log(tre.Message);
-				UnityEngine.Debug.Log("*----------------------System Stack-----------------------*");
-				UnityEngine.Debug.Log(tre.StackTrace);
-				UnityEngine.Debug.Log("*----------------------Tweedle Stack----------------------*");
-				UnityEngine.Debug.Log(step.CallStack());
-				UnityEngine.Debug.Log("*---------------------------------------------------------*");
+				UnityEngine.Debug.Log(
+					"*------------------------Exception------------------------*\n" + tre.Message +
+					"\n*----------------------System Stack-----------------------*\n" + tre.StackTrace +
+					"\n*----------------------Tweedle Stack----------------------*\n" + step.CallStack() +
+					"\n*---------------------------------------------------------*");
 				// TODO decide how best to handle errors in steps
 				throw tre;
 			}
