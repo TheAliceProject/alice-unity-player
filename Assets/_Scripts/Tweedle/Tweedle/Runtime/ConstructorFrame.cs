@@ -26,10 +26,10 @@ namespace Alice.Tweedle
 			callStackEntry = "super() => " + tweedleClass.Name;
 		}
 
-		internal override NotifyingEvaluationStep InvocationStep(string callStack, NotifyingStep parent, Dictionary<string, TweedleExpression> arguments)
+		internal override NotifyingEvaluationStep InvocationStep(string callStack, Dictionary<string, TweedleExpression> arguments, NotifyingStep next)
 		{
 			Method = tweedleClass.ConstructorWithArgs(arguments);
-			return base.InvocationStep(callStack, parent, arguments);
+			return base.InvocationStep(callStack, arguments, next);
 		}
 
 		internal ConstructorFrame SuperFrame(Dictionary<string, TweedleExpression> arguments)
@@ -45,20 +45,6 @@ namespace Alice.Tweedle
 				superClass = superClass.SuperClass(this);
 			}
 			throw new TweedleRuntimeException("No super constructor on" + tweedleClass + " with args " + arguments);
-		}
-
-		protected override void AddSteps(SequentialStepsEvaluation main, Dictionary<string, TweedleExpression> arguments)
-		{
-			AddFieldSteps(main);
-			base.AddSteps(main, arguments);
-		}
-
-		void AddFieldSteps(SequentialStepsEvaluation main)
-		{
-			foreach (NotifyingStep initFieldStep in ((TweedleObject)thisValue).InitializationNotifyingSteps(this))
-			{
-				main.AddStep(initFieldStep);
-			}
 		}
 	}
 }

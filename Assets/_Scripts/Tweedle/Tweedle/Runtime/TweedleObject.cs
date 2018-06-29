@@ -50,8 +50,12 @@ namespace Alice.Tweedle
 		internal override bool Set(string fieldName, TweedleValue value, TweedleFrame frame)
 		{
 			TweedleField field = tweClass.Field(frame, fieldName);
-			if (field != null && field.Accepts(value, frame))
+			if (field != null)
 			{
+				if (!field.Accepts(value, frame))
+				{
+					throw new TweedleRuntimeException("Invalid type. Can not assign " + value + " to " + fieldName);
+				}
 				if (Attributes.ContainsKey(fieldName))
 				{
 					Attributes[fieldName].Value = value;

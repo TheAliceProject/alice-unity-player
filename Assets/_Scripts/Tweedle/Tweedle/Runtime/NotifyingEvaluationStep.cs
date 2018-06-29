@@ -2,7 +2,7 @@
 
 namespace Alice.VM
 {
-	abstract class NotifyingEvaluationStep : NotifyingStep
+	public abstract class NotifyingEvaluationStep : NotifyingStep
 	{
 		protected TweedleValue result;
 		public TweedleValue Result { get { return result; } }
