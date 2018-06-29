@@ -22,8 +22,8 @@ namespace Alice.Tweedle
 				new SingleInputActionNotificationStep(
 					frame.StackWith("if " + Condition.ToTweedle()),
 					frame,
-					null,
-					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(parent, frame)),
+					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(parent, frame),
+					null),
 				frame);
 		}
 	}

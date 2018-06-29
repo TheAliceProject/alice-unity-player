@@ -11,7 +11,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
 		{
-			return new NotifyingValueStep(frame, parent, frame.GetThis());
+			return new NotifyingValueStep(frame.StackWith("this"), frame, parent, frame.GetThis());
 		}
 	}
 }

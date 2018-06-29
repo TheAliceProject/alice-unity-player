@@ -102,7 +102,7 @@ namespace Alice.Tweedle
 
 		// NB There is no guaranteed order for the execution of steps.
 		//    Make sure they do not conflict or change this to enforce order, most likely by class hierarchy.
-		internal void AddInitializationSteps(List<NotifyingStep> steps, ConstructorFrame frame, TweedleObject tweedleObject)
+		internal void AddInitializationSteps(List<NotifyingStep> steps, TweedleFrame frame, TweedleObject tweedleObject)
 		{
 			if (superClass != null)
 			{

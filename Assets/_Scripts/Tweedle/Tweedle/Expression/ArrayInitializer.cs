@@ -50,7 +50,7 @@ namespace Alice.Tweedle
 			}
 			else
 			{
-				sizeStep = new NotifyingValueStep(frame, null, TweedleTypes.WHOLE_NUMBER.Instantiate(steps.Count()));
+				sizeStep = new NotifyingValueStep(frame.StackWith("new Array size"), frame, null, TweedleTypes.WHOLE_NUMBER.Instantiate(steps.Count()));
 			}
 			main.AddStep(sizeStep);
 			foreach (var step in steps)
