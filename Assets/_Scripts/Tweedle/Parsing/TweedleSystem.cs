@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Alice.Tweedle.File;
 using Alice.VM;
 
@@ -16,6 +17,7 @@ namespace Alice.Tweedle.Parsed
 		public Dictionary<string, ProgramDescription> UnlinkedPrograms { get; private set; }
 		public Dictionary<string, ModelManifest> UnlinkedModels { get; private set; }
 		public Dictionary<string, TweedleClass> Classes { get; private set; }
+		Dictionary<string, TweedlePrimitive> primitives;
 
 		public Dictionary<string, TweedleEnum> Enums { get; private set; }
 		public Dictionary<string, TweedleType> Types { get; private set; }
@@ -35,6 +37,12 @@ namespace Alice.Tweedle.Parsed
 			Classes = new Dictionary<string, TweedleClass>();
 			Enums = new Dictionary<string, TweedleEnum>();
 			Types = new Dictionary<string, TweedleType>();
+			InitializePrimitives();
+		}
+
+		private void InitializePrimitives()
+		{
+			primitives = new Dictionary<string, TweedlePrimitive>();
 		}
 
 		public void AddLibrary(LibraryManifest libAsset)
@@ -77,15 +85,29 @@ namespace Alice.Tweedle.Parsed
 
 		internal TweedleTypeDeclaration TypeNamed(string name)
 		{
+			if (name.StartsWith("$", StringComparison.Ordinal))
+			{
+				return PrimitiveDeclaration(name);
+			}
 			if (Classes.ContainsKey(name))
 			{
 				return Classes[name];
 			}
 			if (Enums.ContainsKey(name))
-            {
+			{
 				return Enums[name];
-            }
+			}
 			return null;
+		}
+
+		TweedlePrimitive PrimitiveDeclaration(string name)
+		{
+			if (primitives.ContainsKey(name))
+			{
+				return primitives[name];
+			}
+			UnityEngine.Debug.LogError("Attempt to invoke missing primitive namespace " + name);
+			return new AbsentPrimitiveStub(name);
 		}
 
 		public void AddEnum(TweedleEnum tweEnum)
@@ -101,18 +123,18 @@ namespace Alice.Tweedle.Parsed
 			UnlinkedResources.Add(identifier, resourceAsset);
 		}
 
-		internal void RunProgramMain()
+		internal void QueueProgramMain(VirtualMachine vm)
 		{
 			Link();
 			TweedleClass prog;
+			vm.Initialize(this);
 			if (Classes.TryGetValue("Program", out prog))
 			{
 				TypeValue progVal = new TypeValue(prog);
-				VirtualMachine vm = new VirtualMachine(this);
 				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
 				arguments.Add("args", new TweedleArray(new TweedleArrayType(TweedleTypes.TEXT_STRING),
 													   new List<TweedleValue>()));
-				vm.Execute(new MethodCallExpression(progVal, "main", arguments));
+				vm.Queue(new MethodCallExpression(progVal, "main", arguments));
 			}
 		}
 
