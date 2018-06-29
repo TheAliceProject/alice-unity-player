@@ -10,14 +10,18 @@ namespace Alice.VM
 		internal string callStack;
 		protected internal TweedleFrame frame;
 
-		protected NotifyingStep(TweedleFrame frame)
+		protected internal NotifyingStep(TweedleFrame frame)
+			: this(frame, null)
 		{
-			this.frame = frame;
-			waitingStep = null;
 		}
 
 		protected internal NotifyingStep(TweedleFrame frame, NotifyingStep waitingStep)
 		{
+			if (frame == null)
+			{
+				throw new System.ArgumentNullException(nameof(frame));
+			}
+
 			this.frame = frame;
 			this.waitingStep = waitingStep;
 			if (waitingStep != null)

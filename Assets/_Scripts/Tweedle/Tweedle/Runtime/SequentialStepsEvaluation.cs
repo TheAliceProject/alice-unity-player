@@ -3,7 +3,7 @@ using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	class SequentialStepsEvaluation : NotifyingEvaluationStep
+	public class SequentialStepsEvaluation : NotifyingEvaluationStep
 	{
 		List<NotifyingStep> steps = new List<NotifyingStep>();
 		NotifyingEvaluationStep resultStep;

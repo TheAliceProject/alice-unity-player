@@ -39,7 +39,7 @@ namespace Alice.Tweedle
 			return arguments[argName];
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(NotifyingStep next, TweedleFrame frame)
 		{
 			MethodFrame methodFrame = frame.MethodCallFrame();
 			NotifyingStep prepMethodStep = new SingleInputActionNotificationStep(
@@ -55,7 +55,7 @@ namespace Alice.Tweedle
 					}
 					methodFrame.callStackEntry = MethodName;
 				},
-				new ActionNotifyingStep("InvPrep", methodFrame, null, () => methodFrame.QueueInvocationStep(frame.StackWith("Invocation"), parent, arguments)));
+				new ActionNotifyingStep("InvPrep", methodFrame, null, () => methodFrame.QueueInvocationStep(frame.StackWith("Invocation"), arguments, next)));
 
 			return base.AsStep(prepMethodStep, frame);
 		}

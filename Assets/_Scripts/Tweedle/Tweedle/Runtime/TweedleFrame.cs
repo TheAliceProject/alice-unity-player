@@ -78,6 +78,10 @@ namespace Alice.Tweedle
 
 		public TweedleValue SetValue(string varName, TweedleValue value)
 		{
+			if (value == null)
+			{
+				throw new TweedleRuntimeException("Can not assign null to " + varName);
+			}
 			if (UpdateFrameValue(varName, value) || SetValueOnThis(varName, value))
 			{
 				return value;
@@ -107,7 +111,7 @@ namespace Alice.Tweedle
 		{
 			if (thisValue == null)
 			{
-				return false;
+				throw new TweedleRuntimeException("The VM is unable to write to static variables yet. Can not update <" + varName + ">");
 			}
 			return thisValue.Set(varName, value, this);
 		}
