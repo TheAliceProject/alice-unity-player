@@ -14,14 +14,14 @@ namespace Alice.Tweedle
 			enabled = false;
 		}
 
-		internal void AddChildStep(NotifyingStep parent, TweedleFrame frame)
+		internal virtual void QueueStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
 			if (enabled)
 			{
-				AddStep(parent, frame);
+				frame.vm.AddStep(this.AsStepToNotify(frame, next));
 			}
 		}
 
-		internal abstract void AddStep(NotifyingStep parent, TweedleFrame frame);
+		internal abstract NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next);
 	}
 }

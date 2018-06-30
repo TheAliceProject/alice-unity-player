@@ -73,10 +73,5 @@ namespace Alice.Tweedle
 			result = tweedleValue;
 			this.callStack = callStack;
 		}
-
-		internal override void Execute()
-		{
-			base.Execute();
-		}
 	}
 }

@@ -17,9 +17,9 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			Array.AddStep(new EachInArrayNotifyingStep(this, frame, parent), frame);
+			return Array.AsStep(new EachInArrayNotifyingStep(this, frame, next), frame);
 		}
 	}
 

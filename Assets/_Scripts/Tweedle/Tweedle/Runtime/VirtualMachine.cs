@@ -42,13 +42,13 @@ namespace Alice.VM
 
 		public void Queue(TweedleStatement statement)
 		{
-			statement.AddStep(new NotifyingStep(staticFrame), staticFrame);
+			statement.QueueStepToNotify(staticFrame, new NotifyingStep(staticFrame));
 		}
 
 		// Used by tests
 		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
 		{
-			statement.AddStep(null, frame);
+			statement.QueueStepToNotify(frame, null);
 			executionQueue.ProcessOneFrame();
 		}
 

@@ -16,13 +16,13 @@ namespace Alice.Tweedle
 			ElseBody = new BlockStatement(elseBody);
 		}
 
-		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			Condition.AddStep(
+			return Condition.AsStep(
 				new SingleInputActionNotificationStep(
 					frame.StackWith("if " + Condition.ToTweedle()),
 					frame,
-					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(parent, frame),
+					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(next, frame),
 					null),
 				frame);
 		}

@@ -11,9 +11,9 @@ namespace Alice.Tweedle
 			Expression = expression;
 		}
 
-		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			Expression.AddStep(parent, frame);
+			return Expression.AsStep(next, frame);
 		}
 	}
 }
