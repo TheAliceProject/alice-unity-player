@@ -15,9 +15,9 @@ namespace Alice.Tweedle
 			this.count = count;
 		}
 
-		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep parent)
 		{
-			count.AddStep(new NotifyingCountLoopStep(this, frame, parent), frame);
+			return count.AsStep(new NotifyingCountLoopStep(this, frame, parent), frame);
 		}
 	}
 

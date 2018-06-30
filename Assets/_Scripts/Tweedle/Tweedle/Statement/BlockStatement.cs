@@ -22,11 +22,11 @@ namespace Alice.Tweedle
 			return new SequentialSteps(parent, this, frame);
 		}
 
-		internal void AddParallelSteps(NotifyingStep parent, TweedleFrame frame)
+		internal void AddParallelSteps(NotifyingStep next, TweedleFrame frame)
 		{
 			foreach (TweedleStatement statement in Statements)
 			{
-				statement.AddChildStep(parent, frame.ChildFrame());
+				statement.QueueStepToNotify(frame.ChildFrame(), next);
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace Alice.Tweedle
 			{
 				if (index < block.Statements.Count)
 				{
-					block.Statements[index++].AddChildStep(this, frame);
+					block.Statements[index++].QueueStepToNotify(frame, this);
 				}
 				else
 				{

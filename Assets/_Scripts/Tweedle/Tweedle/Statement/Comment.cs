@@ -9,10 +9,12 @@ namespace Alice.Tweedle
 		public Comment(string text)
 		{
 			this.text = text;
+			Disable();
 		}
 
-		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
+			return null;
 		}
 	}
 }

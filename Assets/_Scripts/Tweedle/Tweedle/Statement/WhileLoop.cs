@@ -12,9 +12,9 @@ namespace Alice.Tweedle
 			RunCondition = runCondition;
 		}
 
-		internal override void AddStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			RunCondition.AddStep(new WhileLoopNotifyingStep(this, frame, parent), frame);
+			return RunCondition.AsStep(new WhileLoopNotifyingStep(this, frame, next), frame);
 		}
 	}
 
