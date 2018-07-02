@@ -13,10 +13,10 @@ namespace Alice.Tweedle
 			Arguments = arguments;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep next, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
 			ConstructorFrame superFrame = ((ConstructorFrame)frame).SuperFrame(Arguments);
-			return superFrame.InvocationStep(frame.StackWith("super()"), Arguments, next);
+			return superFrame.InvocationStep("super()", Arguments);
 		}
 	}
 }

@@ -18,13 +18,14 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return Condition.AsStep(
-				new SingleInputActionNotificationStep(
-					frame.StackWith("if " + Condition.ToTweedle()),
+			var conditionStep = Condition.AsStep(frame);
+			var bodyStep = new SingleInputActionNotificationStep(
+					"if " + Condition.ToTweedle(),
 					frame,
-					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(next, frame),
-					null),
-				frame);
+					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(next, frame));
+			conditionStep.Notify(bodyStep);
+			bodyStep.Notify(next);
+			return conditionStep;
 		}
 	}
 }

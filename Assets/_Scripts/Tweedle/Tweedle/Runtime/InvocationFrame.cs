@@ -20,15 +20,15 @@ namespace Alice.Tweedle
 			return callingFrame.StackWith(stackTop + "\n" + callStackEntry);
 		}
 
-		internal void QueueInvocationStep(string callStack, Dictionary<string, TweedleExpression> arguments, NotifyingStep next)
+		internal void QueueInvocationStep(SequentialStepsEvaluation sequentialSteps, Dictionary<string, TweedleExpression> arguments)
 		{
 			//UnityEngine.Debug.Log("Queueing method invocation " + callStack);
-			vm.AddStep(InvocationStep(callStack, arguments, next));
+			Method.AddInvocationSteps(this, sequentialSteps, arguments);
 		}
 
-		internal virtual NotifyingEvaluationStep InvocationStep(string callStack, Dictionary<string, TweedleExpression> arguments, NotifyingStep next)
+		internal virtual NotifyingEvaluationStep InvocationStep(string callStackEntry, Dictionary<string, TweedleExpression> arguments)
 		{
-			return Method.AsStep(callStack, this, arguments, next);
+			return Method.AsStep(callStackEntry, this, arguments);
 		}
 	}
 }

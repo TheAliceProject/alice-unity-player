@@ -7,8 +7,8 @@ namespace Alice.VM
 	{
 		Action body;
 
-		public ActionNotifyingStep(string callStack, TweedleFrame frame, NotifyingStep next, Action body)
-			: base(frame, next)
+		public ActionNotifyingStep(string callStack, TweedleFrame frame, Action body)
+			: base(frame)
 		{
 			this.body = body;
 			this.callStack = callStack;

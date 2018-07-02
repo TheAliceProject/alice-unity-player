@@ -8,10 +8,10 @@ namespace Alice.VM
 		TweedleValue initialValue;
 		Action<TweedleValue> body;
 
-		public SingleInputActionNotificationStep(string callStack, TweedleFrame frame, Action<TweedleValue> body, NotifyingStep next)
-			: base(frame, next)
+		public SingleInputActionNotificationStep(string callStackEntry, TweedleFrame frame, Action<TweedleValue> body)
+			: base(frame)
 		{
-			this.callStack = callStack;
+			this.callStack = frame.StackWith(callStackEntry);
 			this.body = body;
 		}
 

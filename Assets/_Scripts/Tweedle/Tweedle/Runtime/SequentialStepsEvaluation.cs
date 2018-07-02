@@ -9,10 +9,10 @@ namespace Alice.Tweedle
 		NotifyingEvaluationStep resultStep;
 		int index = 0;
 
-		public SequentialStepsEvaluation(string callStack, NotifyingStep parent)
-			: base(parent.frame, parent)
+		public SequentialStepsEvaluation(string callStackEntry, TweedleFrame frame)
+			: base(frame)
 		{
-			this.callStack = callStack;
+			this.callStack = frame.StackWith(callStackEntry);
 		}
 
 		internal void AddStep(NotifyingStep step)

@@ -21,9 +21,9 @@ namespace Alice.Tweedle
 
 		internal NotifyingStep InitializeField(TweedleFrame frame, TweedleObject tweedleObject)
 		{
-			return Initializer.AsStep(
-				new SingleInputActionNotificationStep("", frame, value => tweedleObject.Set(Name, value, frame), null),
-				frame);
+			return Initializer
+				.AsStep(frame)
+				.Notify(new SingleInputActionNotificationStep("", frame, value => tweedleObject.Set(Name, value, frame)));
 		}
 	}
 }

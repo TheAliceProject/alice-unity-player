@@ -45,18 +45,23 @@ namespace Alice.Tweedle
 			return Modifiers.Contains("static");
 		}
 
-		protected internal virtual NotifyingEvaluationStep AsStep(string callStack, InvocationFrame frame, Dictionary<string, TweedleExpression> arguments, NotifyingStep next)
+		protected internal virtual NotifyingEvaluationStep AsStep(string callStackEntry, InvocationFrame frame, Dictionary<string, TweedleExpression> arguments)
 		{
-			SequentialStepsEvaluation main = new SequentialStepsEvaluation(callStack, next);
-			AddPrepSteps(frame, main, arguments);
-			main.AddStep(Body.AsSequentialStep(null, frame));
-			main.AddEvaluationStep(ResultStep(frame));
+			SequentialStepsEvaluation main = new SequentialStepsEvaluation(callStackEntry, frame.callingFrame);
+			AddInvocationSteps(frame, main, arguments);
 			return main;
+		}
+
+		internal void AddInvocationSteps(InvocationFrame frame, SequentialStepsEvaluation steps, Dictionary<string, TweedleExpression> arguments)
+		{
+			AddPrepSteps(frame, steps, arguments);
+			steps.AddStep(Body.AsSequentialStep(null, frame));
+			steps.AddEvaluationStep(ResultStep(frame));
 		}
 
 		private NotifyingEvaluationStep ResultStep(InvocationFrame frame)
 		{
-			return new SingleInputNotificationStep("call", frame, arg => frame.Result, null);
+			return new SingleInputNotificationStep("call", frame, arg => frame.Result);
 		}
 
 		protected internal virtual void AddPrepSteps(InvocationFrame frame, SequentialStepsEvaluation main, Dictionary<string, TweedleExpression> arguments)
@@ -92,13 +97,13 @@ namespace Alice.Tweedle
 
 		NotifyingStep ArgumentStep(InvocationFrame frame, TweedleValueHolderDeclaration argDec, TweedleExpression expression)
 		{
-			NotifyingStep storeStep =
-				new SingleInputNotificationStep(
+			var argStep = expression.AsStep(frame.callingFrame);
+			var storeStep = new SingleInputNotificationStep(
 					"Arg",
 					frame.callingFrame,
-					arg => frame.SetLocalValue(argDec, arg),
-					null);
-			return expression.AsStep(storeStep, frame.callingFrame);
+					arg => frame.SetLocalValue(argDec, arg));
+			argStep.Notify(storeStep);
+			return argStep;
 		}
 	}
 }

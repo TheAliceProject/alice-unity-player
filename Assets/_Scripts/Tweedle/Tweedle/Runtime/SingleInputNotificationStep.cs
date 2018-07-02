@@ -8,18 +8,11 @@ namespace Alice.VM
 		TweedleValue initialValue;
 		Func<TweedleValue, TweedleValue> body;
 
-		public SingleInputNotificationStep(string callStack, TweedleFrame frame, Func<TweedleValue, TweedleValue> body, NotifyingStep next)
-			: base(frame, next)
+		public SingleInputNotificationStep(string callStackEntry, TweedleFrame frame, Func<TweedleValue, TweedleValue> body)
+			: base(frame)
 		{
 			this.body = body;
-			this.callStack = callStack;
-		}
-
-		public SingleInputNotificationStep(Func<TweedleValue, TweedleValue> body, NotifyingStep next)
-			: base(next.frame, next)
-		{
-			this.body = body;
-			this.callStack = next.callStack;
+			this.callStack = frame.StackWith(callStackEntry);
 		}
 
 		internal override void BlockerFinished(NotifyingStep notifyingStep)

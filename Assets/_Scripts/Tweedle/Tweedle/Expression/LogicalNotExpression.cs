@@ -12,15 +12,16 @@ namespace Alice.Tweedle
 			this.expression = expression;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep next, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
-			return expression.AsStep(
-				new SingleInputNotificationStep(
-					frame.StackWith("!" + expression.ToTweedle()),
-					frame,
-					value => TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean()),
-					next),
-				frame);
+			var step = expression.AsStep(frame);
+			step.Notify(new SingleInputNotificationStep("!" + expression.ToTweedle(), frame, NotPrimitive));
+			return step;
+		}
+
+		static TweedlePrimitiveValue<bool> NotPrimitive(TweedleValue value)
+		{
+			return TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean());
 		}
 	}
 }

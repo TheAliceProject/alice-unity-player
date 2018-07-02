@@ -15,13 +15,14 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return Variable.AsInitializerStep(
+			var initStep = Variable.AsInitializerStep(frame);
+			var storeStep = new SingleInputActionNotificationStep(
+				Variable.ToTweedle(),
 				frame,
-				new SingleInputActionNotificationStep(
-					frame.StackWith(Variable.ToTweedle()),
-					frame,
-					value => frame.SetLocalValue(Variable, value),
-					next));
+				value => frame.SetLocalValue(Variable, value));
+			initStep.Notify(storeStep);
+			storeStep.Notify(next);
+			return initStep;
 		}
 	}
 }

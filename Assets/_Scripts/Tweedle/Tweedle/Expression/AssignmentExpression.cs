@@ -31,24 +31,23 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep next, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
 			if (TargetExp == null)
 			{
-				return ValueExp.AsStep(
+				NotifyingEvaluationStep valueStep = ValueExp.AsStep(frame);
+				valueStep.Notify(
 					new SingleInputActionNotificationStep(
-						frame.StackWith(ToTweedle()),
+						ToTweedle(),
 						frame,
-						value => frame.SetValue(Identifier, value),
-						next),
-					frame);
+						value => frame.SetValue(Identifier, value)));
+				return valueStep;
 			}
 			else
 			{
 				return new DoubleInputEvalStep(
-					frame.StackWith(ToTweedle()),
+					ToTweedle(),
 					frame,
-					next,
 					TargetExp,
 					ValueExp,
 					(target, value) =>

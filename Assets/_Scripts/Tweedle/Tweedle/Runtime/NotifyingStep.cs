@@ -30,23 +30,29 @@ namespace Alice.VM
 			}
 		}
 
-		internal void Notify(NotifyingStep parent)
+		internal NotifyingStep Notify(NotifyingStep next)
 		{
 			if (waitingStep == null)
 			{
-				waitingStep = parent;
-				parent.blockerCount++;
+				waitingStep = next;
+				next.blockerCount++;
 			}
 			else
 			{
-				waitingStep.Notify(parent);
+				waitingStep.Notify(next);
 			}
+			return this;
+		}
+
+		internal void Queue()
+		{
+			frame.vm.AddStep(this);
 		}
 
 		internal void QueueAndNotify(NotifyingStep parent)
 		{
 			Notify(parent);
-			frame.vm.AddStep(this);
+			Queue();
 		}
 
 		internal bool IsBlocked()

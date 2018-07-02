@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 			this.index = index;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
 			throw new NotImplementedException();
 		}
