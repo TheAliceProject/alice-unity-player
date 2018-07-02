@@ -12,15 +12,11 @@ namespace Alice.Tweedle
 			this.expression = expression;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep next, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
-			return expression.AsStep(
-				new SingleInputNotificationStep(
-					frame.StackWith("-" + expression.ToTweedle()),
-					frame,
-					value => Negate(value),
-					next),
-				frame);
+			var val = expression.AsStep(frame);
+			val.Notify(new SingleInputNotificationStep("-" + expression.ToTweedle(), frame, Negate));
+			return val;
 		}
 
 		internal abstract TweedleValue Negate(TweedleValue value);

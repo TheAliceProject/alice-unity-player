@@ -11,35 +11,38 @@ namespace Alice.VM
 		TweedleValue result2;
 		Func<TweedleValue, TweedleValue, TweedleValue> body;
 
-		public DoubleInputEvalStep(string callStack,
+		public DoubleInputEvalStep(string callStackEntry,
 								   TweedleFrame frame,
-								   NotifyingStep parent,
 								   TweedleExpression exp1,
 								   TweedleExpression exp2,
 								   Func<TweedleValue, TweedleValue, TweedleValue> body)
-			: base(frame, parent)
+			: base(frame)
 		{
-			this.callStack = callStack;
+			this.callStack = callStackEntry;
 			this.exp1 = exp1;
 			this.exp2 = exp2;
 			this.body = body;
 		}
 
-		SingleInputActionNotificationStep HandleValueStep(Action<TweedleValue> handler)
+		void QueueExpressionStep(TweedleExpression exp, Action<TweedleValue> handler)
 		{
-			return new SingleInputActionNotificationStep(callStack, frame, handler, this);
+			var evalStep = exp.AsStep(frame);
+			var storeStep = new SingleInputActionNotificationStep(callStack, frame, handler);
+			evalStep.Notify(storeStep);
+			storeStep.Notify(this);
+			evalStep.Queue();
 		}
 
 		internal override void Execute()
 		{
 			if (result1 == null)
 			{
-				exp1.AddStep(HandleValueStep(value => result1 = value), frame);
+				QueueExpressionStep(exp1, value => result1 = value);
 				return;
 			}
 			if (result2 == null)
 			{
-				exp2.AddStep(HandleValueStep(value => result2 = value), frame);
+				QueueExpressionStep(exp2, value => result2 = value);
 				return;
 			}
 			result = body.Invoke(result1, result2);

@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return RunCondition.AsStep(new WhileLoopNotifyingStep(this, frame, next), frame);
+			return RunCondition.AsStep(frame).Notify(new WhileLoopNotifyingStep(this, frame, next));
 		}
 	}
 
@@ -38,7 +38,9 @@ namespace Alice.Tweedle
 			if (shouldRunBody)
 			{
 				var loopFrame = frame.ChildFrame("While loop");
-				statement.Body.AddSequentialStep(statement.RunCondition.AsStep(this, frame), loopFrame);
+				var shouldRunBodyAgain = statement.RunCondition.AsStep(frame);
+				shouldRunBodyAgain.Notify(this);
+				statement.Body.AddSequentialStep(shouldRunBodyAgain, loopFrame);
 			}
 			else
 			{

@@ -7,8 +7,8 @@ namespace Alice.VM
 		protected TweedleValue result;
 		public TweedleValue Result { get { return result; } }
 
-		protected NotifyingEvaluationStep(TweedleFrame frame, NotifyingStep waitingStep)
-			: base(frame, waitingStep)
+		protected NotifyingEvaluationStep(TweedleFrame frame)
+			: base(frame)
 		{
 		}
 

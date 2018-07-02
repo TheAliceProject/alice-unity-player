@@ -22,13 +22,13 @@ namespace Alice.Tweedle
 			Initializer = initializer;
 		}
 
-		internal NotifyingStep AsInitializerStep(TweedleFrame frame, NotifyingStep next)
+		internal NotifyingEvaluationStep AsInitializerStep(TweedleFrame frame)
 		{
 			if (Initializer == null)
 			{
 				throw new TweedleRuntimeException("Absent Initializer. Unable to initialize variable <" + Name + ">.");
 			}
-			return Initializer.AsStep(next, frame);
+			return Initializer.AsStep(frame);
 		}
 
 		internal bool Accepts(TweedleValue value, TweedleFrame frame)

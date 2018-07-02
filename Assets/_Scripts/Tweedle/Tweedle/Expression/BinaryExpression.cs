@@ -14,12 +14,11 @@ namespace Alice.Tweedle
 			this.rhs = rhs;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
 			return new DoubleInputEvalStep(
-				frame.StackWith(ToTweedle()),
+				ToTweedle(),
 				frame,
-				parent,
 				lhs,
 				rhs,
 				(l, r) => Evaluate(l, r));

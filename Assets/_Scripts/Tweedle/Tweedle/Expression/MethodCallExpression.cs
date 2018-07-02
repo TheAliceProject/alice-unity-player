@@ -39,25 +39,24 @@ namespace Alice.Tweedle
 			return arguments[argName];
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep next, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
-			MethodFrame methodFrame = frame.MethodCallFrame();
-			NotifyingStep prepMethodStep = new SingleInputActionNotificationStep(
-				frame.StackWith("Invocation Prep"),
-				frame,
-				target =>
-				{
-					methodFrame.SetThis(target);
-					methodFrame.Method = invokeSuper ? target.SuperMethodNamed(frame, MethodName) : target.MethodNamed(frame, MethodName);
-					if (methodFrame.Method == null)//|| !method.ExpectsArgs(callExpression.arguments))
-					{
-						throw new TweedleRuntimeException("No method matching " + target + "." + MethodName + "()");
-					}
-					methodFrame.callStackEntry = MethodName;
-				},
-				new ActionNotifyingStep("InvPrep", methodFrame, null, () => methodFrame.QueueInvocationStep(frame.StackWith("Invocation"), arguments, next)));
+			MethodFrame methodFrame = frame.MethodCallFrame(MethodName, invokeSuper);
 
-			return base.AsStep(prepMethodStep, frame);
+			var targetStep = TargetStep(frame);
+			NotifyingStep prepMethodStep = new SingleInputActionNotificationStep(
+				"Invocation Prep",
+				frame,
+				methodFrame.SetThis);
+			targetStep.Notify(prepMethodStep);
+
+			SequentialStepsEvaluation main = new SequentialStepsEvaluation(MethodName, frame);
+			main.AddStep(targetStep);
+			main.AddStep(new ActionNotifyingStep(
+				"Invocation",
+				methodFrame,
+				() => methodFrame.QueueInvocationStep(main, arguments)));
+			return main;
 		}
 	}
 }

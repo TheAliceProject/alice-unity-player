@@ -28,7 +28,7 @@ namespace Alice.Tweedle
 			this.arguments = arguments;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame)
+		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
 			// TODO evaluate target to a lambda expression and evaluate it.
 			throw new NotImplementedException();

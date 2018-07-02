@@ -7,8 +7,8 @@ namespace Alice.VM
 	{
 		Func<TweedleValue> body;
 
-		public ContextNotifyingEvaluationStep(string callStack, TweedleFrame frame, NotifyingStep parent, Func<TweedleValue> body)
-			: base(frame, parent)
+		public ContextNotifyingEvaluationStep(string callStack, TweedleFrame frame, Func<TweedleValue> body)
+			: base(frame)
 		{
 			this.body = body;
 			this.callStack = callStack;

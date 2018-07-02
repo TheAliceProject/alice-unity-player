@@ -28,13 +28,14 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return expression.AsStep(
-				new SingleInputActionNotificationStep(
-					frame.StackWith("return " + expression.ToTweedle()),
-					frame,
-					result => ((MethodFrame)frame).Return(result),
-					next),
-				frame);
+			var valStep = expression.AsStep(frame);
+			var returnStep = new SingleInputActionNotificationStep(
+				"return " + expression.ToTweedle(),
+				frame,
+				result => ((MethodFrame)frame).Return(result));
+			valStep.Notify(returnStep);
+			returnStep.Notify(next);
+			return valStep;
 		}
 	}
 }

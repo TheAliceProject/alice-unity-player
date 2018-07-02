@@ -163,9 +163,9 @@ namespace Alice.Tweedle
 			return new ConstructorFrame(this, tweedleClass);
 		}
 
-		internal MethodFrame MethodCallFrame()
+		internal MethodFrame MethodCallFrame(string methodName, bool invokeSuper)
 		{
-			return new MethodFrame(this);
+			return new MethodFrame(this, methodName, invokeSuper);
 		}
 	}
 }

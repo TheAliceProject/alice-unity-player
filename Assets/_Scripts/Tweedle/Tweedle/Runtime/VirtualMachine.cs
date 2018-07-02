@@ -32,7 +32,6 @@ namespace Alice.VM
 		void InstantiateEnums()
 		{
 			// TODO add enums to the staticFrame
-			// throw new NotImplementedException();
 		}
 
 		public void Queue(TweedleExpression exp)
@@ -48,14 +47,14 @@ namespace Alice.VM
 		// Used by tests
 		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
 		{
-			statement.QueueStepToNotify(frame, null);
+			statement.QueueStepToNotify(frame, new NotifyingStep(frame));
 			executionQueue.ProcessOneFrame();
 		}
 
 		// Used by tests
 		public TweedleValue EvaluateToFinish(TweedleExpression expression, TweedleFrame frame)
 		{
-			NotifyingEvaluationStep step = expression.AsStep(null, frame);
+			NotifyingEvaluationStep step = expression.AsStep(frame);
 			executionQueue.AddToQueue(step);
 			executionQueue.ProcessOneFrame();
 			return step.Result;

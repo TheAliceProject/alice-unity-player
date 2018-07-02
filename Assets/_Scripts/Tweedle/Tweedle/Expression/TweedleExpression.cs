@@ -19,13 +19,13 @@ namespace Alice.Tweedle
 		public TweedleValue EvaluateNow(TweedleFrame frame)
 		{
 			TweedleValue result = null;
-			AsStep(
-				new SingleInputActionNotificationStep(
+			var expStep = AsStep(frame);
+			var storeStep = new SingleInputActionNotificationStep(
 					"EvaluateNow",
 					frame,
-					value => result = value,
-					null),
-				frame).EvaluateNow();
+					value => result = value);
+			expStep.Notify(storeStep);
+			expStep.EvaluateNow();
 			return result;
 		}
 
@@ -45,16 +45,11 @@ namespace Alice.Tweedle
 			return ToString();
 		}
 
-		internal abstract NotifyingEvaluationStep AsStep(NotifyingStep parent, TweedleFrame frame);
+		internal abstract NotifyingEvaluationStep AsStep(TweedleFrame frame);
 
-		internal virtual NotifyingEvaluationStep AsStep(NotifyingStep parent)
+		internal void AddStep(NotifyingStep next, TweedleFrame frame)
 		{
-			return AsStep(parent, parent.frame);
-		}
-
-		internal void AddStep(NotifyingStep parent, TweedleFrame frame)
-		{
-			frame.vm.AddStep(AsStep(parent, frame));
+			AsStep(frame).QueueAndNotify(next);
 		}
 	}
 }

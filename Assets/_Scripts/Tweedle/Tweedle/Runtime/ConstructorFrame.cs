@@ -26,10 +26,10 @@ namespace Alice.Tweedle
 			callStackEntry = "super() => " + tweedleClass.Name;
 		}
 
-		internal override NotifyingEvaluationStep InvocationStep(string callStack, Dictionary<string, TweedleExpression> arguments, NotifyingStep next)
+		internal override NotifyingEvaluationStep InvocationStep(string callStackEntry, Dictionary<string, TweedleExpression> arguments)
 		{
 			Method = tweedleClass.ConstructorWithArgs(arguments);
-			return base.InvocationStep(callStack, arguments, next);
+			return base.InvocationStep(callStackEntry, arguments);
 		}
 
 		internal ConstructorFrame SuperFrame(Dictionary<string, TweedleExpression> arguments)

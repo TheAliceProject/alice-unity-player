@@ -19,7 +19,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return Array.AsStep(new EachInArrayNotifyingStep(this, frame, next), frame);
+			return Array.AsStep(frame).Notify(new EachInArrayNotifyingStep(this, frame, next));
 		}
 	}
 
