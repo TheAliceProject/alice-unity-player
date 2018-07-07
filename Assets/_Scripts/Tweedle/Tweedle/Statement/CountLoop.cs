@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return count.AsStep(frame).Notify(new NotifyingCountLoopStep(this, frame, next));
+			return count.AsStep(frame).OnCompletionNotify(new NotifyingCountLoopStep(this, frame, next));
 		}
 	}
 

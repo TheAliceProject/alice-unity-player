@@ -28,8 +28,8 @@ namespace Alice.VM
 		{
 			var evalStep = exp.AsStep(frame);
 			var storeStep = new SingleInputActionNotificationStep(callStack, frame, handler);
-			evalStep.Notify(storeStep);
-			storeStep.Notify(this);
+			evalStep.OnCompletionNotify(storeStep);
+			storeStep.OnCompletionNotify(this);
 			evalStep.Queue();
 		}
 

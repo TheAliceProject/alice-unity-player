@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
 			var val = expression.AsStep(frame);
-			val.Notify(new SingleInputNotificationStep("-" + expression.ToTweedle(), frame, Negate));
+			val.OnCompletionNotify(new SingleInputNotificationStep("-" + expression.ToTweedle(), frame, Negate));
 			return val;
 		}
 

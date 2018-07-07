@@ -36,7 +36,7 @@ namespace Alice.Tweedle
 			if (TargetExp == null)
 			{
 				NotifyingEvaluationStep valueStep = ValueExp.AsStep(frame);
-				valueStep.Notify(
+				valueStep.OnCompletionNotify(
 					new SingleInputActionNotificationStep(
 						ToTweedle(),
 						frame,

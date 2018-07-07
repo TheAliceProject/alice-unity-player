@@ -23,8 +23,8 @@ namespace Alice.Tweedle
 					"if " + Condition.ToTweedle(),
 					frame,
 					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(next, frame));
-			conditionStep.Notify(bodyStep);
-			bodyStep.Notify(next);
+			conditionStep.OnCompletionNotify(bodyStep);
+			bodyStep.OnCompletionNotify(next);
 			return conditionStep;
 		}
 	}

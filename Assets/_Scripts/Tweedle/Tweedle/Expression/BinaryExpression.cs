@@ -16,17 +16,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
-			return new DoubleInputEvalStep(
-				ToTweedle(),
-				frame,
-				lhs,
-				rhs,
-				(l, r) => Evaluate(l, r));
-		}
-
-		public TweedleValue EvaluateStep(TweedleValue left, TweedleValue right)
-		{
-			return Evaluate(left, right);
+			return new DoubleInputEvalStep(ToTweedle(), frame, lhs, rhs, Evaluate);
 		}
 
 		protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);

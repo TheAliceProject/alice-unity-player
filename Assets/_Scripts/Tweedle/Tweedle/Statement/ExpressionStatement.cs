@@ -13,7 +13,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return Expression.AsStep(frame).Notify(next);
+			return Expression.AsStep(frame).OnCompletionNotify(next);
 		}
 	}
 }

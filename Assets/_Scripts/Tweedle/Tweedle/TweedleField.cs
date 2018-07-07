@@ -23,7 +23,7 @@ namespace Alice.Tweedle
 		{
 			return Initializer
 				.AsStep(frame)
-				.Notify(new SingleInputActionNotificationStep("", frame, value => tweedleObject.Set(Name, value, frame)));
+				.OnCompletionNotify(new SingleInputActionNotificationStep("", frame, value => tweedleObject.Set(Name, value, frame)));
 		}
 	}
 }

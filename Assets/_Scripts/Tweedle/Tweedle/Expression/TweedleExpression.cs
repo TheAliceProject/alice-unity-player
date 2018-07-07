@@ -24,7 +24,7 @@ namespace Alice.Tweedle
 					"EvaluateNow",
 					frame,
 					value => result = value);
-			expStep.Notify(storeStep);
+			expStep.OnCompletionNotify(storeStep);
 			expStep.EvaluateNow();
 			return result;
 		}
@@ -46,10 +46,5 @@ namespace Alice.Tweedle
 		}
 
 		internal abstract NotifyingEvaluationStep AsStep(TweedleFrame frame);
-
-		internal void AddStep(NotifyingStep next, TweedleFrame frame)
-		{
-			AsStep(frame).QueueAndNotify(next);
-		}
 	}
 }

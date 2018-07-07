@@ -2,7 +2,7 @@
 
 namespace Alice.VM
 {
-	public class NotifyingStep
+	public class NotifyingStep // ExecutionStep
 	{
 		internal NotifyingStep waitingStep;
 		int blockerCount = 0;
@@ -30,7 +30,7 @@ namespace Alice.VM
 			}
 		}
 
-		internal NotifyingStep Notify(NotifyingStep next)
+		internal NotifyingStep OnCompletionNotify(NotifyingStep next)
 		{
 			if (waitingStep == null)
 			{
@@ -39,7 +39,7 @@ namespace Alice.VM
 			}
 			else
 			{
-				waitingStep.Notify(next);
+				waitingStep.OnCompletionNotify(next);
 			}
 			return this;
 		}
@@ -51,7 +51,7 @@ namespace Alice.VM
 
 		internal void QueueAndNotify(NotifyingStep parent)
 		{
-			Notify(parent);
+			OnCompletionNotify(parent);
 			Queue();
 		}
 
@@ -62,12 +62,12 @@ namespace Alice.VM
 
 		internal bool IsComplete()
 		{
-			return status == StepStatus.Conpleted;
+			return status == StepStatus.Completed;
 		}
 
 		internal void MarkCompleted()
 		{
-			status = StepStatus.Conpleted;
+			status = StepStatus.Completed;
 			if (null != waitingStep)
 			{
 				waitingStep.BlockerFinished(this);
@@ -100,7 +100,7 @@ namespace Alice.VM
 			if (--blockerCount == 0)
 			{
 				status = StepStatus.Ready;
-				frame.vm.AddStep(this);
+				Queue();
 			}
 		}
 
@@ -121,5 +121,5 @@ enum StepStatus
 	Ready,
 	WaitingOnSteps,
 	WaitingOnFrame,
-	Conpleted
+	Completed
 }

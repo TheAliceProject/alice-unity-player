@@ -4,24 +4,22 @@
 	{
 		private TweedleType valueType;
 
-        public TweedleType ValueType
-        {
-            get { return valueType; }
-        }
-
-        public TweedleArrayType(TweedleType valueType) 
-            : base(valueType.Name + "[]")
+		public TweedleType ValueType
 		{
-            this.valueType = valueType;
+			get { return valueType; }
 		}
 
-        public override bool AcceptsType(TweedleType type)
-        {
-            return this == type ||
-                            ((type is TweedleArrayType) &&
-							(valueType == null ||
-                             valueType.AcceptsType(((TweedleArrayType)type).valueType)));
-        }
+		public TweedleArrayType(TweedleType valueType)
+			: base(valueType.Name + "[]")
+		{
+			this.valueType = valueType;
+		}
 
-    }
+		public override bool AcceptsType(TweedleType type)
+		{
+			return this == type ||
+							((type is TweedleArrayType) &&
+							(valueType == null || valueType.AcceptsType(((TweedleArrayType)type).valueType)));
+		}
+	}
 }
