@@ -20,8 +20,8 @@ namespace Alice.Tweedle
 				Variable.ToTweedle(),
 				frame,
 				value => frame.SetLocalValue(Variable, value));
-			initStep.Notify(storeStep);
-			storeStep.Notify(next);
+			initStep.OnCompletionNotify(storeStep);
+			storeStep.OnCompletionNotify(next);
 			return initStep;
 		}
 	}

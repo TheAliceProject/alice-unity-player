@@ -48,7 +48,7 @@ namespace Alice.Tweedle
 				"Invocation Prep",
 				frame,
 				methodFrame.SetThis);
-			targetStep.Notify(prepMethodStep);
+			targetStep.OnCompletionNotify(prepMethodStep);
 
 			SequentialStepsEvaluation main = new SequentialStepsEvaluation(MethodName, frame);
 			main.AddStep(targetStep);

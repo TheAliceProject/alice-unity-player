@@ -33,8 +33,8 @@ namespace Alice.Tweedle
 				"return " + expression.ToTweedle(),
 				frame,
 				result => ((MethodFrame)frame).Return(result));
-			valStep.Notify(returnStep);
-			returnStep.Notify(next);
+			valStep.OnCompletionNotify(returnStep);
+			returnStep.OnCompletionNotify(next);
 			return valStep;
 		}
 	}

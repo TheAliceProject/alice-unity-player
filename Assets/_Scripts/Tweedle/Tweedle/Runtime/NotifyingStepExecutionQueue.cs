@@ -86,7 +86,7 @@ namespace Alice.VM
 		{
 			while (stepsForNextFrame.Count > 0)
 			{
-				NotifyingStep step = stepsForThisFrame.Dequeue();
+				NotifyingStep step = stepsForNextFrame.Dequeue();
 				step.PrepForFrame();
 				AddToQueue(step);
 			}

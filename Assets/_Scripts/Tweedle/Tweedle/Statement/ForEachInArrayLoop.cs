@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
 		{
-			return array.AsStep(frame).Notify(new ForEachInArrayNotifyingStep(this, frame, next));
+			return array.AsStep(frame).OnCompletionNotify(new ForEachInArrayNotifyingStep(this, frame, next));
 		}
 	}
 

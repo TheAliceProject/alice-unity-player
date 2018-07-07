@@ -26,12 +26,12 @@
 			this.tweedleValue = tweedleValue;
 		}
 
-        void CheckType(TweedleType type, TweedleValue value)
-        {
-            if (!type.AcceptsType(value.Type))
-            {
-                throw new TweedleRuntimeException("Unable to treat " + value + " as type " + Type);
-            }
-        }
+		void CheckType(TweedleType type, TweedleValue value)
+		{
+			if (value == null || !type.AcceptsType(value.Type))
+			{
+				throw new TweedleRuntimeException("Unable to treat " + value + " as type " + type);
+			}
+		}
 	}
 }

@@ -102,7 +102,7 @@ namespace Alice.Tweedle
 					"Arg",
 					frame.callingFrame,
 					arg => frame.SetLocalValue(argDec, arg));
-			argStep.Notify(storeStep);
+			argStep.OnCompletionNotify(storeStep);
 			return argStep;
 		}
 	}
