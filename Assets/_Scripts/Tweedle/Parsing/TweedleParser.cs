@@ -701,11 +701,10 @@ namespace Alice.Tweedle.Parsed
 
 		private static TweedleLambdaType GetLambdaType([NotNull] Tweedle.TweedleParser.LambdaTypeSignatureContext context)
 		{
-			List<TweedleType> typeList = new List<TweedleType>();
-			if (context.typeList().typeType() != null)
-			{
-				context.typeList().typeType().Select(type => GetTypeType(type)).ToList();
-			}
+			Tweedle.TweedleParser.TypeTypeContext[] typeTypeContext = context.typeList().typeType();
+			List<TweedleType> typeList = typeTypeContext == null ?
+				new List<TweedleType>() :
+				typeTypeContext.Select(type => GetTypeType(type)).ToList();
 			return new TweedleLambdaType(typeList, GetTypeOrVoid(context.typeTypeOrVoid()));
 		}
 	}

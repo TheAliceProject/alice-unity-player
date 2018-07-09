@@ -26,10 +26,5 @@
 				throw new TweedleRuntimeException("No method matching " + thisValue + "." + callStackEntry + "()");
 			}
 		}
-
-		internal void Return(TweedleValue result)
-		{
-			Result = result;
-		}
 	}
 }

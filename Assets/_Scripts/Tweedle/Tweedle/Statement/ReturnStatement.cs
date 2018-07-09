@@ -32,7 +32,7 @@ namespace Alice.Tweedle
 			var returnStep = new SingleInputActionNotificationStep(
 				"return " + expression.ToTweedle(),
 				frame,
-				result => ((MethodFrame)frame).Return(result));
+				result => ((InvocationFrame)frame).Return(result));
 			valStep.OnCompletionNotify(returnStep);
 			returnStep.OnCompletionNotify(next);
 			return valStep;

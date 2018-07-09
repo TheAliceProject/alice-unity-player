@@ -167,5 +167,10 @@ namespace Alice.Tweedle
 		{
 			return new MethodFrame(this, methodName, invokeSuper);
 		}
+
+		internal LambdaFrame LambdaFrame()
+		{
+			return new LambdaFrame(this);
+		}
 	}
 }

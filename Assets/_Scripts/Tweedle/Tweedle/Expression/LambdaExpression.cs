@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -14,13 +15,19 @@ namespace Alice.Tweedle
 			get { return parameters; }
 		}
 
+		internal TweedleLambdaType LambdaType()
+		{
+			return (TweedleLambdaType)Type;
+		}
+
 		public BlockStatement Body
 		{
 			get { return body; }
 		}
 
+		// TODO Extract a better return type than void from the statements
 		public LambdaExpression(List<TweedleRequiredParameter> parameters, List<TweedleStatement> statements)
-			: base(TweedleVoidType.VOID)
+			: base(new TweedleLambdaType(parameters.Select(param => param.Type).ToList(), TweedleVoidType.VOID))
 		{
 			this.parameters = parameters;
 			body = new BlockStatement(statements);
@@ -28,9 +35,7 @@ namespace Alice.Tweedle
 
 		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
-			// TODO Add parameters to frame
-			//body.Execute(frame.LambdaFrame());
-			throw new NotImplementedException();
+			return new ContextNotifyingEvaluationStep(ToTweedle(), frame, () => new TweedleLambda(this));
 		}
 	}
 }
