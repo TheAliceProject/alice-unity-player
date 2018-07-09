@@ -22,7 +22,7 @@ namespace Alice.Tweedle
 			var bodyStep = new SingleInputActionNotificationStep(
 					"if " + Condition.ToTweedle(),
 					frame,
-					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(next, frame));
+					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(frame, next));
 			conditionStep.OnCompletionNotify(bodyStep);
 			bodyStep.OnCompletionNotify(next);
 			return conditionStep;

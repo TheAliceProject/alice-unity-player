@@ -26,8 +26,8 @@ namespace Alice.Tweedle
 		int maxCount = -1;
 		int index = 0;
 
-		public NotifyingCountLoopStep(CountLoop statement, TweedleFrame frame, NotifyingStep parent)
-			: base(statement, frame, parent)
+		public NotifyingCountLoopStep(CountLoop statement, TweedleFrame frame, NotifyingStep next)
+			: base(statement, frame, next)
 		{
 		}
 
@@ -46,7 +46,7 @@ namespace Alice.Tweedle
 			if (index < maxCount)
 			{
 				var loopFrame = frame.ChildFrame("Count loop", statement.Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index));
-				statement.Body.AddSequentialStep(this, loopFrame);
+				statement.Body.AddSequentialStep(loopFrame, this);
 				index++;
 			}
 			else

@@ -27,6 +27,11 @@ namespace Alice.Tweedle.Parsed
 			+ "  WholeNumber thisless() {\n"
 			+ "    return threeMore();\n"
 			+ "  }\n"
+			+ "  WholeNumber doParallelArraySteps() {\n"
+			+ "    WholeNumber x <- 0;"
+			+ "    eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) { x <- x + c; }"
+			+ "    return x;\n"
+			+ "  }\n"
 			+ "}";
 
 		static string parentClass =
@@ -403,6 +408,17 @@ namespace Alice.Tweedle.Parsed
 			TweedleObject tested = (TweedleObject)frame.GetValue("obj");
 
 			Assert.AreEqual(15, ((TweedlePrimitiveValue<int>)tested.Get("x")).Value);
+		}
+
+		[Test]
+		public void EachInArrayInMethodShouldProduceNumericResult()
+		{
+			Init();
+			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+			ExecuteStatement("WholeNumber val  <- obj.doParallelArraySteps();");
+			TweedleValue tested = frame.GetValue("val");
+
+			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested);
 		}
 	}
 }

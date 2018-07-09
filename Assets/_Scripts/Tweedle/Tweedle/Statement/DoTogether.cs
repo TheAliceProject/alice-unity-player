@@ -16,7 +16,7 @@ namespace Alice.Tweedle
 		{
 			if (IsEnabled)
 			{
-				Body.AddParallelSteps(next, frame);
+				Body.AddParallelSteps(frame, next);
 			}
 		}
 

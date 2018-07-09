@@ -12,17 +12,22 @@ namespace Alice.Tweedle
 			Statements = statements;
 		}
 
-		internal void AddSequentialStep(NotifyingStep parent, TweedleFrame frame)
+		internal void AddSequentialStep(TweedleFrame frame, NotifyingStep next)
 		{
-			frame.vm.AddStep(AsSequentialStep(parent, frame));
+			frame.vm.AddStep(AsSequentialStep(frame, next));
 		}
 
-		internal SequentialSteps AsSequentialStep(NotifyingStep parent, TweedleFrame frame)
+		internal SequentialSteps AsSequentialStep(TweedleFrame frame, NotifyingStep next)
 		{
-			return new SequentialSteps(parent, this, frame);
+			return new SequentialSteps(frame, next, this);
 		}
 
-		internal void AddParallelSteps(NotifyingStep next, TweedleFrame frame)
+		internal SequentialSteps AsSequentialStep(TweedleFrame frame)
+		{
+			return new SequentialSteps(frame, null, this);
+		}
+
+		internal void AddParallelSteps(TweedleFrame frame, NotifyingStep next)
 		{
 			foreach (TweedleStatement statement in Statements)
 			{
@@ -30,11 +35,11 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal void AddParallelSteps(NotifyingStep parent, List<TweedleFrame> frames)
+		internal void AddParallelSteps(List<TweedleFrame> frames, NotifyingStep next)
 		{
 			foreach (TweedleFrame frame in frames)
 			{
-				AddSequentialStep(parent, frame);
+				AddSequentialStep(frame, next);
 			}
 		}
 
@@ -43,8 +48,8 @@ namespace Alice.Tweedle
 			protected BlockStatement block;
 			int index = 0;
 
-			public SequentialSteps(NotifyingStep parent, BlockStatement block, TweedleFrame frame)
-				: base(frame, parent)
+			public SequentialSteps(TweedleFrame frame, NotifyingStep next, BlockStatement block)
+				: base(frame, next)
 			{
 				this.block = block;
 			}
@@ -57,7 +62,7 @@ namespace Alice.Tweedle
 				}
 				else
 				{
-					MarkCompleted();
+					base.Execute();
 				}
 			}
 		}

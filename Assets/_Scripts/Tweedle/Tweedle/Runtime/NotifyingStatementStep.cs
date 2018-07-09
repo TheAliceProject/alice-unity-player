@@ -7,8 +7,8 @@ namespace Alice.Tweedle
 	{
 		protected T statement;
 
-		public NotifyingStatementStep(T statement, TweedleFrame frame, NotifyingStep waiting)
-			: base(frame, waiting)
+		public NotifyingStatementStep(T statement, TweedleFrame frame, NotifyingStep next)
+			: base(frame, next)
 		{
 			this.statement = statement;
 		}

@@ -25,25 +25,35 @@ namespace Alice.Tweedle
 
 	internal class EachInArrayNotifyingStep : NotifyingStatementStep<EachInArrayTogether>
 	{
-		NotifyingStep arrayStep;
+		TweedleArray items;
+		bool firstPass = true;
 
-		public EachInArrayNotifyingStep(EachInArrayTogether statement, TweedleFrame frame, NotifyingStep parent)
-			: base(statement, frame, new NotifyingStep(frame, parent))
+		public EachInArrayNotifyingStep(EachInArrayTogether statement, TweedleFrame frame, NotifyingStep next)
+			: base(statement, frame, next)
 		{
 		}
+
 		internal override void BlockerFinished(NotifyingStep notifyingStep)
 		{
 			base.BlockerFinished(notifyingStep);
-			if (arrayStep == null)
+			if (items == null)
 			{
-				arrayStep = notifyingStep;
+				items = (TweedleArray)((NotifyingEvaluationStep)notifyingStep).Result;
 			}
 		}
 
 		internal override void Execute()
 		{
-			var frames = ((TweedleArray)((NotifyingEvaluationStep)arrayStep).Result).Values.Select(val => frame.ChildFrame("EachInArrayTogether", statement.ItemVariable, val)).ToList();
-			statement.Body.AddParallelSteps(this.waitingStep, frames);
+			if (firstPass)
+			{
+				firstPass = false;
+				var frames = items.Values.Select(val => frame.ChildFrame("EachInArrayTogether", statement.ItemVariable, val)).ToList();
+				statement.Body.AddParallelSteps(frames, this);
+			}
+			else
+			{
+				base.Execute();
+			}
 		}
 	}
 }
