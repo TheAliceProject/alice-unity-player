@@ -306,9 +306,9 @@ namespace Alice.Tweedle.Parsed
 				}
 				else if (bracket != null)
 				{
-					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(new TweedleArrayType(null)));
+					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(new TweedleArrayType()));
 					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
-					return new ArrayIndexExpression(((TweedleArrayType)array.Type).ValueType, array, index);
+					return new ArrayIndexExpression(array, index);
 				}
 				else if (context.lambdaCall() != null)
 				{

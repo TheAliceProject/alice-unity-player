@@ -566,6 +566,20 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
+		public void SomethingShouldBeCreatedForArrayIndex()
+		{
+			TweedleExpression tested = ParseExpression("stuff[x]");
+			Assert.NotNull(tested, "The parser should have returned something.");
+		}
+
+		[Test]
+		public void AnArrayIndexShouldBeCreated()
+		{
+			TweedleExpression tested = ParseExpression("stuff[x]");
+			Assert.IsInstanceOf<ArrayIndexExpression>(tested, "The parser should have returned an ArrayIndexExpression.");
+		}
+
+		[Test]
 		public void SomethingShouldBeCreatedForObjectArray()
 		{
 			TweedleExpression tested = ParseExpression("new SModel[] {this.sphere, this.walrus}");
