@@ -8,8 +8,8 @@ namespace Alice.Tweedle
 		TweedleExpression array;
 		TweedleExpression index;
 
-		public ArrayIndexExpression(TweedleType type, TweedleExpression array, TweedleExpression index)
-			: base(type)
+		public ArrayIndexExpression(TweedleExpression array, TweedleExpression index)
+			: base()
 		{
 			this.array = array;
 			this.index = index;
@@ -17,7 +17,17 @@ namespace Alice.Tweedle
 
 		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
-			throw new NotImplementedException();
+			return new DoubleInputEvalStep(
+				ToTweedle(),
+				frame,
+				array,
+				index,
+				(arr, val) => ((TweedleArray)arr)[val.ToInt()]);
+		}
+
+		internal override string ToTweedle()
+		{
+			return array.ToTweedle() + "[" + index.ToTweedle() + "]";
 		}
 	}
 }

@@ -9,8 +9,14 @@
 			get { return valueType; }
 		}
 
+		public TweedleArrayType()
+			: base("[]")
+		{
+			this.valueType = null;
+		}
+
 		public TweedleArrayType(TweedleType valueType)
-			: base(valueType.Name + "[]")
+			: base(valueType?.Name + "[]")
 		{
 			this.valueType = valueType;
 		}
