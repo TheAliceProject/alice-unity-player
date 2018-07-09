@@ -97,7 +97,7 @@ namespace Alice.VM
 			try
 			{
 				// step can do some work and then:
-				// * Finish, notifying its waiting step
+				// * Finish and notify its next step
 				// * Add itself back to the queue
 				// * Create one or more children to continue work
 				//  * Add a child step to the queue (single threaded)

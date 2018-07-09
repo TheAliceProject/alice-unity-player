@@ -26,8 +26,8 @@ namespace Alice.Tweedle
 		TweedleArray items;
 		int index = 0;
 
-		public ForEachInArrayNotifyingStep(ForEachInArrayLoop statement, TweedleFrame frame, NotifyingStep parent)
-			: base(statement, frame, new NotifyingStep(frame, parent))
+		public ForEachInArrayNotifyingStep(ForEachInArrayLoop statement, TweedleFrame frame, NotifyingStep next)
+			: base(statement, frame, new NotifyingStep(frame, next))
 		{
 		}
 
@@ -45,11 +45,11 @@ namespace Alice.Tweedle
 			if (index < items.Length)
 			{
 				var loopFrame = frame.ChildFrame("ForEach loop", statement.item, items[index++]);
-				statement.Body.AddSequentialStep(this, loopFrame);
+				statement.Body.AddSequentialStep(loopFrame, this);
 			}
 			else
 			{
-				MarkCompleted();
+				base.Execute();
 			}
 		}
 	}

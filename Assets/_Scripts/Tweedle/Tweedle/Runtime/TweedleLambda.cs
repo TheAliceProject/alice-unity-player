@@ -16,7 +16,7 @@ namespace Alice.Tweedle
 		internal void AddInvocationSteps(LambdaFrame frame, SequentialStepsEvaluation main, List<TweedleExpression> arguments)
 		{
 			AddArgumentSteps(frame, main, arguments);
-			main.AddStep(source.Body.AsSequentialStep(null, frame));
+			main.AddStep(source.Body.AsSequentialStep(frame));
 			main.AddEvaluationStep(ResultStep(frame));
 		}
 

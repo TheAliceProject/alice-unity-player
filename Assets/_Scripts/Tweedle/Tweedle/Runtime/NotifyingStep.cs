@@ -4,7 +4,7 @@ namespace Alice.VM
 {
 	public class NotifyingStep // ExecutionStep
 	{
-		internal NotifyingStep waitingStep;
+		internal NotifyingStep next;
 		int blockerCount = 0;
 		StepStatus status;
 		internal string callStack;
@@ -15,7 +15,7 @@ namespace Alice.VM
 		{
 		}
 
-		protected internal NotifyingStep(TweedleFrame frame, NotifyingStep waitingStep)
+		protected internal NotifyingStep(TweedleFrame frame, NotifyingStep next)
 		{
 			if (frame == null)
 			{
@@ -23,23 +23,23 @@ namespace Alice.VM
 			}
 
 			this.frame = frame;
-			this.waitingStep = waitingStep;
-			if (waitingStep != null)
+			this.next = next;
+			if (next != null)
 			{
-				waitingStep.blockerCount++;
+				next.blockerCount++;
 			}
 		}
 
-		internal NotifyingStep OnCompletionNotify(NotifyingStep next)
+		internal NotifyingStep OnCompletionNotify(NotifyingStep finalNext)
 		{
-			if (waitingStep == null)
+			if (next == null)
 			{
-				waitingStep = next;
+				next = finalNext;
 				next.blockerCount++;
 			}
 			else
 			{
-				waitingStep.OnCompletionNotify(next);
+				next.OnCompletionNotify(finalNext);
 			}
 			return this;
 		}
@@ -49,9 +49,9 @@ namespace Alice.VM
 			frame.vm.AddStep(this);
 		}
 
-		internal void QueueAndNotify(NotifyingStep parent)
+		internal void QueueAndNotify(NotifyingStep next)
 		{
-			OnCompletionNotify(parent);
+			OnCompletionNotify(next);
 			Queue();
 		}
 
@@ -65,15 +65,6 @@ namespace Alice.VM
 			return status == StepStatus.Completed;
 		}
 
-		internal void MarkCompleted()
-		{
-			status = StepStatus.Completed;
-			if (null != waitingStep)
-			{
-				waitingStep.BlockerFinished(this);
-			}
-		}
-
 		internal virtual bool CanRunThisFrame()
 		{
 			return status == StepStatus.Ready || status == StepStatus.WaitingOnSteps;
@@ -84,15 +75,19 @@ namespace Alice.VM
 		}
 
 		// Step can do some work and then:
-		// * Finish, notifying its waiting step
+		// * Finish and notify its next step, by invoking this base method
 		// * Add itself back to the queue
-		// * Create one or more children to continue work & increment blockerCount
+		// * Create one or more children to do work & increment blockerCount
 		//  * Add a child step to the queue (single threaded)
 		//  * Add multiple child steps to the queue (doTogether)
 		internal virtual void Execute()
 		{
-			// By default finish and notify the waiting step
-			MarkCompleted();
+			// Each step should eventually finish and notify the next step
+			status = StepStatus.Completed;
+			if (null != next)
+			{
+				next.BlockerFinished(this);
+			}
 		}
 
 		internal virtual void BlockerFinished(NotifyingStep notifyingStep)
@@ -103,11 +98,6 @@ namespace Alice.VM
 				Queue();
 			}
 		}
-
-		// Inner steps to complete the execution of this step.
-		//internal abstract bool HasNextStepsThisFrame();
-
-		//internal abstract List<NotifyingStep> GetNextSteps();
 
 		internal string CallStack()
 		{

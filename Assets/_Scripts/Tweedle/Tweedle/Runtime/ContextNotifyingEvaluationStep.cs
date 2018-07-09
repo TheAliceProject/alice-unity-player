@@ -17,7 +17,7 @@ namespace Alice.VM
 		internal override void Execute()
 		{
 			result = body.Invoke();
-			MarkCompleted();
+			base.Execute();
 		}
 	}
 }

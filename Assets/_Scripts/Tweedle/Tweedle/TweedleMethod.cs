@@ -55,7 +55,7 @@ namespace Alice.Tweedle
 		internal void AddInvocationSteps(InvocationFrame frame, SequentialStepsEvaluation steps, Dictionary<string, TweedleExpression> arguments)
 		{
 			AddPrepSteps(frame, steps, arguments);
-			steps.AddStep(Body.AsSequentialStep(null, frame));
+			steps.AddStep(Body.AsSequentialStep(frame));
 			steps.AddEvaluationStep(ResultStep(frame));
 		}
 

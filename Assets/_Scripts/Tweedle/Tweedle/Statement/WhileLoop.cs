@@ -22,8 +22,8 @@ namespace Alice.Tweedle
 	{
 		bool shouldRunBody = false;
 
-		public WhileLoopNotifyingStep(WhileLoop statement, TweedleFrame frame, NotifyingStep parent)
-			: base(statement, frame, parent)
+		public WhileLoopNotifyingStep(WhileLoop statement, TweedleFrame frame, NotifyingStep next)
+			: base(statement, frame, next)
 		{
 		}
 
@@ -40,11 +40,11 @@ namespace Alice.Tweedle
 				var loopFrame = frame.ChildFrame("While loop");
 				var shouldRunBodyAgain = statement.RunCondition.AsStep(frame);
 				shouldRunBodyAgain.OnCompletionNotify(this);
-				statement.Body.AddSequentialStep(shouldRunBodyAgain, loopFrame);
+				statement.Body.AddSequentialStep(loopFrame, shouldRunBodyAgain);
 			}
 			else
 			{
-				MarkCompleted();
+				base.Execute();
 			}
 		}
 	}
