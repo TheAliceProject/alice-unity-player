@@ -30,5 +30,10 @@ namespace Alice.Tweedle
 		{
 			return Method.AsStep(callStackEntry, this, arguments);
 		}
+
+		internal void Return(TweedleValue result)
+		{
+			Result = result;
+		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alice.VM;
 
 namespace Alice.Tweedle
@@ -15,23 +14,40 @@ namespace Alice.Tweedle
 		}
 
 		public LambdaEvaluation(TweedleExpression target)
-			: base()
 		{
 			this.target = target;
 			arguments = new List<TweedleExpression>();
 		}
 
 		public LambdaEvaluation(TweedleExpression target, List<TweedleExpression> arguments)
-			: base()
 		{
 			this.target = target;
 			this.arguments = arguments;
 		}
 
+		internal override string ToTweedle()
+		{
+			// TODO improve expression
+			return "lambda eval ()";
+		}
+
 		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
 		{
-			// TODO evaluate target to a lambda expression and evaluate it.
-			throw new NotImplementedException();
+			LambdaFrame lambdaFrame = frame.LambdaFrame();
+			var targetStep = target.AsStep(frame);
+			var setTargetStep = new SingleInputActionNotificationStep(
+				"Set Target",
+				lambdaFrame,
+				target => lambdaFrame.lambda = (TweedleLambda)target);
+			targetStep.OnCompletionNotify(setTargetStep);
+
+			SequentialStepsEvaluation main = new SequentialStepsEvaluation(ToTweedle(), frame);
+			main.AddStep(targetStep);
+			main.AddStep(new ActionNotifyingStep(
+				"Invocation",
+				lambdaFrame,
+				() => lambdaFrame.QueueInvocationStep(main, arguments)));
+			return main;
 		}
 	}
 }
