@@ -45,31 +45,31 @@ namespace Alice.Tweedle
 			return Modifiers.Contains("static");
 		}
 
-		protected internal virtual NotifyingEvaluationStep AsStep(string callStackEntry, InvocationFrame frame, Dictionary<string, TweedleExpression> arguments)
+		protected internal virtual ExecutionStep AsStep(string callStackEntry, InvocationFrame frame, Dictionary<string, TweedleExpression> arguments)
 		{
-			SequentialStepsEvaluation main = new SequentialStepsEvaluation(callStackEntry, frame.callingFrame);
+			StepSequence main = new StepSequence(callStackEntry, frame.callingFrame);
 			AddInvocationSteps(frame, main, arguments);
 			return main;
 		}
 
-		internal void AddInvocationSteps(InvocationFrame frame, SequentialStepsEvaluation steps, Dictionary<string, TweedleExpression> arguments)
+		internal void AddInvocationSteps(InvocationFrame frame, StepSequence steps, Dictionary<string, TweedleExpression> arguments)
 		{
 			AddPrepSteps(frame, steps, arguments);
 			steps.AddStep(Body.AsSequentialStep(frame));
-			steps.AddEvaluationStep(ResultStep(frame));
+			steps.AddStep(ResultStep(frame));
 		}
 
-		private NotifyingEvaluationStep ResultStep(InvocationFrame frame)
+		private ExecutionStep ResultStep(InvocationFrame frame)
 		{
 			return new SingleInputNotificationStep("call", frame, arg => frame.Result);
 		}
 
-		protected internal virtual void AddPrepSteps(InvocationFrame frame, SequentialStepsEvaluation main, Dictionary<string, TweedleExpression> arguments)
+		protected internal virtual void AddPrepSteps(InvocationFrame frame, StepSequence main, Dictionary<string, TweedleExpression> arguments)
 		{
 			AddArgumentSteps(frame, main, arguments);
 		}
 
-		private void AddArgumentSteps(InvocationFrame frame, SequentialStepsEvaluation main, Dictionary<string, TweedleExpression> arguments)
+		private void AddArgumentSteps(InvocationFrame frame, StepSequence main, Dictionary<string, TweedleExpression> arguments)
 		{
 			foreach (TweedleRequiredParameter req in RequiredParameters)
 			{
@@ -95,7 +95,7 @@ namespace Alice.Tweedle
 			}
 		}
 
-		NotifyingStep ArgumentStep(InvocationFrame frame, TweedleValueHolderDeclaration argDec, TweedleExpression expression)
+		ExecutionStep ArgumentStep(InvocationFrame frame, TweedleValueHolderDeclaration argDec, TweedleExpression expression)
 		{
 			var argStep = expression.AsStep(frame.callingFrame);
 			var storeStep = new SingleInputNotificationStep(

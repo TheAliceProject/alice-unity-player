@@ -7,8 +7,8 @@ namespace Alice.VM
 	public class NotifyingStepExecutionQueue
 	{
 		// Steps are parallelizable operations. A single sequence of operations will generally have one queued step at a time
-		Queue<NotifyingStep> stepsForThisFrame = new Queue<NotifyingStep>();
-		Queue<NotifyingStep> stepsForNextFrame = new Queue<NotifyingStep>();
+		Queue<ExecutionStep> stepsForThisFrame = new Queue<ExecutionStep>();
+		Queue<ExecutionStep> stepsForNextFrame = new Queue<ExecutionStep>();
 		bool isProcessing = false;
 
 		// This adds an independent thread of work.
@@ -17,7 +17,7 @@ namespace Alice.VM
 		// * code
 		// * a just processed step with more work to do
 		// * a previously process step that has been notified all its children are complete
-		internal void AddToQueue(NotifyingStep step)
+		internal void AddToQueue(ExecutionStep step)
 		{
 			if (step == null || step.IsComplete())
 			{
@@ -26,7 +26,7 @@ namespace Alice.VM
 			AddToCorrectQueue(step);
 		}
 
-		private void AddToCorrectQueue(NotifyingStep step)
+		private void AddToCorrectQueue(ExecutionStep step)
 		{
 			if (step.CanRunThisFrame())
 			{
@@ -38,9 +38,9 @@ namespace Alice.VM
 			}
 		}
 
-		void AddToQueue(List<NotifyingStep> steps)
+		void AddToQueue(List<ExecutionStep> steps)
 		{
-			foreach (NotifyingStep step in steps)
+			foreach (ExecutionStep step in steps)
 			{
 				AddToQueue(step);
 			}
@@ -86,13 +86,13 @@ namespace Alice.VM
 		{
 			while (stepsForNextFrame.Count > 0)
 			{
-				NotifyingStep step = stepsForNextFrame.Dequeue();
+				ExecutionStep step = stepsForNextFrame.Dequeue();
 				step.PrepForFrame();
 				AddToQueue(step);
 			}
 		}
 
-		void ProcessStep(NotifyingStep step)
+		void ProcessStep(ExecutionStep step)
 		{
 			try
 			{

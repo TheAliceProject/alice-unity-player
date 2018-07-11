@@ -31,11 +31,11 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			if (TargetExp == null)
 			{
-				NotifyingEvaluationStep valueStep = ValueExp.AsStep(frame);
+				ExecutionStep valueStep = ValueExp.AsStep(frame);
 				valueStep.OnCompletionNotify(
 					new SingleInputActionNotificationStep(
 						ToTweedle(),

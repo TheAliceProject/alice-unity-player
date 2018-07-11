@@ -45,6 +45,6 @@ namespace Alice.Tweedle
 			return ToString();
 		}
 
-		internal abstract NotifyingEvaluationStep AsStep(TweedleFrame frame);
+		internal abstract ExecutionStep AsStep(TweedleFrame frame);
 	}
 }

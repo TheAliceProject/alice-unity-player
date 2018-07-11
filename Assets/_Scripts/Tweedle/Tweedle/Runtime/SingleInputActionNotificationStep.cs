@@ -3,7 +3,7 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	internal class SingleInputActionNotificationStep : NotifyingStep
+	internal class SingleInputActionNotificationStep : ExecutionStep
 	{
 		TweedleValue initialValue;
 		Action<TweedleValue> body;
@@ -15,10 +15,10 @@ namespace Alice.VM
 			this.body = body;
 		}
 
-		internal override void BlockerFinished(NotifyingStep notifyingStep)
+		internal override void BlockerFinished(ExecutionStep notifyingStep)
 		{
 			base.BlockerFinished(notifyingStep);
-			initialValue = ((NotifyingEvaluationStep)notifyingStep).Result;
+			initialValue = notifyingStep.Result;
 		}
 
 		internal override void Execute()

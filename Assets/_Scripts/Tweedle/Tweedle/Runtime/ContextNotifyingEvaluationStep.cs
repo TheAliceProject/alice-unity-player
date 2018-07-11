@@ -3,7 +3,7 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	class ContextNotifyingEvaluationStep : NotifyingEvaluationStep
+	class ContextNotifyingEvaluationStep : ExecutionStep
 	{
 		Func<TweedleValue> body;
 

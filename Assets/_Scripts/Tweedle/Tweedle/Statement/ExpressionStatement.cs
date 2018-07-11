@@ -11,7 +11,7 @@ namespace Alice.Tweedle
 			Expression = expression;
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			return Expression.AsStep(frame).OnCompletionNotify(next);
 		}

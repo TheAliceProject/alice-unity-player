@@ -17,43 +17,19 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
-			return Array.AsStep(frame).OnCompletionNotify(new EachInArrayNotifyingStep(this, frame, next));
-		}
-	}
-
-	internal class EachInArrayNotifyingStep : NotifyingStatementStep<EachInArrayTogether>
-	{
-		TweedleArray items;
-		bool firstPass = true;
-
-		public EachInArrayNotifyingStep(EachInArrayTogether statement, TweedleFrame frame, NotifyingStep next)
-			: base(statement, frame, next)
-		{
-		}
-
-		internal override void BlockerFinished(NotifyingStep notifyingStep)
-		{
-			base.BlockerFinished(notifyingStep);
-			if (items == null)
-			{
-				items = (TweedleArray)((NotifyingEvaluationStep)notifyingStep).Result;
-			}
-		}
-
-		internal override void Execute()
-		{
-			if (firstPass)
-			{
-				firstPass = false;
-				var frames = items.Values.Select(val => frame.ChildFrame("EachInArrayTogether", statement.ItemVariable, val)).ToList();
-				statement.Body.AddParallelSteps(frames, this);
-			}
-			else
-			{
-				base.Execute();
-			}
+			var arrayStep = Array.AsStep(frame);
+			var bodyStep = new SingleInputActionNotificationStep(
+				"EachInArrayTogether",
+				frame,
+				items =>
+				{
+					var frames = ((TweedleArray)items).Values.Select(val => frame.ChildFrame("EachInArrayTogether", ItemVariable, val)).ToList();
+					Body.AddParallelSteps(frames, next);
+				});
+			arrayStep.OnCompletionNotify(bodyStep);
+			return arrayStep;
 		}
 	}
 }

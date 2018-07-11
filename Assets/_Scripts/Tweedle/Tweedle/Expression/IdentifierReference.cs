@@ -12,9 +12,9 @@ namespace Alice.Tweedle
 			Name = name;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			return new NotifyingValueStep("Get Identifier " + Name, frame, frame.GetValue(Name));
+			return new ValueStep("Get Identifier " + Name, frame, frame.GetValue(Name));
 		}
 	}
 }

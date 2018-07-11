@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 			this.rhs = rhs;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return new DoubleInputEvalStep(ToTweedle(), frame, lhs, rhs, Evaluate);
 		}

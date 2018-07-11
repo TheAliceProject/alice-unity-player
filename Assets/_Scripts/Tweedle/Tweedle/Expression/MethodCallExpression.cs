@@ -39,18 +39,18 @@ namespace Alice.Tweedle
 			return arguments[argName];
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			MethodFrame methodFrame = frame.MethodCallFrame(MethodName, invokeSuper);
 
 			var targetStep = TargetStep(frame);
-			NotifyingStep prepMethodStep = new SingleInputActionNotificationStep(
+			ExecutionStep prepMethodStep = new SingleInputActionNotificationStep(
 				"Invocation Prep",
 				frame,
 				methodFrame.SetThis);
 			targetStep.OnCompletionNotify(prepMethodStep);
 
-			SequentialStepsEvaluation main = new SequentialStepsEvaluation(MethodName, frame);
+			StepSequence main = new StepSequence(MethodName, frame);
 			main.AddStep(targetStep);
 			main.AddStep(new ActionNotifyingStep(
 				"Invocation",

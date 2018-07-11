@@ -9,9 +9,9 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			return new NotifyingValueStep("this", frame, frame.GetThis());
+			return new ValueStep("this", frame, frame.GetThis());
 		}
 	}
 }

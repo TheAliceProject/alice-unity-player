@@ -13,20 +13,20 @@ namespace Alice.Tweedle
 			source = expression;
 		}
 
-		internal void AddInvocationSteps(LambdaFrame frame, SequentialStepsEvaluation main, List<TweedleExpression> arguments)
+		internal void AddInvocationSteps(LambdaFrame frame, StepSequence main, List<TweedleExpression> arguments)
 		{
 			AddArgumentSteps(frame, main, arguments);
 			main.AddStep(source.Body.AsSequentialStep(frame));
-			main.AddEvaluationStep(ResultStep(frame));
+			main.AddStep(ResultStep(frame));
 		}
 
-		void AddArgumentSteps(LambdaFrame frame, SequentialStepsEvaluation main, List<TweedleExpression> arguments)
+		void AddArgumentSteps(LambdaFrame frame, StepSequence main, List<TweedleExpression> arguments)
 		{
 			for (int i = 0; i < arguments.Count; i++)
 			{
 				TweedleRequiredParameter param = source.Parameters[i];
 				TweedleExpression argExp = arguments[i];
-				NotifyingEvaluationStep argStep = argExp.AsStep(frame.callingFrame);
+				ExecutionStep argStep = argExp.AsStep(frame.callingFrame);
 				var storeStep = new SingleInputNotificationStep(
 					"Arg",
 					frame.callingFrame,
@@ -36,7 +36,7 @@ namespace Alice.Tweedle
 			}
 		}
 
-		NotifyingEvaluationStep ResultStep(LambdaFrame frame)
+		ExecutionStep ResultStep(LambdaFrame frame)
 		{
 			return new SingleInputNotificationStep("call", frame, arg => frame.Result);
 		}

@@ -12,12 +12,12 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override NotifyingEvaluationStep InvocationStep(string callStackEntry, Dictionary<string, TweedleExpression> arguments)
+		internal override ExecutionStep InvocationStep(string callStackEntry, Dictionary<string, TweedleExpression> arguments)
 		{
 			return base.InvocationStep(callStackEntry, arguments);
 		}
 
-		internal void QueueInvocationStep(SequentialStepsEvaluation sequentialSteps, List<TweedleExpression> arguments)
+		internal void QueueInvocationStep(StepSequence sequentialSteps, List<TweedleExpression> arguments)
 		{
 			lambda.AddInvocationSteps(this, sequentialSteps, arguments);
 		}

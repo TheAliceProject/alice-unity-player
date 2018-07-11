@@ -13,7 +13,7 @@ namespace Alice.Tweedle
 			Variable = variable;
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			var initStep = Variable.AsInitializerStep(frame);
 			var storeStep = new SingleInputActionNotificationStep(

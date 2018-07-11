@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 			invokeSuper = false;
 		}
 
-		internal NotifyingEvaluationStep TargetStep(TweedleFrame frame)
+		internal ExecutionStep TargetStep(TweedleFrame frame)
 		{
 			return Target.AsStep(frame);
 		}

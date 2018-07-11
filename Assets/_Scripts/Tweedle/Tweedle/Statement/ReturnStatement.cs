@@ -26,7 +26,7 @@ namespace Alice.Tweedle
 			this.expression = expression;
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			var valStep = expression.AsStep(frame);
 			var returnStep = new SingleInputActionNotificationStep(

@@ -25,9 +25,9 @@ namespace Alice.Tweedle
 			return access;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			NotifyingEvaluationStep targetStep = TargetStep(frame);
+			ExecutionStep targetStep = TargetStep(frame);
 			targetStep.OnCompletionNotify(
 				new SingleInputNotificationStep(
 					"Get Field ",
