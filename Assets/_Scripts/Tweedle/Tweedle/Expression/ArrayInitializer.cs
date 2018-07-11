@@ -38,19 +38,19 @@ namespace Alice.Tweedle
 			return null;
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			SequentialStepsEvaluation main = new SequentialStepsEvaluation("new Array", frame);
-			List<NotifyingEvaluationStep> steps = elements.Select(elem => elem?.AsStep(frame)).ToList();
+			StepSequence main = new StepSequence("new Array", frame);
+			List<ExecutionStep> steps = elements.Select(elem => elem?.AsStep(frame)).ToList();
 
-			NotifyingEvaluationStep sizeStep;
+			ExecutionStep sizeStep;
 			if (initializeSize != null)
 			{
 				sizeStep = initializeSize.AsStep(frame);
 			}
 			else
 			{
-				sizeStep = new NotifyingValueStep("new Array size", frame, TweedleTypes.WHOLE_NUMBER.Instantiate(steps.Count()));
+				sizeStep = new ValueStep("new Array size", frame, TweedleTypes.WHOLE_NUMBER.Instantiate(steps.Count()));
 			}
 			main.AddStep(sizeStep);
 			foreach (var step in steps)
@@ -58,7 +58,7 @@ namespace Alice.Tweedle
 				main.AddStep(step);
 			}
 			// TODO Use size to construct array
-			main.AddEvaluationStep(new ContextNotifyingEvaluationStep(
+			main.AddStep(new ContextNotifyingEvaluationStep(
 				"CreateArray", frame,
 				() => new TweedleArray((TweedleArrayType)this.Type, steps.Select(el => el.Result).ToList())));
 			return main;

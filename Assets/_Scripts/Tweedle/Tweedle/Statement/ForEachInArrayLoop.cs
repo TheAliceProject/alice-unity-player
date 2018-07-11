@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 			this.array = array;
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			return array.AsStep(frame).OnCompletionNotify(new ForEachInArrayNotifyingStep(this, frame, next));
 		}
@@ -26,17 +26,17 @@ namespace Alice.Tweedle
 		TweedleArray items;
 		int index = 0;
 
-		public ForEachInArrayNotifyingStep(ForEachInArrayLoop statement, TweedleFrame frame, NotifyingStep next)
-			: base(statement, frame, new NotifyingStep(frame, next))
+		public ForEachInArrayNotifyingStep(ForEachInArrayLoop statement, TweedleFrame frame, ExecutionStep next)
+			: base(statement, frame, new ExecutionStep(frame, next))
 		{
 		}
 
-		internal override void BlockerFinished(NotifyingStep notifyingStep)
+		internal override void BlockerFinished(ExecutionStep notifyingStep)
 		{
 			base.BlockerFinished(notifyingStep);
 			if (items == null)
 			{
-				items = (TweedleArray)((NotifyingEvaluationStep)notifyingStep).Result;
+				items = (TweedleArray)notifyingStep.Result;
 			}
 		}
 

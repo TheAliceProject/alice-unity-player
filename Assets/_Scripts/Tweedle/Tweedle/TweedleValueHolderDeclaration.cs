@@ -22,7 +22,7 @@ namespace Alice.Tweedle
 			Initializer = initializer;
 		}
 
-		internal NotifyingEvaluationStep AsInitializerStep(TweedleFrame frame)
+		internal ExecutionStep AsInitializerStep(TweedleFrame frame)
 		{
 			if (Initializer == null)
 			{

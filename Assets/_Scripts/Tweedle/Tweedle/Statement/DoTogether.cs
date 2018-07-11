@@ -12,7 +12,7 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		internal override void QueueStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override void QueueStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			if (IsEnabled)
 			{
@@ -20,7 +20,7 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			return null;
 		}

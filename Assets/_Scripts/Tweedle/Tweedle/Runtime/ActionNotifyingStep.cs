@@ -3,7 +3,7 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	class ActionNotifyingStep : NotifyingStep
+	class ActionNotifyingStep : ExecutionStep
 	{
 		Action body;
 

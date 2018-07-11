@@ -14,14 +14,14 @@ namespace Alice.Tweedle
 			enabled = false;
 		}
 
-		internal virtual void QueueStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal virtual void QueueStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			if (enabled)
 			{
-				frame.vm.AddStep(this.AsStepToNotify(frame, next));
+				AsStepToNotify(frame, next).Queue();
 			}
 		}
 
-		internal abstract NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next);
+		internal abstract ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next);
 	}
 }

@@ -33,7 +33,7 @@ namespace Alice.Tweedle
 			body = new BlockStatement(statements);
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			return new ContextNotifyingEvaluationStep(ToTweedle(), frame, () => new TweedleLambda(this));
 		}

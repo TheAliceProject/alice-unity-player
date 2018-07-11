@@ -12,7 +12,7 @@ namespace Alice.Tweedle
 			RunCondition = runCondition;
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			return RunCondition.AsStep(frame).OnCompletionNotify(new WhileLoopNotifyingStep(this, frame, next));
 		}
@@ -22,15 +22,15 @@ namespace Alice.Tweedle
 	{
 		bool shouldRunBody = false;
 
-		public WhileLoopNotifyingStep(WhileLoop statement, TweedleFrame frame, NotifyingStep next)
+		public WhileLoopNotifyingStep(WhileLoop statement, TweedleFrame frame, ExecutionStep next)
 			: base(statement, frame, next)
 		{
 		}
 
-		internal override void BlockerFinished(NotifyingStep notifyingStep)
+		internal override void BlockerFinished(ExecutionStep notifyingStep)
 		{
 			base.BlockerFinished(notifyingStep);
-			shouldRunBody = ((NotifyingEvaluationStep)notifyingStep).Result.ToBoolean();
+			shouldRunBody = notifyingStep.Result.ToBoolean();
 		}
 
 		internal override void Execute()

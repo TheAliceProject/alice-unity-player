@@ -41,26 +41,26 @@ namespace Alice.VM
 
 		public void Queue(TweedleStatement statement)
 		{
-			statement.QueueStepToNotify(staticFrame, new NotifyingStep(staticFrame));
+			statement.QueueStepToNotify(staticFrame, new ExecutionStep(staticFrame));
 		}
 
 		// Used by tests
 		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
 		{
-			statement.QueueStepToNotify(frame, new NotifyingStep(frame));
+			statement.QueueStepToNotify(frame, new ExecutionStep(frame));
 			executionQueue.ProcessOneFrame();
 		}
 
 		// Used by tests
 		public TweedleValue EvaluateToFinish(TweedleExpression expression, TweedleFrame frame)
 		{
-			NotifyingEvaluationStep step = expression.AsStep(frame);
+			ExecutionStep step = expression.AsStep(frame);
 			executionQueue.AddToQueue(step);
 			executionQueue.ProcessOneFrame();
 			return step.Result;
 		}
 
-		public void AddStep(NotifyingStep step)
+		internal void AddStep(ExecutionStep step)
 		{
 			executionQueue.AddToQueue(step);
 			executionQueue.ProcessOneFrame();

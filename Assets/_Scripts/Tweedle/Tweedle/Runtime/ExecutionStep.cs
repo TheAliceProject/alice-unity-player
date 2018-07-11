@@ -2,20 +2,29 @@
 
 namespace Alice.VM
 {
-	public class NotifyingStep // ExecutionStep
+	public class ExecutionStep
 	{
-		internal NotifyingStep next;
+		internal ExecutionStep next;
 		int blockerCount = 0;
 		StepStatus status;
 		internal string callStack;
 		protected internal TweedleFrame frame;
 
-		protected internal NotifyingStep(TweedleFrame frame)
+		protected TweedleValue result = TweedleNull.NULL;
+		public TweedleValue Result { get { return result; } }
+
+		internal TweedleValue EvaluateNow()
+		{
+			Queue();
+			return result;
+		}
+
+		protected internal ExecutionStep(TweedleFrame frame)
 			: this(frame, null)
 		{
 		}
 
-		protected internal NotifyingStep(TweedleFrame frame, NotifyingStep next)
+		protected internal ExecutionStep(TweedleFrame frame, ExecutionStep next)
 		{
 			if (frame == null)
 			{
@@ -30,7 +39,7 @@ namespace Alice.VM
 			}
 		}
 
-		internal NotifyingStep OnCompletionNotify(NotifyingStep finalNext)
+		internal ExecutionStep OnCompletionNotify(ExecutionStep finalNext)
 		{
 			if (next == null)
 			{
@@ -49,9 +58,9 @@ namespace Alice.VM
 			frame.vm.AddStep(this);
 		}
 
-		internal void QueueAndNotify(NotifyingStep next)
+		internal void QueueAndNotify(ExecutionStep finalNext)
 		{
-			OnCompletionNotify(next);
+			OnCompletionNotify(finalNext);
 			Queue();
 		}
 
@@ -72,6 +81,7 @@ namespace Alice.VM
 
 		internal virtual void PrepForFrame()
 		{
+			status = StepStatus.Ready;
 		}
 
 		// Step can do some work and then:
@@ -90,7 +100,7 @@ namespace Alice.VM
 			}
 		}
 
-		internal virtual void BlockerFinished(NotifyingStep notifyingStep)
+		internal virtual void BlockerFinished(ExecutionStep notifyingStep)
 		{
 			if (--blockerCount == 0)
 			{

@@ -12,12 +12,12 @@ namespace Alice.Tweedle
 			Statements = statements;
 		}
 
-		internal void AddSequentialStep(TweedleFrame frame, NotifyingStep next)
+		internal void AddSequentialStep(TweedleFrame frame, ExecutionStep next)
 		{
-			frame.vm.AddStep(AsSequentialStep(frame, next));
+			AsSequentialStep(frame, next).Queue();
 		}
 
-		internal SequentialSteps AsSequentialStep(TweedleFrame frame, NotifyingStep next)
+		internal SequentialSteps AsSequentialStep(TweedleFrame frame, ExecutionStep next)
 		{
 			return new SequentialSteps(frame, next, this);
 		}
@@ -27,7 +27,7 @@ namespace Alice.Tweedle
 			return new SequentialSteps(frame, null, this);
 		}
 
-		internal void AddParallelSteps(TweedleFrame frame, NotifyingStep next)
+		internal void AddParallelSteps(TweedleFrame frame, ExecutionStep next)
 		{
 			foreach (TweedleStatement statement in Statements)
 			{
@@ -35,7 +35,7 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal void AddParallelSteps(List<TweedleFrame> frames, NotifyingStep next)
+		internal void AddParallelSteps(List<TweedleFrame> frames, ExecutionStep next)
 		{
 			foreach (TweedleFrame frame in frames)
 			{
@@ -43,12 +43,12 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal class SequentialSteps : NotifyingStep
+		internal class SequentialSteps : ExecutionStep
 		{
 			protected BlockStatement block;
 			int index = 0;
 
-			public SequentialSteps(TweedleFrame frame, NotifyingStep next, BlockStatement block)
+			public SequentialSteps(TweedleFrame frame, ExecutionStep next, BlockStatement block)
 				: base(frame, next)
 			{
 				this.block = block;

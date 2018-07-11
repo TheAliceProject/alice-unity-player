@@ -31,7 +31,7 @@ namespace Alice.Tweedle
 			return "lambda eval ()";
 		}
 
-		internal override NotifyingEvaluationStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			LambdaFrame lambdaFrame = frame.LambdaFrame();
 			var targetStep = target.AsStep(frame);
@@ -41,7 +41,7 @@ namespace Alice.Tweedle
 				target => lambdaFrame.lambda = (TweedleLambda)target);
 			targetStep.OnCompletionNotify(setTargetStep);
 
-			SequentialStepsEvaluation main = new SequentialStepsEvaluation(ToTweedle(), frame);
+			StepSequence main = new StepSequence(ToTweedle(), frame);
 			main.AddStep(targetStep);
 			main.AddStep(new ActionNotifyingStep(
 				"Invocation",

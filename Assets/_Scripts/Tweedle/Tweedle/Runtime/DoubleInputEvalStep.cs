@@ -3,7 +3,7 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	internal class DoubleInputEvalStep : NotifyingEvaluationStep
+	internal class DoubleInputEvalStep : ExecutionStep
 	{
 		TweedleExpression exp1;
 		TweedleExpression exp2;

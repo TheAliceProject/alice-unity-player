@@ -16,7 +16,7 @@ namespace Alice.Tweedle
 			ElseBody = new BlockStatement(elseBody);
 		}
 
-		internal override NotifyingStep AsStepToNotify(TweedleFrame frame, NotifyingStep next)
+		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			var conditionStep = Condition.AsStep(frame);
 			var bodyStep = new SingleInputActionNotificationStep(
