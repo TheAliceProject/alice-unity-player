@@ -17,17 +17,17 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
-			return array.AsStep(frame).OnCompletionNotify(new ForEachInArrayNotifyingStep(this, frame, next));
+			return array.AsStep(frame).OnCompletionNotify(new ForEachInArrayStep(this, frame, next));
 		}
 	}
 
-	internal class ForEachInArrayNotifyingStep : NotifyingStatementStep<ForEachInArrayLoop>
+	internal class ForEachInArrayStep : LoopStep<ForEachInArrayLoop>
 	{
 		TweedleArray items;
 		int index = 0;
 
-		public ForEachInArrayNotifyingStep(ForEachInArrayLoop statement, TweedleFrame frame, ExecutionStep next)
-			: base(statement, frame, new ExecutionStep(frame, next))
+		public ForEachInArrayStep(ForEachInArrayLoop statement, TweedleFrame frame, ExecutionStep next)
+			: base(statement, frame, next)
 		{
 		}
 

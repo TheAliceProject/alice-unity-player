@@ -35,7 +35,7 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
-			return new ContextNotifyingEvaluationStep(ToTweedle(), frame, () => new TweedleLambda(this));
+			return new ValueStep(ToTweedle(), frame, new TweedleLambda(this));
 		}
 	}
 }
