@@ -17,16 +17,16 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
-			return count.AsStep(frame).OnCompletionNotify(new NotifyingCountLoopStep(this, frame, next));
+			return count.AsStep(frame).OnCompletionNotify(new CountLoopStep(this, frame, next));
 		}
 	}
 
-	class NotifyingCountLoopStep : NotifyingStatementStep<CountLoop>
+	class CountLoopStep : LoopStep<CountLoop>
 	{
 		int maxCount = -1;
 		int index = 0;
 
-		public NotifyingCountLoopStep(CountLoop statement, TweedleFrame frame, ExecutionStep next)
+		public CountLoopStep(CountLoop statement, TweedleFrame frame, ExecutionStep next)
 			: base(statement, frame, next)
 		{
 		}

@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 		protected internal override ExecutionStep AsStep(string callStack, InvocationFrame frame, Dictionary<string, TweedleExpression> arguments)
 		{
 			UnityEngine.Debug.LogError("Attempt to invoke missing primitive method " + Name);
-			return new ContextNotifyingEvaluationStep(callStack, frame, () => TweedleNull.NULL);
+			return new ValueStep(callStack, frame, TweedleNull.NULL);
 		}
 
 		public override bool IsStatic()

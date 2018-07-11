@@ -14,15 +14,15 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
-			return RunCondition.AsStep(frame).OnCompletionNotify(new WhileLoopNotifyingStep(this, frame, next));
+			return RunCondition.AsStep(frame).OnCompletionNotify(new WhileLoopStep(this, frame, next));
 		}
 	}
 
-	internal class WhileLoopNotifyingStep : NotifyingStatementStep<WhileLoop>
+	internal class WhileLoopStep : LoopStep<WhileLoop>
 	{
 		bool shouldRunBody = false;
 
-		public WhileLoopNotifyingStep(WhileLoop statement, TweedleFrame frame, ExecutionStep next)
+		public WhileLoopStep(WhileLoop statement, TweedleFrame frame, ExecutionStep next)
 			: base(statement, frame, next)
 		{
 		}
