@@ -31,13 +31,13 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override void BlockerFinished(ExecutionStep notifyingStep)
+		internal override void BlockerFinished(ExecutionStep blockingStep)
 		{
-			base.BlockerFinished(notifyingStep);
+			base.BlockerFinished(blockingStep);
 			if (maxCount == -1)
 			{
 				// Only set this once
-				maxCount = notifyingStep.Result.ToInt();
+				maxCount = blockingStep.Result.ToInt();
 			}
 		}
 

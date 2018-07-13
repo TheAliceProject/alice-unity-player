@@ -31,12 +31,12 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override void BlockerFinished(ExecutionStep notifyingStep)
+		internal override void BlockerFinished(ExecutionStep blockingStep)
 		{
-			base.BlockerFinished(notifyingStep);
+			base.BlockerFinished(blockingStep);
 			if (items == null)
 			{
-				items = (TweedleArray)notifyingStep.Result;
+				items = (TweedleArray)blockingStep.Result;
 			}
 		}
 

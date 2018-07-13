@@ -7,11 +7,11 @@ namespace Alice.VM
 	{
 		Action body;
 
-		public ActionNotifyingStep(string callStack, TweedleFrame frame, Action body)
+		public ActionNotifyingStep(string callStackEntry, TweedleFrame frame, Action body)
 			: base(frame)
 		{
+			this.callStack = frame.StackWith(callStackEntry);
 			this.body = body;
-			this.callStack = callStack;
 		}
 
 		internal override void Execute()

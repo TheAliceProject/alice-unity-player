@@ -27,7 +27,7 @@ namespace Alice.Tweedle
 				TweedleRequiredParameter param = source.Parameters[i];
 				TweedleExpression argExp = arguments[i];
 				ExecutionStep argStep = argExp.AsStep(frame.callingFrame);
-				var storeStep = new SingleInputNotificationStep(
+				var storeStep = new ComputationStep(
 					"Arg",
 					frame.callingFrame,
 					argVal => frame.SetLocalValue(param, argVal));
@@ -38,7 +38,7 @@ namespace Alice.Tweedle
 
 		ExecutionStep ResultStep(LambdaFrame frame)
 		{
-			return new SingleInputNotificationStep("call", frame, arg => frame.Result);
+			return new ComputationStep("call", frame, arg => frame.Result);
 		}
 	}
 }

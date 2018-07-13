@@ -18,7 +18,7 @@ namespace Alice.VM
 								   Func<TweedleValue, TweedleValue, TweedleValue> body)
 			: base(frame)
 		{
-			this.callStack = callStackEntry;
+			this.callStack = frame.StackWith(callStackEntry);
 			this.exp1 = exp1;
 			this.exp2 = exp2;
 			this.body = body;
@@ -27,7 +27,7 @@ namespace Alice.VM
 		void QueueExpressionStep(TweedleExpression exp, Action<TweedleValue> handler)
 		{
 			var evalStep = exp.AsStep(frame);
-			var storeStep = new SingleInputActionNotificationStep(callStack, frame, handler);
+			var storeStep = new OperationStep(callStack, frame, handler);
 			evalStep.OnCompletionNotify(storeStep);
 			storeStep.OnCompletionNotify(this);
 			evalStep.Queue();

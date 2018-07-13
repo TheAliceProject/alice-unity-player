@@ -20,7 +20,7 @@ namespace Alice.Tweedle
 		{
 			TweedleValue result = null;
 			var expStep = AsStep(frame);
-			var storeStep = new SingleInputActionNotificationStep(
+			var storeStep = new OperationStep(
 					"EvaluateNow",
 					frame,
 					value => result = value);

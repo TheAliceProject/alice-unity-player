@@ -44,7 +44,7 @@ namespace Alice.Tweedle
 			MethodFrame methodFrame = frame.MethodCallFrame(MethodName, invokeSuper);
 
 			var targetStep = TargetStep(frame);
-			ExecutionStep prepMethodStep = new SingleInputActionNotificationStep(
+			ExecutionStep prepMethodStep = new OperationStep(
 				"Invocation Prep",
 				frame,
 				methodFrame.SetThis);

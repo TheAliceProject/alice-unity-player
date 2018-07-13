@@ -16,7 +16,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			var initStep = Variable.AsInitializerStep(frame);
-			var storeStep = new SingleInputActionNotificationStep(
+			var storeStep = new OperationStep(
 				Variable.ToTweedle(),
 				frame,
 				value => frame.SetLocalValue(Variable, value));
