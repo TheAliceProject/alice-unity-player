@@ -4,7 +4,7 @@ using Alice.Tweedle;
 namespace Alice.VM
 {
 
-	public class NotifyingStepExecutionQueue
+	public class ExecutionQueue
 	{
 		// Steps are parallelizable operations. A single sequence of operations will generally have one queued step at a time
 		Queue<ExecutionStep> stepsForThisFrame = new Queue<ExecutionStep>();

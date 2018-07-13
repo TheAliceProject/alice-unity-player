@@ -8,7 +8,7 @@ namespace Alice.VM
 	{
 		ExecutionScope staticScope;
 		public TweedleSystem Library { get; private set; }
-		public NotifyingStepExecutionQueue executionQueue = new NotifyingStepExecutionQueue();
+		public ExecutionQueue executionQueue = new ExecutionQueue();
 
 		public VirtualMachine()
 		{
