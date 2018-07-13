@@ -29,7 +29,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			var valStep = expression.AsStep(frame);
-			var returnStep = new SingleInputActionNotificationStep(
+			var returnStep = new OperationStep(
 				"return " + expression.ToTweedle(),
 				frame,
 				result => ((InvocationFrame)frame).Return(result));

@@ -27,10 +27,10 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override void BlockerFinished(ExecutionStep notifyingStep)
+		internal override void BlockerFinished(ExecutionStep blockingStep)
 		{
-			base.BlockerFinished(notifyingStep);
-			shouldRunBody = notifyingStep.Result.ToBoolean();
+			base.BlockerFinished(blockingStep);
+			shouldRunBody = blockingStep.Result.ToBoolean();
 		}
 
 		internal override void Execute()

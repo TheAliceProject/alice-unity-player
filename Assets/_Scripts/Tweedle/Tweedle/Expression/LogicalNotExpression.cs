@@ -15,7 +15,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStep(TweedleFrame frame)
 		{
 			var step = expression.AsStep(frame);
-			step.OnCompletionNotify(new SingleInputNotificationStep("!" + expression.ToTweedle(), frame, NotPrimitive));
+			step.OnCompletionNotify(new ComputationStep("!" + expression.ToTweedle(), frame, NotPrimitive));
 			return step;
 		}
 

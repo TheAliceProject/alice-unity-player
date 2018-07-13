@@ -19,7 +19,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			var conditionStep = Condition.AsStep(frame);
-			var bodyStep = new SingleInputActionNotificationStep(
+			var bodyStep = new OperationStep(
 					"if " + Condition.ToTweedle(),
 					frame,
 					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(frame, next));

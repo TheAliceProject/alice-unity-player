@@ -61,7 +61,7 @@ namespace Alice.Tweedle
 
 		private ExecutionStep ResultStep(InvocationFrame frame)
 		{
-			return new SingleInputNotificationStep("call", frame, arg => frame.Result);
+			return new ComputationStep("call", frame, arg => frame.Result);
 		}
 
 		protected internal virtual void AddPrepSteps(InvocationFrame frame, StepSequence main, Dictionary<string, TweedleExpression> arguments)
@@ -98,7 +98,7 @@ namespace Alice.Tweedle
 		ExecutionStep ArgumentStep(InvocationFrame frame, TweedleValueHolderDeclaration argDec, TweedleExpression expression)
 		{
 			var argStep = expression.AsStep(frame.callingFrame);
-			var storeStep = new SingleInputNotificationStep(
+			var storeStep = new ComputationStep(
 					"Arg",
 					frame.callingFrame,
 					arg => frame.SetLocalValue(argDec, arg));

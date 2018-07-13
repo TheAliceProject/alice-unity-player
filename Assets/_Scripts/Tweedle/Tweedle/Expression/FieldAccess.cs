@@ -29,7 +29,7 @@ namespace Alice.Tweedle
 		{
 			ExecutionStep targetStep = TargetStep(frame);
 			targetStep.OnCompletionNotify(
-				new SingleInputNotificationStep(
+				new ComputationStep(
 					"Get Field ",
 					frame,
 					target => target.Get(FieldName)));

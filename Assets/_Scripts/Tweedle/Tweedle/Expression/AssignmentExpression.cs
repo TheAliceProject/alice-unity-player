@@ -37,7 +37,7 @@ namespace Alice.Tweedle
 			{
 				ExecutionStep valueStep = ValueExp.AsStep(frame);
 				valueStep.OnCompletionNotify(
-					new SingleInputActionNotificationStep(
+					new ComputationStep(
 						ToTweedle(),
 						frame,
 						value => frame.SetValue(Identifier, value)));

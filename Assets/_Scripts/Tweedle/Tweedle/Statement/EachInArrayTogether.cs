@@ -20,7 +20,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
 		{
 			var arrayStep = Array.AsStep(frame);
-			var bodyStep = new SingleInputActionNotificationStep(
+			var bodyStep = new OperationStep(
 				"EachInArrayTogether",
 				frame,
 				items =>

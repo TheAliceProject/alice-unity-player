@@ -48,8 +48,10 @@ namespace Alice.VM
 			}
 			else
 			{
+				// Add at the end of the chain of steps.
 				next.OnCompletionNotify(finalNext);
 			}
+			// Return earliest step in the chain
 			return this;
 		}
 
@@ -100,7 +102,7 @@ namespace Alice.VM
 			}
 		}
 
-		internal virtual void BlockerFinished(ExecutionStep notifyingStep)
+		internal virtual void BlockerFinished(ExecutionStep blockingStep)
 		{
 			if (--blockerCount == 0)
 			{

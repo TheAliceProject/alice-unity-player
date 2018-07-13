@@ -35,7 +35,7 @@ namespace Alice.Tweedle
 		{
 			LambdaFrame lambdaFrame = frame.LambdaFrame();
 			var targetStep = target.AsStep(frame);
-			var setTargetStep = new SingleInputActionNotificationStep(
+			var setTargetStep = new OperationStep(
 				"Set Target",
 				lambdaFrame,
 				target => lambdaFrame.lambda = (TweedleLambda)target);
