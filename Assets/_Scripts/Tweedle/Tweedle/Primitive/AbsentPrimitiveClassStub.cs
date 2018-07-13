@@ -2,9 +2,9 @@
 
 namespace Alice.Tweedle
 {
-	public class AbsentPrimitiveStub : TweedlePrimitive
+	public class AbsentPrimitiveClassStub : TweedlePrimitiveClass
 	{
-		public AbsentPrimitiveStub(string absentNameSpace)
+		public AbsentPrimitiveClassStub(string absentNameSpace)
 			: base(absentNameSpace, new List<TweedleField>(), new List<TweedleMethod>())
 		{
 		}

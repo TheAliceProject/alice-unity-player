@@ -3,13 +3,13 @@ using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	internal class AbsentMethodStub : TweedleMethod
+	internal class AbsentPrimitiveMethodStub : TweedleMethod
 	{
 		private static readonly List<TweedleRequiredParameter> NoRequiredParams = new List<TweedleRequiredParameter>();
 		private static readonly List<TweedleOptionalParameter> NoOptionalParams = new List<TweedleOptionalParameter>();
 		private static readonly List<TweedleStatement> EmptyBody = new List<TweedleStatement>();
 
-		public AbsentMethodStub(string methodName)
+		public AbsentPrimitiveMethodStub(string methodName)
 			: base(TweedleVoidType.VOID, methodName, NoRequiredParams, NoOptionalParams, EmptyBody)
 		{
 		}

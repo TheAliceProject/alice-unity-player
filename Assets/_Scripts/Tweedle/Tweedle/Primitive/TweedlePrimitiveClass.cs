@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Alice.Tweedle
 {
-	abstract public class TweedlePrimitive : TweedleTypeDeclaration
+	abstract public class TweedlePrimitiveClass : TweedleTypeDeclaration
 	{
-		public TweedlePrimitive(String name, List<TweedleField> properties, List<TweedleMethod> methods)
+		public TweedlePrimitiveClass(String name, List<TweedleField> properties, List<TweedleMethod> methods)
 			: base(name, properties, methods, new List<TweedleConstructor>())
 		{
 		}
@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 			{
 				return method;
 			}
-			return new AbsentMethodStub(methodName);
+			return new AbsentPrimitiveMethodStub(methodName);
 		}
 	}
 }
