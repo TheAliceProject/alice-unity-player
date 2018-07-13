@@ -17,7 +17,7 @@ namespace Alice.Tweedle.Parsed
 		public Dictionary<string, ProgramDescription> UnlinkedPrograms { get; private set; }
 		public Dictionary<string, ModelManifest> UnlinkedModels { get; private set; }
 		public Dictionary<string, TweedleClass> Classes { get; private set; }
-		Dictionary<string, TweedlePrimitive> primitives;
+		Dictionary<string, TweedlePrimitiveClass> primitives;
 
 		public Dictionary<string, TweedleEnum> Enums { get; private set; }
 		public Dictionary<string, TweedleType> Types { get; private set; }
@@ -42,7 +42,7 @@ namespace Alice.Tweedle.Parsed
 
 		private void InitializePrimitives()
 		{
-			primitives = new Dictionary<string, TweedlePrimitive>();
+			primitives = new Dictionary<string, TweedlePrimitiveClass>();
 		}
 
 		public void AddLibrary(LibraryManifest libAsset)
@@ -100,14 +100,14 @@ namespace Alice.Tweedle.Parsed
 			return null;
 		}
 
-		TweedlePrimitive PrimitiveDeclaration(string name)
+		TweedlePrimitiveClass PrimitiveDeclaration(string name)
 		{
 			if (primitives.ContainsKey(name))
 			{
 				return primitives[name];
 			}
 			UnityEngine.Debug.LogError("Attempt to invoke missing primitive namespace " + name);
-			return new AbsentPrimitiveStub(name);
+			return new AbsentPrimitiveClassStub(name);
 		}
 
 		public void AddEnum(TweedleEnum tweEnum)

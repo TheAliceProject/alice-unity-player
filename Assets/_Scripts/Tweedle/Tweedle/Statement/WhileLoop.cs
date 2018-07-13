@@ -12,9 +12,9 @@ namespace Alice.Tweedle
 			RunCondition = runCondition;
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			return RunCondition.AsStep(frame).OnCompletionNotify(new WhileLoopStep(this, frame, next));
+			return RunCondition.AsStep(scope).OnCompletionNotify(new WhileLoopStep(this, scope, next));
 		}
 	}
 
@@ -22,8 +22,8 @@ namespace Alice.Tweedle
 	{
 		bool shouldRunBody = false;
 
-		public WhileLoopStep(WhileLoop statement, TweedleFrame frame, ExecutionStep next)
-			: base(statement, frame, next)
+		public WhileLoopStep(WhileLoop statement, ExecutionScope scope, ExecutionStep next)
+			: base(statement, scope, next)
 		{
 		}
 
@@ -37,10 +37,10 @@ namespace Alice.Tweedle
 		{
 			if (shouldRunBody)
 			{
-				var loopFrame = frame.ChildFrame("While loop");
-				var shouldRunBodyAgain = statement.RunCondition.AsStep(frame);
+				var loopScope = scope.ChildScope("While loop");
+				var shouldRunBodyAgain = statement.RunCondition.AsStep(scope);
 				shouldRunBodyAgain.OnCompletionNotify(this);
-				statement.Body.AddSequentialStep(loopFrame, shouldRunBodyAgain);
+				statement.Body.AddSequentialStep(loopScope, shouldRunBodyAgain);
 			}
 			else
 			{

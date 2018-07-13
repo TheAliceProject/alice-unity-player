@@ -6,18 +6,18 @@ namespace Alice.VM
 {
 	public class VirtualMachine // : MonoBehaviour
 	{
-		TweedleFrame staticFrame;
+		ExecutionScope staticScope;
 		public TweedleSystem Library { get; private set; }
 		public NotifyingStepExecutionQueue executionQueue = new NotifyingStepExecutionQueue();
 
 		public VirtualMachine()
 		{
-			staticFrame = new TweedleFrame("VM", this);
+			staticScope = new ExecutionScope("VM", this);
 		}
 
 		public VirtualMachine(TweedleSystem tweedleSystem)
 		{
-			staticFrame = new TweedleFrame("VM", this);
+			staticScope = new ExecutionScope("VM", this);
 			Initialize(tweedleSystem);
 		}
 
@@ -31,7 +31,7 @@ namespace Alice.VM
 
 		void InstantiateEnums()
 		{
-			// TODO add enums to the staticFrame
+			// TODO add enums to the staticScope
 		}
 
 		public void Queue(TweedleExpression exp)
@@ -41,20 +41,20 @@ namespace Alice.VM
 
 		public void Queue(TweedleStatement statement)
 		{
-			statement.QueueStepToNotify(staticFrame, new ExecutionStep(staticFrame));
+			statement.QueueStepToNotify(staticScope, new ExecutionStep(staticScope));
 		}
 
 		// Used by tests
-		public void ExecuteToFinish(TweedleStatement statement, TweedleFrame frame)
+		public void ExecuteToFinish(TweedleStatement statement, ExecutionScope scope)
 		{
-			statement.QueueStepToNotify(frame, new ExecutionStep(frame));
+			statement.QueueStepToNotify(scope, new ExecutionStep(scope));
 			executionQueue.ProcessOneFrame();
 		}
 
 		// Used by tests
-		public TweedleValue EvaluateToFinish(TweedleExpression expression, TweedleFrame frame)
+		public TweedleValue EvaluateToFinish(TweedleExpression expression, ExecutionScope scope)
 		{
-			ExecutionStep step = expression.AsStep(frame);
+			ExecutionStep step = expression.AsStep(scope);
 			executionQueue.AddToQueue(step);
 			executionQueue.ProcessOneFrame();
 			return step.Result;

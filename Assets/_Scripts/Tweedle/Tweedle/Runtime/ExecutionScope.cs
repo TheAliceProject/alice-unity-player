@@ -4,9 +4,9 @@ using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	public class TweedleFrame
+	public class ExecutionScope
 	{
-		TweedleFrame parent;
+		ExecutionScope parent;
 		public VirtualMachine vm;
 		protected TweedleValue thisValue;
 		protected internal string callStackEntry;
@@ -14,19 +14,19 @@ namespace Alice.Tweedle
 		Dictionary<string, ValueHolder> localValues =
 			new Dictionary<string, ValueHolder>();
 
-		public TweedleFrame(string stackEntry)
+		public ExecutionScope(string stackEntry)
 		{
 			callStackEntry = stackEntry;
 			vm = new VirtualMachine();
 		}
 
-		public TweedleFrame(string stackEntry, VirtualMachine vm)
+		public ExecutionScope(string stackEntry, VirtualMachine vm)
 		{
 			this.vm = vm;
 			callStackEntry = stackEntry;
 		}
 
-		protected TweedleFrame(TweedleFrame parent)
+		protected ExecutionScope(ExecutionScope parent)
 		{
 			vm = parent.vm;
 			this.parent = parent;
@@ -71,6 +71,7 @@ namespace Alice.Tweedle
 
 		public TweedleValue SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue value)
 		{
+			//UnityEngine.Debug.Log("Initializing " + declaration.Name + " to " + value.ToTextString());
 			localValues.Add(declaration.Name,
 							new ValueHolder(declaration.Type.AsDeclaredType(this), value));
 			return value;
@@ -82,17 +83,18 @@ namespace Alice.Tweedle
 			{
 				throw new TweedleRuntimeException("Can not assign null to " + varName);
 			}
-			if (UpdateFrameValue(varName, value) || SetValueOnThis(varName, value))
+			if (UpdateScopeValue(varName, value) || SetValueOnThis(varName, value))
 			{
 				return value;
 			}
 			throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
 		}
 
-		public bool UpdateFrameValue(string varName, TweedleValue value)
+		public bool UpdateScopeValue(string varName, TweedleValue value)
 		{
 			if (localValues.ContainsKey(varName))
 			{
+				//UnityEngine.Debug.Log("Updating " + varName + " to " + value.ToTextString());
 				// TODO handle on property objects for animation and delay
 				localValues[varName].Value = value;
 				return true;
@@ -101,7 +103,8 @@ namespace Alice.Tweedle
 			{
 				if (parent != null)
 				{
-					return parent.UpdateFrameValue(varName, value);
+					//UnityEngine.Debug.Log("Asking parent scope to set " + varName + " to " + value.ToTextString());
+					return parent.UpdateScopeValue(varName, value);
 				}
 			}
 			return false;
@@ -125,10 +128,12 @@ namespace Alice.Tweedle
 			}
 			if (localValues.ContainsKey(varName))
 			{
+				//UnityEngine.Debug.Log("Reading local " + varName + " as " + localValues[varName].Value.ToTextString());
 				return localValues[varName].Value;
 			}
 			if (parent != null)
 			{
+				//UnityEngine.Debug.Log("Asking parent for " + varName);
 				return parent.GetValue(varName);
 			}
 			if (thisValue != null && thisValue.HasSetField(varName))
@@ -138,39 +143,39 @@ namespace Alice.Tweedle
 			throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
 		}
 
-		public TweedleFrame ChildFrame()
+		public ExecutionScope ChildScope()
 		{
-			return new TweedleFrame(this);
+			return new ExecutionScope(this);
 		}
 
-		public TweedleFrame ChildFrame(string stackEntry)
+		public ExecutionScope ChildScope(string stackEntry)
 		{
-			TweedleFrame child = new TweedleFrame(this);
+			ExecutionScope child = new ExecutionScope(this);
 			child.callStackEntry = stackEntry;
 			return child;
 		}
 
-		internal TweedleFrame ChildFrame(string stackEntry, TweedleValueHolderDeclaration declaration, TweedleValue value)
+		internal ExecutionScope ChildScope(string stackEntry, TweedleValueHolderDeclaration declaration, TweedleValue value)
 		{
-			var child = new TweedleFrame(this);
+			var child = new ExecutionScope(this);
 			child.SetLocalValue(declaration, value);
 			child.callStackEntry = stackEntry;
 			return child;
 		}
 
-		internal ConstructorFrame ForInstantiation(TweedleClass tweedleClass)
+		internal ConstructorScope ForInstantiation(TweedleClass tweedleClass)
 		{
-			return new ConstructorFrame(this, tweedleClass);
+			return new ConstructorScope(this, tweedleClass);
 		}
 
-		internal MethodFrame MethodCallFrame(string methodName, bool invokeSuper)
+		internal MethodScope MethodCallScope(string methodName, bool invokeSuper)
 		{
-			return new MethodFrame(this, methodName, invokeSuper);
+			return new MethodScope(this, methodName, invokeSuper);
 		}
 
-		internal LambdaFrame LambdaFrame()
+		internal LambdaScope LambdaScope()
 		{
-			return new LambdaFrame(this);
+			return new LambdaScope(this);
 		}
 	}
 }

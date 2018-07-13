@@ -9,7 +9,7 @@ namespace Alice.Tweedle.Parsed
 
 		TweedleClass lambdaTest;
 		VirtualMachine vm;
-		TweedleFrame frame;
+		ExecutionScope scope;
 
 		[SetUp]
 		public void Setup()
@@ -56,13 +56,13 @@ namespace Alice.Tweedle.Parsed
 			TweedleSystem system = new TweedleSystem();
 			system.AddClass(lambdaTest);
 			vm = new VirtualMachine(system);
-			frame = new TweedleFrame("Test", vm);
+			scope = new ExecutionScope("Test", vm);
 			ExecuteStatement("LambdaTest lam <- new LambdaTest();");
 		}
 
 		void ExecuteStatement(string src)
 		{
-			vm.ExecuteToFinish(parser.ParseStatement(src), frame);
+			vm.ExecuteToFinish(parser.ParseStatement(src), scope);
 		}
 
 		[Test]
@@ -75,7 +75,7 @@ namespace Alice.Tweedle.Parsed
 		public void LambdaShouldBePassed()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendLambda();");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(5, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -84,7 +84,7 @@ namespace Alice.Tweedle.Parsed
 		public void LambdaShouldBeEvaluated()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendLambdaToEval();");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(12, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -93,7 +93,7 @@ namespace Alice.Tweedle.Parsed
 		public void SumLambdaShouldBeEvaluated()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendSumLambda();");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(10, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -102,7 +102,7 @@ namespace Alice.Tweedle.Parsed
 		public void MultLambdaShouldBeEvaluated()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendMultLambda();");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(25, ((TweedlePrimitiveValue<int>)tested).Value);
 		}

@@ -8,10 +8,10 @@ namespace Alice.VM
 		TweedleValue initialValue;
 		Action<TweedleValue> body;
 
-		public OperationStep(string callStackEntry, TweedleFrame frame, Action<TweedleValue> body)
-			: base(frame)
+		public OperationStep(string callStackEntry, ExecutionScope scope, Action<TweedleValue> body)
+			: base(scope)
 		{
-			this.callStack = frame.StackWith(callStackEntry);
+			this.callStack = scope.StackWith(callStackEntry);
 			this.body = body;
 		}
 

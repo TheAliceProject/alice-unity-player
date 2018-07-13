@@ -33,17 +33,17 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		VirtualMachine vm;
-		TweedleFrame frame;
+		ExecutionScope scope;
 
 		public void Init()
 		{
 			vm = new VirtualMachine(NewSystem());
-			frame = new TweedleFrame("Test", vm);
+			scope = new ExecutionScope("Test", vm);
 		}
 
 		void ExecuteStatement(string src)
 		{
-			vm.ExecuteToFinish(parser.ParseStatement(src), frame);
+			vm.ExecuteToFinish(parser.ParseStatement(src), scope);
 		}
 
 		[Test]
@@ -58,7 +58,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
-			var tested = frame.GetValue("fib");
+			var tested = scope.GetValue("fib");
 
 			Assert.IsInstanceOf<TweedleObject>(tested);
 		}
@@ -69,7 +69,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 1);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested);
 		}
@@ -80,7 +80,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 1);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(1, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -91,7 +91,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 2);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(2, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -102,7 +102,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 3);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(3, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -113,7 +113,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 4);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(5, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -124,7 +124,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 5);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(8, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -135,7 +135,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 8);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(34, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -146,7 +146,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Fibonacci fib <- new Fibonacci();");
 			ExecuteStatement("WholeNumber x <- fib.compute(n: 15);");
-			TweedleValue tested = frame.GetValue("x");
+			TweedleValue tested = scope.GetValue("x");
 
 			Assert.AreEqual(987, ((TweedlePrimitiveValue<int>)tested).Value);
 		}

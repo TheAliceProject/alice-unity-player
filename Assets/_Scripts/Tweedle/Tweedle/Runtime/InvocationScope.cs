@@ -3,21 +3,21 @@ using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	public abstract class InvocationFrame : TweedleFrame
+	public abstract class InvocationScope : ExecutionScope
 	{
-		internal TweedleFrame callingFrame;
+		internal ExecutionScope callingScope;
 		internal TweedleMethod Method { get; set; }
 		public TweedleValue Result { get; internal set; }
 
-		public InvocationFrame(TweedleFrame frame)
-			: base("Invocation", frame.vm)
+		public InvocationScope(ExecutionScope scope)
+			: base("Invocation", scope.vm)
 		{
-			callingFrame = frame;
+			callingScope = scope;
 		}
 
 		internal override string StackWith(string stackTop)
 		{
-			return callingFrame.StackWith(stackTop + "\n" + callStackEntry);
+			return callingScope.StackWith(stackTop + "\n" + callStackEntry);
 		}
 
 		internal void QueueInvocationStep(StepSequence sequentialSteps, Dictionary<string, TweedleExpression> arguments)

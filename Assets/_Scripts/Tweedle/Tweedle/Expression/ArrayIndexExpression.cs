@@ -15,11 +15,11 @@ namespace Alice.Tweedle
 			this.index = index;
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			return new DoubleInputEvalStep(
 				ToTweedle(),
-				frame,
+				scope,
 				array,
 				index,
 				(arr, val) => ((TweedleArray)arr)[val.ToInt()]);

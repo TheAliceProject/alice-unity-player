@@ -12,10 +12,10 @@ namespace Alice.Tweedle
 			this.expression = expression;
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			var val = expression.AsStep(frame);
-			val.OnCompletionNotify(new ComputationStep("-" + expression.ToTweedle(), frame, Negate));
+			var val = expression.AsStep(scope);
+			val.OnCompletionNotify(new ComputationStep("-" + expression.ToTweedle(), scope, Negate));
 			return val;
 		}
 

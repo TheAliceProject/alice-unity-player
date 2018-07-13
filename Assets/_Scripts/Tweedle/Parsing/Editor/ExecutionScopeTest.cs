@@ -4,70 +4,70 @@ using NUnit.Framework;
 namespace Alice.Tweedle.Parsed
 {
 	[TestFixture]
-	public class TweedleFrameTest
+	public class ExecutionScopeTest
 	{
 		VirtualMachine vm;
-		TweedleFrame frame;
+		ExecutionScope scope;
 
 		public void Init()
 		{
 			vm = new VirtualMachine();
-			frame = new TweedleFrame("Test", vm);
+			scope = new ExecutionScope("Test", vm);
 		}
 
 		[Test]
-		public void FrameShouldHoldLocalValue()
+		public void ScopeShouldHoldLocalValue()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			scope.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 
-			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
+			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)scope.GetValue("x");
 			Assert.AreEqual(12, newVal.Value, "The VM should have returned 12.");
 		}
 
 		[Test]
-		public void FrameShouldHoldLocalValueWithInitializer()
+		public void ScopeShouldHoldLocalValueWithInitializer()
 		{
 			Init();
 			TweedleLocalVariable xVar = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x", TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 			LocalVariableDeclaration xDec = new LocalVariableDeclaration(false, xVar);
-			vm.ExecuteToFinish(xDec, frame);
+			vm.ExecuteToFinish(xDec, scope);
 
-			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
+			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)scope.GetValue("x");
 			Assert.AreEqual(12, newVal.Value, "The VM should have returned 12.");
 		}
 
 		[Test]
-		public void FrameShouldRejectSettingOfUnitializedLocalValue()
+		public void ScopeShouldRejectSettingOfUnitializedLocalValue()
 		{
 			Init();
 			Assert.Throws<TweedleRuntimeException>(
-				() => frame.SetValue("x", TweedleTypes.TEXT_STRING.Instantiate("twelve")));
+				() => scope.SetValue("x", TweedleTypes.TEXT_STRING.Instantiate("twelve")));
 		}
 
 		[Test]
-		public void FrameShouldRejectLocalValueOfWrongType()
-		{
-			Init();
-			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-
-			Assert.Throws<TweedleRuntimeException>(
-				() => frame.SetLocalValue(xDec, TweedleTypes.TEXT_STRING.Instantiate("twelve")));
-		}
-
-		[Test]
-		public void FrameShouldRejectNullForPrimitiveValue()
+		public void ScopeShouldRejectLocalValueOfWrongType()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
 
 			Assert.Throws<TweedleRuntimeException>(
-				() => frame.SetLocalValue(xDec, TweedleNull.NULL));
+				() => scope.SetLocalValue(xDec, TweedleTypes.TEXT_STRING.Instantiate("twelve")));
 		}
 
 		[Test]
-		public void FrameShouldRejectNullForObjectValue()
+		public void ScopeShouldRejectNullForPrimitiveValue()
+		{
+			Init();
+			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
+
+			Assert.Throws<TweedleRuntimeException>(
+				() => scope.SetLocalValue(xDec, TweedleNull.NULL));
+		}
+
+		[Test]
+		public void ScopeShouldRejectNullForObjectValue()
 		{
 			Init();
 			TweedleClass cls = new TweedleClass("Dummy",
@@ -76,28 +76,28 @@ namespace Alice.Tweedle.Parsed
 												new System.Collections.Generic.List<TweedleConstructor>());
 			TweedleLocalVariable objDec = new TweedleLocalVariable(cls, "o");
 			Assert.Throws<TweedleRuntimeException>(
-				() => frame.SetLocalValue(objDec, TweedleNull.NULL));
+				() => scope.SetLocalValue(objDec, TweedleNull.NULL));
 		}
 
 		[Test]
-		public void FrameShouldReadParentValue()
+		public void ScopeShouldReadParentValue()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
-			TweedleFrame child = frame.ChildFrame();
+			scope.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			ExecutionScope child = scope.ChildScope();
 
 			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)child.GetValue("x");
 			Assert.AreEqual(12, newVal.Value, "The VM should have returned 12.");
 		}
 
 		[Test]
-		public void FrameShouldWriteValueInitializedOnParent()
+		public void ScopeShouldWriteValueInitializedOnParent()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
-			TweedleFrame child = frame.ChildFrame();
+			scope.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			ExecutionScope child = scope.ChildScope();
 			child.SetValue("x", TweedleTypes.WHOLE_NUMBER.Instantiate(77));
 
 			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)child.GetValue("x");
@@ -105,25 +105,25 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-		public void FrameShouldWriteToParentValue()
+		public void ScopeShouldWriteToParentValue()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
-			TweedleFrame child = frame.ChildFrame();
+			scope.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			ExecutionScope child = scope.ChildScope();
 			child.SetValue("x", TweedleTypes.WHOLE_NUMBER.Instantiate(77));
 
-			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
+			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)scope.GetValue("x");
 			Assert.AreEqual(77, newVal.Value, "The VM should have returned 77.");
 		}
 
 		[Test]
-		public void FrameShouldAllowBlockingOfParentValue()
+		public void ScopeShouldAllowBlockingOfParentValue()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
-			TweedleFrame child = frame.ChildFrame();
+			scope.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			ExecutionScope child = scope.ChildScope();
 			child.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(77));
 
 			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)child.GetValue("x");
@@ -131,15 +131,15 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-		public void FrameShouldChangeParentValue()
+		public void ScopeShouldChangeParentValue()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
-			TweedleFrame child = frame.ChildFrame();
+			scope.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			ExecutionScope child = scope.ChildScope();
 			child.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(77));
 
-			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
+			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)scope.GetValue("x");
 			Assert.AreEqual(12, newVal.Value, "The VM should have returned 12.");
 		}
 	}

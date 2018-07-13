@@ -19,11 +19,11 @@ namespace Alice.Tweedle
 			Modifiers = modifiers;
 		}
 
-		internal ExecutionStep InitializeField(TweedleFrame frame, TweedleObject tweedleObject)
+		internal ExecutionStep InitializeField(ExecutionScope scope, TweedleObject tweedleObject)
 		{
 			return Initializer
-				.AsStep(frame)
-				.OnCompletionNotify(new OperationStep("", frame, value => tweedleObject.Set(Name, value, frame)));
+				.AsStep(scope)
+				.OnCompletionNotify(new OperationStep("", scope, value => tweedleObject.Set(Name, value, scope)));
 		}
 	}
 }

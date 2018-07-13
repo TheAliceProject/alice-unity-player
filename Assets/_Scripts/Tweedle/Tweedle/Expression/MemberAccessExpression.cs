@@ -14,9 +14,9 @@ namespace Alice.Tweedle
 			invokeSuper = false;
 		}
 
-		internal ExecutionStep TargetStep(TweedleFrame frame)
+		internal ExecutionStep TargetStep(ExecutionScope scope)
 		{
-			return Target.AsStep(frame);
+			return Target.AsStep(scope);
 		}
 	}
 }

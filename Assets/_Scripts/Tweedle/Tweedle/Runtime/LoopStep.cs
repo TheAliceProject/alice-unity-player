@@ -8,8 +8,8 @@ namespace Alice.Tweedle
 	{
 		protected T statement;
 
-		public LoopStep(T statement, TweedleFrame frame, ExecutionStep next)
-			: base(frame, next)
+		public LoopStep(T statement, ExecutionScope scope, ExecutionStep next)
+			: base(scope, next)
 		{
 			this.statement = statement;
 		}

@@ -47,12 +47,12 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override bool Set(string fieldName, TweedleValue value, TweedleFrame frame)
+		internal override bool Set(string fieldName, TweedleValue value, ExecutionScope scope)
 		{
-			TweedleField field = tweClass.Field(frame, fieldName);
+			TweedleField field = tweClass.Field(scope, fieldName);
 			if (field != null)
 			{
-				if (!field.Accepts(value, frame))
+				if (!field.Accepts(value, scope))
 				{
 					throw new TweedleRuntimeException("Invalid type. Can not assign " + value + " to " + fieldName);
 				}
@@ -62,27 +62,27 @@ namespace Alice.Tweedle
 				}
 				else
 				{
-					Attributes.Add(field.Name, new ValueHolder(field.Type.AsDeclaredType(frame), value));
+					Attributes.Add(field.Name, new ValueHolder(field.Type.AsDeclaredType(scope), value));
 				}
 				return true;
 			}
 			return false;
 		}
 
-		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
+		internal override TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
-			return tweClass.MethodNamed(frame, methodName);
+			return tweClass.MethodNamed(scope, methodName);
 		}
 
-		internal override TweedleMethod SuperMethodNamed(TweedleFrame frame, string methodName)
+		internal override TweedleMethod SuperMethodNamed(ExecutionScope scope, string methodName)
 		{
-			return tweClass.SuperClass(frame).MethodNamed(frame, methodName);
+			return tweClass.SuperClass(scope).MethodNamed(scope, methodName);
 		}
 
-		internal IEnumerable<ExecutionStep> InitializationNotifyingSteps(TweedleFrame frame)
+		internal IEnumerable<ExecutionStep> InitializationNotifyingSteps(ExecutionScope scope)
 		{
 			List<ExecutionStep> steps = new List<ExecutionStep>();
-			tweClass.AddInitializationSteps(steps, frame, this);
+			tweClass.AddInitializationSteps(steps, scope, this);
 			return steps;
 		}
 	}

@@ -31,22 +31,22 @@ namespace Alice.Tweedle
 			return "lambda eval ()";
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			LambdaFrame lambdaFrame = frame.LambdaFrame();
-			var targetStep = target.AsStep(frame);
+			LambdaScope lambdaScope = scope.LambdaScope();
+			var targetStep = target.AsStep(scope);
 			var setTargetStep = new OperationStep(
 				"Set Target",
-				lambdaFrame,
-				target => lambdaFrame.lambda = (TweedleLambda)target);
+				lambdaScope,
+				target => lambdaScope.lambda = (TweedleLambda)target);
 			targetStep.OnCompletionNotify(setTargetStep);
 
-			StepSequence main = new StepSequence(ToTweedle(), frame);
+			StepSequence main = new StepSequence(ToTweedle(), scope);
 			main.AddStep(targetStep);
 			main.AddStep(new ActionNotifyingStep(
 				"Invocation",
-				lambdaFrame,
-				() => lambdaFrame.QueueInvocationStep(main, arguments)));
+				lambdaScope,
+				() => lambdaScope.QueueInvocationStep(main, arguments)));
 			return main;
 		}
 	}

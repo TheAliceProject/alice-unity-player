@@ -25,7 +25,7 @@ namespace Alice.Tweedle
 			values.Add(value);
 		}
 
-		internal override TweedleEnum AsEnum(TweedleFrame frame)
+		internal override TweedleEnum AsEnum(ExecutionScope scope)
 		{
 			return this;
 		}
@@ -45,9 +45,9 @@ namespace Alice.Tweedle
 			this.arguments = arguments;
 		}
 
-		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
+		internal override TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
-			return EnumType.MethodNamed(frame, methodName);
+			return EnumType.MethodNamed(scope, methodName);
 		}
 	}
 }

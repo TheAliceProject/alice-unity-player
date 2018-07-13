@@ -1,11 +1,11 @@
 ﻿namespace Alice.Tweedle
 {
-	class MethodFrame : InvocationFrame
+	class MethodScope : InvocationScope
 	{
 		bool invokeSuper;
 
-		public MethodFrame(TweedleFrame frame, string methodName, bool invokeSuper)
-			: base(frame)
+		public MethodScope(ExecutionScope scope, string methodName, bool invokeSuper)
+			: base(scope)
 		{
 			callStackEntry = methodName;
 			this.invokeSuper = invokeSuper;
@@ -20,7 +20,7 @@
 
 		private void IdentifyTargetMethod()
 		{
-			Method = invokeSuper ? thisValue.SuperMethodNamed(callingFrame, callStackEntry) : thisValue.MethodNamed(callingFrame, callStackEntry);
+			Method = invokeSuper ? thisValue.SuperMethodNamed(callingScope, callStackEntry) : thisValue.MethodNamed(callingScope, callStackEntry);
 			if (Method == null)//|| !method.ExpectsArgs(callExpression.arguments))
 			{
 				throw new TweedleRuntimeException("No method matching " + thisValue + "." + callStackEntry + "()");

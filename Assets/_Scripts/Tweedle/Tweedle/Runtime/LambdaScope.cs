@@ -3,11 +3,11 @@ using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	class LambdaFrame : InvocationFrame
+	class LambdaScope : InvocationScope
 	{
 		internal TweedleLambda lambda;
 
-		internal LambdaFrame(TweedleFrame caller)
+		internal LambdaScope(ExecutionScope caller)
 			: base(caller)
 		{
 		}

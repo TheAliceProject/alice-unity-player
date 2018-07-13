@@ -12,9 +12,9 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			return Body.AsSequentialStep(frame, next);
+			return Body.AsSequentialStep(scope, next);
 		}
 	}
 }

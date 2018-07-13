@@ -33,9 +33,9 @@ namespace Alice.Tweedle
 			body = new BlockStatement(statements);
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			return new ValueStep(ToTweedle(), frame, new TweedleLambda(this));
+			return new ValueStep(ToTweedle(), scope, new TweedleLambda(this));
 		}
 	}
 }

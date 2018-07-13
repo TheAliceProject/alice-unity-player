@@ -16,13 +16,13 @@ namespace Alice.Tweedle
 			Type = type;
 		}
 
-		public TweedleValue EvaluateNow(TweedleFrame frame)
+		public TweedleValue EvaluateNow(ExecutionScope scope)
 		{
 			TweedleValue result = null;
-			var expStep = AsStep(frame);
+			var expStep = AsStep(scope);
 			var storeStep = new OperationStep(
 					"EvaluateNow",
-					frame,
+					scope,
 					value => result = value);
 			expStep.OnCompletionNotify(storeStep);
 			expStep.EvaluateNow();
@@ -31,7 +31,7 @@ namespace Alice.Tweedle
 
 		public TweedleValue EvaluateNow()
 		{
-			return EvaluateNow(new TweedleFrame("EvaluateNow"));
+			return EvaluateNow(new ExecutionScope("EvaluateNow"));
 		}
 
 		internal virtual bool IsLiteral()
@@ -45,6 +45,6 @@ namespace Alice.Tweedle
 			return ToString();
 		}
 
-		internal abstract ExecutionStep AsStep(TweedleFrame frame);
+		internal abstract ExecutionStep AsStep(ExecutionScope scope);
 	}
 }

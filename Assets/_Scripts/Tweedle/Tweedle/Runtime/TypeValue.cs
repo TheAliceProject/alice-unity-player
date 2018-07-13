@@ -10,9 +10,9 @@
 			this.type = type;
 		}
 
-		internal override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
+		internal override TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
-			TweedleMethod method = type.MethodNamed(frame, methodName);
+			TweedleMethod method = type.MethodNamed(scope, methodName);
 			if (method.IsStatic())
 			{
 				return method;
