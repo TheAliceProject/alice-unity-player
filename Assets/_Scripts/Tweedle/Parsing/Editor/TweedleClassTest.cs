@@ -73,17 +73,17 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		VirtualMachine vm;
-		TweedleFrame frame;
+		ExecutionScope scope;
 
 		public void Init()
 		{
 			vm = new VirtualMachine(NewSystem());
-			frame = new TweedleFrame("Test", vm);
+			scope = new ExecutionScope("Test", vm);
 		}
 
 		void ExecuteStatement(string src)
 		{
-			vm.ExecuteToFinish(parser.ParseStatement(src), frame);
+			vm.ExecuteToFinish(parser.ParseStatement(src), scope);
 		}
 
 		[Test]
@@ -112,7 +112,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("WholeNumber val <- ClassToHave.getNumber();");
-			var tested = frame.GetValue("val");
+			var tested = scope.GetValue("val");
 
 			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested);
 		}
@@ -122,7 +122,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("WholeNumber val <- ClassToHave.getNumber();");
-			TweedlePrimitiveValue<int> tested = (TweedlePrimitiveValue<int>)frame.GetValue("val");
+			TweedlePrimitiveValue<int> tested = (TweedlePrimitiveValue<int>)scope.GetValue("val");
 
 			Assert.AreEqual(21, tested.Value);
 		}
@@ -132,7 +132,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
-			var tested = frame.GetValue("obj");
+			var tested = scope.GetValue("obj");
 
 			Assert.IsInstanceOf<TweedleObject>(tested);
 		}
@@ -142,7 +142,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("obj");
+			TweedleObject tested = (TweedleObject)scope.GetValue("obj");
 
 			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested.Get("x"));
 		}
@@ -152,7 +152,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("obj");
+			TweedleObject tested = (TweedleObject)scope.GetValue("obj");
 
 			Assert.AreEqual(5, ((TweedlePrimitiveValue<int>)tested.Get("x")).Value);
 		}
@@ -162,7 +162,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 100);");
-			var tested = frame.GetValue("obj");
+			var tested = scope.GetValue("obj");
 
 			Assert.IsInstanceOf<TweedleObject>(tested);
 		}
@@ -172,7 +172,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 100);");
-			TweedleObject tested = (TweedleObject)frame.GetValue("obj");
+			TweedleObject tested = (TweedleObject)scope.GetValue("obj");
 
 			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested.Get("x"));
 		}
@@ -182,7 +182,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 100);");
-			TweedleObject tested = (TweedleObject)frame.GetValue("obj");
+			TweedleObject tested = (TweedleObject)scope.GetValue("obj");
 
 			Assert.AreEqual(100, ((TweedlePrimitiveValue<int>)tested.Get("x")).Value);
 		}
@@ -193,7 +193,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 			ExecuteStatement("WholeNumber val  <- obj.threeMore();");
-			TweedleValue tested = frame.GetValue("val");
+			TweedleValue tested = scope.GetValue("val");
 
 			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested);
 		}
@@ -204,7 +204,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 			ExecuteStatement("WholeNumber val  <- obj.threeMore();");
-			TweedleValue tested = frame.GetValue("val");
+			TweedleValue tested = scope.GetValue("val");
 
 			Assert.AreEqual(8, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -215,7 +215,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 			ExecuteStatement("WholeNumber val  <- obj.thisless();");
-			TweedleValue tested = frame.GetValue("val");
+			TweedleValue tested = scope.GetValue("val");
 
 			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested);
 		}
@@ -226,7 +226,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 			ExecuteStatement("WholeNumber val  <- obj.thisless();");
-			TweedleValue tested = frame.GetValue("val");
+			TweedleValue tested = scope.GetValue("val");
 
 			Assert.AreEqual(8, ((TweedlePrimitiveValue<int>)tested).Value);
 		}
@@ -236,7 +236,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("myThing"));
 		}
@@ -246,7 +246,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("myThing"));
 
 			Assert.AreEqual(5, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -257,7 +257,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("myConstructedThing"));
 		}
@@ -267,7 +267,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("myConstructedThing"));
 
 			Assert.AreEqual(27, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -278,7 +278,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("myReplacedThing"));
 		}
@@ -288,7 +288,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("myReplacedThing"));
 
 			Assert.AreEqual(-5, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -299,7 +299,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("mySpecialThing"));
 		}
@@ -309,7 +309,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Parent parent <- new Parent();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("parent");
+			TweedleObject tested = (TweedleObject)scope.GetValue("parent");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("mySpecialThing"));
 
 			Assert.AreEqual(97, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -320,7 +320,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("myThing"));
 		}
@@ -330,7 +330,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("myThing"));
 
 			Assert.AreEqual(5, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -341,7 +341,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("myConstructedThing"));
 		}
@@ -351,7 +351,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("myConstructedThing"));
 
 			Assert.AreEqual(27, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -362,7 +362,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("myReplacedThing"));
 		}
@@ -372,7 +372,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("myReplacedThing"));
 
 			Assert.AreEqual(1000, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -383,7 +383,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 
 			Assert.IsInstanceOf<TweedleObject>(tested.Get("mySpecialThing"));
 		}
@@ -393,7 +393,7 @@ namespace Alice.Tweedle.Parsed
 		{
 			Init();
 			ExecuteStatement("Child child <- new Child();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("child");
+			TweedleObject tested = (TweedleObject)scope.GetValue("child");
 			TweedleObject fieldObject = ((TweedleObject)tested.Get("mySpecialThing"));
 
 			Assert.AreEqual(97, ((TweedlePrimitiveValue<int>)fieldObject.Get("x")).Value);
@@ -405,7 +405,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("Child child <- new Child();");
 			ExecuteStatement("ClassToHave obj <- child.getMyThing();");
-			TweedleObject tested = (TweedleObject)frame.GetValue("obj");
+			TweedleObject tested = (TweedleObject)scope.GetValue("obj");
 
 			Assert.AreEqual(15, ((TweedlePrimitiveValue<int>)tested.Get("x")).Value);
 		}
@@ -416,7 +416,7 @@ namespace Alice.Tweedle.Parsed
 			Init();
 			ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 			ExecuteStatement("WholeNumber val  <- obj.doParallelArraySteps();");
-			TweedleValue tested = frame.GetValue("val");
+			TweedleValue tested = scope.GetValue("val");
 
 			Assert.IsInstanceOf<TweedlePrimitiveValue<int>>(tested);
 		}

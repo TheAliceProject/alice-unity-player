@@ -61,14 +61,14 @@ namespace Alice.Tweedle
 			this.constructors = constructors;
 		}
 
-		internal virtual TweedleField Field(TweedleFrame frame, string fieldName)
+		internal virtual TweedleField Field(ExecutionScope scope, string fieldName)
 		{
 			return properties.Where(prop => prop.Name.Equals(fieldName))
 							 .DefaultIfEmpty(null)
 							 .First();
 		}
 
-		public virtual TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
+		public virtual TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
 			return Methods.Find((TweedleMethod method) => method.Name.Equals(methodName));
 		}

@@ -16,13 +16,13 @@ namespace Alice.Tweedle
 			ElseBody = new BlockStatement(elseBody);
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			var conditionStep = Condition.AsStep(frame);
+			var conditionStep = Condition.AsStep(scope);
 			var bodyStep = new OperationStep(
 					"if " + Condition.ToTweedle(),
-					frame,
-					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(frame, next));
+					scope,
+					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(scope, next));
 			conditionStep.OnCompletionNotify(bodyStep);
 			bodyStep.OnCompletionNotify(next);
 			return conditionStep;

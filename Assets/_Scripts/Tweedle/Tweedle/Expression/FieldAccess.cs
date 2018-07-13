@@ -25,13 +25,13 @@ namespace Alice.Tweedle
 			return access;
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			ExecutionStep targetStep = TargetStep(frame);
+			ExecutionStep targetStep = TargetStep(scope);
 			targetStep.OnCompletionNotify(
 				new ComputationStep(
 					"Get Field ",
-					frame,
+					scope,
 					target => target.Get(FieldName)));
 			return targetStep;
 		}

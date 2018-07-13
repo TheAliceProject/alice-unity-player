@@ -13,10 +13,10 @@ namespace Alice.Tweedle
 			Arguments = arguments;
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			ConstructorFrame superFrame = ((ConstructorFrame)frame).SuperFrame(Arguments);
-			return superFrame.InvocationStep("super()", Arguments);
+			ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(Arguments);
+			return superScope.InvocationStep("super()", Arguments);
 		}
 	}
 }

@@ -22,18 +22,18 @@ namespace Alice.Tweedle
 			Initializer = initializer;
 		}
 
-		internal ExecutionStep AsInitializerStep(TweedleFrame frame)
+		internal ExecutionStep AsInitializerStep(ExecutionScope scope)
 		{
 			if (Initializer == null)
 			{
 				throw new TweedleRuntimeException("Absent Initializer. Unable to initialize variable <" + Name + ">.");
 			}
-			return Initializer.AsStep(frame);
+			return Initializer.AsStep(scope);
 		}
 
-		internal bool Accepts(TweedleValue value, TweedleFrame frame)
+		internal bool Accepts(TweedleValue value, ExecutionScope scope)
 		{
-			return value != null && Type.AsDeclaredType(frame).AcceptsType(value.Type);
+			return value != null && Type.AsDeclaredType(scope).AcceptsType(value.Type);
 		}
 
 		internal string ToTweedle()

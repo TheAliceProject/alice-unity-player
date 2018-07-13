@@ -12,13 +12,13 @@ namespace Alice.VM
 		Func<TweedleValue, TweedleValue, TweedleValue> body;
 
 		public DoubleInputEvalStep(string callStackEntry,
-								   TweedleFrame frame,
-								   TweedleExpression exp1,
-								   TweedleExpression exp2,
-								   Func<TweedleValue, TweedleValue, TweedleValue> body)
-			: base(frame)
+															 ExecutionScope scope,
+															 TweedleExpression exp1,
+															 TweedleExpression exp2,
+															 Func<TweedleValue, TweedleValue, TweedleValue> body)
+			: base(scope)
 		{
-			this.callStack = frame.StackWith(callStackEntry);
+			this.callStack = scope.StackWith(callStackEntry);
 			this.exp1 = exp1;
 			this.exp2 = exp2;
 			this.body = body;
@@ -26,8 +26,8 @@ namespace Alice.VM
 
 		void QueueExpressionStep(TweedleExpression exp, Action<TweedleValue> handler)
 		{
-			var evalStep = exp.AsStep(frame);
-			var storeStep = new OperationStep(callStack, frame, handler);
+			var evalStep = exp.AsStep(scope);
+			var storeStep = new OperationStep(callStack, scope, handler);
 			evalStep.OnCompletionNotify(storeStep);
 			storeStep.OnCompletionNotify(this);
 			evalStep.Queue();

@@ -9,9 +9,9 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			return new ValueStep("this", frame, frame.GetThis());
+			return new ValueStep("this", scope, scope.GetThis());
 		}
 	}
 }

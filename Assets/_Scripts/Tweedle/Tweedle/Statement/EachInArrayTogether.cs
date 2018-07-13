@@ -17,16 +17,16 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			var arrayStep = Array.AsStep(frame);
+			var arrayStep = Array.AsStep(scope);
 			var bodyStep = new OperationStep(
 				"EachInArrayTogether",
-				frame,
+				scope,
 				items =>
 				{
-					var frames = ((TweedleArray)items).Values.Select(val => frame.ChildFrame("EachInArrayTogether", ItemVariable, val)).ToList();
-					Body.AddParallelSteps(frames, next);
+					var scopes = ((TweedleArray)items).Values.Select(val => scope.ChildScope("EachInArrayTogether", ItemVariable, val)).ToList();
+					Body.AddParallelSteps(scopes, next);
 				});
 			arrayStep.OnCompletionNotify(bodyStep);
 			return arrayStep;

@@ -15,9 +15,9 @@ namespace Alice.Tweedle
 			this.count = count;
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			return count.AsStep(frame).OnCompletionNotify(new CountLoopStep(this, frame, next));
+			return count.AsStep(scope).OnCompletionNotify(new CountLoopStep(this, scope, next));
 		}
 	}
 
@@ -26,8 +26,8 @@ namespace Alice.Tweedle
 		int maxCount = -1;
 		int index = 0;
 
-		public CountLoopStep(CountLoop statement, TweedleFrame frame, ExecutionStep next)
-			: base(statement, frame, next)
+		public CountLoopStep(CountLoop statement, ExecutionScope scope, ExecutionStep next)
+			: base(statement, scope, next)
 		{
 		}
 
@@ -45,8 +45,8 @@ namespace Alice.Tweedle
 		{
 			if (index < maxCount)
 			{
-				var loopFrame = frame.ChildFrame("Count loop", statement.Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index++));
-				statement.Body.AddSequentialStep(loopFrame, this);
+				var loopScope = scope.ChildScope("Count loop", statement.Variable, TweedleTypes.WHOLE_NUMBER.Instantiate(index++));
+				statement.Body.AddSequentialStep(loopScope, this);
 			}
 			else
 			{

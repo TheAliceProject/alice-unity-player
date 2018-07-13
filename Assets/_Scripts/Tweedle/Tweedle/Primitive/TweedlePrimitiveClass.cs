@@ -10,9 +10,9 @@ namespace Alice.Tweedle
 		{
 		}
 
-		public override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
+		public override TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
-			TweedleMethod method = base.MethodNamed(frame, methodName);
+			TweedleMethod method = base.MethodNamed(scope, methodName);
 			if (method != null)
 			{
 				return method;

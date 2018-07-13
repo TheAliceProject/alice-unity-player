@@ -39,23 +39,23 @@ namespace Alice.Tweedle
 			return arguments[argName];
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			MethodFrame methodFrame = frame.MethodCallFrame(MethodName, invokeSuper);
+			MethodScope methodScope = scope.MethodCallScope(MethodName, invokeSuper);
 
-			var targetStep = TargetStep(frame);
+			var targetStep = TargetStep(scope);
 			ExecutionStep prepMethodStep = new OperationStep(
 				"Invocation Prep",
-				frame,
-				methodFrame.SetThis);
+				scope,
+				methodScope.SetThis);
 			targetStep.OnCompletionNotify(prepMethodStep);
 
-			StepSequence main = new StepSequence(MethodName, frame);
+			StepSequence main = new StepSequence(MethodName, scope);
 			main.AddStep(targetStep);
 			main.AddStep(new ActionNotifyingStep(
 				"Invocation",
-				methodFrame,
-				() => methodFrame.QueueInvocationStep(main, arguments)));
+				methodScope,
+				() => methodScope.QueueInvocationStep(main, arguments)));
 			return main;
 		}
 	}

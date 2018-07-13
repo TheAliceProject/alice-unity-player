@@ -14,9 +14,9 @@ namespace Alice.Tweedle
 			this.rhs = rhs;
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			return new DoubleInputEvalStep(ToTweedle(), frame, lhs, rhs, Evaluate);
+			return new DoubleInputEvalStep(ToTweedle(), scope, lhs, rhs, Evaluate);
 		}
 
 		protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);

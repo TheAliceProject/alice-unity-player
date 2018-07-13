@@ -8,11 +8,11 @@ namespace Alice.VM
 		TweedleValue initialValue;
 		Func<TweedleValue, TweedleValue> body;
 
-		public ComputationStep(string callStackEntry, TweedleFrame frame, Func<TweedleValue, TweedleValue> body)
-			: base(frame)
+		public ComputationStep(string callStackEntry, ExecutionScope scope, Func<TweedleValue, TweedleValue> body)
+			: base(scope)
 		{
 			this.body = body;
-			this.callStack = frame.StackWith(callStackEntry);
+			this.callStack = scope.StackWith(callStackEntry);
 		}
 
 		internal override void BlockerFinished(ExecutionStep blockingStep)

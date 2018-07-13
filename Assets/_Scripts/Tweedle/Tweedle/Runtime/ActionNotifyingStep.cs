@@ -7,10 +7,10 @@ namespace Alice.VM
 	{
 		Action body;
 
-		public ActionNotifyingStep(string callStackEntry, TweedleFrame frame, Action body)
-			: base(frame)
+		public ActionNotifyingStep(string callStackEntry, ExecutionScope scope, Action body)
+			: base(scope)
 		{
-			this.callStack = frame.StackWith(callStackEntry);
+			this.callStack = scope.StackWith(callStackEntry);
 			this.body = body;
 		}
 

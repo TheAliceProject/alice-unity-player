@@ -16,15 +16,15 @@ namespace Alice.Tweedle
 			return true;
 		}
 
-		protected internal override void AddPrepSteps(InvocationFrame frame, StepSequence main, Dictionary<string, TweedleExpression> arguments)
+		protected internal override void AddPrepSteps(InvocationScope scope, StepSequence main, Dictionary<string, TweedleExpression> arguments)
 		{
-			AddFieldSteps(frame, main);
-			base.AddPrepSteps(frame, main, arguments);
+			AddFieldSteps(scope, main);
+			base.AddPrepSteps(scope, main, arguments);
 		}
 
-		void AddFieldSteps(TweedleFrame frame, StepSequence main)
+		void AddFieldSteps(ExecutionScope scope, StepSequence main)
 		{
-			foreach (ExecutionStep initFieldStep in ((TweedleObject)frame.GetThis()).InitializationNotifyingSteps(frame))
+			foreach (ExecutionStep initFieldStep in ((TweedleObject)scope.GetThis()).InitializationNotifyingSteps(scope))
 			{
 				main.AddStep(initFieldStep);
 			}

@@ -22,17 +22,17 @@
 			throw new TweedleRuntimeException("This type (" + this + ") cannot convert the value " + value + "to a double.");
 		}
 
-		internal virtual TweedleType AsDeclaredType(TweedleFrame frame)
+		internal virtual TweedleType AsDeclaredType(ExecutionScope scope)
 		{
 			return this;
 		}
 
-		internal virtual TweedleClass AsClass(TweedleFrame frame)
+		internal virtual TweedleClass AsClass(ExecutionScope scope)
 		{
 			throw new TweedleRuntimeException("Attempt to treat type " + Name + " as a class can not be processed.");
 		}
 
-		internal virtual TweedleEnum AsEnum(TweedleFrame frame)
+		internal virtual TweedleEnum AsEnum(ExecutionScope scope)
 		{
 			throw new TweedleRuntimeException("Attempt to treat type " + Name + " as an enum can not be processed.");
 		}

@@ -7,12 +7,12 @@ namespace Alice.Tweedle.Parsed
 	public class TweedleExpressionRunTest
 	{
 		VirtualMachine vm;
-		TweedleFrame frame;
+		ExecutionScope scope;
 
 		private void Init()
 		{
 			vm = new VirtualMachine(null);
-			frame = new TweedleFrame("Test", vm);
+			scope = new ExecutionScope("Test", vm);
 		}
 
 		private TweedleValue RunExpression(string src)
@@ -21,16 +21,16 @@ namespace Alice.Tweedle.Parsed
 			return expression.EvaluateNow();
 		}
 
-		private TweedleValue RunExpression(string src, TweedleFrame frame)
+		private TweedleValue RunExpression(string src, ExecutionScope scope)
 		{
 			TweedleExpression expression = new TweedleParser().ParseExpression(src);
-			return vm.EvaluateToFinish(expression, frame);
+			return vm.EvaluateToFinish(expression, scope);
 		}
 
-		private void RunStatement(string src, TweedleFrame frame)
+		private void RunStatement(string src, ExecutionScope scope)
 		{
 			TweedleStatement statement = new TweedleParser().ParseStatement(src);
-			vm.ExecuteToFinish(statement, frame);
+			vm.ExecuteToFinish(statement, scope);
 		}
 
 		[Test]
@@ -51,15 +51,15 @@ namespace Alice.Tweedle.Parsed
 		}
 
 		[Test]
-		public void AnAssignmentExpressionShouldUpdateTheFrame()
+		public void AnAssignmentExpressionShouldUpdateTheScope()
 		{
 			Init();
 			TweedleLocalVariable xDec = new TweedleLocalVariable(TweedleTypes.WHOLE_NUMBER, "x");
-			frame.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
+			scope.SetLocalValue(xDec, TweedleTypes.WHOLE_NUMBER.Instantiate(12));
 
-			TweedleValue noResult = RunExpression("x <- 3", frame);
+			TweedleValue noResult = RunExpression("x <- 3", scope);
 
-			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("x");
+			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)scope.GetValue("x");
 			Assert.AreEqual(3, newVal.Value, "The VM should have returned 3.");
 		}
 
@@ -67,9 +67,9 @@ namespace Alice.Tweedle.Parsed
 		public void APrimitiveArrayShouldBeCreated()
 		{
 			Init();
-			RunStatement("WholeNumber[] a <- new WholeNumber[] {3, 4, 5};", frame);
+			RunStatement("WholeNumber[] a <- new WholeNumber[] {3, 4, 5};", scope);
 
-			TweedleValue tested = frame.GetValue("a");
+			TweedleValue tested = scope.GetValue("a");
 			Assert.IsInstanceOf<TweedleArray>(tested);
 		}
 
@@ -77,10 +77,10 @@ namespace Alice.Tweedle.Parsed
 		public void ArrayValueShouldBeReturned()
 		{
 			Init();
-			RunStatement("WholeNumber[] a <- new WholeNumber[] {3, 4, 5};", frame);
-			RunStatement("WholeNumber v <- a[1];", frame);
+			RunStatement("WholeNumber[] a <- new WholeNumber[] {3, 4, 5};", scope);
+			RunStatement("WholeNumber v <- a[1];", scope);
 
-			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)frame.GetValue("v");
+			TweedlePrimitiveValue<int> newVal = (TweedlePrimitiveValue<int>)scope.GetValue("v");
 			Assert.AreEqual(4, newVal.Value);
 		}
 	}

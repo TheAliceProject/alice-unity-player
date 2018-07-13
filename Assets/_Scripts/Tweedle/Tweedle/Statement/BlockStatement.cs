@@ -12,34 +12,34 @@ namespace Alice.Tweedle
 			Statements = statements;
 		}
 
-		internal void AddSequentialStep(TweedleFrame frame, ExecutionStep next)
+		internal void AddSequentialStep(ExecutionScope scope, ExecutionStep next)
 		{
-			AsSequentialStep(frame, next).Queue();
+			AsSequentialStep(scope, next).Queue();
 		}
 
-		internal SequentialSteps AsSequentialStep(TweedleFrame frame, ExecutionStep next)
+		internal SequentialSteps AsSequentialStep(ExecutionScope scope, ExecutionStep next)
 		{
-			return new SequentialSteps(frame, next, this);
+			return new SequentialSteps(scope, next, this);
 		}
 
-		internal SequentialSteps AsSequentialStep(TweedleFrame frame)
+		internal SequentialSteps AsSequentialStep(ExecutionScope scope)
 		{
-			return new SequentialSteps(frame, null, this);
+			return new SequentialSteps(scope, null, this);
 		}
 
-		internal void AddParallelSteps(TweedleFrame frame, ExecutionStep next)
+		internal void AddParallelSteps(ExecutionScope scope, ExecutionStep next)
 		{
 			foreach (TweedleStatement statement in Statements)
 			{
-				statement.QueueStepToNotify(frame.ChildFrame(), next);
+				statement.QueueStepToNotify(scope.ChildScope(), next);
 			}
 		}
 
-		internal void AddParallelSteps(List<TweedleFrame> frames, ExecutionStep next)
+		internal void AddParallelSteps(List<ExecutionScope> scopes, ExecutionStep next)
 		{
-			foreach (TweedleFrame frame in frames)
+			foreach (ExecutionScope scope in scopes)
 			{
-				AddSequentialStep(frame, next);
+				AddSequentialStep(scope, next);
 			}
 		}
 
@@ -48,8 +48,8 @@ namespace Alice.Tweedle
 			protected BlockStatement block;
 			int index = 0;
 
-			public SequentialSteps(TweedleFrame frame, ExecutionStep next, BlockStatement block)
-				: base(frame, next)
+			public SequentialSteps(ExecutionScope scope, ExecutionStep next, BlockStatement block)
+				: base(scope, next)
 			{
 				this.block = block;
 			}
@@ -58,7 +58,7 @@ namespace Alice.Tweedle
 			{
 				if (index < block.Statements.Count)
 				{
-					block.Statements[index++].QueueStepToNotify(frame, this);
+					block.Statements[index++].QueueStepToNotify(scope, this);
 				}
 				else
 				{

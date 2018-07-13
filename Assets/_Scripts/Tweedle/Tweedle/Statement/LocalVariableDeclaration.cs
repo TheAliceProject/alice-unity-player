@@ -13,13 +13,13 @@ namespace Alice.Tweedle
 			Variable = variable;
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			var initStep = Variable.AsInitializerStep(frame);
+			var initStep = Variable.AsInitializerStep(scope);
 			var storeStep = new OperationStep(
 				Variable.ToTweedle(),
-				frame,
-				value => frame.SetLocalValue(Variable, value));
+				scope,
+				value => scope.SetLocalValue(Variable, value));
 			initStep.OnCompletionNotify(storeStep);
 			storeStep.OnCompletionNotify(next);
 			return initStep;

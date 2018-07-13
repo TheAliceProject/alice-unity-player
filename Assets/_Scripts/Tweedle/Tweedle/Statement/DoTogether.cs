@@ -12,15 +12,15 @@ namespace Alice.Tweedle
 			Body = new BlockStatement(statements);
 		}
 
-		internal override void QueueStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override void QueueStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
 			if (IsEnabled)
 			{
-				Body.AddParallelSteps(frame, next);
+				Body.AddParallelSteps(scope, next);
 			}
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
 			return null;
 		}

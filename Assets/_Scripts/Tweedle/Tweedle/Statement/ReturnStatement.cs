@@ -26,13 +26,13 @@ namespace Alice.Tweedle
 			this.expression = expression;
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			var valStep = expression.AsStep(frame);
+			var valStep = expression.AsStep(scope);
 			var returnStep = new OperationStep(
 				"return " + expression.ToTweedle(),
-				frame,
-				result => ((InvocationFrame)frame).Return(result));
+				scope,
+				result => ((InvocationScope)scope).Return(result));
 			valStep.OnCompletionNotify(returnStep);
 			returnStep.OnCompletionNotify(next);
 			return valStep;

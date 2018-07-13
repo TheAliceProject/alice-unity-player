@@ -3,11 +3,11 @@ using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	class ConstructorFrame : InvocationFrame
+	class ConstructorScope : InvocationScope
 	{
 		internal TweedleClass tweedleClass;
 
-		internal ConstructorFrame(TweedleFrame caller, TweedleClass tweedleClass)
+		internal ConstructorScope(ExecutionScope caller, TweedleClass tweedleClass)
 			: base(caller)
 		{
 			this.tweedleClass = tweedleClass;
@@ -16,11 +16,11 @@ namespace Alice.Tweedle
 			callStackEntry = "new " + tweedleClass.Name;
 		}
 
-		ConstructorFrame(ConstructorFrame constructorFrame, TweedleClass superClass, TweedleConstructor constructor)
-			: base(constructorFrame)
+		ConstructorScope(ConstructorScope constructorSubclassScope, TweedleClass superClass, TweedleConstructor constructor)
+			: base(constructorSubclassScope)
 		{
 			tweedleClass = superClass;
-			thisValue = constructorFrame.thisValue;
+			thisValue = constructorSubclassScope.thisValue;
 			Result = thisValue;
 			Method = constructor;
 			callStackEntry = "super() => " + tweedleClass.Name;
@@ -32,7 +32,7 @@ namespace Alice.Tweedle
 			return base.InvocationStep(callStackEntry, arguments);
 		}
 
-		internal ConstructorFrame SuperFrame(Dictionary<string, TweedleExpression> arguments)
+		internal ConstructorScope SuperScope(Dictionary<string, TweedleExpression> arguments)
 		{
 			TweedleClass superClass = tweedleClass.SuperClass(this);
 			while (superClass != null)
@@ -40,7 +40,7 @@ namespace Alice.Tweedle
 				TweedleConstructor superConst = superClass?.ConstructorWithArgs(arguments);
 				if (superConst != null)
 				{
-					return new ConstructorFrame(this, superClass, superConst);
+					return new ConstructorScope(this, superClass, superConst);
 				}
 				superClass = superClass.SuperClass(this);
 			}

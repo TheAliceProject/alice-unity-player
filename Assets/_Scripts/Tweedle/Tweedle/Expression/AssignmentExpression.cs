@@ -31,28 +31,28 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			if (TargetExp == null)
 			{
-				ExecutionStep valueStep = ValueExp.AsStep(frame);
+				ExecutionStep valueStep = ValueExp.AsStep(scope);
 				valueStep.OnCompletionNotify(
 					new ComputationStep(
 						ToTweedle(),
-						frame,
-						value => frame.SetValue(Identifier, value)));
+						scope,
+						value => scope.SetValue(Identifier, value)));
 				return valueStep;
 			}
 			else
 			{
 				return new DoubleInputEvalStep(
 					ToTweedle(),
-					frame,
+					scope,
 					TargetExp,
 					ValueExp,
 					(target, value) =>
 					{
-						target.Set(Identifier, value, frame);
+						target.Set(Identifier, value, scope);
 						return value;
 					});
 			}

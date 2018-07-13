@@ -38,16 +38,16 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override TweedleClass AsClass(TweedleFrame frame)
+		internal override TweedleClass AsClass(ExecutionScope scope)
 		{
 			return this;
 		}
 
-		internal TweedleClass SuperClass(TweedleFrame frame)
+		internal TweedleClass SuperClass(ExecutionScope scope)
 		{
 			if (SuperClassName != null)
 			{
-				return frame.ClassNamed(SuperClassName);
+				return scope.ClassNamed(SuperClassName);
 			}
 			return null;
 		}
@@ -57,31 +57,31 @@ namespace Alice.Tweedle
 			return Constructors.FindLast(cstr => cstr.ExpectsArgs(arguments));
 		}
 
-		internal override TweedleField Field(TweedleFrame frame, string fieldName)
+		internal override TweedleField Field(ExecutionScope scope, string fieldName)
 		{
-			TweedleField field = base.Field(frame, fieldName);
+			TweedleField field = base.Field(scope, fieldName);
 			if (field != null)
 			{
 				return field;
 			}
 			if (superClass != null)
 			{
-				return SuperClass(frame).Field(frame, fieldName);
+				return SuperClass(scope).Field(scope, fieldName);
 			}
 			return null;
 		}
 
 
-		public override TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
+		public override TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
-			TweedleMethod method = base.MethodNamed(frame, methodName);
+			TweedleMethod method = base.MethodNamed(scope, methodName);
 			if (method != null)
 			{
 				return method;
 			}
 			if (superClass != null)
 			{
-				return SuperClass(frame).MethodNamed(frame, methodName);
+				return SuperClass(scope).MethodNamed(scope, methodName);
 			}
 			return null;
 		}
@@ -102,17 +102,17 @@ namespace Alice.Tweedle
 
 		// NB There is no guaranteed order for the execution of steps.
 		//    Make sure they do not conflict or change this to enforce order, most likely by class hierarchy.
-		internal void AddInitializationSteps(List<ExecutionStep> steps, TweedleFrame frame, TweedleObject tweedleObject)
+		internal void AddInitializationSteps(List<ExecutionStep> steps, ExecutionScope scope, TweedleObject tweedleObject)
 		{
 			if (superClass != null)
 			{
-				SuperClass(frame).AddInitializationSteps(steps, frame, tweedleObject);
+				SuperClass(scope).AddInitializationSteps(steps, scope, tweedleObject);
 			}
 			foreach (TweedleField field in Properties)
 			{
 				if (field.Initializer != null)
 				{
-					steps.Add(field.InitializeField(frame, tweedleObject));
+					steps.Add(field.InitializeField(scope, tweedleObject));
 				}
 			}
 		}

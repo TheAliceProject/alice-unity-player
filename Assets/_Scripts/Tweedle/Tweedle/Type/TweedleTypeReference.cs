@@ -6,14 +6,14 @@
 		{
 		}
 
-		internal override TweedleClass AsClass(TweedleFrame frame)
+		internal override TweedleClass AsClass(ExecutionScope scope)
 		{
-			return frame.ClassNamed(Name);
+			return scope.ClassNamed(Name);
 		}
 
-		internal override TweedleType AsDeclaredType(TweedleFrame frame)
+		internal override TweedleType AsDeclaredType(ExecutionScope scope)
 		{
-			return frame.TypeNamed(Name);
+			return scope.TypeNamed(Name);
 		}
 
 		override public bool AcceptsType(TweedleType type)

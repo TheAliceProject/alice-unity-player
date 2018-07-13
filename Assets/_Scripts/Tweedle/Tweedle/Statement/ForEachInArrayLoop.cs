@@ -15,9 +15,9 @@ namespace Alice.Tweedle
 			this.array = array;
 		}
 
-		internal override ExecutionStep AsStepToNotify(TweedleFrame frame, ExecutionStep next)
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
-			return array.AsStep(frame).OnCompletionNotify(new ForEachInArrayStep(this, frame, next));
+			return array.AsStep(scope).OnCompletionNotify(new ForEachInArrayStep(this, scope, next));
 		}
 	}
 
@@ -26,8 +26,8 @@ namespace Alice.Tweedle
 		TweedleArray items;
 		int index = 0;
 
-		public ForEachInArrayStep(ForEachInArrayLoop statement, TweedleFrame frame, ExecutionStep next)
-			: base(statement, frame, next)
+		public ForEachInArrayStep(ForEachInArrayLoop statement, ExecutionScope scope, ExecutionStep next)
+			: base(statement, scope, next)
 		{
 		}
 
@@ -44,8 +44,8 @@ namespace Alice.Tweedle
 		{
 			if (index < items.Length)
 			{
-				var loopFrame = frame.ChildFrame("ForEach loop", statement.item, items[index++]);
-				statement.Body.AddSequentialStep(loopFrame, this);
+				var loopScope = scope.ChildScope("ForEach loop", statement.item, items[index++]);
+				statement.Body.AddSequentialStep(loopScope, this);
 			}
 			else
 			{

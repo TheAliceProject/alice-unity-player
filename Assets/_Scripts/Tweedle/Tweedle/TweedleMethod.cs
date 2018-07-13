@@ -45,37 +45,37 @@ namespace Alice.Tweedle
 			return Modifiers.Contains("static");
 		}
 
-		protected internal virtual ExecutionStep AsStep(string callStackEntry, InvocationFrame frame, Dictionary<string, TweedleExpression> arguments)
+		protected internal virtual ExecutionStep AsStep(string callStackEntry, InvocationScope scope, Dictionary<string, TweedleExpression> arguments)
 		{
-			StepSequence main = new StepSequence(callStackEntry, frame.callingFrame);
-			AddInvocationSteps(frame, main, arguments);
+			StepSequence main = new StepSequence(callStackEntry, scope.callingScope);
+			AddInvocationSteps(scope, main, arguments);
 			return main;
 		}
 
-		internal void AddInvocationSteps(InvocationFrame frame, StepSequence steps, Dictionary<string, TweedleExpression> arguments)
+		internal void AddInvocationSteps(InvocationScope scope, StepSequence steps, Dictionary<string, TweedleExpression> arguments)
 		{
-			AddPrepSteps(frame, steps, arguments);
-			steps.AddStep(Body.AsSequentialStep(frame));
-			steps.AddStep(ResultStep(frame));
+			AddPrepSteps(scope, steps, arguments);
+			steps.AddStep(Body.AsSequentialStep(scope));
+			steps.AddStep(ResultStep(scope));
 		}
 
-		private ExecutionStep ResultStep(InvocationFrame frame)
+		private ExecutionStep ResultStep(InvocationScope scope)
 		{
-			return new ComputationStep("call", frame, arg => frame.Result);
+			return new ComputationStep("call", scope, arg => scope.Result);
 		}
 
-		protected internal virtual void AddPrepSteps(InvocationFrame frame, StepSequence main, Dictionary<string, TweedleExpression> arguments)
+		protected internal virtual void AddPrepSteps(InvocationScope scope, StepSequence main, Dictionary<string, TweedleExpression> arguments)
 		{
-			AddArgumentSteps(frame, main, arguments);
+			AddArgumentSteps(scope, main, arguments);
 		}
 
-		private void AddArgumentSteps(InvocationFrame frame, StepSequence main, Dictionary<string, TweedleExpression> arguments)
+		private void AddArgumentSteps(InvocationScope scope, StepSequence main, Dictionary<string, TweedleExpression> arguments)
 		{
 			foreach (TweedleRequiredParameter req in RequiredParameters)
 			{
 				if (arguments.ContainsKey(req.Name))
 				{
-					main.AddStep(ArgumentStep(frame, req, arguments[req.Name]));
+					main.AddStep(ArgumentStep(scope, req, arguments[req.Name]));
 				}
 				else
 				{
@@ -86,22 +86,22 @@ namespace Alice.Tweedle
 			{
 				if (arguments.ContainsKey(opt.Name))
 				{
-					main.AddStep(ArgumentStep(frame, opt, arguments[opt.Name]));
+					main.AddStep(ArgumentStep(scope, opt, arguments[opt.Name]));
 				}
 				else
 				{
-					main.AddStep(ArgumentStep(frame, opt, opt.Initializer));
+					main.AddStep(ArgumentStep(scope, opt, opt.Initializer));
 				}
 			}
 		}
 
-		ExecutionStep ArgumentStep(InvocationFrame frame, TweedleValueHolderDeclaration argDec, TweedleExpression expression)
+		ExecutionStep ArgumentStep(InvocationScope scope, TweedleValueHolderDeclaration argDec, TweedleExpression expression)
 		{
-			var argStep = expression.AsStep(frame.callingFrame);
+			var argStep = expression.AsStep(scope.callingScope);
 			var storeStep = new ComputationStep(
 					"Arg",
-					frame.callingFrame,
-					arg => frame.SetLocalValue(argDec, arg));
+					scope.callingScope,
+					arg => scope.SetLocalValue(argDec, arg));
 			argStep.OnCompletionNotify(storeStep);
 			return argStep;
 		}

@@ -8,7 +8,7 @@ namespace Alice.VM
 		int blockerCount = 0;
 		StepStatus status;
 		internal string callStack;
-		protected internal TweedleFrame frame;
+		protected internal ExecutionScope scope;
 
 		protected TweedleValue result = TweedleNull.NULL;
 		public TweedleValue Result { get { return result; } }
@@ -19,19 +19,19 @@ namespace Alice.VM
 			return result;
 		}
 
-		protected internal ExecutionStep(TweedleFrame frame)
-			: this(frame, null)
+		protected internal ExecutionStep(ExecutionScope scope)
+			: this(scope, null)
 		{
 		}
 
-		protected internal ExecutionStep(TweedleFrame frame, ExecutionStep next)
+		protected internal ExecutionStep(ExecutionScope scope, ExecutionStep next)
 		{
-			if (frame == null)
+			if (scope == null)
 			{
-				throw new System.ArgumentNullException(nameof(frame));
+				throw new System.ArgumentNullException(nameof(scope));
 			}
 
-			this.frame = frame;
+			this.scope = scope;
 			this.next = next;
 			if (next != null)
 			{
@@ -57,7 +57,7 @@ namespace Alice.VM
 
 		internal void Queue()
 		{
-			frame.vm.AddStep(this);
+			scope.vm.AddStep(this);
 		}
 
 		internal void QueueAndNotify(ExecutionStep finalNext)

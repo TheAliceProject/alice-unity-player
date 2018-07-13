@@ -9,9 +9,9 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			return new ValueStep("", frame, this);
+			return new ValueStep("", scope, this);
 		}
 
 		internal double ToDouble()
@@ -34,17 +34,17 @@ namespace Alice.Tweedle
 			return Type.ValueToBoolean(this);
 		}
 
-		internal virtual TweedleMethod MethodNamed(TweedleFrame frame, string methodName)
+		internal virtual TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
 			throw new TweedleRuntimeException("Can not invoke method " + methodName + " on " + this);
 		}
 
-		internal virtual TweedleMethod SuperMethodNamed(TweedleFrame frame, string methodName)
+		internal virtual TweedleMethod SuperMethodNamed(ExecutionScope scope, string methodName)
 		{
 			throw new TweedleRuntimeException("Can not invoke super." + methodName + " on " + this);
 		}
 
-		internal virtual bool Set(string fieldName, TweedleValue value, TweedleFrame frame)
+		internal virtual bool Set(string fieldName, TweedleValue value, ExecutionScope scope)
 		{
 			return false;
 		}
@@ -67,11 +67,11 @@ namespace Alice.Tweedle
 
 	class ValueStep : ExecutionStep
 	{
-		public ValueStep(string callStackEntry, TweedleFrame frame, TweedleValue tweedleValue)
-			: base(frame)
+		public ValueStep(string callStackEntry, ExecutionScope scope, TweedleValue tweedleValue)
+			: base(scope)
 		{
 			result = tweedleValue;
-			this.callStack = frame.StackWith(callStackEntry);
+			this.callStack = scope.StackWith(callStackEntry);
 		}
 	}
 }

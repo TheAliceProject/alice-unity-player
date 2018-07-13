@@ -17,10 +17,10 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override ExecutionStep AsStep(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			ConstructorFrame cFrame = frame.ForInstantiation(Type.AsClass(frame));
-			return cFrame.InvocationStep("Instantiation", Arguments);
+			ConstructorScope ctrScope = scope.ForInstantiation(Type.AsClass(scope));
+			return ctrScope.InvocationStep("Instantiation", Arguments);
 		}
 	}
 }
