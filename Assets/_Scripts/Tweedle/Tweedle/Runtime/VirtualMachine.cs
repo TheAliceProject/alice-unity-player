@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using Alice.Tweedle;
-using Alice.Tweedle.Parsed;
+using Alice.Tweedle.Parse;
 
 namespace Alice.VM
 {
@@ -44,23 +44,7 @@ namespace Alice.VM
 			statement.QueueStepToNotify(staticScope, new ExecutionStep(staticScope));
 		}
 
-		// Used by tests
-		public void ExecuteToFinish(TweedleStatement statement, ExecutionScope scope)
-		{
-			statement.QueueStepToNotify(scope, new ExecutionStep(scope));
-			executionQueue.ProcessOneFrame();
-		}
-
-		// Used by tests
-		public TweedleValue EvaluateToFinish(TweedleExpression expression, ExecutionScope scope)
-		{
-			ExecutionStep step = expression.AsStep(scope);
-			executionQueue.AddToQueue(step);
-			executionQueue.ProcessOneFrame();
-			return step.Result;
-		}
-
-		internal void AddStep(ExecutionStep step)
+		protected internal void AddStep(ExecutionStep step)
 		{
 			executionQueue.AddToQueue(step);
 			executionQueue.ProcessOneFrame();
