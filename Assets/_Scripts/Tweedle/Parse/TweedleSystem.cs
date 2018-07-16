@@ -8,31 +8,27 @@ namespace Alice.Tweedle.Parse
 	public class TweedleSystem
 	{
 		public HashSet<ProjectIdentifier> LoadedFiles { get; private set; }
-		public HashSet<ResourceIdentifier> LoadedResources { get; private set; }
 
-		public Dictionary<Tuple<string, ProjectType>, Manifest> UnlinkedAssets { get; private set; }
-		public Dictionary<ResourceIdentifier, ResourceReference> UnlinkedResources { get; private set; }
+		public Dictionary<string, LibraryManifest> Libraries { get; private set; }
+		public Dictionary<string, ProgramDescription> Programs { get; private set; }
+		public Dictionary<string, ModelManifest> Models { get; private set; }
 
-		public Dictionary<string, LibraryManifest> UnlinkedLibraries { get; private set; }
-		public Dictionary<string, ProgramDescription> UnlinkedPrograms { get; private set; }
-		public Dictionary<string, ModelManifest> UnlinkedModels { get; private set; }
+		public Dictionary<ResourceIdentifier, ResourceReference> Resources { get; private set; }
+
 		public Dictionary<string, TweedleClass> Classes { get; private set; }
 		Dictionary<string, TweedlePrimitiveClass> primitives;
-
 		public Dictionary<string, TweedleEnum> Enums { get; private set; }
 		public Dictionary<string, TweedleType> Types { get; private set; }
 
 		public TweedleSystem()
 		{
 			LoadedFiles = new HashSet<ProjectIdentifier>();
-			LoadedResources = new HashSet<ResourceIdentifier>();
 
-			UnlinkedAssets = new Dictionary<Tuple<string, ProjectType>, Manifest>();
-			UnlinkedResources = new Dictionary<ResourceIdentifier, ResourceReference>();
+			Libraries = new Dictionary<string, LibraryManifest>();
+			Programs = new Dictionary<string, ProgramDescription>();
+			Models = new Dictionary<string, ModelManifest>();
 
-			UnlinkedLibraries = new Dictionary<string, LibraryManifest>();
-			UnlinkedPrograms = new Dictionary<string, ProgramDescription>();
-			UnlinkedModels = new Dictionary<string, ModelManifest>();
+			Resources = new Dictionary<ResourceIdentifier, ResourceReference>();
 
 			Classes = new Dictionary<string, TweedleClass>();
 			Enums = new Dictionary<string, TweedleEnum>();
@@ -48,22 +44,19 @@ namespace Alice.Tweedle.Parse
 		public void AddLibrary(LibraryManifest libAsset)
 		{
 			LoadedFiles.Add(libAsset.Identifier);
-			UnlinkedLibraries.Add(libAsset.Identifier.id, libAsset);
-			UnlinkedAssets.Add(new Tuple<string, ProjectType>(libAsset.Name, ProjectType.Library), libAsset);
+			Libraries.Add(libAsset.Identifier.id, libAsset);
 		}
 
 		public void AddProgram(ProgramDescription programAsset)
 		{
 			LoadedFiles.Add(programAsset.Identifier);
-			UnlinkedPrograms.Add(programAsset.Identifier.id, programAsset);
-			UnlinkedAssets.Add(new Tuple<string, ProjectType>(programAsset.Name, ProjectType.World), programAsset);
+			Programs.Add(programAsset.Identifier.id, programAsset);
 		}
 
 		public void AddModel(ModelManifest modelAsset)
 		{
 			LoadedFiles.Add(modelAsset.Identifier);
-			UnlinkedModels.Add(modelAsset.Identifier.id, modelAsset);
-			UnlinkedAssets.Add(new Tuple<string, ProjectType>(modelAsset.Name, ProjectType.Model), modelAsset);
+			Models.Add(modelAsset.Identifier.id, modelAsset);
 		}
 
 		public void AddClass(TweedleClass tweClass)
@@ -119,13 +112,11 @@ namespace Alice.Tweedle.Parse
 		public void AddResource(ResourceReference resourceAsset)
 		{
 			ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
-			LoadedResources.Add(identifier);
-			UnlinkedResources.Add(identifier, resourceAsset);
+			Resources.Add(identifier, resourceAsset);
 		}
 
 		internal void QueueProgramMain(VirtualMachine vm)
 		{
-			Link();
 			TweedleClass prog;
 			vm.Initialize(this);
 			if (Classes.TryGetValue("Program", out prog))
@@ -133,26 +124,9 @@ namespace Alice.Tweedle.Parse
 				TypeValue progVal = new TypeValue(prog);
 				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
 				arguments.Add("args", new TweedleArray(new TweedleArrayType(TweedleTypes.TEXT_STRING),
-													   new List<TweedleValue>()));
+														 new List<TweedleValue>()));
 				vm.Queue(new MethodCallExpression(progVal, "main", arguments));
 			}
-		}
-
-		private void Link()
-		{
-			// Validate and link the static code of the system
-			LinkTypes();
-			LinkStaticCalls();
-		}
-
-		private void LinkTypes()
-		{
-			// TODO Replace all TweedleTypeReferences
-		}
-
-		private void LinkStaticCalls()
-		{
-			// TODO Make static method calls hard refs to the method itself
 		}
 	}
 }

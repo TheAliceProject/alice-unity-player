@@ -78,7 +78,7 @@ namespace Alice.Tweedle.Parse
 				"\"metadata\":{" +
 					"\"identifier\":{\"id\":\"970a310f-90a7-4d29-8380-5b2a742e3ee4\",\"version\":\"1.0\",\"type\":\"World\"}" +
 				"}}";
-			ProgramDescription program = StoredSystem(manifest).UnlinkedPrograms["970a310f-90a7-4d29-8380-5b2a742e3ee4"];
+			ProgramDescription program = StoredSystem(manifest).Programs["970a310f-90a7-4d29-8380-5b2a742e3ee4"];
 			Assert.AreEqual("Program", program.description.name, "File's name should match");
 			Assert.AreEqual("thumbnail.png", program.description.icon, "File's icon should match");
 			Assert.AreEqual(new List<string>() { "tags" }, program.description.tags, "File's tags should match.");
@@ -95,7 +95,7 @@ namespace Alice.Tweedle.Parse
 				"\"metadata\":{" +
 					"\"identifier\":{\"id\":\"970a310f-90a7-4d29-8380-5b2a742e3ee4\",\"version\":\"1.0\",\"type\":\"World\"}" +
 				"}}";
-			ProgramDescription program = StoredSystem(manifest).UnlinkedPrograms["970a310f-90a7-4d29-8380-5b2a742e3ee4"];
+			ProgramDescription program = StoredSystem(manifest).Programs["970a310f-90a7-4d29-8380-5b2a742e3ee4"];
 			Assert.AreEqual("3.4.0.0-alpha", program.provenance.aliceVersion, "File's alice version should match.");
 			Assert.AreEqual("2018", program.provenance.creationYear, "File's creation year should match.");
 			Assert.AreEqual("Anonymous", program.provenance.creator, "File's creator should match.");
@@ -111,7 +111,7 @@ namespace Alice.Tweedle.Parse
 					"\"formatVersion\": \"0.1\"," +
 					"\"identifier\":{\"id\":\"970a310f-90a7-4d29-8380-5b2a742e3ee4\",\"version\":\"1.0\",\"type\":\"World\"}" +
 				"}}";
-			ProgramDescription program = StoredSystem(manifest).UnlinkedPrograms["970a310f-90a7-4d29-8380-5b2a742e3ee4"];
+			ProgramDescription program = StoredSystem(manifest).Programs["970a310f-90a7-4d29-8380-5b2a742e3ee4"];
 			Assert.AreEqual("0.1", program.metadata.formatVersion, "File's id should match.");
 			Assert.AreEqual("970a310f-90a7-4d29-8380-5b2a742e3ee4", program.metadata.identifier.id, "File's id should match.");
 			Assert.AreEqual("1.0", program.metadata.identifier.version, "File's version should match.");
@@ -130,27 +130,12 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\":\"Program\",\"format\":\"tweedle\",\"files\":[\"src/Program.twe\"],\"type\":\"Class\"}" +
 				"]}";
-			Assert.IsTrue(StoredSystem(manifest).LoadedResources.Contains(new ResourceIdentifier("Program", ContentType.Class, "tweedle")), "System should have loaded resource.");
+			Assert.IsTrue(StoredSystem(manifest).Resources.ContainsKey(new ResourceIdentifier("Program", ContentType.Class, "tweedle")), "System should have loaded resource.");
 		}
 
 		[Test]
 		[Ignore("No zip to read from")]
-		public void SystemShouldHaveUnlinkedAsset()
-		{
-			string manifest = "{ " +
-				"\"description\":{ \"name\":\"Program\",\"icon\":\"thumbnail.png\",\"tags\":[],\"groupTags\":[],\"themeTags\":[]}," +
-				"\"provenance\":{\"aliceVersion\":\"3.4.0.0-alpha\",\"creationYear\":\"2018\",\"creator\":\"Anonymous\"}," +
-				"\"metadata\":{\"identifier\":{\"id\":\"970a310f-90a7-4d29-8380-5b2a742e3ee4\",\"version\":\"1.0\",\"type\":\"World\"}}," +
-				"\"prerequisites\":[]," +
-				"\"resources\":[" +
-					"{\"id\":\"Program\",\"format\":\"tweedle\",\"files\":[\"src/Program.twe\"],\"type\":\"Class\"}" +
-				"]}";
-			Assert.NotNull(StoredSystem(manifest).UnlinkedAssets[new Tuple<string, ProjectType>("Program", ProjectType.World)], "Unlinked assets should store a world.");
-		}
-
-		[Test]
-		[Ignore("No zip to read from")]
-		public void SystemShouldHaveUnlinkedResource()
+		public void SystemShouldHaveResource()
 		{
 			string manifest = "{ " +
 				"\"description\":{ \"name\":\"Program\",\"icon\":\"thumbnail.png\",\"tags\":[],\"groupTags\":[],\"themeTags\":[]}," +
@@ -160,11 +145,11 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\": \"Alien\", \"type\": \"model\", \"format\": \"json\", \"files\": [ \"resources/alienCollada/model.json\" ]}" +
 				"]}";
-			Assert.NotNull(StoredSystem(manifest).UnlinkedResources[new ResourceIdentifier("Alien", ContentType.Model, "json")], "Unlinked resources should store a model.");
+			Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("Alien", ContentType.Model, "json")], "Resources should store a model.");
 		}
 
 		[Test]
-		public void SystemShouldHaveUnlinkedLibrary()
+		public void SystemShouldHaveLibrary()
 		{
 			string manifest = "{ " +
 				"\"description\":{ \"name\":\"Program\",\"icon\":\"thumbnail.png\",\"tags\":[],\"groupTags\":[],\"themeTags\":[]}," +
@@ -172,11 +157,11 @@ namespace Alice.Tweedle.Parse
 				"\"metadata\":{" +
 					"\"identifier\":{\"id\":\"970a310f-90a7-4d29-8380-5b2a742e3ee4\",\"version\":\"1.0\",\"type\":\"Library\"}" +
 				"}}";
-			Assert.NotNull(StoredSystem(manifest).UnlinkedLibraries["970a310f-90a7-4d29-8380-5b2a742e3ee4"], "Library should be stored with identifier, not be null.");
+			Assert.NotNull(StoredSystem(manifest).Libraries["970a310f-90a7-4d29-8380-5b2a742e3ee4"], "Library should be stored with identifier, not be null.");
 		}
 
 		[Test]
-		public void SystemShouldHaveUnlinkedProgram()
+		public void SystemShouldHaveProgram()
 		{
 			string manifest = "{ " +
 				"\"description\":{ \"name\":\"Program\",\"icon\":\"thumbnail.png\",\"tags\":[],\"groupTags\":[],\"themeTags\":[]}," +
@@ -184,11 +169,11 @@ namespace Alice.Tweedle.Parse
 				"\"metadata\":{" +
 					"\"identifier\":{\"id\":\"970a310f-90a7-4d29-8380-5b2a742e3ee4\",\"version\":\"1.0\",\"type\":\"World\"}" +
 				"}}";
-			Assert.NotNull(StoredSystem(manifest).UnlinkedPrograms["970a310f-90a7-4d29-8380-5b2a742e3ee4"], "Program should be stored with identifier, not be null.");
+			Assert.NotNull(StoredSystem(manifest).Programs["970a310f-90a7-4d29-8380-5b2a742e3ee4"], "Program should be stored with identifier, not be null.");
 		}
 
 		[Test]
-		public void SystemShouldHaveUnlinkedModel()
+		public void SystemShouldHaveModel()
 		{
 			string manifest = "{ " +
 				"\"description\":{ \"name\":\"Program\",\"icon\":\"thumbnail.png\",\"tags\":[],\"groupTags\":[],\"themeTags\":[]}," +
@@ -196,7 +181,7 @@ namespace Alice.Tweedle.Parse
 				"\"metadata\":{" +
 					"\"identifier\":{\"id\":\"970a310f-90a7-4d29-8380-5b2a742e3ee4\",\"version\":\"1.0\",\"type\":\"Model\"}" +
 				"}}";
-			Assert.NotNull(StoredSystem(manifest).UnlinkedModels["970a310f-90a7-4d29-8380-5b2a742e3ee4"], "Program should be stored with identifier, not be null.");
+			Assert.NotNull(StoredSystem(manifest).Models["970a310f-90a7-4d29-8380-5b2a742e3ee4"], "Program should be stored with identifier, not be null.");
 		}
 
 		[Test]
@@ -255,7 +240,7 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\": \"beast_growl_02_echo.mp3\", \"type\": \"audio\", \"format\": \"mpeg\", \"files\": [\"resources/beast_growl_02_echo.mp3\" ], \"uuid\": \"23d9dfb6-5cb0-4b55-bd05-1ec5bb133381\", \"duration\": 3.313}" +
 				"]}";
-			Assert.NotNull(StoredSystem(manifest).UnlinkedResources[new ResourceIdentifier("beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")], "Audio should be stored, not be null.");
+			Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")], "Audio should be stored, not be null.");
 		}
 
 		[Test]
@@ -269,7 +254,7 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\": \"beast_growl_02_echo.mp3\", \"type\": \"audio\", \"format\": \"mpeg\", \"files\": [\"resources/beast_growl_02_echo.mp3\" ], \"uuid\": \"23d9dfb6-5cb0-4b55-bd05-1ec5bb133381\", \"duration\": 3.313}" +
 				"]}";
-			AudioReference audio = (AudioReference)StoredSystem(manifest).UnlinkedResources[new ResourceIdentifier("beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")];
+			AudioReference audio = (AudioReference)StoredSystem(manifest).Resources[new ResourceIdentifier("beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")];
 			Assert.AreEqual(new List<string>() { "resources/beast_growl_02_echo.mp3" }, audio.files, "Audio should have list of files.");
 			Assert.AreEqual("23d9dfb6-5cb0-4b55-bd05-1ec5bb133381", audio.uuid, "Audio uuid should match.");
 			Assert.AreEqual(3.313f, audio.duration, "Audio duration should match.");
@@ -286,7 +271,7 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\": \"somePicture.png\", \"type\": \"image\", \"format\": \"png\", \"files\": [ \"resources/somePicture.png\" ], \"uuid\": \"9d7f2757-154a-4124-9d44-587025184679\", \"height\": 300, \"width\": 500}" +
 				"]}";
-			Assert.NotNull(StoredSystem(manifest).UnlinkedResources[new ResourceIdentifier("somePicture.png", ContentType.Image, "png")], "Image should be stored, not be null.");
+			Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("somePicture.png", ContentType.Image, "png")], "Image should be stored, not be null.");
 		}
 
 		[Test]
@@ -300,7 +285,7 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\": \"somePicture.png\", \"type\": \"image\", \"format\": \"png\", \"files\": [ \"resources/somePicture.png\" ], \"uuid\": \"9d7f2757-154a-4124-9d44-587025184679\", \"height\": 300, \"width\": 500}" +
 				"]}";
-			ImageReference image = (ImageReference)StoredSystem(manifest).UnlinkedResources[new ResourceIdentifier("somePicture.png", ContentType.Image, "png")];
+			ImageReference image = (ImageReference)StoredSystem(manifest).Resources[new ResourceIdentifier("somePicture.png", ContentType.Image, "png")];
 			Assert.AreEqual("9d7f2757-154a-4124-9d44-587025184679", image.uuid, "Image uuid should match.");
 			Assert.AreEqual(300f, image.height, "Image height should match.");
 			Assert.AreEqual(500f, image.width, "Image width should match.");
