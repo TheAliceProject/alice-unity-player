@@ -35,7 +35,7 @@ namespace Alice.Tweedle
 		{
 			LambdaScope lambdaScope = scope.LambdaScope();
 			var targetStep = target.AsStep(scope);
-			var setTargetStep = new OperationStep(
+			var setTargetStep = new ValueOperationStep(
 				"Set Target",
 				lambdaScope,
 				target => lambdaScope.lambda = (TweedleLambda)target);
@@ -43,7 +43,7 @@ namespace Alice.Tweedle
 
 			StepSequence main = new StepSequence(ToTweedle(), scope);
 			main.AddStep(targetStep);
-			main.AddStep(new ActionNotifyingStep(
+			main.AddStep(new DelayedOperationStep(
 				"Invocation",
 				lambdaScope,
 				() => lambdaScope.QueueInvocationStep(main, arguments)));

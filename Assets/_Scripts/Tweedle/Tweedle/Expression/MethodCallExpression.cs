@@ -44,7 +44,7 @@ namespace Alice.Tweedle
 			MethodScope methodScope = scope.MethodCallScope(MethodName, invokeSuper);
 
 			var targetStep = TargetStep(scope);
-			ExecutionStep prepMethodStep = new OperationStep(
+			ExecutionStep prepMethodStep = new ValueOperationStep(
 				"Invocation Prep",
 				scope,
 				methodScope.SetThis);
@@ -52,7 +52,7 @@ namespace Alice.Tweedle
 
 			StepSequence main = new StepSequence(MethodName, scope);
 			main.AddStep(targetStep);
-			main.AddStep(new ActionNotifyingStep(
+			main.AddStep(new DelayedOperationStep(
 				"Invocation",
 				methodScope,
 				() => methodScope.QueueInvocationStep(main, arguments)));

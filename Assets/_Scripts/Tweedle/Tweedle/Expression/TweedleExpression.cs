@@ -20,7 +20,7 @@ namespace Alice.Tweedle
 		{
 			TweedleValue result = null;
 			var expStep = AsStep(scope);
-			var storeStep = new OperationStep(
+			var storeStep = new ValueOperationStep(
 					"EvaluateNow",
 					scope,
 					value => result = value);

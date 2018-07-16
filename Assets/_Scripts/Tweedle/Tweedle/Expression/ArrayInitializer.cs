@@ -58,7 +58,7 @@ namespace Alice.Tweedle
 				main.AddStep(step);
 			}
 			// TODO Use size to construct array
-			main.AddStep(new ContextNotifyingEvaluationStep(
+			main.AddStep(new ValueGenerationStep(
 				"CreateArray", scope,
 				() => new TweedleArray((TweedleArrayType)this.Type, steps.Select(el => el.Result).ToList())));
 			return main;

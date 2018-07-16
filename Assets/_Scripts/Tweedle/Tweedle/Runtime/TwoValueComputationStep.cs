@@ -3,7 +3,7 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	internal class DoubleInputEvalStep : ExecutionStep
+	internal class TwoValueComputationStep : ExecutionStep
 	{
 		TweedleExpression exp1;
 		TweedleExpression exp2;
@@ -11,7 +11,7 @@ namespace Alice.VM
 		TweedleValue result2;
 		Func<TweedleValue, TweedleValue, TweedleValue> body;
 
-		public DoubleInputEvalStep(string callStackEntry,
+		public TwoValueComputationStep(string callStackEntry,
 															 ExecutionScope scope,
 															 TweedleExpression exp1,
 															 TweedleExpression exp2,
@@ -27,7 +27,7 @@ namespace Alice.VM
 		void QueueExpressionStep(TweedleExpression exp, Action<TweedleValue> handler)
 		{
 			var evalStep = exp.AsStep(scope);
-			var storeStep = new OperationStep(callStack, scope, handler);
+			var storeStep = new ValueOperationStep(callStack, scope, handler);
 			evalStep.OnCompletionNotify(storeStep);
 			storeStep.OnCompletionNotify(this);
 			evalStep.Queue();

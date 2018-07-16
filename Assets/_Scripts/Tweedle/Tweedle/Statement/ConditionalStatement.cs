@@ -19,7 +19,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
 			var conditionStep = Condition.AsStep(scope);
-			var bodyStep = new OperationStep(
+			var bodyStep = new ValueOperationStep(
 					"if " + Condition.ToTweedle(),
 					scope,
 					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(scope, next));

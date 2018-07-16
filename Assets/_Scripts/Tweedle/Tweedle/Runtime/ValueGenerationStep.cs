@@ -3,11 +3,11 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	class ContextNotifyingEvaluationStep : ExecutionStep
+	class ValueGenerationStep : ExecutionStep
 	{
 		Func<TweedleValue> body;
 
-		public ContextNotifyingEvaluationStep(string callStack, ExecutionScope scope, Func<TweedleValue> body)
+		public ValueGenerationStep(string callStack, ExecutionScope scope, Func<TweedleValue> body)
 			: base(scope)
 		{
 			this.body = body;

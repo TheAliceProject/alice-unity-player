@@ -29,7 +29,7 @@ namespace Alice.Tweedle
 		{
 			ExecutionStep targetStep = TargetStep(scope);
 			targetStep.OnCompletionNotify(
-				new ComputationStep(
+				new ValueComputationStep(
 					"Get Field ",
 					scope,
 					target => target.Get(FieldName)));

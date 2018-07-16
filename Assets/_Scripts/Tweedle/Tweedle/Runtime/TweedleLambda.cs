@@ -27,7 +27,7 @@ namespace Alice.Tweedle
 				TweedleRequiredParameter param = source.Parameters[i];
 				TweedleExpression argExp = arguments[i];
 				ExecutionStep argStep = argExp.AsStep(scope.callingScope);
-				var storeStep = new ComputationStep(
+				var storeStep = new ValueComputationStep(
 					"Arg",
 					scope.callingScope,
 					argVal => scope.SetLocalValue(param, argVal));
@@ -38,7 +38,7 @@ namespace Alice.Tweedle
 
 		ExecutionStep ResultStep(LambdaScope scope)
 		{
-			return new ComputationStep("call", scope, arg => scope.Result);
+			return new ValueComputationStep("call", scope, arg => scope.Result);
 		}
 	}
 }
