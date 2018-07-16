@@ -3,16 +3,16 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	class ComputationStep : ExecutionStep
+	internal class ValueOperationStep : ExecutionStep
 	{
 		TweedleValue initialValue;
-		Func<TweedleValue, TweedleValue> body;
+		Action<TweedleValue> body;
 
-		public ComputationStep(string callStackEntry, ExecutionScope scope, Func<TweedleValue, TweedleValue> body)
+		public ValueOperationStep(string callStackEntry, ExecutionScope scope, Action<TweedleValue> body)
 			: base(scope)
 		{
-			this.body = body;
 			this.callStack = scope.StackWith(callStackEntry);
+			this.body = body;
 		}
 
 		internal override void BlockerFinished(ExecutionStep blockingStep)
@@ -23,7 +23,7 @@ namespace Alice.VM
 
 		internal override void Execute()
 		{
-			result = body.Invoke(initialValue);
+			body.Invoke(initialValue);
 			base.Execute();
 		}
 	}

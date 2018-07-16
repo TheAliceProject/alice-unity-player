@@ -29,7 +29,7 @@ namespace Alice.Tweedle
 		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
 		{
 			var valStep = expression.AsStep(scope);
-			var returnStep = new OperationStep(
+			var returnStep = new ValueOperationStep(
 				"return " + expression.ToTweedle(),
 				scope,
 				result => ((InvocationScope)scope).Return(result));

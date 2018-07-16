@@ -23,7 +23,7 @@ namespace Alice.Tweedle
 		{
 			return Initializer
 				.AsStep(scope)
-				.OnCompletionNotify(new OperationStep("", scope, value => tweedleObject.Set(Name, value, scope)));
+				.OnCompletionNotify(new ValueOperationStep("", scope, value => tweedleObject.Set(Name, value, scope)));
 		}
 	}
 }

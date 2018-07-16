@@ -61,7 +61,7 @@ namespace Alice.Tweedle
 
 		private ExecutionStep ResultStep(InvocationScope scope)
 		{
-			return new ComputationStep("call", scope, arg => scope.Result);
+			return new ValueComputationStep("call", scope, arg => scope.Result);
 		}
 
 		protected internal virtual void AddPrepSteps(InvocationScope scope, StepSequence main, Dictionary<string, TweedleExpression> arguments)
@@ -98,7 +98,7 @@ namespace Alice.Tweedle
 		ExecutionStep ArgumentStep(InvocationScope scope, TweedleValueHolderDeclaration argDec, TweedleExpression expression)
 		{
 			var argStep = expression.AsStep(scope.callingScope);
-			var storeStep = new ComputationStep(
+			var storeStep = new ValueComputationStep(
 					"Arg",
 					scope.callingScope,
 					arg => scope.SetLocalValue(argDec, arg));

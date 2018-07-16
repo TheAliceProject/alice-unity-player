@@ -17,7 +17,7 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			return new DoubleInputEvalStep(
+			return new TwoValueComputationStep(
 				ToTweedle(),
 				scope,
 				array,
