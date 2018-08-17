@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Alice.Tweedle
 {
-	public abstract class TweedleTypeDeclaration : TweedleType, InvocableMethodHolder
+	public abstract class TweedleTypeDeclaration : TweedleType
 	{
 		protected List<TweedleField> properties;
 		protected List<TweedleMethod> methods;
@@ -35,7 +36,7 @@ namespace Alice.Tweedle
 		public TweedleTypeDeclaration(string name, TweedleTypeReference super,
 			List<TweedleField> properties,
 			List<TweedleMethod> methods,
-			List<TweedleConstructor> constructors) 
+			List<TweedleConstructor> constructors)
 			: base(name, super)
 		{
 			DeclarationListInitializer(properties, methods, constructors);
@@ -60,6 +61,16 @@ namespace Alice.Tweedle
 			this.constructors = constructors;
 		}
 
-		public abstract void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments);
+		internal virtual TweedleField Field(ExecutionScope scope, string fieldName)
+		{
+			return properties.Where(prop => prop.Name.Equals(fieldName))
+							 .DefaultIfEmpty(null)
+							 .First();
+		}
+
+		public virtual TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
+		{
+			return Methods.Find((TweedleMethod method) => method.Name.Equals(methodName));
+		}
 	}
 }

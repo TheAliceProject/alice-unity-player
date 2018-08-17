@@ -1,28 +1,20 @@
-﻿namespace Alice.Tweedle
+﻿using Alice.VM;
+
+namespace Alice.Tweedle
 {
-    public class IdentifierReference : TweedleExpression
-    {
-        private string name;
+	public class IdentifierReference : TweedleExpression
+	{
+		public string Name { get; }
 
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+		public IdentifierReference(string name)
+			: base(null)
+		{
+			Name = name;
+		}
 
-        public IdentifierReference(string name)
-            : base(null)
-        {
-            this.name = name;
-        }
-
-        override public TweedleValue Evaluate(TweedleFrame frame)
-        {
-            return null;
-            // TODO track on execution frame
-            // return frame.getValueFor(this);
-        }
-    }
+		internal override ExecutionStep AsStep(ExecutionScope scope)
+		{
+			return new ValueStep("Get Identifier " + Name, scope, scope.GetValue(Name));
+		}
+	}
 }

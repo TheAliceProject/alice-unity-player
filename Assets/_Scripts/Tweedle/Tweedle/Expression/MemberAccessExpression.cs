@@ -1,26 +1,22 @@
-﻿namespace Alice.Tweedle
+﻿using Alice.VM;
+
+namespace Alice.Tweedle
 {
-    abstract public class MemberAccessExpression : TweedleExpression
-    {
-        private TweedleExpression target;
+	abstract public class MemberAccessExpression : TweedleExpression
+	{
+		public TweedleExpression Target { get; }
+		internal protected bool invokeSuper;
 
-        public TweedleExpression Target
-        {
-            get
-            {
-                return target;
-            }
-        }
+		public MemberAccessExpression(TweedleExpression target)
+			: base(null)
+		{
+			Target = target;
+			invokeSuper = false;
+		}
 
-        public MemberAccessExpression(TweedleExpression target)
-            : base(null)
-        {
-            this.target = target;
-        }
-
-        protected TweedleValue EvaluateTarget(TweedleFrame frame)
-        {
-            return target.Evaluate(frame);
-        }
-    }
+		internal ExecutionStep TargetStep(ExecutionScope scope)
+		{
+			return Target.AsStep(scope);
+		}
+	}
 }

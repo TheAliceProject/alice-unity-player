@@ -1,20 +1,33 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+using Alice.VM;
+
+namespace Alice.Tweedle
 {
 	public class ArrayIndexExpression : TweedleExpression
 	{
-		private TweedleExpression array;
-		private TweedleExpression index;
+		TweedleExpression array;
+		TweedleExpression index;
 
-		public ArrayIndexExpression(TweedleType type, TweedleExpression array, TweedleExpression index) 
-			: base(type)
+		public ArrayIndexExpression(TweedleExpression array, TweedleExpression index)
+			: base()
 		{
 			this.array = array;
 			this.index = index;
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			throw new System.NotImplementedException();
+			return new TwoValueComputationStep(
+				ToTweedle(),
+				scope,
+				array,
+				index,
+				(arr, val) => ((TweedleArray)arr)[val.ToInt()]);
+		}
+
+		internal override string ToTweedle()
+		{
+			return array.ToTweedle() + "[" + index.ToTweedle() + "]";
 		}
 	}
 }

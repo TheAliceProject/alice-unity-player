@@ -12,5 +12,10 @@
 		{
 			return TweedleTypes.TEXT_STRING.Instantiate(left.ToTextString() + right.ToTextString());
 		}
+
+		internal override string Operator()
+		{
+			return "..";
+		}
 	}
 }

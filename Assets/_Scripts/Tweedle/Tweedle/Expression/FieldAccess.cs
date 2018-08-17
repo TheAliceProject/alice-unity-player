@@ -1,28 +1,39 @@
-﻿namespace Alice.Tweedle
+﻿using Alice.VM;
+
+namespace Alice.Tweedle
 {
-    public class FieldAccess : MemberAccessExpression
-    {
-        private string fieldName;
+	public class FieldAccess : MemberAccessExpression
+	{
+		public string FieldName { get; }
 
-        public string FieldName
-        {
-            get
-            {
-                return fieldName;
-            }
-        }
+		public FieldAccess(string fieldName)
+			: base(new ThisExpression())
+		{
+			FieldName = fieldName;
+		}
 
-        public FieldAccess(TweedleExpression target, string fieldName)
-            : base(target)
-        {
-            this.fieldName = fieldName;
-        }
+		public FieldAccess(TweedleExpression target, string fieldName)
+			: base(target)
+		{
+			FieldName = fieldName;
+		}
 
-        override public TweedleValue Evaluate(TweedleFrame frame)
-        {
-            EvaluateTarget(frame);
-            // TODO access the fieldName on the target.
-            return null;
-        }
-    }
+		public static FieldAccess Super(string fieldName)
+		{
+			FieldAccess access = new FieldAccess(fieldName);
+			access.invokeSuper = true;
+			return access;
+		}
+
+		internal override ExecutionStep AsStep(ExecutionScope scope)
+		{
+			ExecutionStep targetStep = TargetStep(scope);
+			targetStep.OnCompletionNotify(
+				new ValueComputationStep(
+					"Get Field ",
+					scope,
+					target => target.Get(FieldName)));
+			return targetStep;
+		}
+	}
 }

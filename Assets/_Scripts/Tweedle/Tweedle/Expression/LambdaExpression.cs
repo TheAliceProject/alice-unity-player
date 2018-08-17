@@ -1,32 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	public class LambdaExpression : TweedleExpression
 	{
-		private List<TweedleRequiredParameter> parameters;
-		private List<TweedleStatement> statements;
+		List<TweedleRequiredParameter> parameters;
+		BlockStatement body;
 
 		public List<TweedleRequiredParameter> Parameters
 		{
 			get { return parameters; }
 		}
 
-		public List<TweedleStatement> Statements
+		internal TweedleLambdaType LambdaType()
 		{
-			get { return statements; }
+			return (TweedleLambdaType)Type;
 		}
 
+		public BlockStatement Body
+		{
+			get { return body; }
+		}
+
+		// TODO Extract a better return type than void from the statements
 		public LambdaExpression(List<TweedleRequiredParameter> parameters, List<TweedleStatement> statements)
-			: base(TweedleVoidType.VOID)
+			: base(new TweedleLambdaType(parameters.Select(param => param.Type).ToList(), TweedleVoidType.VOID))
 		{
 			this.parameters = parameters;
-			this.statements = statements;
+			body = new BlockStatement(statements);
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			throw new System.NotImplementedException();
+			return new ValueStep(ToTweedle(), scope, new TweedleLambda(this));
 		}
 	}
 }

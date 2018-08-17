@@ -1,33 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	public class LocalVariableDeclaration : TweedleStatement
 	{
-        private TweedleLocalVariable variable;
+		public TweedleLocalVariable Variable { get; }
+		public bool IsConstant { get; }
 
-        public TweedleLocalVariable Variable
-        {
-            get
-            {
-                return variable;
-            }
-        }
-
-        private bool isConstant;
-
-        public bool IsConstant
-        {
-            get
-            {
-                return isConstant;
-            }
-        }
-
-        public LocalVariableDeclaration(bool isConstant, TweedleLocalVariable variable)
+		public LocalVariableDeclaration(bool isConstant, TweedleLocalVariable variable)
 		{
-            this.isConstant = isConstant;
-            this.variable = variable;
+			IsConstant = isConstant;
+			Variable = variable;
+		}
+
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
+		{
+			var initStep = Variable.AsInitializerStep(scope);
+			var storeStep = new ValueOperationStep(
+				Variable.ToTweedle(),
+				scope,
+				value => scope.SetLocalValue(Variable, value));
+			initStep.OnCompletionNotify(storeStep);
+			storeStep.OnCompletionNotify(next);
+			return initStep;
 		}
 	}
 }

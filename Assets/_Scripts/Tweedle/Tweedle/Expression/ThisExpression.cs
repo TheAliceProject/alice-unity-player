@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using Alice.VM;
+
+namespace Alice.Tweedle
 {
 	public class ThisExpression : TweedleExpression
 	{
@@ -7,9 +9,9 @@
 		{
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			return null;
+			return new ValueStep("this", scope, scope.GetThis());
 		}
 	}
 }
