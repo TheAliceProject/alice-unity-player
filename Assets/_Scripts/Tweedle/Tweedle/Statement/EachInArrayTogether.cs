@@ -1,34 +1,35 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	public class EachInArrayTogether : AbstractStatementWithBody
+	public class EachInArrayTogether : TweedleStatement
 	{
-        private TweedleLocalVariable itemVariable;
+		public TweedleLocalVariable ItemVariable { get; }
+		public TweedleExpression Array { get; }
+		public BlockStatement Body { get; }
 
-        public TweedleLocalVariable ItemVariable
-        {
-            get
-            {
-                return itemVariable;
-            }
-        }
-
-        private TweedleExpression array;
-
-        public TweedleExpression Array
-        {
-            get
-            {
-                return array;
-            }
-        }
-
-        public EachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> body) 
-			: base(body)
+		public EachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> statements)
 		{
-            this.itemVariable = itemVariable;
-			this.array = array;
+			ItemVariable = itemVariable;
+			Array = array;
+			Body = new BlockStatement(statements);
+		}
+
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
+		{
+			var arrayStep = Array.AsStep(scope);
+			var bodyStep = new ValueOperationStep(
+				"EachInArrayTogether",
+				scope,
+				items =>
+				{
+					var scopes = ((TweedleArray)items).Values.Select(val => scope.ChildScope("EachInArrayTogether", ItemVariable, val)).ToList();
+					Body.AddParallelSteps(scopes, next);
+				});
+			arrayStep.OnCompletionNotify(bodyStep);
+			return arrayStep;
 		}
 	}
 }

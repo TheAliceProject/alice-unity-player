@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
-    public class ArrayInitializer : TweedleExpression
-    {
-        private List<TweedleExpression> elements;
-		private TweedleExpression initializeSize;
+	public class ArrayInitializer : TweedleExpression
+	{
+		List<TweedleExpression> elements;
+		TweedleExpression initializeSize;
 
-        public ArrayInitializer(TweedleArrayType arrayType, List<TweedleExpression> elements)
+		public ArrayInitializer(TweedleArrayType arrayType, List<TweedleExpression> elements)
 			: base(arrayType)
-        {
-            this.elements = elements;
-        }
+		{
+			this.elements = elements;
+		}
 
 		public ArrayInitializer(TweedleType elementType, List<TweedleExpression> elements)
 			: base(new TweedleArrayType(elementType))
@@ -37,16 +38,30 @@ namespace Alice.Tweedle
 			return null;
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
-        {
+		internal override ExecutionStep AsStep(ExecutionScope scope)
+		{
+			StepSequence main = new StepSequence("new Array", scope);
+			List<ExecutionStep> steps = elements.Select(elem => elem?.AsStep(scope)).ToList();
+
+			ExecutionStep sizeStep;
 			if (initializeSize != null)
 			{
-				this.elements = new List<TweedleExpression>(((TweedlePrimitiveValue<int>)initializeSize.Evaluate(frame)).Value);
+				sizeStep = initializeSize.AsStep(scope);
 			}
-			return new TweedleArray(
-				(TweedleArrayType)this.Type,
-				elements.Select(elem => elem?.Evaluate(frame)).ToList()
-				);
-        }
-    }
+			else
+			{
+				sizeStep = new ValueStep("new Array size", scope, TweedleTypes.WHOLE_NUMBER.Instantiate(steps.Count()));
+			}
+			main.AddStep(sizeStep);
+			foreach (var step in steps)
+			{
+				main.AddStep(step);
+			}
+			// TODO Use size to construct array
+			main.AddStep(new ValueGenerationStep(
+				"CreateArray", scope,
+				() => new TweedleArray((TweedleArrayType)this.Type, steps.Select(el => el.Result).ToList())));
+			return main;
+		}
+	}
 }

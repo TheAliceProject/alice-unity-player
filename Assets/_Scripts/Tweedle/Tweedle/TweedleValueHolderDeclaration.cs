@@ -1,26 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
-    public abstract class TweedleValueHolderDeclaration
-    {
-		public string Name
+	public abstract class TweedleValueHolderDeclaration
+	{
+		public TweedleType Type { get; }
+		public string Name { get; }
+		public TweedleExpression Initializer { get; }
+
+		public TweedleValueHolderDeclaration(TweedleType type, string name)
 		{
-			get { return name; }
+			Type = type;
+			Name = name;
+			Initializer = null;
 		}
 
-		public TweedleType Type
+		public TweedleValueHolderDeclaration(TweedleType type, string name, TweedleExpression initializer)
 		{
-			get { return type; }
+			Type = type;
+			Name = name;
+			Initializer = initializer;
 		}
 
-		private string name;
-		private TweedleType type;
-
-        public TweedleValueHolderDeclaration(TweedleType type, string name)
+		internal ExecutionStep AsInitializerStep(ExecutionScope scope)
 		{
-			this.type = type;
-			this.name = name;
+			if (Initializer == null)
+			{
+				throw new TweedleRuntimeException("Absent Initializer. Unable to initialize variable <" + Name + ">.");
+			}
+			return Initializer.AsStep(scope);
+		}
+
+		internal bool Accepts(TweedleValue value, ExecutionScope scope)
+		{
+			return value != null && Type.AsDeclaredType(scope).AcceptsType(value.Type);
+		}
+
+		internal string ToTweedle()
+		{
+			if (Initializer == null)
+			{
+				return Type.Name + " " + Name;
+			}
+			else
+			{
+				return Type.Name + " " + Name + " <- " + Initializer;
+			}
 		}
 	}
 }

@@ -1,44 +1,31 @@
 ﻿using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	public class ConditionalStatement : TweedleStatement
 	{
-        private TweedleExpression condition;
+		public TweedleExpression Condition { get; }
+		public BlockStatement ThenBody { get; }
+		public BlockStatement ElseBody { get; }
 
-        public TweedleExpression Condition
-        {
-            get
-            {
-                return condition;
-            }
-        }
-
-        private List<TweedleStatement> thenBody;
-
-        public List<TweedleStatement> ThenBody
-        {
-            get
-            {
-                return thenBody;
-            }
-        }
-
-        private List<TweedleStatement> elseBody;
-
-        public List<TweedleStatement> ElseBody
-        {
-            get
-            {
-                return elseBody;
-            }
-        }
-
-        public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
+		public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
 		{
-            this.condition = condition;
-            this.thenBody = thenBody;
-			this.elseBody = elseBody;
+			Condition = condition;
+			ThenBody = new BlockStatement(thenBody);
+			ElseBody = new BlockStatement(elseBody);
+		}
+
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
+		{
+			var conditionStep = Condition.AsStep(scope);
+			var bodyStep = new ValueOperationStep(
+					"if " + Condition.ToTweedle(),
+					scope,
+					value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(scope, next));
+			conditionStep.OnCompletionNotify(bodyStep);
+			bodyStep.OnCompletionNotify(next);
+			return conditionStep;
 		}
 	}
 }

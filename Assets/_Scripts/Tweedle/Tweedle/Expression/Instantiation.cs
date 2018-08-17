@@ -1,22 +1,26 @@
 ﻿using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
 	public class Instantiation : TweedleExpression
 	{
-		private InvocableMethodHolder invocable;
-		private Dictionary<string, TweedleExpression> arguments;
+		internal Dictionary<string, TweedleExpression> Arguments { get; }
 
 		public Instantiation(TweedleTypeReference type, Dictionary<string, TweedleExpression> arguments)
 			: base(type)
 		{
-			this.invocable = type;
-			this.arguments = arguments;
+			Arguments = arguments;
+			if (type == null)
+			{
+				UnityEngine.Debug.Log("Placeholder");
+			}
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		internal override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			throw new System.NotImplementedException();
+			ConstructorScope ctrScope = scope.ForInstantiation(Type.AsClass(scope));
+			return ctrScope.InvocationStep("Instantiation", Arguments);
 		}
 	}
 }

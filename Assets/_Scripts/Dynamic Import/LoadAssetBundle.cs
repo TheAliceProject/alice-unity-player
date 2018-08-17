@@ -19,7 +19,7 @@ public class LoadAssetBundle : MonoBehaviour {
         {
             string uri = "file:///" + Application.streamingAssetsPath + "/AssetBundles/" + assetBundle;
             Debug.Log(uri);
-            UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.GetAssetBundle(uri, 0);
+            UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(uri, 0);
             yield return request.SendWebRequest();
             bundle = DownloadHandlerAssetBundle.GetContent(request);
         } else

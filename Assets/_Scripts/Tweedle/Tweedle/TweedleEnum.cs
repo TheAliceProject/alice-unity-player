@@ -3,50 +3,51 @@ using System.Linq;
 
 namespace Alice.Tweedle
 {
-    public class TweedleEnum : TweedleTypeDeclaration
-    {
-		private List<TweedleEnumValue> values;
+	public class TweedleEnum : TweedleTypeDeclaration
+	{
+		List<TweedleEnumValue> values = new List<TweedleEnumValue>();
 
 		public List<string> Values
 		{
 			get { return values.Select(v => v.Name).ToList(); }
 		}
 
-        public TweedleEnum(string name, 
+		public TweedleEnum(string name,
 			List<TweedleField> properties,
 			List<TweedleMethod> methods,
-			List<TweedleConstructor> constructors,
-			List<TweedleEnumValue> values)
+			List<TweedleConstructor> constructors)
 			: base(name, properties, methods, constructors)
-        {
-			this.values = values;
-        }
-
-		public TweedleObject Instantiate(TweedleFrame frame, TweedleValue[] args)
-        {
-            return null;
-        }
-
-		public override void Invoke(TweedleFrame frame, TweedleObject target, TweedleMethod method, TweedleValue[] arguments)
 		{
-			throw new System.NotImplementedException();
+		}
+
+		public void AddEnumValue(TweedleEnumValue value)
+		{
+			values.Add(value);
+		}
+
+		internal override TweedleEnum AsEnum(ExecutionScope scope)
+		{
+			return this;
 		}
 	}
 
-	public class TweedleEnumValue
+	public class TweedleEnumValue : TweedleValue
 	{
-		private string name;
-		private Dictionary<string, TweedleExpression> arguments;
+		public string Name { get; }
+		public TweedleEnum EnumType { get; }
+		Dictionary<string, TweedleExpression> arguments;
 
-		public string Name
+		public TweedleEnumValue(TweedleEnum type, string name, Dictionary<string, TweedleExpression> arguments)
+			: base(type)
 		{
-			get { return name; }
+			EnumType = type;
+			Name = name;
+			this.arguments = arguments;
 		}
 
-		public TweedleEnumValue(string name, Dictionary<string, TweedleExpression> arguments)
+		internal override TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
 		{
-			this.name = name;
-			this.arguments = arguments;
+			return EnumType.MethodNamed(scope, methodName);
 		}
 	}
 }

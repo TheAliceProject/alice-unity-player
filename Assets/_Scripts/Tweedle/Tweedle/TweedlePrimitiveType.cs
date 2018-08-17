@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle
+﻿using System;
+
+namespace Alice.Tweedle
 {
 	public class TweedlePrimitiveType : TweedleType
 	{
@@ -41,6 +43,11 @@
 		{
 			return ((TweedlePrimitiveValue<double>)value).Value;
 		}
+
+		internal override int ValueToInt(TweedleValue value)
+		{
+			return (int)Math.Round(((TweedlePrimitiveValue<double>)value).Value);
+		}
 	}
 
 	public class TweedleWholeNumberType : TweedlePrimitiveType<int>
@@ -51,6 +58,11 @@
 		}
 
 		internal override double ValueToDouble(TweedleValue value)
+		{
+			return ((TweedlePrimitiveValue<int>)value).Value;
+		}
+
+		internal override int ValueToInt(TweedleValue value)
 		{
 			return ((TweedlePrimitiveValue<int>)value).Value;
 		}
@@ -69,6 +81,11 @@
 		public TweedleBooleanType()
 			: base("Boolean", null)
 		{
+		}
+
+		internal override bool ValueToBoolean(TweedleValue value)
+		{
+			return ((TweedlePrimitiveValue<bool>)value).Value;
 		}
 	}
 

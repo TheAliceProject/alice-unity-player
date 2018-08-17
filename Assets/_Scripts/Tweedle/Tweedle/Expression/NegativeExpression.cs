@@ -1,28 +1,38 @@
-﻿namespace Alice.Tweedle
+﻿using Alice.VM;
+
+namespace Alice.Tweedle
 {
 	public abstract class NegativeExpression : TweedleExpression
 	{
 		protected TweedleExpression expression;
 
-		internal NegativeExpression(TweedleType type, TweedleExpression expression) 
+		internal NegativeExpression(TweedleType type, TweedleExpression expression)
 			: base(type)
 		{
 			this.expression = expression;
 		}
+
+		internal override ExecutionStep AsStep(ExecutionScope scope)
+		{
+			var val = expression.AsStep(scope);
+			val.OnCompletionNotify(new ValueComputationStep("-" + expression.ToTweedle(), scope, Negate));
+			return val;
+		}
+
+		internal abstract TweedleValue Negate(TweedleValue value);
 	}
 
 	public class NegativeWholeExpression : NegativeExpression
 	{
 
-		public NegativeWholeExpression(TweedleExpression expression) 
+		public NegativeWholeExpression(TweedleExpression expression)
 			: base(TweedleTypes.WHOLE_NUMBER, expression)
 		{
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		internal override TweedleValue Negate(TweedleValue value)
 		{
-			TweedlePrimitiveValue<int> primitive = (TweedlePrimitiveValue<int>)expression.Evaluate(frame);
-			return TweedleTypes.WHOLE_NUMBER.Instantiate(0 - primitive.Value);
+			return TweedleTypes.WHOLE_NUMBER.Instantiate(0 - value.ToInt());
 		}
 	}
 
@@ -34,10 +44,9 @@
 		{
 		}
 
-		public override TweedleValue Evaluate(TweedleFrame frame)
+		internal override TweedleValue Negate(TweedleValue value)
 		{
-			TweedlePrimitiveValue<double> primitive = (TweedlePrimitiveValue<double>)expression.Evaluate(frame);
-			return TweedleTypes.DECIMAL_NUMBER.Instantiate(0 - primitive.Value);
+			return TweedleTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble());
 		}
 	}
 }

@@ -2,26 +2,26 @@
 
 namespace Alice.Tweedle
 {
-    public class TweedleArray : TweedleValue
-    {
-		private readonly TweedleArrayType arrayType;
-		private readonly List<TweedleValue> values;
+	public class TweedleArray : TweedleValue
+	{
+		readonly TweedleArrayType arrayType;
+		public List<TweedleValue> Values { get; }
 
-        public int Length
-        {
-            get { return values.Count; }
-        }
+		public int Length
+		{
+			get { return Values.Count; }
+		}
 
-        public TweedleValue this[int i]
-        {
-            get { return values[i]; }
-        }
+		public TweedleValue this[int i]
+		{
+			get { return Values[i]; }
+		}
 
-        public TweedleArray(TweedleArrayType arrayType, List<TweedleValue> values)
+		public TweedleArray(TweedleArrayType arrayType, List<TweedleValue> values)
 			: base(arrayType)
-        {
-            this.values = values;
+		{
+			Values = values;
 			this.arrayType = arrayType;
-        }
+		}
 	}
 }

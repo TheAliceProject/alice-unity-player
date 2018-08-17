@@ -1,19 +1,27 @@
-﻿namespace Alice.Tweedle
+﻿using Alice.VM;
+
+namespace Alice.Tweedle
 {
-    class LogicalNotExpression : TweedleExpression
-    {
-		private TweedleExpression expression;
+	public class LogicalNotExpression : TweedleExpression
+	{
+		TweedleExpression expression;
 
-        public LogicalNotExpression(TweedleExpression expression)
-            : base(TweedleTypes.BOOLEAN)
-        {
+		public LogicalNotExpression(TweedleExpression expression)
+			: base(TweedleTypes.BOOLEAN)
+		{
 			this.expression = expression;
-        }
+		}
 
-        public override TweedleValue Evaluate(TweedleFrame frame)
-        {
-			TweedlePrimitiveValue<bool> eval = (TweedlePrimitiveValue<bool>)expression.Evaluate(frame);
-			return TweedleTypes.BOOLEAN.Instantiate(!eval.Value);
-        }
-    }
+		internal override ExecutionStep AsStep(ExecutionScope scope)
+		{
+			var step = expression.AsStep(scope);
+			step.OnCompletionNotify(new ValueComputationStep("!" + expression.ToTweedle(), scope, NotPrimitive));
+			return step;
+		}
+
+		static TweedlePrimitiveValue<bool> NotPrimitive(TweedleValue value)
+		{
+			return TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean());
+		}
+	}
 }

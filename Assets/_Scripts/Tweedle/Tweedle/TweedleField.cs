@@ -1,30 +1,29 @@
 ﻿using System.Collections.Generic;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
-    public class TweedleField : TweedleValueHolderDeclaration
-    {
-        private List<string> modifiers;
-        private TweedleExpression initializer;
+	public class TweedleField : TweedleValueHolderDeclaration
+	{
+		public List<string> Modifiers { get; }
 
-		public List<string> Modifiers
+		public TweedleField(List<string> modifiers, TweedleType type, string name)
+			: base(type, name)
 		{
-			get { return modifiers; }
+			Modifiers = modifiers;
 		}
 
-
-        public TweedleField(List<string> modifiers, TweedleType type, string name)
-            : base(type, name)
+		public TweedleField(List<string> modifiers, TweedleType type, string name, TweedleExpression initializer)
+			: base(type, name, initializer)
 		{
-            this.modifiers = modifiers;
-        }
+			Modifiers = modifiers;
+		}
 
-
-        public TweedleField(List<string> modifiers, TweedleType type, string name, TweedleExpression initializer)
-            : base(type, name)
-        {
-            this.modifiers = modifiers;
-            this.initializer = initializer;
-        }
+		internal ExecutionStep InitializeField(ExecutionScope scope, TweedleObject tweedleObject)
+		{
+			return Initializer
+				.AsStep(scope)
+				.OnCompletionNotify(new ValueOperationStep("", scope, value => tweedleObject.Set(Name, value, scope)));
+		}
 	}
 }

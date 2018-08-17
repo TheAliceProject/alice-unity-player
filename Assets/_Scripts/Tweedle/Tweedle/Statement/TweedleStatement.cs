@@ -1,27 +1,27 @@
-﻿using System;
+﻿using Alice.VM;
 
 namespace Alice.Tweedle
 {
-    abstract public class TweedleStatement
-    {
-        private bool enabled = true;
+	abstract public class TweedleStatement
+	{
+		bool enabled = true;
 
-        public bool IsEnabled
-        {
-            get
-            {
-                return enabled;
-            }
-        }
-
-        public void Execute(TweedleFrame frame)
-        {
-
-        }
+		public bool IsEnabled
+		{ get { return enabled; } }
 
 		internal void Disable()
 		{
-            enabled = false;
+			enabled = false;
 		}
+
+		internal virtual void QueueStepToNotify(ExecutionScope scope, ExecutionStep next)
+		{
+			if (enabled)
+			{
+				AsStepToNotify(scope, next).Queue();
+			}
+		}
+
+		internal abstract ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next);
 	}
 }

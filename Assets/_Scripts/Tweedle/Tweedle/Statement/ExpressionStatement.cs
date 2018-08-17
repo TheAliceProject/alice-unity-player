@@ -1,20 +1,19 @@
-﻿namespace Alice.Tweedle
+﻿using Alice.VM;
+
+namespace Alice.Tweedle
 {
 	public class ExpressionStatement : TweedleStatement
 	{
-		private TweedleExpression expression;
+		public TweedleExpression Expression { get; }
 
-        public TweedleExpression Expression
-        {
-            get
-            {
-                return expression;
-            }
-        }
-
-        public ExpressionStatement(TweedleExpression expression)
+		public ExpressionStatement(TweedleExpression expression)
 		{
-			this.expression = expression;
+			Expression = expression;
+		}
+
+		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
+		{
+			return Expression.AsStep(scope).OnCompletionNotify(next);
 		}
 	}
 }
