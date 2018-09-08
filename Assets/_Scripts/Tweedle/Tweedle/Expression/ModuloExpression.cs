@@ -3,19 +3,14 @@
 	class ModuloExpression : BinaryExpression
 	{
 
-		public ModuloExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.WHOLE_NUMBER)
+		public ModuloExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+			: base(lhs, rhs, TStaticTypes.WHOLE_NUMBER)
 		{
 		}
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
+		protected override TValue Evaluate(TValue left, TValue right)
 		{
-			return Eval((TweedlePrimitiveValue<int>)left, (TweedlePrimitiveValue<int>)right);
-		}
-
-		private TweedlePrimitiveValue<int> Eval(TweedlePrimitiveValue<int> left, TweedlePrimitiveValue<int> right)
-		{
-			return TweedleTypes.WHOLE_NUMBER.Instantiate(left.Value % right.Value);
+			return TStaticTypes.WHOLE_NUMBER.Instantiate(left.ToInt() % right.ToInt());
 		}
 
 		internal override string Operator()

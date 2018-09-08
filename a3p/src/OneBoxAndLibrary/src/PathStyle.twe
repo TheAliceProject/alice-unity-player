@@ -1,0 +1,4 @@
+enum PathStyle {
+	BEE_LINE,
+	SMOOTH
+}

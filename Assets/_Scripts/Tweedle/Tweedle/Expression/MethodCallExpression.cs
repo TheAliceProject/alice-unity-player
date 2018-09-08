@@ -6,11 +6,11 @@ namespace Alice.Tweedle
 {
 	public class MethodCallExpression : MemberAccessExpression
 	{
-		internal Dictionary<string, TweedleExpression> arguments;
+		internal NamedArgument[] arguments;
 
 		public string MethodName { get; }
 
-		public MethodCallExpression(string methodName, Dictionary<string, TweedleExpression> arguments)
+		public MethodCallExpression(string methodName, NamedArgument[] arguments)
 			: base(new ThisExpression())
 		{
 			Contract.Requires(arguments != null);
@@ -18,7 +18,7 @@ namespace Alice.Tweedle
 			this.arguments = arguments;
 		}
 
-		public MethodCallExpression(TweedleExpression target, string methodName, Dictionary<string, TweedleExpression> arguments)
+		public MethodCallExpression(ITweedleExpression target, string methodName, NamedArgument[] arguments)
 			: base(target)
 		{
 			Contract.Requires(arguments != null);
@@ -26,7 +26,7 @@ namespace Alice.Tweedle
 			this.arguments = arguments;
 		}
 
-		public static MethodCallExpression Super(string methodName, Dictionary<string, TweedleExpression> arguments)
+		public static MethodCallExpression Super(string methodName, NamedArgument[] arguments)
 		{
 			Contract.Requires(arguments != null);
 			MethodCallExpression callExpression = new MethodCallExpression(methodName, arguments);
@@ -34,12 +34,17 @@ namespace Alice.Tweedle
 			return callExpression;
 		}
 
-		public TweedleExpression GetArg(string argName)
+		public ITweedleExpression GetArg(string argName)
 		{
-			return arguments[argName];
-		}
+            for (int i = 0; i < arguments.Length; ++i)
+			{
+				if (arguments[i].Name == argName)
+                    return arguments[i].Argument;
+            }
+			return null;
+        }
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			MethodScope methodScope = scope.MethodCallScope(MethodName, invokeSuper);
 

@@ -3,12 +3,12 @@ using Alice.Tweedle;
 
 namespace Alice.VM
 {
-	internal class ValueOperationStep : ExecutionStep
+	public class ValueOperationStep : ExecutionStep
 	{
-		TweedleValue initialValue;
-		Action<TweedleValue> body;
+		TValue initialValue;
+		Action<TValue> body;
 
-		public ValueOperationStep(string callStackEntry, ExecutionScope scope, Action<TweedleValue> body)
+		public ValueOperationStep(string callStackEntry, ExecutionScope scope, Action<TValue> body)
 			: base(scope)
 		{
 			this.callStack = scope.StackWith(callStackEntry);

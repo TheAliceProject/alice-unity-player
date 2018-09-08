@@ -5,9 +5,9 @@ namespace Alice.VM
 {
 	class ValueGenerationStep : ExecutionStep
 	{
-		Func<TweedleValue> body;
+		Func<TValue> body;
 
-		public ValueGenerationStep(string callStack, ExecutionScope scope, Func<TweedleValue> body)
+		public ValueGenerationStep(string callStack, ExecutionScope scope, Func<TValue> body)
 			: base(scope)
 		{
 			this.body = body;

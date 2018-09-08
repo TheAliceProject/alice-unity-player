@@ -4,10 +4,10 @@ namespace Alice.Tweedle
 {
 	abstract public class MemberAccessExpression : TweedleExpression
 	{
-		public TweedleExpression Target { get; }
+		public ITweedleExpression Target { get; }
 		internal protected bool invokeSuper;
 
-		public MemberAccessExpression(TweedleExpression target)
+		public MemberAccessExpression(ITweedleExpression target)
 			: base(null)
 		{
 			Target = target;

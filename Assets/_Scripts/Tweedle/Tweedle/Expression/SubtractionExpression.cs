@@ -3,7 +3,7 @@
 	class SubtractionExpression : BinaryNumToNumExpression
 	{
 
-		public SubtractionExpression(TweedleExpression lhs, TweedleExpression rhs)
+		public SubtractionExpression(ITweedleExpression lhs, ITweedleExpression rhs)
 			: base(lhs, rhs)
 		{
 		}

@@ -1,36 +1,62 @@
 ﻿namespace Alice.Tweedle
 {
-	class ValueHolder
+	/// <summary>
+	/// Holder for a TValue.
+	/// </summary>
+	internal class ValueHolder
 	{
-		TweedleValue tweedleValue;
+		private TValue m_Value;
 
-		public TweedleType Type { get; }
-		public TweedleValue Value
+		/// <summary>
+		/// Value type.
+		/// </summary>
+        public readonly TType Type;
+
+		/// <summary>
+		/// Current value.
+		/// </summary>
+        public TValue Value
 		{
-			get
-			{
-				return tweedleValue;
-			}
-
+			get { return m_Value; }
 			set
 			{
-				CheckType(Type, value);
-				tweedleValue = value;
+				CheckType(Type, ref value);
+				m_Value = value;
 			}
 		}
 
-		public ValueHolder(TweedleType type, TweedleValue tweedleValue)
+		/// <summary>
+		/// Initializes a holder with a type and its default value.
+		/// </summary>
+		public ValueHolder(TType inType)
 		{
-			CheckType(type, tweedleValue);
-			Type = type;
-			this.tweedleValue = tweedleValue;
-		}
+            Type = inType;
+            m_Value = inType.DefaultValue();
+        }
 
-		void CheckType(TweedleType type, TweedleValue value)
+		/// <summary>
+		/// Initializes a holder with a type and a value.
+		/// </summary>
+		public ValueHolder(TType inType, TValue inValue)
 		{
-			if (value == null || !type.AcceptsType(value.Type))
+			CheckType(inType, ref inValue);
+			Type = inType;
+            m_Value = inValue;
+        }
+
+		/// <summary>
+		/// Creates a duplicate value holder.
+		/// </summary>
+		public ValueHolder Clone()
+		{
+            return new ValueHolder(Type, m_Value);
+        }
+
+		private void CheckType(TType inType, ref TValue inValue)
+		{
+			if (inValue.Type == null || !inValue.Type.CanCast(inType))
 			{
-				throw new TweedleRuntimeException("Unable to treat " + value + " as type " + type);
+				throw new TweedleRuntimeException("Unable to treat " + inValue + " as type " + inType);
 			}
 		}
 	}

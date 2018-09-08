@@ -5,9 +5,9 @@ namespace Alice.Tweedle
 {
 	public class BlockStatement
 	{
-		public List<TweedleStatement> Statements { get; }
+		public TweedleStatement[] Statements { get; }
 
-		public BlockStatement(List<TweedleStatement> statements)
+		public BlockStatement(TweedleStatement[] statements)
 		{
 			Statements = statements;
 		}
@@ -56,7 +56,7 @@ namespace Alice.Tweedle
 
 			internal override void Execute()
 			{
-				if (index < block.Statements.Count)
+				if (index < block.Statements.Length)
 				{
 					block.Statements[index++].QueueStepToNotify(scope, this);
 				}

@@ -8,8 +8,21 @@ namespace Alice.Tweedle
 	{
 		ExecutionScope parent;
 		public VirtualMachine vm;
-		protected TweedleValue thisValue;
+		protected TValue thisValue;
 		protected internal string callStackEntry;
+
+		protected virtual ScopePermissions GetPermissions()
+		{
+            var permissions = ScopePermissions.None;
+			if (parent != null)
+                permissions |= parent.GetPermissions();
+            return permissions;
+        }
+
+		internal bool HasPermissions(ScopePermissions inPermissions)
+		{
+            return (GetPermissions() & inPermissions) == inPermissions;
+        }
 
 		Dictionary<string, ValueHolder> localValues =
 			new Dictionary<string, ValueHolder>();
@@ -32,23 +45,20 @@ namespace Alice.Tweedle
 			this.parent = parent;
 		}
 
-		internal TweedleClass ClassNamed(string name)
+		internal TType ClassNamed(string name)
 		{
 			return vm?.Library?.ClassNamed(name);
 		}
 
-		internal TweedleTypeDeclaration TypeNamed(string name)
+		internal TType TypeNamed(string name)
 		{
 			return vm?.Library?.TypeNamed(name);
 		}
 
-		private TypeValue GetTypeNamed(string name)
+		private TTypeRef GetTypeNamed(string name)
 		{
-			TweedleTypeDeclaration libraryType = TypeNamed(name);
-			if (libraryType != null)
-				return new TypeValue(libraryType);
-			// TODO Add catch for System Primitive types
-			return null;
+			TType libraryType = TypeNamed(name);
+			return libraryType != null ? new TTypeRef(libraryType) : null;
 		}
 
 		internal virtual string StackWith(string stackTop)
@@ -64,22 +74,22 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal TweedleValue GetThis()
+		internal TValue GetThis()
 		{
 			return thisValue;
 		}
 
-		public TweedleValue SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue value)
+		public TValue SetLocalValue(TValueHolderDeclaration declaration, TValue value)
 		{
 			//UnityEngine.Debug.Log("Initializing " + declaration.Name + " to " + value.ToTextString());
 			localValues.Add(declaration.Name,
-							new ValueHolder(declaration.Type.AsDeclaredType(this), value));
+							new ValueHolder(declaration.Type.Get(this), value));
 			return value;
 		}
 
-		public TweedleValue SetValue(string varName, TweedleValue value)
+		public TValue SetValue(string varName, TValue value)
 		{
-			if (value == null)
+			if (value == TValue.UNDEFINED)
 			{
 				throw new TweedleRuntimeException("Can not assign null to " + varName);
 			}
@@ -90,7 +100,7 @@ namespace Alice.Tweedle
 			throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
 		}
 
-		public bool UpdateScopeValue(string varName, TweedleValue value)
+		public bool UpdateScopeValue(string varName, TValue value)
 		{
 			if (localValues.ContainsKey(varName))
 			{
@@ -110,21 +120,17 @@ namespace Alice.Tweedle
 			return false;
 		}
 
-		bool SetValueOnThis(string varName, TweedleValue value)
+		bool SetValueOnThis(string varName, TValue value)
 		{
-			if (thisValue == null)
-			{
-				throw new TweedleRuntimeException("The VM is unable to write to static variables yet. Can not update <" + varName + ">");
-			}
-			return thisValue.Set(varName, value, this);
+			return thisValue != TValue.UNDEFINED && thisValue.Set(this, varName, value);
 		}
 
-		public TweedleValue GetValue(string varName)
+		public TValue GetValue(string varName)
 		{
-			TypeValue type = GetTypeNamed(varName);
+            TTypeRef type = GetTypeNamed(varName);
 			if (type != null)
 			{
-				return type;
+				return TStaticTypes.TYPE_REF.Instantiate(type);
 			}
 			if (localValues.ContainsKey(varName))
 			{
@@ -136,10 +142,14 @@ namespace Alice.Tweedle
 				//UnityEngine.Debug.Log("Asking parent for " + varName);
 				return parent.GetValue(varName);
 			}
-			if (thisValue != null && thisValue.HasSetField(varName))
+			if (thisValue != TValue.UNDEFINED)
 			{
-				return thisValue.Get(varName);
-			}
+                try
+                {
+                    return thisValue.Get(this, varName);
+                }
+				catch(TweedleNonexistentFieldException) { }
+            }
 			throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
 		}
 
@@ -155,7 +165,7 @@ namespace Alice.Tweedle
 			return child;
 		}
 
-		internal ExecutionScope ChildScope(string stackEntry, TweedleValueHolderDeclaration declaration, TweedleValue value)
+		internal ExecutionScope ChildScope(string stackEntry, TValueHolderDeclaration declaration, TValue value)
 		{
 			var child = new ExecutionScope(this);
 			child.SetLocalValue(declaration, value);
@@ -163,7 +173,7 @@ namespace Alice.Tweedle
 			return child;
 		}
 
-		internal ConstructorScope ForInstantiation(TweedleClass tweedleClass)
+		internal ConstructorScope ForInstantiation(TType tweedleClass)
 		{
 			return new ConstructorScope(this, tweedleClass);
 		}
@@ -173,9 +183,9 @@ namespace Alice.Tweedle
 			return new MethodScope(this, methodName, invokeSuper);
 		}
 
-		internal LambdaScope LambdaScope()
-		{
-			return new LambdaScope(this);
-		}
+		// internal LambdaScope LambdaScope()
+		// {
+		// 	return new LambdaScope(this);
+		// }
 	}
 }

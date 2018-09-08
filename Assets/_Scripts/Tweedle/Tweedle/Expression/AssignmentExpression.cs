@@ -4,11 +4,11 @@ namespace Alice.Tweedle
 {
 	public class AssignmentExpression : TweedleExpression
 	{
-		TweedleExpression TargetExp { get; }
-		TweedleExpression ValueExp { get; }
+		ITweedleExpression TargetExp { get; }
+		ITweedleExpression ValueExp { get; }
 		internal string Identifier { get; }
 
-		public AssignmentExpression(TweedleExpression assigneeExp, TweedleExpression valueExp)
+		public AssignmentExpression(ITweedleExpression assigneeExp, ITweedleExpression valueExp)
 			: base(valueExp.Type)
 		{
 			ValueExp = valueExp;
@@ -31,7 +31,7 @@ namespace Alice.Tweedle
 			}
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			if (TargetExp == null)
 			{
@@ -52,13 +52,13 @@ namespace Alice.Tweedle
 					ValueExp,
 					(target, value) =>
 					{
-						target.Set(Identifier, value, scope);
+						target.Set(scope, Identifier, value);
 						return value;
 					});
 			}
 		}
 
-		internal override string ToTweedle()
+		public override string ToTweedle()
 		{
 			return Identifier + " <- " + ValueExp;
 		}

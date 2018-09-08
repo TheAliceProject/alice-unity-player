@@ -6,11 +6,11 @@ namespace Alice.Tweedle
 {
 	public class EachInArrayTogether : TweedleStatement
 	{
-		public TweedleLocalVariable ItemVariable { get; }
-		public TweedleExpression Array { get; }
+		public TLocalVariable ItemVariable { get; }
+		public ITweedleExpression Array { get; }
 		public BlockStatement Body { get; }
 
-		public EachInArrayTogether(TweedleLocalVariable itemVariable, TweedleExpression array, List<TweedleStatement> statements)
+		public EachInArrayTogether(TLocalVariable itemVariable, ITweedleExpression array, TweedleStatement[] statements)
 		{
 			ItemVariable = itemVariable;
 			Array = array;
@@ -25,7 +25,7 @@ namespace Alice.Tweedle
 				scope,
 				items =>
 				{
-					var scopes = ((TweedleArray)items).Values.Select(val => scope.ChildScope("EachInArrayTogether", ItemVariable, val)).ToList();
+					var scopes = items.Array().Select(val => scope.ChildScope("EachInArrayTogether", ItemVariable, val)).ToList();
 					Body.AddParallelSteps(scopes, next);
 				});
 			arrayStep.OnCompletionNotify(bodyStep);

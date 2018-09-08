@@ -3,14 +3,14 @@
 	public class StringConcatenationExpression : BinaryExpression
 	{
 
-		public StringConcatenationExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.TEXT_STRING)
+		public StringConcatenationExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+			: base(lhs, rhs, TStaticTypes.TEXT_STRING)
 		{
 		}
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
+		protected override TValue Evaluate(TValue left, TValue right)
 		{
-			return TweedleTypes.TEXT_STRING.Instantiate(left.ToTextString() + right.ToTextString());
+			return TStaticTypes.TEXT_STRING.Instantiate(left.ToTextString() + right.ToTextString());
 		}
 
 		internal override string Operator()

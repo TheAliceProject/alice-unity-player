@@ -7,7 +7,7 @@ namespace Alice.Tweedle
 	{
 		public BlockStatement Body { get; }
 
-		public DoInOrder(List<TweedleStatement> statements)
+		public DoInOrder(TweedleStatement[] statements)
 		{
 			Body = new BlockStatement(statements);
 		}

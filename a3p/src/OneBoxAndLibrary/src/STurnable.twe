@@ -1,0 +1,160 @@
+class STurnable extends SThing {
+
+	Boolean isFacing( SThing other ) {
+    return other.getTranslation( asSeenBy: this ).z < 0.0;
+	}
+
+	void turn( TurnDirection direction,
+	           Number amount,
+	           DecimalNumber duration <- Default.duration(),
+	           AnimationStyle animationStyle <- Default.animationStyle(),
+	           SThing asSeenBy <- this ) {
+    //TODO
+  		  // this.animateApplyRotation( axis: direction.getAxis(), revolutions: (new Angle(revolutions: amount)), viewer: asSeenBy, duration: duration, animation: animationStyle );
+		localTransformation.animateChange(axis: direction.getAxis(), revolutions: (new Angle(revolutions: amount)), viewer: asSeenBy, duration: duration, animation: animationStyle);
+	}
+
+	void roll( RollDirection direction,
+	           Number amount,
+	           DecimalNumber duration <- Default.duration(),
+	           AnimationStyle animationStyle <- Default.animationStyle(),
+	           SThing asSeenBy <- this ) {
+    //TODO
+		this.animateApplyRotation( axis: direction.getAxis(), revolutions: (new Angle(revolutions: amount)), viewer: asSeenBy, duration: duration, animation: animationStyle );
+	}
+
+	void turnToFace( SThing target,
+	                 DecimalNumber duration <- Default.duration(),
+	                 AnimationStyle animationStyle <- Default.animationStyle() ) {
+    //TODO
+		this.animateOrientationOnlyToFace( target: target, offset: null, duration: duration, animation: animationStyle );
+	}
+
+	void orientToUpright( DecimalNumber duration <- Default.duration(),
+	                      AnimationStyle animationStyle <- Default.animationStyle(),
+	                      SThing upAsSeenBy <- this.getScene() ) {
+    //TODO
+		this.animateOrientationToUpright( viewer: asSeenBy, duration: duration, animation: animationStyle );
+	}
+
+	void pointAt( SThing target,
+	              DecimalNumber duration <- Default.duration(),
+	              AnimationStyle animationStyle <- Default.animationStyle(),
+	              SThing upAsSeenBy <- this.getScene() ) {
+    //TODO
+		this.animateOrientationToPointAt( target: target, viewer: asSeenBy, duration: duration, animation: animationStyle );
+	}
+
+	void orientTo( SThing target,
+	               DecimalNumber duration <- Default.duration(),
+	               AnimationStyle animationStyle <- Default.animationStyle() ) {
+    //TODO
+		this.animateOrientationOnly( target: target, offset: null, duration: duration, animation: animationStyle );
+	}
+
+	@TuckedAway Orientation getOrientationRelativeToVehicle() {
+		return this.getLocalTransformation().orientation;
+	}
+
+	@CompletelyHidden VantagePoint getLocalTransformation() {
+		return this.getSgComposite().getLocalTransformation();
+	}
+
+	@TuckedAway void setOrientationRelativeToVehicle( Orientation orientation,
+                                                    DecimalNumber duration <- Default.duration(),
+                                                    AnimationStyle animationStyle <- Default.animationStyle() ) {
+    //TODO
+		if( vehicle != null ) {
+			this.animateOrientationOnly( vehicle: vehicle, orientation: orientation.getInternal(), duration: duration, animation: animationStyle );
+		} else {
+			AbstractTransformable sgTransformable <- this.getSgComposite();
+			VantagePoint m <- sgTransformable.getLocalTransformation();
+			m.orientation.setValue( orientation: orientation.getInternal() );
+			sgTransformable.setLocalTransformation( transformation: m );
+		}
+	}
+
+	DecimalNumber getDistanceTo( STurnable other ) {
+		return this.getTranslation( asSeenBy: other ).calculateMagnitude();
+	}
+
+
+
+	DecimalNumber getDistanceAbove( SThing other, SThing asSeenBy <- this.getScene() ) {
+		return this.getVerticalGap( lower: other, upper: this, asSeenBy: asSeenBy );
+	}
+
+	Boolean isAbove( SThing other, SThing asSeenBy <- this.getScene() ) {
+		return this.getDistanceAbove( target: other, asSeenBy: asSeenBy ) > 0;
+	}
+
+	DecimalNumber getDistanceBelow( SThing other, SThing asSeenBy <- this.getScene() ) {
+		return this.getVerticalGap( lower: this, upper: other, asSeenBy: asSeenBy );
+	}
+
+	Boolean isBelow( SThing other, SThing asSeenBy <- this.getScene() ) {
+		return this.getDistanceBelow( target: other, asSeenBy: asSeenBy ) > 0;
+	}
+
+	@CompletelyHidden DecimalNumber getVerticalGap( SThing lower, EntityImp upper, ReferenceFrame asSeenBy ) {
+		return this.differenceToEpsilon(a: upper.getMinPoint( asSeenBy: asSeenBy ).y,
+		                                b: lower.getMaxPoint( asSeenBy: asSeenBy ).y );
+	}
+
+
+	DecimalNumber getDistanceToTheRightOf( SThing other, SThing asSeenBy <- other ) {
+		return this.getLeftRightGap( left: other, right: this, viewer: asSeenBy );
+	}
+
+	Boolean isToTheRightOf( SThing other, SThing asSeenBy <- other ) {
+		return this.getDistanceToTheRightOf( target: other, viewer: asSeenBy ) > 0;
+	}
+
+	DecimalNumber getDistanceToTheLeftOf( SThing other, SThing asSeenBy <- other ) {
+		return this.getLeftRightGap( left: this, right: other, viewer: asSeenBy );
+	}
+
+	Boolean isToTheLeftOf( SThing other, SThing asSeenBy <- other ) {
+		return this.getDistanceToTheLeftOf( target: other, viewer: asSeenBy ) > 0;
+	}
+
+	@CompletelyHidden DecimalNumber getLeftRightGap( SThing left, EntityImp right, ReferenceFrame asSeenBy ) {
+    return this.differenceToEpsilon(a: right.getMinPoint( asSeenBy: asSeenBy ).x,
+                                    b: left.getMaxPoint( asSeenBy: asSeenBy ).x );
+  }
+
+
+	DecimalNumber getDistanceInFrontOf( SThing other, SThing asSeenBy <- other ) {
+		return this.getFrontBackGap( back: other, front: this, viewer: asSeenBy );
+	}
+
+	Boolean isInFrontOf( SThing other, SThing asSeenBy <- other ) {
+		return this.getDistanceInFrontOf( target: other, viewer: asSeenBy ) > 0;
+	}
+
+	DecimalNumber getDistanceBehind( SThing other, SThing asSeenBy <- other ) {
+		return this.getFrontBackGap( back: this, front: other, viewer: asSeenBy );
+	}
+
+	Boolean isBehind( SThing other, SThing asSeenBy <- other ) {
+		return this.getDistanceBehind( target: other, viewer: asSeenBy ) > 0;
+	}
+
+	@CompletelyHidden DecimalNumber getFrontBackGap( SThing back, EntityImp front, ReferenceFrame asSeenBy ) {
+		//Front and back calculations are flipped because -Z is front
+    return this.differenceToEpsilon(a: back.getMinPoint( asSeenBy: asSeenBy ).z,
+                                    b: front.getMaxPoint( asSeenBy: asSeenBy ).z );
+  }
+
+
+	@CompletelyHidden DecimalNumber differenceToEpsilon( DecimalNumber a, DecimalNumber b ) {
+		DecimalNumber diff <- a - b;
+		if($Math.abs( value: diff ) < .01) {
+			return 0;
+		}
+		return diff;
+	}
+
+	@CompletelyHidden SThing vehicle;
+	@CompletelyHidden VantagePointProperty localTransformation;
+}

@@ -27,7 +27,7 @@ namespace Alice.Tweedle
 			}
 			else
 			{
-				result = steps.Count > 0 ? steps[index - 1].Result : TweedleNull.NULL;
+				result = steps.Count > 0 ? steps[index - 1].Result : TValue.NULL;
 				base.Execute();
 			}
 		}

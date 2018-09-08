@@ -2,20 +2,18 @@
 {
 	public abstract class BinaryNumToNumExpression : BinaryExpression
 	{
-		public BinaryNumToNumExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.NUMBER)
+		public BinaryNumToNumExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+			: base(lhs, rhs, TStaticTypes.NUMBER)
 		{
 		}
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
+		protected override TValue Evaluate(TValue left, TValue right)
 		{
-			if (left.Type is TweedleWholeNumberType && right.Type is TweedleWholeNumberType)
+			if (left.Type == TStaticTypes.WHOLE_NUMBER && right.Type == TStaticTypes.WHOLE_NUMBER)
 			{
-				return TweedleTypes.WHOLE_NUMBER.Instantiate(
-					Evaluate(((TweedlePrimitiveValue<int>)left).Value,
-							 ((TweedlePrimitiveValue<int>)right).Value));
-			}
-			return TweedleTypes.DECIMAL_NUMBER.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
+                return TStaticTypes.WHOLE_NUMBER.Instantiate(Evaluate(left.ToInt(), right.ToInt()));
+            }
+			return TStaticTypes.DECIMAL_NUMBER.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
 		}
 
 		protected abstract int Evaluate(int left, int right);
@@ -25,20 +23,18 @@
 
 	public abstract class BinaryNumToBoolExpression : BinaryExpression
 	{
-		public BinaryNumToBoolExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.BOOLEAN)
+		public BinaryNumToBoolExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+			: base(lhs, rhs, TStaticTypes.BOOLEAN)
 		{
 		}
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
+		protected override TValue Evaluate(TValue left, TValue right)
 		{
-			if (left.Type is TweedleWholeNumberType && right.Type is TweedleWholeNumberType)
-			{
-				return TweedleTypes.BOOLEAN.Instantiate(
-					Evaluate(((TweedlePrimitiveValue<int>)left).Value,
-							 ((TweedlePrimitiveValue<int>)right).Value));
-			}
-			return TweedleTypes.BOOLEAN.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
+            if (left.Type == TStaticTypes.WHOLE_NUMBER && right.Type == TStaticTypes.WHOLE_NUMBER)
+            {
+                return TStaticTypes.BOOLEAN.Instantiate(Evaluate(left.ToInt(), right.ToInt()));
+            }
+            return TStaticTypes.BOOLEAN.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
 		}
 
 		protected abstract bool Evaluate(int left, int right);

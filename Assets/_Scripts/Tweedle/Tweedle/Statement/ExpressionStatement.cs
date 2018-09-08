@@ -4,9 +4,9 @@ namespace Alice.Tweedle
 {
 	public class ExpressionStatement : TweedleStatement
 	{
-		public TweedleExpression Expression { get; }
+		public ITweedleExpression Expression { get; }
 
-		public ExpressionStatement(TweedleExpression expression)
+		public ExpressionStatement(ITweedleExpression expression)
 		{
 			Expression = expression;
 		}

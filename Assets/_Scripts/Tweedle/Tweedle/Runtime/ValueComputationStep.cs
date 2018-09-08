@@ -5,10 +5,10 @@ namespace Alice.VM
 {
 	class ValueComputationStep : ExecutionStep
 	{
-		TweedleValue initialValue;
-		Func<TweedleValue, TweedleValue> body;
+		TValue initialValue;
+		Func<TValue, TValue> body;
 
-		public ValueComputationStep(string callStackEntry, ExecutionScope scope, Func<TweedleValue, TweedleValue> body)
+		public ValueComputationStep(string callStackEntry, ExecutionScope scope, Func<TValue, TValue> body)
 			: base(scope)
 		{
 			this.body = body;

@@ -3,19 +3,14 @@
 	class LogicalAndExpression : BinaryExpression
 	{
 
-		public LogicalAndExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.BOOLEAN)
+		public LogicalAndExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+			: base(lhs, rhs, TStaticTypes.BOOLEAN)
 		{
 		}
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
+		protected override TValue Evaluate(TValue left, TValue right)
 		{
-			return Eval((TweedlePrimitiveValue<bool>)left, (TweedlePrimitiveValue<bool>)right);
-		}
-
-		private TweedlePrimitiveValue<bool> Eval(TweedlePrimitiveValue<bool> left, TweedlePrimitiveValue<bool> right)
-		{
-			return TweedleTypes.BOOLEAN.Instantiate(left.Value && right.Value);
+			return TStaticTypes.BOOLEAN.Instantiate(left.ToBoolean() && right.ToBoolean());
 		}
 
 		internal override string Operator()

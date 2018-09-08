@@ -2,7 +2,7 @@
 {
 	class LessThanExpression : BinaryNumToBoolExpression
 	{
-		public LessThanExpression(TweedleExpression lhs, TweedleExpression rhs)
+		public LessThanExpression(ITweedleExpression lhs, ITweedleExpression rhs)
 			: base(lhs, rhs)
 		{
 		}

@@ -9,7 +9,7 @@ namespace Alice.Tweedle
 		{
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			return new ValueStep("this", scope, scope.GetThis());
 		}

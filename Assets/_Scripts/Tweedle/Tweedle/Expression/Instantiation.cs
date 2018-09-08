@@ -5,22 +5,18 @@ namespace Alice.Tweedle
 {
 	public class Instantiation : TweedleExpression
 	{
-		internal Dictionary<string, TweedleExpression> Arguments { get; }
+        private readonly NamedArgument[] m_Arguments;
 
-		public Instantiation(TweedleTypeReference type, Dictionary<string, TweedleExpression> arguments)
-			: base(type)
+        public Instantiation(TTypeRef inType, NamedArgument[] inArguments)
+			: base(inType)
 		{
-			Arguments = arguments;
-			if (type == null)
-			{
-				UnityEngine.Debug.Log("Placeholder");
-			}
+			m_Arguments = inArguments;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			ConstructorScope ctrScope = scope.ForInstantiation(Type.AsClass(scope));
-			return ctrScope.InvocationStep("Instantiation", Arguments);
+			ConstructorScope ctrScope = scope.ForInstantiation(Type.Get(scope));
+			return ctrScope.InvocationStep("Instantiation", m_Arguments);
 		}
 	}
 }

@@ -4,24 +4,29 @@ namespace Alice.Tweedle
 {
 	public abstract class BinaryExpression : TweedleExpression
 	{
-		TweedleExpression lhs;
-		TweedleExpression rhs;
+		ITweedleExpression lhs;
+		ITweedleExpression rhs;
 
-		public BinaryExpression(TweedleExpression lhs, TweedleExpression rhs, TweedleType type)
+		public BinaryExpression(ITweedleExpression lhs, ITweedleExpression rhs, TType type)
 			: base(type)
 		{
 			this.lhs = lhs;
 			this.rhs = rhs;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			return new TwoValueComputationStep(ToTweedle(), scope, lhs, rhs, Evaluate);
 		}
 
-		protected abstract TweedleValue Evaluate(TweedleValue left, TweedleValue right);
+		public TValue EvaluateLiteral()
+		{
+            return Evaluate((TValue)lhs, (TValue)rhs);
+        }
 
-		internal override string ToTweedle()
+		protected abstract TValue Evaluate(TValue left, TValue right);
+
+		public override string ToTweedle()
 		{
 			return lhs.ToTweedle() + " " + Operator() + " " + rhs.ToTweedle();
 		}

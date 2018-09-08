@@ -1,0 +1,5 @@
+class SProp extends SJointedModel {
+  SProp(TextString resource) {
+    super(resource: resource);
+  }
+}

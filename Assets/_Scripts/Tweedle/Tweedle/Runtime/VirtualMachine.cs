@@ -24,7 +24,8 @@ namespace Alice.VM
 		internal void Initialize(TweedleSystem tweedleSystem)
 		{
 			Library = tweedleSystem;
-			InstantiateEnums();
+
+            InstantiateEnums();
 			// TODO Evaluate static variables
 			// make enums hard refs?
 		}

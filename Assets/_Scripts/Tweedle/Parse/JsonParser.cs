@@ -96,16 +96,16 @@ namespace Alice.Tweedle.Parse
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TweedleClass tweClass = (TweedleClass)tweedleParser.ParseType(tweedleCode);
+						TType tweClass = (TType)tweedleParser.ParseType(tweedleCode);
 						system.AddClass(tweClass);
 					}
 					return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
 				case ContentType.Enum:
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
-						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TweedleEnum tweedleEnum = (TweedleEnum)tweedleParser.ParseType(tweedleCode);
-						system.AddEnum(tweedleEnum);
+						// string tweedleCode = ReadEntry(resourceRef.files[j]);
+						// TweedleEnum tweedleEnum = (TweedleEnum)tweedleParser.ParseType(tweedleCode);
+						// system.AddEnum(tweedleEnum);
 					}
 					return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
 				case ContentType.Image:

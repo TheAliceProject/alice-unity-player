@@ -2,49 +2,28 @@
 
 namespace Alice.Tweedle
 {
-	public abstract class TweedleExpression
+	public abstract class TweedleExpression : ITweedleExpression
 	{
-		public TweedleType Type { get; }
+        protected readonly TTypeRef m_TypeRef;
+
+        public TTypeRef Type { get { return m_TypeRef; } }
 
 		protected TweedleExpression()
 		{
-			Type = null;
+			m_TypeRef = null;
 		}
 
-		protected TweedleExpression(TweedleType type)
+		protected TweedleExpression(TTypeRef typeRef)
 		{
-			Type = type;
-		}
+            m_TypeRef = typeRef;
+        }
 
-		public TweedleValue EvaluateNow(ExecutionScope scope)
-		{
-			TweedleValue result = null;
-			var expStep = AsStep(scope);
-			var storeStep = new ValueOperationStep(
-					"EvaluateNow",
-					scope,
-					value => result = value);
-			expStep.OnCompletionNotify(storeStep);
-			expStep.EvaluateNow();
-			return result;
-		}
-
-		public TweedleValue EvaluateNow()
-		{
-			return EvaluateNow(new ExecutionScope("EvaluateNow"));
-		}
-
-		internal virtual bool IsLiteral()
-		{
-			return false;
-		}
-
-		internal virtual string ToTweedle()
+		public virtual string ToTweedle()
 		{
 			// TODO Override in all subclasses and make this abstract
 			return ToString();
 		}
 
-		internal abstract ExecutionStep AsStep(ExecutionScope scope);
+		public abstract ExecutionStep AsStep(ExecutionScope scope);
 	}
 }

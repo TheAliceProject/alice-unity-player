@@ -3,51 +3,46 @@ using System.Linq;
 
 namespace Alice.Tweedle
 {
-	public class TweedleEnum : TweedleTypeDeclaration
-	{
-		List<TweedleEnumValue> values = new List<TweedleEnumValue>();
+	// public class TweedleEnum : TweedleTypeDeclaration
+	// {
+	// 	List<TweedleEnumValue> values = new List<TweedleEnumValue>();
 
-		public List<string> Values
-		{
-			get { return values.Select(v => v.Name).ToList(); }
-		}
+	// 	public List<string> Values
+	// 	{
+	// 		get { return values.Select(v => v.Name).ToList(); }
+	// 	}
 
-		public TweedleEnum(string name,
-			List<TweedleField> properties,
-			List<TweedleMethod> methods,
-			List<TweedleConstructor> constructors)
-			: base(name, properties, methods, constructors)
-		{
-		}
+	// 	public TweedleEnum(string name,
+	// 		List<TField> properties,
+	// 		List<TMethod> methods,
+	// 		List<TweedleConstructor> constructors)
+	// 		: base(name, properties, methods, constructors)
+	// 	{
+	// 	}
 
-		public void AddEnumValue(TweedleEnumValue value)
-		{
-			values.Add(value);
-		}
+	// 	public void AddEnumValue(TweedleEnumValue value)
+	// 	{
+	// 		values.Add(value);
+	// 	}
 
-		internal override TweedleEnum AsEnum(ExecutionScope scope)
-		{
-			return this;
-		}
-	}
+	// 	internal override TweedleEnum AsEnum(ExecutionScope scope)
+	// 	{
+	// 		return this;
+	// 	}
+	// }
 
-	public class TweedleEnumValue : TweedleValue
-	{
-		public string Name { get; }
-		public TweedleEnum EnumType { get; }
-		Dictionary<string, TweedleExpression> arguments;
+	// // Implement as TweedleObject with only readonly fields
+	// public class TweedleEnumValue
+	// {
+	// 	public string Name { get; }
+	// 	public TweedleEnum EnumType { get; }
+	// 	NamedArgument[] arguments;
 
-		public TweedleEnumValue(TweedleEnum type, string name, Dictionary<string, TweedleExpression> arguments)
-			: base(type)
-		{
-			EnumType = type;
-			Name = name;
-			this.arguments = arguments;
-		}
-
-		internal override TweedleMethod MethodNamed(ExecutionScope scope, string methodName)
-		{
-			return EnumType.MethodNamed(scope, methodName);
-		}
-	}
+	// 	public TweedleEnumValue(TweedleEnum type, string name, NamedArgument[] arguments)
+	// 	{
+	// 		EnumType = type;
+	// 		Name = name;
+	// 		this.arguments = arguments;
+	// 	}
+	// }
 }
