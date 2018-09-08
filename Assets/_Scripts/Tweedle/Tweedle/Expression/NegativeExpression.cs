@@ -2,51 +2,61 @@
 
 namespace Alice.Tweedle
 {
-	public abstract class NegativeExpression : TweedleExpression
+	public abstract class NegativeExpression : UnaryExpression
 	{
-		protected TweedleExpression expression;
+		protected ITweedleExpression expression;
 
-		internal NegativeExpression(TweedleType type, TweedleExpression expression)
+		internal NegativeExpression(TType type, ITweedleExpression expression)
 			: base(type)
 		{
 			this.expression = expression;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			var val = expression.AsStep(scope);
 			val.OnCompletionNotify(new ValueComputationStep("-" + expression.ToTweedle(), scope, Negate));
 			return val;
 		}
 
-		internal abstract TweedleValue Negate(TweedleValue value);
+		public override TValue EvaluateLiteral()
+		{
+            return Negate((TValue)expression);
+        }
+
+		internal abstract TValue Negate(TValue value);
+
+		public override string ToTweedle()
+		{
+			return "-" + expression.ToTweedle();
+		}
 	}
 
 	public class NegativeWholeExpression : NegativeExpression
 	{
 
-		public NegativeWholeExpression(TweedleExpression expression)
-			: base(TweedleTypes.WHOLE_NUMBER, expression)
+		public NegativeWholeExpression(ITweedleExpression expression)
+			: base(TStaticTypes.WHOLE_NUMBER, expression)
 		{
 		}
 
-		internal override TweedleValue Negate(TweedleValue value)
+		internal override TValue Negate(TValue value)
 		{
-			return TweedleTypes.WHOLE_NUMBER.Instantiate(0 - value.ToInt());
+			return TStaticTypes.WHOLE_NUMBER.Instantiate(0 - value.ToInt());
 		}
 	}
 
 	public class NegativeDecimalExpression : NegativeExpression
 	{
 
-		public NegativeDecimalExpression(TweedleExpression expression)
-			: base(TweedleTypes.DECIMAL_NUMBER, expression)
+		public NegativeDecimalExpression(ITweedleExpression expression)
+			: base(TStaticTypes.DECIMAL_NUMBER, expression)
 		{
 		}
 
-		internal override TweedleValue Negate(TweedleValue value)
+		internal override TValue Negate(TValue value)
 		{
-			return TweedleTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble());
+			return TStaticTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble());
 		}
 	}
 }

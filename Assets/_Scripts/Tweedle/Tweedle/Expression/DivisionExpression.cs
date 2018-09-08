@@ -2,7 +2,7 @@
 {
 	class DivisionExpression : BinaryNumToNumExpression
 	{
-		public DivisionExpression(TweedleExpression lhs, TweedleExpression rhs)
+		public DivisionExpression(ITweedleExpression lhs, ITweedleExpression rhs)
 			: base(lhs, rhs)
 		{
 		}

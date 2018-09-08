@@ -1,0 +1,241 @@
+class SQuadruped extends SJointedModel {
+  SQuadruped(TextString resource) {
+    super(resource: resource);
+  }
+
+  void walkTo(SThing entity) {
+  }
+
+  void touch(SThing entity) {
+  }
+	static JointId ROOT <- new JointId(name: "root", parent: null);
+	static JointId SPINE_BASE <- new JointId(name: "spine1", parent: ROOT);
+	static JointId SPINE_MIDDLE <- new JointId(name: "spine2", parent: SPINE_BASE);
+	static JointId SPINE_UPPER <- new JointId(name: "spine3", parent: SPINE_MIDDLE);
+
+	static JointId NECK <- new JointId(name: "neck", parent: SPINE_UPPER);
+	static JointId HEAD <- new JointId(name: "head", parent: NECK);
+	static JointId MOUTH <- new JointId(name: "jaw", parent: HEAD);
+	static JointId LEFT_EYE <- new JointId(name: "eye_L", parent: HEAD);
+	static JointId LEFT_EYELID <- new JointId(name: "eyeLid_L", parent: HEAD);
+	static JointId LEFT_EAR <- new JointId(name: "ear1_L", parent: HEAD);
+	static JointId RIGHT_EYE <- new JointId(name: "eye_R", parent: HEAD);
+	static JointId RIGHT_EYELID <- new JointId(name: "eyeLid_R", parent: HEAD);
+	static JointId RIGHT_EAR <- new JointId(name: "ear1_R", parent: HEAD);
+
+
+	static JointId FRONT_LEFT_CLAVICLE <- new JointId(name: "clav_L", parent: SPINE_UPPER);
+	static JointId FRONT_LEFT_SHOULDER <- new JointId(name: "shoulder_L", parent: FRONT_LEFT_CLAVICLE);
+	static JointId FRONT_LEFT_KNEE <- new JointId(name: "knee_L", parent: FRONT_LEFT_HIP);
+	static JointId FRONT_LEFT_ANKLE <- new JointId(name: "ankle_L", parent: FRONT_LEFT_KNEE);
+	static JointId FRONT_LEFT_FOOT <- new JointId(name: "foot_L", parent: FRONT_LEFT_ANKLE);
+	static JointId FRONT_LEFT_TOE <- new JointId(name: "toe_L", parent: FRONT_LEFT_FOOT);
+
+	static JointId FRONT_RIGHT_CLAVICLE <- new JointId(name: "clav_L", parent: SPINE_UPPER);
+	static JointId FRONT_RIGHT_SHOULDER <- new JointId(name: "shoulder_L", parent: FRONT_RIGHT_CLAVICLE);
+	static JointId FRONT_RIGHT_KNEE <- new JointId(name: "knee_L", parent: FRONT_RIGHT_HIP);
+	static JointId FRONT_RIGHT_ANKLE <- new JointId(name: "ankle_L", parent: FRONT_RIGHT_KNEE);
+	static JointId FRONT_RIGHT_FOOT <- new JointId(name: "foot_L", parent: FRONT_RIGHT_ANKLE);
+	static JointId FRONT_RIGHT_TOE <- new JointId(name: "toe_L", parent: FRONT_RIGHT_FOOT);
+
+	static JointId PELVIS_LOWER_BODY <- new JointId(name: "pelvis", parent: ROOT);
+
+	//Tails are included as arrays access
+	@CompletelyHidden static JointId TAIL_0 <- new JointId(name: "tail_0", parent: PELVIS_LOWER_BODY);
+	@CompletelyHidden static JointId TAIL_1 <- new JointId(name: "tail_1", parent: TAIL_0);
+	@CompletelyHidden static JointId TAIL_2 <- new JointId(name: "tail_2", parent: TAIL_1);
+	@CompletelyHidden static JointId TAIL_3 <- new JointId(name: "tail_3", parent: TAIL_2);
+
+	static JointId BACK_LEFT_HIP <- new JointId(name: "hip_L", parent:  PELVIS_LOWER_BODY);
+	static JointId BACK_LEFT_KNEE <- new JointId(name: "back_knee_L", parent: BACK_LEFT_HIP);
+	static JointId BACK_LEFT_HOCK <- new JointId(name: "hock_L", parent: BACK_LEFT_KNEE);
+	static JointId BACK_LEFT_ANKLE <- new JointId(name: "back_ankle_L", parent: BACK_LEFT_HOCK);
+	static JointId BACK_LEFT_FOOT <- new JointId(name: "back_foot_L", parent: BACK_LEFT_ANKLE);
+	static JointId BACK_LEFT_TOE <- new JointId(name: "back_toe_L", parent: BACK_LEFT_FOOT);
+
+	static JointId BACK_RIGHT_HIP <- new JointId(name: "hip_R", parent:  PELVIS_LOWER_BODY);
+	static JointId BACK_RIGHT_KNEE <- new JointId(name: "back_knee_R", parent: BACK_RIGHT_HIP);
+	static JointId BACK_RIGHT_HOCK <- new JointId(name: "hock_R", parent: BACK_RIGHT_KNEE);
+	static JointId BACK_RIGHT_ANKLE <- new JointId(name: "back_ankle_R", parent: BACK_RIGHT_HOCK);
+	static JointId BACK_RIGHT_FOOT <- new JointId(name: "back_foot_R", parent: BACK_RIGHT_ANKLE);
+	static JointId BACK_RIGHT_TOE <- new JointId(name: "back_toe_R", parent: BACK_RIGHT_FOOT);
+
+  SJoint getRoot() {
+    return getJoint(joint: ROOT);
+  }
+
+  SJoint getPelvisLowerBody() {
+    return getJoint(joint: PELVIS_LOWER_BODY);
+  }
+
+  SJoint getSpineBase() {
+    return getJoint(joint: SPINE_BASE);
+  }
+
+  SJoint getSpineMiddle() {
+    return getJoint(joint: SPINE_MIDDLE);
+  }
+
+  SJoint getSpineUpper() {
+    return getJoint(joint: SPINE_UPPER);
+  }
+
+  SJoint getNeck() {
+    return getJoint(joint: NECK);
+  }
+
+  SJoint getHead() {
+    return getJoint(joint: HEAD);
+  }
+
+  SJoint getMouth() {
+    return getJoint(joint: MOUTH);
+  }
+
+  SJoint getRightEye() {
+    return getJoint(joint: RIGHT_EYE);
+  }
+
+  SJoint getLeftEye() {
+    return getJoint(joint: LEFT_EYE);
+  }
+
+  SJoint getLeftEyelid() {
+    return getJoint(joint: LEFT_EYELID);
+  }
+
+  SJoint getRightEyelid() {
+    return getJoint(joint: RIGHT_EYELID);
+  }
+
+  SJoint getLeftEar() {
+    return getJoint(joint: LEFT_EAR);
+  }
+
+  SJoint getRightEar() {
+    return getJoint(joint: RIGHT_EAR);
+  }
+
+  SJoint getFrontLeftClavicle() {
+    return getJoint(joint: FRONT_LEFT_CLAVICLE);
+  }
+
+  SJoint getFrontLeftShoulder() {
+    return getJoint(joint: FRONT_LEFT_SHOULDER);
+  }
+
+  SJoint getFrontLeftKnee() {
+    return getJoint(joint: FRONT_LEFT_KNEE);
+  }
+
+  SJoint getFrontLeftAnkle() {
+    return getJoint(joint: FRONT_LEFT_ANKLE);
+  }
+
+  SJoint getFrontLeftFoot() {
+    return getJoint(joint: FRONT_LEFT_FOOT);
+  }
+
+  SJoint getFrontLeftToe() {
+    return getJoint(joint: FRONT_LEFT_TOE);
+  }
+
+  SJoint getFrontRightClavicle() {
+    return getJoint(joint: FRONT_RIGHT_CLAVICLE);
+  }
+
+  SJoint getFrontRightShoulder() {
+    return getJoint(joint: FRONT_RIGHT_SHOULDER);
+  }
+
+  SJoint getFrontRightKnee() {
+    return getJoint(joint: FRONT_RIGHT_KNEE);
+  }
+
+  SJoint getFrontRightAnkle() {
+    return getJoint(joint: FRONT_RIGHT_ANKLE);
+  }
+
+  SJoint getFrontRightFoot() {
+    return getJoint(joint: FRONT_RIGHT_FOOT);
+  }
+
+  SJoint getFrontRightToe() {
+    return getJoint(joint: FRONT_RIGHT_TOE);
+  }
+
+  SJoint[] getTailArray() {
+    // TODO
+  }
+
+  SJoint getTail() {
+    return getJoint(joint: TAIL_0);
+  }
+
+  SJoint getTail1() {
+    return getJoint(joint: TAIL_0);
+  }
+
+  SJoint getTail2() {
+    return getJoint(joint: TAIL_1);
+  }
+
+  SJoint getTail3() {
+    return getJoint(joint: TAIL_2);
+  }
+
+  SJoint getTail4() {
+    return getJoint(joint: TAIL_3);
+  }
+
+  SJoint getBackLeftHip() {
+    return getJoint(joint: BACK_LEFT_HIP);
+  }
+
+  SJoint getBackLeftKnee() {
+    return getJoint(joint: BACK_LEFT_KNEE);
+  }
+
+  SJoint getBackLeftHock() {
+    return getJoint(joint: BACK_LEFT_HOCK);
+  }
+
+  SJoint getBackLeftAnkle() {
+    return getJoint(joint: BACK_LEFT_ANKLE);
+  }
+
+  SJoint getBackLeftFoot() {
+    return getJoint(joint: BACK_LEFT_FOOT);
+  }
+
+  SJoint getBackLeftToe() {
+    return getJoint(joint: BACK_LEFT_TOE);
+  }
+
+  SJoint getBackRightHip() {
+    return getJoint(joint: BACK_RIGHT_HIP);
+  }
+
+  SJoint getBackRightKnee() {
+    return getJoint(joint: BACK_RIGHT_KNEE);
+  }
+
+  SJoint getBackRightHock() {
+    return getJoint(joint: BACK_RIGHT_HOCK);
+  }
+
+  SJoint getBackRightAnkle() {
+    return getJoint(joint: BACK_RIGHT_ANKLE);
+  }
+
+  SJoint getBackRightFoot() {
+    return getJoint(joint: BACK_RIGHT_FOOT);
+  }
+
+  SJoint getBackRightToe() {
+    return getJoint(joint: BACK_RIGHT_TOE);
+  }
+
+  void strikePose(QuadrupedPose pose) {
+  }
+}

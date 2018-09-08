@@ -6,7 +6,7 @@ namespace Alice.Tweedle
 	{
 		public BlockStatement Body { get; }
 
-		public AbstractLoop(List<TweedleStatement> statements)
+		public AbstractLoop(TweedleStatement[] statements)
 		{
 			Body = new BlockStatement(statements);
 		}

@@ -12,7 +12,7 @@ namespace Alice.Tweedle
 			Name = name;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			return new ValueStep("Get Identifier " + Name, scope, scope.GetValue(Name));
 		}

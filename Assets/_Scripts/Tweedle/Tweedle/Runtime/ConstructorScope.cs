@@ -3,48 +3,66 @@ using Alice.VM;
 
 namespace Alice.Tweedle
 {
-	class ConstructorScope : InvocationScope
+	public class ConstructorScope : InvocationScope
 	{
-		internal TweedleClass tweedleClass;
+		private TType m_Type;
+        private bool m_RootInitializer;
 
-		internal ConstructorScope(ExecutionScope caller, TweedleClass tweedleClass)
-			: base(caller)
+        internal ConstructorScope(ExecutionScope inCaller, TType inClass)
+			: base(inCaller)
 		{
-			this.tweedleClass = tweedleClass;
-			thisValue = new TweedleObject(tweedleClass);
+			m_Type = inClass;
+			thisValue = inClass.CanInstantiateDefault() ? inClass.Instantiate() : TValue.UNDEFINED;
 			Result = thisValue;
-			callStackEntry = "new " + tweedleClass.Name;
-		}
+			callStackEntry = "new " + inClass.Name;
+            m_RootInitializer = true;
+        }
 
-		ConstructorScope(ConstructorScope constructorSubclassScope, TweedleClass superClass, TweedleConstructor constructor)
-			: base(constructorSubclassScope)
+		private ConstructorScope(ConstructorScope inSubclassScope, TType inSuperType, TMethod inConstructor)
+			: base(inSubclassScope)
 		{
-			tweedleClass = superClass;
-			thisValue = constructorSubclassScope.thisValue;
+			m_Type = inSuperType;
+			thisValue = inSubclassScope.thisValue;
 			Result = thisValue;
-			Method = constructor;
-			callStackEntry = "super() => " + tweedleClass.Name;
-		}
+			Method = inConstructor;
+			callStackEntry = "super() => " + m_Type.Name;
+            m_RootInitializer = false;
+        }
 
-		internal override ExecutionStep InvocationStep(string callStackEntry, Dictionary<string, TweedleExpression> arguments)
+		protected override ScopePermissions GetPermissions()
 		{
-			Method = tweedleClass.ConstructorWithArgs(arguments);
-			return base.InvocationStep(callStackEntry, arguments);
-		}
+            return base.GetPermissions() | ScopePermissions.WriteReadonlyFields;
+        }
 
-		internal ConstructorScope SuperScope(Dictionary<string, TweedleExpression> arguments)
+		internal override ExecutionStep InvocationStep(string callStackEntry, NamedArgument[] arguments)
 		{
-			TweedleClass superClass = tweedleClass.SuperClass(this);
-			while (superClass != null)
+			Method = m_Type.Constructor(this, arguments);
+            if (m_RootInitializer)
+            {
+                StepSequence main = new StepSequence(callStackEntry, this);
+                m_Type.AddDefaultInitializer(this, main);
+                main.AddStep(Method.AsStep(callStackEntry, this, arguments));
+                return main;
+            }
+			else
 			{
-				TweedleConstructor superConst = superClass?.ConstructorWithArgs(arguments);
+                return base.InvocationStep(callStackEntry, arguments);
+            }
+        }
+
+		internal ConstructorScope SuperScope(NamedArgument[] arguments)
+		{
+			TType superType = m_Type.SuperType?.Get(this);
+			while (superType != null)
+			{
+				TMethod superConst = superType.Constructor(this, arguments);
 				if (superConst != null)
 				{
-					return new ConstructorScope(this, superClass, superConst);
+					return new ConstructorScope(this, superType, superConst);
 				}
-				superClass = superClass.SuperClass(this);
+				superType = superType.SuperType?.Get(this);
 			}
-			throw new TweedleRuntimeException("No super constructor on" + tweedleClass + " with args " + arguments);
+			throw new TweedleRuntimeException("No super constructor on" + m_Type + " with args " + arguments);
 		}
 	}
 }

@@ -15,12 +15,12 @@ namespace Alice.Tweedle.Parse
 
 		public Dictionary<ResourceIdentifier, ResourceReference> Resources { get; private set; }
 
-		public Dictionary<string, TweedleClass> Classes { get; private set; }
-		Dictionary<string, TweedlePrimitiveClass> primitives;
-		public Dictionary<string, TweedleEnum> Enums { get; private set; }
-		public Dictionary<string, TweedleType> Types { get; private set; }
+		// public Dictionary<string, TClassType> Classes { get; private set; }
+		// Dictionary<string, TweedlePrimitiveClass> primitives;
+		// public Dictionary<string, TweedleEnum> Enums { get; private set; }
+		public Dictionary<string, TType> Types { get; private set; }
 
-		public TweedleSystem()
+        public TweedleSystem()
 		{
 			LoadedFiles = new HashSet<ProjectIdentifier>();
 
@@ -30,16 +30,21 @@ namespace Alice.Tweedle.Parse
 
 			Resources = new Dictionary<ResourceIdentifier, ResourceReference>();
 
-			Classes = new Dictionary<string, TweedleClass>();
-			Enums = new Dictionary<string, TweedleEnum>();
-			Types = new Dictionary<string, TweedleType>();
-			InitializePrimitives();
+			// Classes = new Dictionary<string, TClassType>();
+			// Enums = new Dictionary<string, TweedleEnum>();
+			Types = new Dictionary<string, TType>();
+            InitializePrimitives();
 		}
 
 		private void InitializePrimitives()
 		{
-			primitives = new Dictionary<string, TweedlePrimitiveClass>();
-		}
+			foreach(var prim in TStaticTypes.ALL_PRIMITIVE_TYPES)
+                AddClass(prim);
+
+            AddClass(new TPObjectType(typeof(Modules.DebugModule)));
+            AddClass(new TPObjectType(typeof(Modules.Portion)));
+            // primitives = new Dictionary<string, TweedlePrimitiveClass>();
+        }
 
 		public void AddLibrary(LibraryManifest libAsset)
 		{
@@ -59,55 +64,66 @@ namespace Alice.Tweedle.Parse
 			Models.Add(modelAsset.Identifier.id, modelAsset);
 		}
 
-		public void AddClass(TweedleClass tweClass)
+		public void AddClass(TType tweClass)
 		{
-			Classes.Add(tweClass.Name, tweClass);
 			Types.Add(tweClass.Name, tweClass);
 
 		}
 
-		internal TweedleClass ClassNamed(string name)
+		public void Resolve()
 		{
-			return Classes[name];
+            foreach (var typeVal in Types.Values)
+            {
+                TType.Finalize(this, typeVal);
+                // UnityEngine.Debug.Log(TType.Dump(typeVal));
+            }
+        }
+
+		internal TType ClassNamed(string name)
+		{
+			return Types[name];
 		}
 
-		internal TweedleEnum EnumNamed(string name)
+		// internal TweedleEnum EnumNamed(string name)
+		// {
+		// 	return Enums[name];
+		// }
+
+		internal TType TypeNamed(string name)
 		{
-			return Enums[name];
+            TType type;
+            Types.TryGetValue(name, out type);
+            return type;
+            // if (name.StartsWith("$", StringComparison.Ordinal))
+			// {
+			// 	return PrimitiveDeclaration(name);
+			// }
+			// if (Classes.ContainsKey(name))
+			// {
+			// 	return Classes[name];
+			// }
+			// if (Enums.ContainsKey(name))
+			// {
+			// 	return Enums[name];
+			// }
+			// return null;
 		}
 
-		internal TweedleTypeDeclaration TypeNamed(string name)
-		{
-			if (name.StartsWith("$", StringComparison.Ordinal))
-			{
-				return PrimitiveDeclaration(name);
-			}
-			if (Classes.ContainsKey(name))
-			{
-				return Classes[name];
-			}
-			if (Enums.ContainsKey(name))
-			{
-				return Enums[name];
-			}
-			return null;
-		}
+		// TType PrimitiveDeclaration(string name)
+		// {
+		// 	if (primitives.ContainsKey(name))
+		// 	{
+		// 		return primitives[name];
+		// 	}
+		// 	UnityEngine.Debug.LogError("Attempt to invoke missing primitive namespace " + name);
+		// 	return new AbsentPrimitiveClassStub(name);
+		// }
 
-		TweedlePrimitiveClass PrimitiveDeclaration(string name)
-		{
-			if (primitives.ContainsKey(name))
-			{
-				return primitives[name];
-			}
-			UnityEngine.Debug.LogError("Attempt to invoke missing primitive namespace " + name);
-			return new AbsentPrimitiveClassStub(name);
-		}
-
-		public void AddEnum(TweedleEnum tweEnum)
-		{
-			Enums.Add(tweEnum.Name, tweEnum);
-			Types.Add(tweEnum.Name, tweEnum);
-		}
+		// public void AddEnum(TweedleEnum tweEnum)
+		// {
+		// 	Enums.Add(tweEnum.Name, tweEnum);
+		// 	Types.Add(tweEnum.Name, tweEnum);
+		// }
 
 		public void AddResource(ResourceReference resourceAsset)
 		{
@@ -117,15 +133,13 @@ namespace Alice.Tweedle.Parse
 
 		internal void QueueProgramMain(VirtualMachine vm)
 		{
-			TweedleClass prog;
+			TType prog;
 			vm.Initialize(this);
-			if (Classes.TryGetValue("Program", out prog))
+			if (Types.TryGetValue("Program", out prog))
 			{
-				TypeValue progVal = new TypeValue(prog);
-				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-				arguments.Add("args", new TweedleArray(new TweedleArrayType(TweedleTypes.TEXT_STRING),
-														 new List<TweedleValue>()));
-				vm.Queue(new MethodCallExpression(progVal, "main", arguments));
+				TValue progVal = TStaticTypes.TYPE_REF.Instantiate(prog);
+				NamedArgument[] arguments = NamedArgument.EMPTY_ARGS;
+                vm.Queue(new MethodCallExpression(progVal, "main", arguments));
 			}
 		}
 	}

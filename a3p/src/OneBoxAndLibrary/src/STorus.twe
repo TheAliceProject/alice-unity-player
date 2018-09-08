@@ -1,0 +1,27 @@
+class STorus extends SShape {
+  STorus() {
+  }
+
+  DecimalNumber getInnerRadius() {
+    return innerRadius.getValue();
+  }
+
+  void setInnerRadius(Number radius,
+                 DecimalNumber duration <- Default.duration(),
+                 AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.innerRadius.animateValue( endValue: radius, duration: duration, animation: animationStyle );
+  }
+
+  DecimalNumber getOuterRadius() {
+    return outerRadius.getValue();
+  }
+
+  void setOuterRadius(Number radius,
+                      DecimalNumber duration <- Default.duration(),
+                      AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.outerRadius.animateValue( endValue: radius, duration: duration, animation: animationStyle );
+  }
+
+  @CompletelyHidden DecimalNumberProperty innerRadius;
+  @CompletelyHidden DecimalNumberProperty outerRadius;
+}

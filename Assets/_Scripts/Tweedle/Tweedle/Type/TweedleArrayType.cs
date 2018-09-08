@@ -1,31 +1,31 @@
 ﻿namespace Alice.Tweedle
 {
-	public class TweedleArrayType : TweedleType
-	{
-		private TweedleType valueType;
+	// public class TweedleArrayType : TweedleType
+	// {
+	// 	private TType valueType;
 
-		public TweedleType ValueType
-		{
-			get { return valueType; }
-		}
+	// 	public TType ValueType
+	// 	{
+	// 		get { return valueType; }
+	// 	}
 
-		public TweedleArrayType()
-			: base("[]")
-		{
-			this.valueType = null;
-		}
+	// 	public TweedleArrayType()
+	// 		: base("[]")
+	// 	{
+	// 		this.valueType = null;
+	// 	}
 
-		public TweedleArrayType(TweedleType valueType)
-			: base(valueType?.Name + "[]")
-		{
-			this.valueType = valueType;
-		}
+	// 	public TweedleArrayType(TType valueType)
+	// 		: base(valueType?.Name + "[]")
+	// 	{
+	// 		this.valueType = valueType;
+	// 	}
 
-		public override bool AcceptsType(TweedleType type)
-		{
-			return this == type ||
-							((type is TweedleArrayType) &&
-							(valueType == null || valueType.AcceptsType(((TweedleArrayType)type).valueType)));
-		}
-	}
+	// 	public override bool AcceptsType(TType type)
+	// 	{
+	// 		return this == type ||
+	// 						((type is TweedleArrayType) &&
+	// 						(valueType == null || valueType.AcceptsType(((TweedleArrayType)type).valueType)));
+	// 	}
+	// }
 }

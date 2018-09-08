@@ -10,10 +10,10 @@ namespace Alice.VM
 		internal string callStack;
 		protected internal ExecutionScope scope;
 
-		protected TweedleValue result = TweedleNull.NULL;
-		public TweedleValue Result { get { return result; } }
+		protected TValue result = TValue.NULL;
+		public TValue Result { get { return result; } }
 
-		internal TweedleValue EvaluateNow()
+		public TValue EvaluateNow()
 		{
 			Queue();
 			return result;
@@ -39,7 +39,7 @@ namespace Alice.VM
 			}
 		}
 
-		internal ExecutionStep OnCompletionNotify(ExecutionStep finalNext)
+		public ExecutionStep OnCompletionNotify(ExecutionStep finalNext)
 		{
 			if (next == null)
 			{

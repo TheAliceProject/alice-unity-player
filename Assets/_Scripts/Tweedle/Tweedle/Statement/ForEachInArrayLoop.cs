@@ -5,10 +5,10 @@ namespace Alice.Tweedle
 {
 	public class ForEachInArrayLoop : AbstractLoop
 	{
-		internal TweedleLocalVariable item;
-		TweedleExpression array;
+		internal TLocalVariable item;
+		ITweedleExpression array;
 
-		public ForEachInArrayLoop(TweedleLocalVariable item, TweedleExpression array, List<TweedleStatement> body)
+		public ForEachInArrayLoop(TLocalVariable item, ITweedleExpression array, TweedleStatement[] body)
 			: base(body)
 		{
 			this.item = item;
@@ -23,7 +23,7 @@ namespace Alice.Tweedle
 
 	internal class ForEachInArrayStep : LoopStep<ForEachInArrayLoop>
 	{
-		TweedleArray items;
+		TArray items;
 		int index = 0;
 
 		public ForEachInArrayStep(ForEachInArrayLoop statement, ExecutionScope scope, ExecutionStep next)
@@ -36,7 +36,7 @@ namespace Alice.Tweedle
 			base.BlockerFinished(blockingStep);
 			if (items == null)
 			{
-				items = (TweedleArray)blockingStep.Result;
+				items = blockingStep.Result.Array();
 			}
 		}
 

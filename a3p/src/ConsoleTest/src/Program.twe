@@ -1,0 +1,52 @@
+class Program {
+
+  TextString name;
+  WholeNumber id <- 0;
+
+  Program(TextString name, WholeNumber id <- 0) {
+    this.name <- name;
+  }
+
+  TextString getName() {
+    return name;
+  }
+
+  void execute() {
+    Portion p <- new Portion(number: -1);
+    Portion clone <- new Portion(clone: p);
+    $Debug.dump(object: clone);
+    // $Debug.log(string: "Portion value is " .. p.value);
+  }
+  
+  static void main() {
+    TextString textStr <- "This string is from tweedle";
+    incrementer <- 1;
+
+    $Debug.log(string: textStr .. " (length " .. textStr.length .. ")";
+    $Debug.log(string: "Substring from" .. " 7: " .. textStr.substring(startIndex: 0, length: 7) .. "[" .. textStr.substring(startIndex: 7) .. "]");
+    forLoop(start: 0, end: 100);
+
+    Program p <- new Program(name: "Some name");
+    $Debug.log(string: "Program name is " .. p.getName() .. " and id is " .. p.id);
+    p.execute();
+  }
+
+  static void forLoop(WholeNumber start, WholeNumber end) {
+    WholeNumber i <- start;
+
+    $Debug.beginTiming();
+    $Debug.log(string: "Timing label: " .. $Debug.timingLabel);
+    $Debug.timingLabel <- "Some other value";
+
+    while (i <= end) {
+      $Debug.log(string: "" .. i);
+      i <- i + 1;
+    }
+
+    DecimalNumber totalTime <- $Debug.endTiming();
+    DecimalNumber timePerLoop <- totalTime / (end - start + 1);
+    $Debug.log(string: "Time per loop: " .. timePerLoop);
+  }
+
+  static WholeNumber incrementer <- 1;
+}

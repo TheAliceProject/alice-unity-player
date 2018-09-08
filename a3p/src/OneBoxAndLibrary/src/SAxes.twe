@@ -1,0 +1,4 @@
+class SAxes extends SShape {
+  SAxes() {
+  }
+}

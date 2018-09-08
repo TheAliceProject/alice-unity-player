@@ -1,7 +1,5 @@
 fileFormatVersion: 2
 guid: 8c10a4dc28c84554683844bf99e1f7e2
-timeCreated: 1517366777
-licenseType: Pro
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -322,6 +320,7 @@ ModelImporter:
     13700006: mesh0
     13700008: mesh1
     13700010: mesh2
+    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -342,6 +341,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5

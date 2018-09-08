@@ -12,7 +12,7 @@ namespace Alice.Tweedle
 			FieldName = fieldName;
 		}
 
-		public FieldAccess(TweedleExpression target, string fieldName)
+		public FieldAccess(ITweedleExpression target, string fieldName)
 			: base(target)
 		{
 			FieldName = fieldName;
@@ -25,14 +25,14 @@ namespace Alice.Tweedle
 			return access;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			ExecutionStep targetStep = TargetStep(scope);
 			targetStep.OnCompletionNotify(
 				new ValueComputationStep(
 					"Get Field ",
 					scope,
-					target => target.Get(FieldName)));
+					target => target.Get(scope, FieldName)));
 			return targetStep;
 		}
 	}

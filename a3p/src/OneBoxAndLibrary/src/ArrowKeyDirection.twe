@@ -1,0 +1,43 @@
+enum ArrowKeyDirection {
+  UP(turn: TurnDirection.FORWARD, forwardBack: MoveDirection.FORWARD, upDown: MoveDirection.UP),
+  DOWN(turn: TurnDirection.BACKWARD, forwardBack: MoveDirection.BACKWARD, upDown: MoveDirection.DOWN),
+  LEFT(turn: TurnDirection.LEFT, forwardBack: MoveDirection.LEFT, upDown: MoveDirection.LEFT),
+  RIGHT(turn: TurnDirection.RIGHT, forwardBack: MoveDirection.RIGHT, upDown: MoveDirection.RIGHT);
+
+  static ArrowKeyDirection fromKey(Key key) {
+    if( key == Key.A || key == Key.LEFT ) {
+      return LEFT;
+    }
+    if( key == Key.S || key == Key.DOWN ) {
+      return DOWN;
+    }
+    if( key == Key.W || key == Key.UP ) {
+      return UP;
+    }
+    if( key == Key.D || key == Key.RIGHT ) {
+      return RIGHT;
+    }
+    return null;
+  }
+
+  TurnDirection turn;
+  MoveDirection forwardBack;
+  MoveDirection upDown;
+
+  ArrowKeyDirection( TurnDirection turn, MoveDirection forwardBack, MoveDirection upDown ) {
+    this.turn <- turn;
+    this.forwardBack <- forwardBack;
+    this.upDown <- upDown;
+  }
+
+  TurnDirection getTurnDirection() {
+    return turn;
+  }
+
+	MoveDirection getMoveDirection( MoveDirectionPlane plane ) {
+	  if( plane == MoveDirectionPlane.UP_DOWN_LEFT_RIGHT ) {
+      return upDown;
+    }
+    return forwardBack;
+  }
+}

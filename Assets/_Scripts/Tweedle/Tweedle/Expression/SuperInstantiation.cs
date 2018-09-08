@@ -5,18 +5,18 @@ namespace Alice.Tweedle
 {
 	public class SuperInstantiation : TweedleExpression
 	{
-		Dictionary<string, TweedleExpression> Arguments { get; }
+        private readonly NamedArgument[] m_Arguments;
 
-		public SuperInstantiation(Dictionary<string, TweedleExpression> arguments)
+        public SuperInstantiation(NamedArgument[] inArguments)
 			: base(null)
 		{
-			Arguments = arguments;
+			m_Arguments = inArguments;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
-			ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(Arguments);
-			return superScope.InvocationStep("super()", Arguments);
+			ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(m_Arguments);
+			return superScope.InvocationStep("super()", m_Arguments);
 		}
 	}
 }

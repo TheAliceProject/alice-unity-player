@@ -4,10 +4,10 @@ namespace Alice.Tweedle
 {
 	public class LocalVariableDeclaration : TweedleStatement
 	{
-		public TweedleLocalVariable Variable { get; }
+		public TLocalVariable Variable { get; }
 		public bool IsConstant { get; }
 
-		public LocalVariableDeclaration(bool isConstant, TweedleLocalVariable variable)
+		public LocalVariableDeclaration(bool isConstant, TLocalVariable variable)
 		{
 			IsConstant = isConstant;
 			Variable = variable;

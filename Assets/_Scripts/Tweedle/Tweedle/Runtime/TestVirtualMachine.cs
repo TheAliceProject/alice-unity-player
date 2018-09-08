@@ -22,7 +22,7 @@ namespace Alice.VM
 			executionQueue.ProcessOneFrame();
 		}
 
-		public TweedleValue EvaluateToFinish(TweedleExpression expression, ExecutionScope scope)
+		public TValue EvaluateToFinish(ITweedleExpression expression, ExecutionScope scope)
 		{
 			ExecutionStep step = expression.AsStep(scope);
 			AddStep(step);

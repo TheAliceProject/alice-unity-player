@@ -5,27 +5,27 @@ namespace Alice.Tweedle
 {
 	public class ArrayIndexExpression : TweedleExpression
 	{
-		TweedleExpression array;
-		TweedleExpression index;
+		ITweedleExpression array;
+		ITweedleExpression index;
 
-		public ArrayIndexExpression(TweedleExpression array, TweedleExpression index)
+		public ArrayIndexExpression(ITweedleExpression array, ITweedleExpression index)
 			: base()
 		{
 			this.array = array;
 			this.index = index;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			return new TwoValueComputationStep(
 				ToTweedle(),
 				scope,
 				array,
 				index,
-				(arr, val) => ((TweedleArray)arr)[val.ToInt()]);
+				(arr, val) => (arr.Array())[val.ToInt()]);
 		}
 
-		internal override string ToTweedle()
+		public override string ToTweedle()
 		{
 			return array.ToTweedle() + "[" + index.ToTweedle() + "]";
 		}

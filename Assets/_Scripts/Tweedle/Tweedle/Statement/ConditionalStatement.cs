@@ -5,11 +5,11 @@ namespace Alice.Tweedle
 {
 	public class ConditionalStatement : TweedleStatement
 	{
-		public TweedleExpression Condition { get; }
+		public ITweedleExpression Condition { get; }
 		public BlockStatement ThenBody { get; }
 		public BlockStatement ElseBody { get; }
 
-		public ConditionalStatement(TweedleExpression condition, List<TweedleStatement> thenBody, List<TweedleStatement> elseBody)
+		public ConditionalStatement(ITweedleExpression condition, TweedleStatement[] thenBody, TweedleStatement[] elseBody)
 		{
 			Condition = condition;
 			ThenBody = new BlockStatement(thenBody);

@@ -2,7 +2,7 @@
 {
 	public class AdditionExpression : BinaryNumToNumExpression
 	{
-		public AdditionExpression(TweedleExpression lhs, TweedleExpression rhs)
+		public AdditionExpression(ITweedleExpression lhs, ITweedleExpression rhs)
 			: base(lhs, rhs)
 		{
 		}

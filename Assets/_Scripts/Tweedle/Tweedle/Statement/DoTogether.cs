@@ -7,7 +7,7 @@ namespace Alice.Tweedle
 	{
 		public BlockStatement Body { get; }
 
-		public DoTogether(List<TweedleStatement> statements)
+		public DoTogether(TweedleStatement[] statements)
 		{
 			Body = new BlockStatement(statements);
 		}

@@ -2,7 +2,7 @@
 {
 	class GreaterThanOrEqualExpression : BinaryNumToBoolExpression
 	{
-		public GreaterThanOrEqualExpression(TweedleExpression lhs, TweedleExpression rhs)
+		public GreaterThanOrEqualExpression(ITweedleExpression lhs, ITweedleExpression rhs)
 			: base(lhs, rhs)
 		{
 		}

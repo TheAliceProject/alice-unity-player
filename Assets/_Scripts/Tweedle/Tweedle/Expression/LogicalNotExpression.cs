@@ -2,26 +2,31 @@
 
 namespace Alice.Tweedle
 {
-	public class LogicalNotExpression : TweedleExpression
+	public class LogicalNotExpression : UnaryExpression
 	{
-		TweedleExpression expression;
+		ITweedleExpression expression;
 
-		public LogicalNotExpression(TweedleExpression expression)
-			: base(TweedleTypes.BOOLEAN)
+		public LogicalNotExpression(ITweedleExpression expression)
+			: base(TStaticTypes.BOOLEAN)
 		{
 			this.expression = expression;
 		}
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
+		public override ExecutionStep AsStep(ExecutionScope scope)
 		{
 			var step = expression.AsStep(scope);
 			step.OnCompletionNotify(new ValueComputationStep("!" + expression.ToTweedle(), scope, NotPrimitive));
 			return step;
 		}
 
-		static TweedlePrimitiveValue<bool> NotPrimitive(TweedleValue value)
+		static TValue NotPrimitive(TValue value)
 		{
-			return TweedleTypes.BOOLEAN.Instantiate(!value.ToBoolean());
+			return TStaticTypes.BOOLEAN.Instantiate(!value.ToBoolean());
 		}
-	}
+
+        public override TValue EvaluateLiteral()
+        {
+            return NotPrimitive((TValue)expression);
+        }
+    }
 }

@@ -5,9 +5,9 @@ namespace Alice.Tweedle
 {
 	public class WhileLoop : AbstractLoop
 	{
-		public TweedleExpression RunCondition { get; }
+		public ITweedleExpression RunCondition { get; }
 
-		public WhileLoop(TweedleExpression runCondition, List<TweedleStatement> body) : base(body)
+		public WhileLoop(ITweedleExpression runCondition, TweedleStatement[] body) : base(body)
 		{
 			RunCondition = runCondition;
 		}

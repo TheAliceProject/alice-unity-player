@@ -11,7 +11,7 @@
 			this.invokeSuper = invokeSuper;
 		}
 
-		internal void SetThis(TweedleValue target)
+		internal void SetThis(TValue target)
 		{
 			// target may be an instance (object or enumValue) or type (class or enum)
 			thisValue = target;
@@ -20,7 +20,18 @@
 
 		private void IdentifyTargetMethod()
 		{
-			Method = invokeSuper ? thisValue.SuperMethodNamed(callingScope, callStackEntry) : thisValue.MethodNamed(callingScope, callStackEntry);
+            TType type;
+            if (invokeSuper)
+            {
+                type = thisValue.Type.SuperType.Get(this);
+		    }
+			else
+			{
+                type = thisValue.Type;
+            }
+
+            Method = type.Method(callingScope, ref thisValue, callStackEntry);
+			
 			if (Method == null)//|| !method.ExpectsArgs(callExpression.arguments))
 			{
 				throw new TweedleRuntimeException("No method matching " + thisValue + "." + callStackEntry + "()");

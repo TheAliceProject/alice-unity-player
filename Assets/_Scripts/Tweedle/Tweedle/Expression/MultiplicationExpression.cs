@@ -3,7 +3,7 @@
 	class MultiplicationExpression : BinaryNumToNumExpression
 	{
 
-		public MultiplicationExpression(TweedleExpression lhs, TweedleExpression rhs)
+		public MultiplicationExpression(ITweedleExpression lhs, ITweedleExpression rhs)
 			: base(lhs, rhs)
 		{
 		}

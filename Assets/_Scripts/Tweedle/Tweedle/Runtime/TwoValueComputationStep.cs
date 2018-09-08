@@ -5,17 +5,17 @@ namespace Alice.VM
 {
 	internal class TwoValueComputationStep : ExecutionStep
 	{
-		TweedleExpression exp1;
-		TweedleExpression exp2;
-		TweedleValue result1;
-		TweedleValue result2;
-		Func<TweedleValue, TweedleValue, TweedleValue> body;
+		ITweedleExpression exp1;
+		ITweedleExpression exp2;
+		TValue result1;
+		TValue result2;
+		Func<TValue, TValue, TValue> body;
 
 		public TwoValueComputationStep(string callStackEntry,
 															 ExecutionScope scope,
-															 TweedleExpression exp1,
-															 TweedleExpression exp2,
-															 Func<TweedleValue, TweedleValue, TweedleValue> body)
+															 ITweedleExpression exp1,
+															 ITweedleExpression exp2,
+															 Func<TValue, TValue, TValue> body)
 			: base(scope)
 		{
 			this.callStack = scope.StackWith(callStackEntry);
@@ -24,7 +24,7 @@ namespace Alice.VM
 			this.body = body;
 		}
 
-		void QueueExpressionStep(TweedleExpression exp, Action<TweedleValue> handler)
+		void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
 		{
 			var evalStep = exp.AsStep(scope);
 			var storeStep = new ValueOperationStep(callStack, scope, handler);
@@ -35,12 +35,12 @@ namespace Alice.VM
 
 		internal override void Execute()
 		{
-			if (result1 == null)
+			if (result1 == TValue.UNDEFINED)
 			{
 				QueueExpressionStep(exp1, value => result1 = value);
 				return;
 			}
-			if (result2 == null)
+			if (result2 == TValue.UNDEFINED)
 			{
 				QueueExpressionStep(exp2, value => result2 = value);
 				return;

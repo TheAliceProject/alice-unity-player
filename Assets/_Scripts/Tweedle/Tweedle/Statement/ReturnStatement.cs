@@ -4,24 +4,24 @@ namespace Alice.Tweedle
 {
 	public class ReturnStatement : TweedleStatement
 	{
-		TweedleExpression expression;
+		ITweedleExpression expression;
 
-		public TweedleExpression Expression
+		public ITweedleExpression Expression
 		{
 			get { return expression; }
 		}
 
-		public TweedleType Type
+		public TType Type
 		{
 			get { return expression.Type; }
 		}
 
 		public ReturnStatement()
 		{
-			expression = TweedleNull.NULL;
+			expression = TValue.UNDEFINED;
 		}
 
-		public ReturnStatement(TweedleExpression expression)
+		public ReturnStatement(ITweedleExpression expression)
 		{
 			this.expression = expression;
 		}

@@ -1,0 +1,16 @@
+class SSphere extends SShape {
+  SSphere() {
+  }
+
+  DecimalNumber getRadius() {
+    return radius;
+  }
+
+  void setRadius(Number radius,
+                 DecimalNumber duration <- Default.duration(),
+                 AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.radius.animateValue( endValue: radius, duration: duration, animation: animationStyle );
+  }
+
+  @CompletelyHidden DecimalNumberProperty radius;
+}
