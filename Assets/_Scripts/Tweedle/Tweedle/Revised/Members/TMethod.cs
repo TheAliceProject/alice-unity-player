@@ -144,46 +144,44 @@ namespace Alice.Tweedle
 
         private void AddArgumentSteps(InvocationScope inScope, StepSequence ioMain, NamedArgument[] inArguments)
         {
-            s_CachedParamNameSet.Clear();
+            using (PooledSet<string> paramNameSet = PooledSet<string>.Alloc()) {
 
-            for (int i = 0; i < inArguments.Length; ++i)
-            {
-                TParameter param;
-                if (!m_RecognizedParams.TryGetValue(inArguments[i].Name, out param))
+                for (int i = 0; i < inArguments.Length; ++i)
                 {
-                    throw new TweedleLinkException("Invalid method call on " + Name + ". Unrecognized parameter " + inArguments[i].Name);
+                    TParameter param;
+                    if (!m_RecognizedParams.TryGetValue(inArguments[i].Name, out param))
+                    {
+                        throw new TweedleLinkException("Invalid method call on " + Name + ". Unrecognized parameter " + inArguments[i].Name);
+                    }
+
+                    paramNameSet.Add(param.Name);
+                    ioMain.AddStep(ArgumentStep(inScope, param, inArguments[i].Argument));
                 }
 
-                s_CachedParamNameSet.Add(param.Name);
-                ioMain.AddStep(ArgumentStep(inScope, param, inArguments[i].Argument));
-            }
-
-            // If we've already counted as many parameters as are possible
-            // for this method, we can exit out early
-            if (s_CachedParamNameSet.Count >= m_RecognizedParams.Count)
-            {
-                s_CachedParamNameSet.Clear();
-                return;
-            }
-
-            for (int i = 0; i < RequiredParams.Length; ++i)
-            {
-                if (!s_CachedParamNameSet.Contains(RequiredParams[i].Name))
+                // If we've already counted as many parameters as are possible
+                // for this method, we can exit out early
+                if (paramNameSet.Count >= m_RecognizedParams.Count)
                 {
-                    throw new TweedleLinkException("Invalid method call on " + Name + ". Missing value for required parameter " + RequiredParams[i].Name);
+                    return;
+                }
+
+                for (int i = 0; i < RequiredParams.Length; ++i)
+                {
+                    if (!paramNameSet.Contains(RequiredParams[i].Name))
+                    {
+                        throw new TweedleLinkException("Invalid method call on " + Name + ". Missing value for required parameter " + RequiredParams[i].Name);
+                    }
+                }
+
+                for (int i = 0; i < OptionalParams.Length; ++i)
+                {
+                    TParameter optionalParam = OptionalParams[i];
+                    if (paramNameSet.Add(optionalParam.Name))
+                    {
+                        ioMain.AddStep(ArgumentStep(inScope, optionalParam, optionalParam.Initializer));
+                    }
                 }
             }
-
-            for (int i = 0; i < OptionalParams.Length; ++i)
-            {
-                TParameter optionalParam = OptionalParams[i];
-                if (s_CachedParamNameSet.Add(optionalParam.Name))
-                {
-                    ioMain.AddStep(ArgumentStep(inScope, optionalParam, optionalParam.Initializer));
-                }
-            }
-
-            s_CachedParamNameSet.Clear();
         }
 
         private ExecutionStep ArgumentStep(InvocationScope inScope, TValueHolderDeclaration inArgDeclaration, ITweedleExpression inExpression)
@@ -210,9 +208,6 @@ namespace Alice.Tweedle
         }
 
         #endregion // Invocation Steps
-
-        // TODO: Make this thread-safe? (in case we introduce multithreading)
-        static private readonly HashSet<string> s_CachedParamNameSet = new HashSet<string>();
 
         static public readonly TMethod[] EMPTY_ARRAY = new TMethod[0];
     }

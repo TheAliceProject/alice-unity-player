@@ -84,7 +84,7 @@ namespace Alice.Tweedle
                 m_CachedArgs[i] = TConvert.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i]);
 
             object thisVal;
-            if ((Flags & MemberFlags.Static | MemberFlags.Constructor) != 0)
+            if ((Flags & (MemberFlags.Static | MemberFlags.Constructor)) != 0)
                 thisVal = null;
             else
                 thisVal = TConvert.ToPObject(inScope.GetThis());
