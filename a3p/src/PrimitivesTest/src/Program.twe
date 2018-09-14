@@ -1,0 +1,48 @@
+class Program {
+
+  TextString name;
+  WholeNumber id <- 0;
+
+  Program(TextString name, WholeNumber id <- 0) {
+    this.name <- name;
+  }
+
+  TextString getName() {
+    return name;
+  }
+
+  void execute() {
+    // portions
+    $Debug.log(string: "Portion");
+    Portion p <- new Portion(number: 0.25);
+    Portion clone <- new Portion(clone: p);
+    Portion sum <- clone.plus(addend: new Portion(number: 0.5));
+    $Debug.log(string: "Portion: " .. sum.value);
+
+    // angles
+    $Debug.log(string: "Angle");
+    Angle angle <- new Angle(radians: 3.14);
+    $Debug.log(string: "Angle: " .. angle.radians);
+
+    // positions
+    $Debug.log(string: "Position");
+    Position pos <- new Position(right: 1, up: 2, backward: 4);
+    $Debug.log(string: "Position (Right: " .. pos.getRight() .. " Up: " .. pos.getUp() .. " Backward: " .. pos.getBackward() .. ")");
+
+    // direction
+    $Debug.log(string: "Direction");
+    Direction dir <- new Direction(right: 2, up: 5, backward: 3);
+    $Debug.log(string: "Direction (Right: " .. dir.getRight() .. " Up: " .. dir.getUp() .. " Backward: " .. dir.getBackward() .. ")");
+
+    // Orientation
+    $Debug.log(string: "Orientation");
+    Orientation orientation <- new Orientation(direction: new Direction(right: 1, up: 0, backward: 0), angle: new Angle(radians: 1.62));
+    $Debug.dump(object: orientation);
+  }
+  
+  static void main() {
+    Program p <- new Program(name: "Primitives Test");
+    $Debug.log(string: "Program name is " .. p.getName() .. " and id is " .. p.id);
+    p.execute();
+  }
+}

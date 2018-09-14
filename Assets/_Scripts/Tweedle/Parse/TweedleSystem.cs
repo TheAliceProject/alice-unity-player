@@ -42,7 +42,12 @@ namespace Alice.Tweedle.Parse
                 AddClass(prim);
 
             AddClass(new TPObjectType(typeof(Modules.DebugModule)));
-            AddClass(new TPObjectType(typeof(Modules.Portion)));
+            AddClass(new TPObjectType(typeof(Primatives.Portion)));
+			AddClass(new TPObjectType(typeof(Primatives.Position)));
+			AddClass(new TPObjectType(typeof(Primatives.Direction)));
+			AddClass(new TPObjectType(typeof(Primatives.Orientation)));
+			AddClass(new TPObjectType(typeof(Primatives.VantagePoint)));
+			AddClass(new TPObjectType(typeof(Primatives.Angle)));
             // primitives = new Dictionary<string, TweedlePrimitiveClass>();
         }
 
