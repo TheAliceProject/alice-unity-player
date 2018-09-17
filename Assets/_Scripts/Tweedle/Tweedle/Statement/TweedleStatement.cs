@@ -1,4 +1,5 @@
-﻿using Alice.VM;
+﻿using Alice.Tweedle.Parse;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
@@ -23,5 +24,7 @@ namespace Alice.Tweedle
 		}
 
 		internal abstract ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next);
-	}
+
+        static public readonly TweedleStatement[] EMPTY_STATEMENTS = new TweedleStatement[0];
+    }
 }

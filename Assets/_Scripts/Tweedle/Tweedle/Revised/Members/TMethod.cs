@@ -18,7 +18,7 @@ namespace Alice.Tweedle
         public TTypeRef Type { get; private set; }
         public MemberFlags Flags { get; private set; }
 
-        public virtual void Resolve(TweedleSystem inSystem, TType inOwnerType)
+        public virtual void Link(TweedleSystem inSystem, TType inOwnerType)
         {
             Type.Resolve(inSystem);
             ReturnType.Resolve(inSystem);

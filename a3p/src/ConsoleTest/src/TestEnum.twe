@@ -1,0 +1,14 @@
+enum TestEnum {
+  DOWN(flag: false),
+  UP(flag: true);
+
+  Boolean someFlag;
+
+  TestEnum(Boolean flag) {
+    someFlag <- flag;
+  }
+
+  void logSelf() {
+    $Debug.log(string: "" .. someFlag);
+  }
+}

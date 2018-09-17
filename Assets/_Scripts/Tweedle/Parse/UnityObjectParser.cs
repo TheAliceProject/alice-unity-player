@@ -27,7 +27,8 @@ namespace Alice.Tweedle.Parse
 					// TODO store the TweedleSystem
 				}
 			}
-            sys.Resolve();
+			
+            sys.Link();
             sys.QueueProgramMain(vm);
 			StartQueueProcessing();
 		}

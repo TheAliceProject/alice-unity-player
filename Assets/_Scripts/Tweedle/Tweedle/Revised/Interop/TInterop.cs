@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.Interop
 {
-    static public class TConvert
+    static public class TInterop
     {
         static private IntPtr GetTypePtr<T>() { return typeof(T).TypeHandle.Value; }
 
@@ -193,7 +195,11 @@ namespace Alice.Tweedle.Interop
             }
             else
             {
-                return new TTypeRef(TTypeNameForType(inType));
+                string typeName = TTypeNameForType(inType);
+                if (!string.IsNullOrEmpty(typeName))
+                    return new TTypeRef(typeName);
+
+                return null;
             }
         }
 
@@ -203,5 +209,84 @@ namespace Alice.Tweedle.Interop
         }
 
         #endregion // Types
+    
+        #region Types
+
+        static public TType[] GenerateTypes(params Type[] inTypes)
+        {
+            TType[] types = new TType[inTypes.Length];
+            for (int i = 0; i < types.Length; ++i)
+            {
+                types[i] = GenerateType(inTypes[i]);
+            }
+            return types;
+        }
+
+        static public TType GenerateType(Type inType)
+        {
+            if (inType.IsClass)
+                return new TPObjectType(inType);
+            else if (inType.IsEnum)
+                return new TPEnumType(inType);
+            else
+                throw new Exception("Unable to convert type " + inType.Name + " to a tweedle type");
+        }
+
+        static public TType GenerateType<T>()
+        {
+            return new TPObjectType(typeof(T));
+        }
+
+        static public TField[] GenerateFields(Type inType)
+        {
+            List<TField> tFields = new List<TField>();
+            
+            var pFields = inType.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            foreach(var pField in pFields)
+            {
+                // UnityEngine.Debug.Log("Parsing field " + pField.Name);
+                if (PInteropFieldAttribute.IsDefined(pField))
+                    tFields.Add(new PField(pField));
+            }
+
+            var pProps = inType.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            foreach(var pProp in pProps)
+            {
+                if (PInteropFieldAttribute.IsDefined(pProp))
+                    tFields.Add(new PProperty(pProp));
+            }
+
+            return tFields.ToArray();
+        }
+
+        static public TMethod[] GenerateMethods(Type inType)
+        {
+            List<TMethod> tMethods = new List<TMethod>();
+
+            var pMethods = inType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            foreach(var pMethod in pMethods)
+            {
+                if (PInteropMethodAttribute.IsDefined(pMethod))
+                    tMethods.Add(new PMethod(pMethod));
+            }
+
+            return tMethods.ToArray();
+        }
+
+        static public TMethod[] GenerateConstructors(Type inType)
+        {
+            List<TMethod> tConstructors = new List<TMethod>();
+
+            var pConstructors = inType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach(var pConstructor in pConstructors)
+            {
+                if (PInteropConstructorAttribute.IsDefined(pConstructor))
+                    tConstructors.Add(new PConstructor(pConstructor));
+            }
+
+            return tConstructors.ToArray();
+        }
+
+        #endregion // Members
     }
 }

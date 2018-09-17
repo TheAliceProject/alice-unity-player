@@ -6,10 +6,11 @@ namespace Alice.Tweedle
 	public abstract class InvocationScope : ExecutionScope
 	{
 		internal ExecutionScope callingScope;
-		internal TMethod Method { get; set; }
 		public TValue Result { get; internal set; }
 
-		public InvocationScope(ExecutionScope scope)
+        protected TMethod method;
+
+        public InvocationScope(ExecutionScope scope)
 			: base("Invocation", scope.vm)
 		{
 			callingScope = scope;
@@ -23,12 +24,12 @@ namespace Alice.Tweedle
 		internal void QueueInvocationStep(StepSequence sequentialSteps, NamedArgument[] arguments)
 		{
 			//UnityEngine.Debug.Log("Queueing method invocation " + callStack);
-			Method.AddInvocationSteps(this, sequentialSteps, arguments);
+			method.AddInvocationSteps(this, sequentialSteps, arguments);
 		}
 
 		internal virtual ExecutionStep InvocationStep(string callStackEntry, NamedArgument[] arguments)
 		{
-			return Method.AsStep(callStackEntry, this, arguments);
+			return method.AsStep(callStackEntry, this, arguments);
 		}
 
 		internal void Return(TValue result)

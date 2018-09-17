@@ -24,18 +24,10 @@ namespace Alice.VM
 		internal void Initialize(TweedleSystem tweedleSystem)
 		{
 			Library = tweedleSystem;
+            Library?.Prep(this);
+        }
 
-            InstantiateEnums();
-			// TODO Evaluate static variables
-			// make enums hard refs?
-		}
-
-		void InstantiateEnums()
-		{
-			// TODO add enums to the staticScope
-		}
-
-		public void Queue(TweedleExpression exp)
+		public void Queue(ITweedleExpression exp)
 		{
 			Queue(new ExpressionStatement(exp));
 		}

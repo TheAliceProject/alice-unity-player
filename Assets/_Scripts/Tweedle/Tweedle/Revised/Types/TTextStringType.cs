@@ -56,17 +56,17 @@ namespace Alice.Tweedle
 
         #endregion // Custom Members
 
-        #region Internal
+        #region Link
 
-        protected override void Finalize(Parse.TweedleSystem inSystem)
+        protected override void LinkImpl(Parse.TweedleSystem inSystem)
         {
-            base.Finalize(inSystem);
+            base.LinkImpl(inSystem);
 
-            ResolveMembers(m_Fields, inSystem, this);
-            ResolveMembers(m_Methods, inSystem, this);
+            LinkMembers(m_Fields, inSystem, this);
+            LinkMembers(m_Methods, inSystem, this);
         }
 
-        #endregion // Internal
+        #endregion // Link
 
         #region Object Semantics
 

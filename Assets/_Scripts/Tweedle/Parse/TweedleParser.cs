@@ -60,10 +60,20 @@ namespace Alice.Tweedle.Parse
 			public override TType VisitClassDeclaration([NotNull] Tweedle.TweedleParser.ClassDeclarationContext context)
 			{
 				context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
+
 				string className = context.identifier().GetText();
-                if (context.EXTENDS() != null)
+                string superclass = context.EXTENDS() != null ? context.typeType().classType().GetText() : null;
+
+                if (body.constructors.Count == 0)
                 {
-                	string superclass = context.typeType().classType().GetText();
+					if (superclass != null)
+                    	body.constructors.Add(TTMethod.DefaultConstructorWithSuper(new TTypeRef(className)));
+					else
+                        body.constructors.Add(TTMethod.DefaultConstructor(new TTypeRef(className)));
+                }
+
+                if (superclass != null)
+                {
                 	return new TClassType(className, superclass,
                 		body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
                 }
@@ -76,24 +86,30 @@ namespace Alice.Tweedle.Parse
 
 			public override TType VisitEnumDeclaration([NotNull] Tweedle.TweedleParser.EnumDeclarationContext context)
 			{
-                // TODO(Alex): Implement
-                // if (context.enumBodyDeclarations() != null)
-                // {
-                // 	context.enumBodyDeclarations().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
-                // }
-                // TweedleEnum tweedleEnum = new TweedleEnum(context.identifier().GetText(), body.properties, body.methods, body.constructors);
-                // context.enumConstants().enumConstant().ToList().ForEach(enumConst =>
-                // {
-                // 	string name = enumConst.identifier().GetText();
-                // 	NamedArgument[] arguments = new NamedArgument[0];
-                // 	if (enumConst.arguments() != null)
-                // 	{
-                // 		arguments = TweedleParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList());
-                // 	}
-                // 	tweedleEnum.AddEnumValue(new TweedleEnumValue(tweedleEnum, name, arguments));
-                // });
-                // return tweedleEnum;
-                return null;
+                if (context.enumBodyDeclarations() != null)
+                {
+                	context.enumBodyDeclarations().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
+                }
+
+                string enumName = context.identifier().GetText();
+
+				if (body.constructors.Count == 0)
+                    body.constructors.Add(TTMethod.DefaultConstructor(new TTypeRef(enumName)));
+
+                List<TEnumValueInitializer> enumValues = new List<TEnumValueInitializer>();
+                context.enumConstants().enumConstant().ToList().ForEach(enumConst =>
+                {
+                	string name = enumConst.identifier().GetText();
+                	NamedArgument[] arguments = new NamedArgument[0];
+                	if (enumConst.arguments() != null)
+                	{
+                		arguments = TweedleParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList());
+                	}
+                	enumValues.Add(new TEnumValueInitializer(name, arguments));
+                });
+
+                TEnumType tweedleEnum = new TEnumType(enumName, enumValues.ToArray(), body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
+                return tweedleEnum;;
             }
 		}
 
@@ -111,8 +127,8 @@ namespace Alice.Tweedle.Parse
 				Tweedle.TweedleParser.MemberDeclarationContext memberDec = context.memberDeclaration();
 				if (memberDec != null)
 				{
-					List<string> modifiers =
-						context.classModifier().Select(classMod => (classMod.STATIC() != null) ? "static" : null).ToList();
+					string[] modifiers =
+						context.classModifier().Select(classMod => (classMod.STATIC() != null) ? "static" : null).ToArray();
 					memberDec.Accept(new MemberDeclarationVisitor(body, GetModifiers(modifiers)));
 				}
 				return base.VisitClassBodyDeclaration(context);
@@ -132,7 +148,7 @@ namespace Alice.Tweedle.Parse
 
 			public override ITypeMember VisitFieldDeclaration([NotNull] Tweedle.TweedleParser.FieldDeclarationContext context)
 			{
-				TTypeRef type = GetTypeType(context.typeType());
+				TTypeRef type = GetTypeRef(context.typeType());
 				string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
 				TField property;
 				if (context.variableDeclarator().variableInitializer() != null)
@@ -194,7 +210,7 @@ namespace Alice.Tweedle.Parse
 
 				return context.formalParameterList().requiredParameter().Select(field =>
 				{
-					TTypeRef type = GetTypeType(field.typeType());
+					TTypeRef type = GetTypeRef(field.typeType());
 					return TParameter.RequiredParameter(
 						type,
 						field.variableDeclaratorId().IDENTIFIER().GetText()
@@ -211,7 +227,7 @@ namespace Alice.Tweedle.Parse
 
 				return context.formalParameterList().optionalParameter().Select(field =>
 				{
-					TTypeRef type = GetTypeType(field.typeType());
+					TTypeRef type = GetTypeRef(field.typeType());
 					return TParameter.OptionalParameter(
 						type,
 						field.variableDeclaratorId().IDENTIFIER().GetText(),
@@ -545,7 +561,7 @@ namespace Alice.Tweedle.Parse
 		{
 			public override TweedleStatement VisitLocalVariableDeclaration([NotNull] Tweedle.TweedleParser.LocalVariableDeclarationContext context)
 			{
-				TTypeRef type = GetTypeType(context.typeType());
+				TTypeRef type = GetTypeRef(context.typeType());
 				string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
 				TLocalVariable decl;
 				if (context.variableDeclarator().variableInitializer() != null)
@@ -672,12 +688,12 @@ namespace Alice.Tweedle.Parse
 			return arguments;
 		}
 
-		private static List<ITweedleExpression> VisitUnlabeledArguments(Tweedle.TweedleParser.UnlabeledExpressionListContext listContext,
+		private static ITweedleExpression[] VisitUnlabeledArguments(Tweedle.TweedleParser.UnlabeledExpressionListContext listContext,
 																	   ExpressionVisitor expressionVisitor)
 		{
 			return listContext == null
-					? new List<ITweedleExpression>()
-					: listContext.expression().Select(exp => exp.Accept(expressionVisitor)).ToList();
+					? new ITweedleExpression[0]
+					: listContext.expression().Select(exp => exp.Accept(expressionVisitor)).ToArray();
 		}
 
 		private static TTypeRef GetTypeOrVoid(Tweedle.TweedleParser.TypeTypeOrVoidContext context)
@@ -686,10 +702,10 @@ namespace Alice.Tweedle.Parse
 			{
 				return TStaticTypes.VOID;
 			}
-			return GetTypeType(context.typeType());
+			return GetTypeRef(context.typeType());
 		}
 
-		private static TTypeRef GetTypeType(Tweedle.TweedleParser.TypeTypeContext context)
+		private static TTypeRef GetTypeRef(Tweedle.TweedleParser.TypeTypeContext context)
 		{
 			if (context.lambdaTypeSignature() != null)
 			{
@@ -741,10 +757,10 @@ namespace Alice.Tweedle.Parse
 		// 	return new TweedleLambdaType(typeList, GetTypeOrVoid(context.typeTypeOrVoid()));
 		// }
 
-		private static MemberFlags GetModifiers(List<string> inModifiers)
+		private static MemberFlags GetModifiers(string[] inModifiers)
 		{
             MemberFlags flags = MemberFlags.None;
-            for (int i = 0; i < inModifiers.Count; ++i)
+            for (int i = 0; i < inModifiers.Length; ++i)
 			{
                 string modifierStr = inModifiers[i];
 				switch(modifierStr)

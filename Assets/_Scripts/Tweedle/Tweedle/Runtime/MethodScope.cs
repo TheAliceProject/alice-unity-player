@@ -30,9 +30,9 @@
                 type = thisValue.Type;
             }
 
-            Method = type.Method(callingScope, ref thisValue, callStackEntry);
+            method = type.Method(callingScope, ref thisValue, callStackEntry);
 			
-			if (Method == null)//|| !method.ExpectsArgs(callExpression.arguments))
+			if (method == null)//|| !method.ExpectsArgs(callExpression.arguments))
 			{
 				throw new TweedleRuntimeException("No method matching " + thisValue + "." + callStackEntry + "()");
 			}

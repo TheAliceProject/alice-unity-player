@@ -27,7 +27,7 @@ namespace Alice.Tweedle
             else
                 flags |= MemberFlags.Instance;
 
-            TTypeRef tReturnType = TConvert.TTypeFor(inReturnType);
+            TTypeRef tReturnType = TInterop.TTypeFor(inReturnType);
             SetupMember(inMethodBase.Name, tReturnType, flags);
 
             ParseArguments(tReturnType);
@@ -53,14 +53,14 @@ namespace Alice.Tweedle
                 if (param.IsOptional)
                 {
                     tParam = TParameter.OptionalParameter(
-                        TConvert.TTypeFor(param.ParameterType), param.Name, TConvert.ToTValue(param.DefaultValue)
+                        TInterop.TTypeFor(param.ParameterType), param.Name, TInterop.ToTValue(param.DefaultValue)
                     );
                     optionalParams.Add(tParam);
                 }
                 else
                 {
                     tParam = TParameter.RequiredParameter(
-                        TConvert.TTypeFor(param.ParameterType), param.Name
+                        TInterop.TTypeFor(param.ParameterType), param.Name
                     );
                     requiredParams.Add(tParam);
                 }
@@ -81,16 +81,16 @@ namespace Alice.Tweedle
         private void Invoke(InvocationScope inScope)
         {
             for (int i = 0; i < m_ParameterNames.Length; ++i)
-                m_CachedArgs[i] = TConvert.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i]);
+                m_CachedArgs[i] = TInterop.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i]);
 
             object thisVal;
             if ((Flags & (MemberFlags.Static | MemberFlags.Constructor)) != 0)
                 thisVal = null;
             else
-                thisVal = TConvert.ToPObject(inScope.GetThis());
+                thisVal = TInterop.ToPObject(inScope.GetThis());
 
             object retVal = Invoke(thisVal, m_CachedArgs);
-            inScope.Return(TConvert.ToTValue(retVal, inScope.vm.Library));
+            inScope.Return(TInterop.ToTValue(retVal, inScope.vm.Library));
         }
 
         protected virtual object Invoke(object thisVal, object[] inCachedArgs)

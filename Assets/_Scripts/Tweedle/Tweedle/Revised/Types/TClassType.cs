@@ -5,87 +5,36 @@ namespace Alice.Tweedle
     /// <summary>
     /// Tweedle class type.
     /// </summary>
-    public sealed class TClassType : TType
+    public sealed class TClassType : TTypeWithMembers
     {
-        private TField[] m_Fields;
-        private TMethod[] m_Methods;
-        private TMethod[] m_Constructors;
-
         public TClassType(string inName, TField[] inFields, TMethod[] inMethods, TMethod[] inConstructors)
             : base(inName)
         {
-            m_Fields = inFields;
-            m_Methods = inMethods;
-            m_Constructors = inConstructors;
+            AssignMembers(inFields, inMethods, inConstructors);
         }
 
         public TClassType(string inName, string inSuperType, TField[] inFields, TMethod[] inMethods, TMethod[] inConstructors)
             : base(inName, inSuperType)
         {
-            m_Fields = inFields;
-            m_Methods = inMethods;
-            m_Constructors = inConstructors;
+            AssignMembers(inFields, inMethods, inConstructors);
         }
-
-        #region Object Semantics
-
-        public override TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
-        {
-            AssertValueIsTypeOrTypeRef(ref inValue);
-            TField field = FindMember(m_Fields, inName, inFlags | MemberFlags.Field);
-            if (field == null && SuperType != null)
-                field = SuperType.Get(inScope).Field(inScope, ref inValue, inName, inFlags);
-            return field;
-        }
-
-        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
-        {
-            AssertValueIsTypeOrTypeRef(ref inValue);
-            TMethod method = FindMember(m_Methods, inName, inFlags | MemberFlags.Method);
-            if (method == null && SuperType != null)
-                method = SuperType.Get(inScope).Method(inScope, ref inValue, inName, inFlags);
-            return method;
-        }
-
-        public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
-        {
-            return FindMethodWithArgs(m_Constructors, TMethod.ConstructorName, inArguments, MemberFlags.Instance | MemberFlags.Constructor);
-        }
-
-        public override bool IsReferenceType()
-        {
-            return true;
-        }
-
-        public override TField[] Fields(ExecutionScope inScope, ref TValue inValue)
-        {
-            return m_Fields;
-        }
-
-        public override TMethod[] Methods(ExecutionScope inScope, ref TValue inValue)
-        {
-            return m_Methods;
-        }
-
-        public override TMethod[] Constructors(ExecutionScope inScope)
-        {
-            return m_Constructors;
-        }
-
-        #endregion // Object Semantics
         
-        #region Internal
+        #region Statics
 
-        protected override void Finalize(Parse.TweedleSystem inSystem)
+        public override void AddStaticInitializer(ExecutionScope inScope, StepSequence ioSteps)
         {
-            base.Finalize(inSystem);
-
-            ResolveMembers(m_Fields, inSystem, this);
-            ResolveMembers(m_Methods, inSystem, this);
-            ResolveMembers(m_Constructors, inSystem, this);
+            TValue thisRef = TValue.FromType(this);
+            for (int i = 0; i < m_Fields.Length; ++i)
+            {
+                TField field = m_Fields[i];
+                if (field.IsStatic())
+                    ioSteps.AddStep(field.InitializeStep(inScope, ref thisRef));
+            }
         }
 
-        #endregion // Internal
+        #endregion // Statics
+
+        public override bool IsReferenceType() { return true; }
 
         #region Lifecycle
 
@@ -99,9 +48,9 @@ namespace Alice.Tweedle
             return TValue.NULL;
         }
 
-        public override void AddDefaultInitializer(ConstructorScope inScope, StepSequence ioSteps)
+        public override void AddInstanceInitializer(ConstructorScope inScope, StepSequence ioSteps)
         {
-            base.AddDefaultInitializer(inScope, ioSteps);
+            base.AddInstanceInitializer(inScope, ioSteps);
 
             TValue _this = inScope.GetThis();
             for (int i = 0; i < m_Fields.Length; ++i)

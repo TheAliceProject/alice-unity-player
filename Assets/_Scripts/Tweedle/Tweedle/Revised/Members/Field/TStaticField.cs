@@ -24,9 +24,9 @@ namespace Alice.Tweedle
 
         #region TField
 
-        public override void Resolve(TweedleSystem inSystem, TType inOwnerType)
+        public override void Link(TweedleSystem inSystem, TType inOwnerType)
         {
-            base.Resolve(inSystem, inOwnerType);
+            base.Link(inSystem, inOwnerType);
             
             // This is stored here instead of being retrieved from a TTypeRef
             // so that static fields accessed through subclasses are still
@@ -44,16 +44,22 @@ namespace Alice.Tweedle
             return m_StaticStorage.Get(Name);
         }
 
+        public override bool HasInitializer()
+        {
+            return m_Initializer != null;
+        }
+
         public override ExecutionStep InitializeStep(ExecutionScope inScope, ref TValue inValue)
         {
             if (m_Initializer != null)
             {
+                TValue _this = inValue;
                 return m_Initializer.AsStep(inScope)
                     .OnCompletionNotify(
                         new ValueOperationStep("", inScope,
                         (value) =>
                         {
-                            CheckSet(inScope, ref value);
+                            CheckSet(inScope, ref _this, ref value);
                             m_StaticStorage.Set(Name, value);
                         })
                     );
@@ -64,7 +70,7 @@ namespace Alice.Tweedle
 
         public override void Set(ExecutionScope inScope, ref TValue inValue, TValue inNewValue)
         {
-            CheckSet(inScope, ref inNewValue);
+            CheckSet(inScope, ref inValue, ref inNewValue);
             m_StaticStorage.Set(Name, inNewValue);
         }
 
