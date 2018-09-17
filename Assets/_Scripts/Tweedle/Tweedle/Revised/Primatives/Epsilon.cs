@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tweedle.Primatives 
+namespace Alice.Tweedle.Primatives 
 {
 	public static class Epsilon 
 	 {

@@ -71,6 +71,7 @@ namespace Alice.Tweedle.Primatives
             return new Angle(radians / divisor);
         }       
 
+        // TODO: Talk to Daniel if this should use absolute values or account for wrapping
         public static Angle lerp(Angle a, Angle b, Portion t) {
             return new Angle(a.radians + (b.radians - a.radians)*t.value);
         }
