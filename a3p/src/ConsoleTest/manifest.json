@@ -22,6 +22,12 @@
       "format": "tweedle",
       "files": ["src/Program.twe"],
       "type": "Class"
+    },
+    {
+      "id": "TestEnum",
+      "format": "tweedle",
+      "files": ["src/TestEnum.twe"],
+      "type": "Enum"
     }
   ]
 }

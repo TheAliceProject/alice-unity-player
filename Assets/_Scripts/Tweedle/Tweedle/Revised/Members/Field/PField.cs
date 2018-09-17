@@ -27,7 +27,7 @@ namespace Alice.Tweedle
             if (inFieldInfo.IsInitOnly)
                 flags |= MemberFlags.Readonly;
 
-            TTypeRef tType = TConvert.TTypeFor(inFieldInfo.FieldType);
+            TTypeRef tType = TInterop.TTypeFor(inFieldInfo.FieldType);
             SetupMember(inFieldInfo.Name, tType, flags);
         }
 
@@ -45,7 +45,12 @@ namespace Alice.Tweedle
                 retVal = m_FieldInfo.GetValue(inValue.ToPObject());
             }
 
-            return TConvert.ToTValue(retVal, inScope.vm.Library);
+            return TInterop.ToTValue(retVal, inScope.vm.Library);
+        }
+
+        public override bool HasInitializer()
+        {
+            return false;
         }
 
         public override ExecutionStep InitializeStep(ExecutionScope inScope, ref TValue inValue)
@@ -55,8 +60,8 @@ namespace Alice.Tweedle
 
         public override void Set(ExecutionScope inScope, ref TValue inValue, TValue inNewValue)
         {
-            CheckSet(inScope, ref inNewValue);
-            object newVal = TConvert.ToPObject(inNewValue, m_FieldInfo.FieldType);
+            CheckSet(inScope, ref inValue, ref inNewValue);
+            object newVal = TInterop.ToPObject(inNewValue, m_FieldInfo.FieldType);
             if (m_IsStatic)
             {
                 m_FieldInfo.SetValue(null, newVal);

@@ -1,18 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle
 {
-    public abstract class TType
+    public abstract partial class TType : IComparable<TType>, ILinkable
     {
+        #region Enums
+
+        private enum Status
+        {
+            Unlinked,
+            Linked,
+            PostLinked,
+            Prepped
+        }
+
+        #endregion // Enums
+
         public readonly string Name;
         public readonly TTypeRef SuperType;
         public readonly TTypeRef SelfRef;
 
+        private Status m_Status;
+        private int m_InheritanceDepth;
         private TObject m_StaticStorage;
-        private bool m_Finalized;
+
+        #region Constructors
 
         protected TType(string inName) : this(inName, (TTypeRef)null) { }
 
@@ -27,25 +43,7 @@ namespace Alice.Tweedle
             SelfRef = new TTypeRef(this);
         }
 
-        #region Internal
-
-        // Returns the backing object for static fields on this type
-        internal TObject StaticStorage()
-        {
-            if (m_StaticStorage == null)
-                m_StaticStorage = new TObject();
-            return m_StaticStorage;
-        }
-
-        // Resolves links between types
-        protected virtual void Finalize(TweedleSystem inSystem)
-        {
-            if (SuperType != null)
-                SuperType.Resolve(inSystem);
-            m_Finalized = true;
-        }
-
-        #endregion // Internal
+        #endregion // Constructors
 
         #region Object Semantics 
 
@@ -89,19 +87,60 @@ namespace Alice.Tweedle
 
         #region Lifecycle
 
-        public virtual bool CanInstantiateDefault() { return true; }
-        
+        public virtual bool CanInstantiate(ExecutionScope inScope) { return IsReferenceType(); }
+
+        public virtual bool HasDefaultInstantiate() { return true; }
         public abstract TValue Instantiate();
         public abstract TValue DefaultValue();
 
-        public virtual void AddDefaultInitializer(ConstructorScope inScope, StepSequence ioSteps)
+        public virtual void AddInstanceInitializer(ConstructorScope inScope, StepSequence ioSteps)
         {
             // Default initialization steps for super class
             if (SuperType != null)
-                SuperType.Get(inScope).AddDefaultInitializer(inScope, ioSteps);
+                SuperType.Get(inScope).AddInstanceInitializer(inScope, ioSteps);
         }
 
         #endregion // Lifecycle
+
+        #region Statics
+
+        protected virtual bool HasStaticConstructor() { return false; }
+
+        /// <summary>
+        /// Preps the type for execution.
+        /// Returns any additional steps that need to be executed on the VM.
+        /// </summary>
+        public ITweedleExpression Prep()
+        {
+            if (m_Status == Status.Prepped)
+            {
+                return null;
+            }
+
+            m_StaticStorage?.Clear();
+            m_Status = Status.Prepped;
+
+            if (HasStaticConstructor())
+            {
+                return new StaticInstantiation(this.SelfRef);
+            }
+
+            return null;
+        }
+
+        public virtual void AddStaticInitializer(ExecutionScope inScope, StepSequence ioSteps)
+        {
+        }
+
+        // Returns the backing object for static fields on this type
+        internal TObject StaticStorage()
+        {
+            if (m_StaticStorage == null)
+                m_StaticStorage = new TObject();
+            return m_StaticStorage;
+        }
+
+        #endregion // Static Initialization
 
         #region Comparison Semantics
 
@@ -216,174 +255,53 @@ namespace Alice.Tweedle
         }
 
         #endregion // Misc
-    
-        #region Helper Methods
 
-        /// <summary>
-        /// Finds the member with the given name and flags.
-        /// </summary>
-        static protected T FindMember<T>(T[] inMembers, string inName, MemberFlags inFlags) where T : class, ITypeMember
+        #region Linker
+
+        public void Link(TweedleSystem inSystem)
         {
-            for (int i = 0; i < inMembers.Length; ++i)
+            if (m_Status == Status.Unlinked)
             {
-                T member = inMembers[i];
-                if (member.Name.Equals(inName, StringComparison.Ordinal))
-                {
-                    if ((member.Flags & inFlags) != inFlags)
-                        return null;
-
-                    return member;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Finds a method with the given name, arguments, and flags.
-        /// </summary>
-        static protected T FindMethodWithArgs<T>(T[] inMembers, string inName, NamedArgument[] inArguments, MemberFlags inFlags) where T : TMethod
-        {
-            for (int i = 0; i < inMembers.Length; ++i)
-            {
-                T method = inMembers[i];
-                if (method.Name.Equals(inName, StringComparison.Ordinal)
-                    && (method.Flags & inFlags) == inFlags
-                    && method.ExpectsArgs(inArguments))
-                    return method;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Resolves all members.
-        /// </summary>
-        static protected void ResolveMembers<T>(T[] inMembers, TweedleSystem inSystem, TType inType) where T : ITypeMember
-        {
-            for (int i = 0; i < inMembers.Length; ++i)
-            {
-                inMembers[i].Resolve(inSystem, inType);
+                LinkImpl(inSystem);
+                m_Status = Status.Linked;
             }
         }
 
-        /// <summary>
-        /// Returns if a source type is assignable to the target type.
-        /// </summary>
-        static protected bool IsAssignableFrom(TType inTarget, TType inSource)
+        protected virtual void LinkImpl(TweedleSystem inSystem)
         {
-            TType type = inSource;
-            while(type != null)
+            if (SuperType != null)
             {
-                if (type == inSource)
-                    return true;
-                type = inSource.SuperType.Get();
-            }
-
-            return inSource == TStaticTypes.ANY;
-        }
-
-        /// <summary>
-        /// Returns if a value's type is within the given type hierarchy.
-        /// </summary>
-        static protected bool InstanceOf(ref TValue inValue, TType inType, bool inbAllowTypeRef = true)
-        {
-            TType type = inValue.Type;
-            if (type == inType)
-                return true;
-            if (inbAllowTypeRef && type == TStaticTypes.TYPE_REF)
-                type = inValue.TypeRef().Get();
-            return IsAssignableFrom(inType, type);
-        }
-
-        #endregion // Helper Methods
-
-        /// <summary>
-        /// Finalizes type references, methods, and fields.
-        /// </summary>
-        static public void Finalize(TweedleSystem inSystem, TType inType)
-        {
-            TType type = inType;
-            while(type != null && !type.m_Finalized)
-            {
-                type.Finalize(inSystem);
-                type = type.SuperType;
+                SuperType.Resolve(inSystem);
             }
         }
 
-        #region Debugging
-
-        static public string DumpOutline(TType inType)
+        public void PostLink(TweedleSystem inSystem)
         {
-            StringBuilder builder = new StringBuilder(1024);
-            builder.Append("type ").Append(inType.Name);
-            if (inType.SuperType != null)
+            if (m_Status == Status.Linked)
             {
-                builder.Append(" extends ").Append(inType.SuperType);
+                PostLinkImpl(inSystem);
+                m_Status = Status.PostLinked;
             }
-            builder.Append(" {")
-                .Append("\n");
-
-            // Write out constructors
-            builder.Append("\n\t//Fields");
-            foreach(var field in inType.Fields(null))
-            {
-                builder.Append("\n\t");
-                DumpField(builder, field);
-            }
-
-            // Write out constructors
-            builder.Append("\n\n\t//Constructors");
-            foreach(var constructor in inType.Constructors(null))
-            {
-                builder.Append("\n\t");
-                DumpMethod(builder, constructor);
-            }
-
-            // Write out constructors
-            builder.Append("\n\n\t//Methods");
-            foreach(var method in inType.Methods(null))
-            {
-                builder.Append("\n\t");
-                DumpMethod(builder, method);
-            }
-
-            builder.Append("\n}");
-
-            return builder.ToString();
         }
 
-        static private void DumpMethod(StringBuilder inBuilder, TMethod inMethod)
+        protected virtual void PostLinkImpl(TweedleSystem inSystem)
         {
-            if (inMethod.IsStatic())
-                inBuilder.Append("static ");
-            inBuilder.Append(inMethod.ReturnType).Append(" ").Append(inMethod.Name).Append('(');
-            int paramCount = 0;
-            foreach(var requiredParam in inMethod.RequiredParams)
-            {
-                if (paramCount > 0)
-                    inBuilder.Append(", ");
-                inBuilder.Append(requiredParam.ToTweedle());
-                ++paramCount;
-            }
-            foreach(var optionalParam in inMethod.OptionalParams)
-            {
-                if (paramCount > 0)
-                    inBuilder.Append(", ");
-                inBuilder.Append(optionalParam.ToTweedle());
-                ++paramCount;
-            }
-            inBuilder.Append(") [").Append(inMethod.Flags).Append("];");
+            m_InheritanceDepth = CalculateInheritanceDepth(this);
         }
 
-        static private void DumpField(StringBuilder inBuilder, TField inField)
+        #endregion // Linker
+
+        #region IComparable
+
+        int IComparable<TType>.CompareTo(TType other)
         {
-            if (inField.IsStatic())
-                inBuilder.Append("static ");
-            inBuilder.Append(inField.ToTweedle());
-            inBuilder.Append(" [").Append(inField.Flags).Append("];");
+            if (m_InheritanceDepth < other.m_InheritanceDepth)
+                return -1;
+            if (m_InheritanceDepth > other.m_InheritanceDepth)
+                return 1;
+            return 0;
         }
 
-        #endregion // Debugging
+        #endregion // IComparable
     }
 }

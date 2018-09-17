@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Alice.Tweedle.Interop
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Enum)]
     public class PInteropTypeAttribute : Attribute
     {
         public readonly string TweedleName;

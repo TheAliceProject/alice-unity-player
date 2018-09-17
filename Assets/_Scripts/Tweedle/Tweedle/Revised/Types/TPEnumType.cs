@@ -1,47 +1,42 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Alice.Tweedle.Interop;
+using Alice.VM;
 
 namespace Alice.Tweedle
 {
     /// <summary>
-    /// Proxy class type.
+    /// Tweedle enum type.
     /// </summary>
-    public sealed class TPObjectType : TTypeWithMembers
+    public sealed class TPEnumType : TTypeWithMembers
     {
         private Type m_Type;
-        private bool m_IsModule;
 
-        public TPObjectType(Type inType)
-            : base(TInterop.TTypeNameForType(inType), TInterop.TTypeFor(inType.BaseType))
+        public TPEnumType(Type inType)
+            : base(TInterop.TTypeNameForType(inType))
         {
             m_Type = inType;
-            m_IsModule = m_Type.IsAbstract && m_Type.IsSealed;
 
-            AssignMembers(
-                TInterop.GenerateFields(m_Type),
-                TInterop.GenerateMethods(m_Type),
-                TInterop.GenerateConstructors(m_Type)
-            );
+            Array values = Enum.GetValues(inType);
+            TField[] enumFields = new TField[values.Length];
+
+            for (int i = 0; i < values.Length; ++i)
+            {
+                var value = values.GetValue(i);
+                enumFields[i] = new PConstant(value.ToString(), value);
+            }
+
+            AssignMembers(enumFields, TMethod.EMPTY_ARRAY, TMethod.EMPTY_ARRAY);
         }
 
-        #region Object Semantics
+        #region Statics
 
-        public override bool IsReferenceType()
-        {
-            return true;
-        }
+        #endregion // Statics
 
-        #endregion // Object Semantics
-        
-        #region Link
-
-        #endregion // Link
+        public override bool IsReferenceType() { return false; }
 
         #region Lifecycle
 
-        public override bool HasDefaultInstantiate()
+        public override bool CanInstantiate(ExecutionScope inScope)
         {
             return false;
         }
@@ -53,7 +48,7 @@ namespace Alice.Tweedle
 
         public override TValue DefaultValue()
         {
-            return TValue.NULL;
+            return TValue.UNDEFINED;
         }
 
         #endregion // Lifecycle
@@ -61,12 +56,12 @@ namespace Alice.Tweedle
         public override bool Equals(ref TValue inValA, ref TValue inValB)
         {
             return base.Equals(ref inValA, ref inValB)
-                && inValA.Object() == inValB.Object();
+                && inValA.RawObject<object>() == inValA.RawObject<object>();
         }
 
         public override bool LessThan(ref TValue inValA, ref TValue inValB)
         {
-            return false;
+            return inValA.Enum().Value < inValB.Enum().Value;
         }
 
         #region Tweedle Casting
@@ -75,14 +70,19 @@ namespace Alice.Tweedle
 
         #region Conversion Semantics
 
-        public override object ConvertToPObject(ref TValue inValue)
+        public override int ConvertToInt(ref TValue inValue)
         {
-            return inValue.RawObject<object>();
+            return (int)inValue.RawObject<object>();
         }
 
         public override string ConvertToString(ref TValue inValue)
         {
             return inValue.RawObject<object>().ToString();
+        }
+
+        public override object ConvertToPObject(ref TValue inValue)
+        {
+            return inValue;
         }
 
         #endregion // Conversion Semantics
@@ -101,7 +101,7 @@ namespace Alice.Tweedle
 
         public override string ToTweedle(ref TValue inValue)
         {
-            return Name;
+            return inValue.RawObject<object>().ToString();
         }
 
         #endregion // Misc

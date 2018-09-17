@@ -9,6 +9,9 @@ namespace Alice.Tweedle
 		None						= 0,
 
 		// Scope can write to readonly fields
-		WriteReadonlyFields			= 0x001
+		WriteReadonlyFields			= 0x001,
+
+		// Scope can instantiate enum values
+		InstantiateEnum				= 0x002
 	}
 }

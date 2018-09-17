@@ -92,7 +92,10 @@ namespace Alice.Tweedle
 
         public TObject Object()
         {
-            return (TObject)m_ReferenceValue;
+            TObject obj = m_ReferenceValue as TObject;
+            if (obj == null)
+                obj = ((TEnum)m_ReferenceValue).Object;
+            return obj;
         }
 
         public TArray Array()
@@ -105,8 +108,10 @@ namespace Alice.Tweedle
             return (TLambda)m_ReferenceValue;
         }
 
-        // Implement TweedleEnumValue here
-        // also change this from "As" to something more indicative of the behavior
+        public TEnum Enum()
+        {
+            return (TEnum)m_ReferenceValue;
+        }
 
         public TTypeRef TypeRef()
         {
@@ -131,7 +136,7 @@ namespace Alice.Tweedle
         }
 
         #endregion // ITweedleExpression
-    
+
 		#region Misc
 
 		internal double RawNumber()

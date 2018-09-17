@@ -2,6 +2,8 @@ class Program {
 
   TextString name;
   WholeNumber id <- 0;
+  TestEnum test <- TestEnum.DOWN;
+  DirectionEnum dir <- DirectionEnum.LEFT;
 
   Program(TextString name, WholeNumber id <- 0) {
     this.name <- name;
@@ -12,22 +14,24 @@ class Program {
   }
 
   void execute() {
-    Portion p <- new Portion(number: -1);
+    Portion p <- new Portion(number: 0);
     Portion clone <- new Portion(clone: p);
     $Debug.dump(object: clone);
     // $Debug.log(string: "Portion value is " .. p.value);
+
+    test.logSelf();
   }
   
   static void main() {
     TextString textStr <- "This string is from tweedle";
-    incrementer <- 1;
+    $Debug.log(string: "static incrementer is " .. Program.newPosTest);
 
     $Debug.log(string: textStr .. " (length " .. textStr.length .. ")";
     $Debug.log(string: "Substring from" .. " 7: " .. textStr.substring(startIndex: 0, length: 7) .. "[" .. textStr.substring(startIndex: 7) .. "]");
     forLoop(start: 0, end: 100);
 
     Program p <- new Program(name: "Some name");
-    $Debug.log(string: "Program name is " .. p.getName() .. " and id is " .. p.id);
+    $Debug.log(string: "Program name is " .. p.getName() .. " and id is " .. p.id .. " and test is " .. p.test .. " and direction is " .. p.dir);
     p.execute();
   }
 
@@ -48,5 +52,5 @@ class Program {
     $Debug.log(string: "Time per loop: " .. timePerLoop);
   }
 
-  static WholeNumber incrementer <- 1;
+  static Position newPosTest <- new Position(right: 2, up: -1, backward: -99999.999956);
 }

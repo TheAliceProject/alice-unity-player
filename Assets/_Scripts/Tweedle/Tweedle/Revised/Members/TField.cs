@@ -15,7 +15,7 @@ namespace Alice.Tweedle
         public TTypeRef Type { get; private set; }
         public MemberFlags Flags { get; private set; }
 
-        public virtual void Resolve(TweedleSystem inSystem, TType inOwnerType)
+        public virtual void Link(TweedleSystem inSystem, TType inOwnerType)
         {
             Type.Resolve(inSystem);
 
@@ -53,14 +53,16 @@ namespace Alice.Tweedle
             return this.HasModifiers(MemberFlags.Static);
         }
 
+        public abstract bool HasInitializer();
+
         public abstract ExecutionStep InitializeStep(ExecutionScope inScope, ref TValue inValue);
         public abstract TValue Get(ExecutionScope inScope, ref TValue inValue);
         public abstract void Set(ExecutionScope inScope, ref TValue inValue, TValue inNewValue);
 
         // Checks if the potential assignment is valid
-        protected void CheckSet(ExecutionScope inScope, ref TValue inNewValue)
+        protected void CheckSet(ExecutionScope inScope, ref TValue inThis, ref TValue inNewValue)
         {
-            if (this.HasModifiers(MemberFlags.Readonly) && (!inScope.HasPermissions(ScopePermissions.WriteReadonlyFields) || inScope.GetThis() != inNewValue))
+            if (this.HasModifiers(MemberFlags.Readonly) && (!inScope.HasPermissions(ScopePermissions.WriteReadonlyFields) || inScope.GetThis() != inThis))
             {
                 throw new TweedleRuntimeException("Unable to write readonly field " + Name);
             }

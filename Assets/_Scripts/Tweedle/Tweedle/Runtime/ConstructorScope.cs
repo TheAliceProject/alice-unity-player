@@ -12,10 +12,16 @@ namespace Alice.Tweedle
 			: base(inCaller)
 		{
 			m_Type = inClass;
-			thisValue = inClass.CanInstantiateDefault() ? inClass.Instantiate() : TValue.UNDEFINED;
+			thisValue = inClass.HasDefaultInstantiate() ? inClass.Instantiate() : TValue.UNDEFINED;
 			Result = thisValue;
 			callStackEntry = "new " + inClass.Name;
             m_RootInitializer = true;
+        }
+
+		internal ConstructorScope(ExecutionScope inCaller, TEnumType inEnumType, TEnumValueInitializer inValueInitializer)
+			: this(inCaller, inEnumType)
+		{
+            Result = thisValue = inEnumType.Instantiate(inValueInitializer);
         }
 
 		private ConstructorScope(ConstructorScope inSubclassScope, TType inSuperType, TMethod inConstructor)
@@ -24,7 +30,7 @@ namespace Alice.Tweedle
 			m_Type = inSuperType;
 			thisValue = inSubclassScope.thisValue;
 			Result = thisValue;
-			Method = inConstructor;
+			method = inConstructor;
 			callStackEntry = "super() => " + m_Type.Name;
             m_RootInitializer = false;
         }
@@ -36,12 +42,12 @@ namespace Alice.Tweedle
 
 		internal override ExecutionStep InvocationStep(string callStackEntry, NamedArgument[] arguments)
 		{
-			Method = m_Type.Constructor(this, arguments);
+			method = m_Type.Constructor(this, arguments);
             if (m_RootInitializer)
             {
                 StepSequence main = new StepSequence(callStackEntry, this);
-                m_Type.AddDefaultInitializer(this, main);
-                main.AddStep(Method.AsStep(callStackEntry, this, arguments));
+                m_Type.AddInstanceInitializer(this, main);
+                main.AddStep(method.AsStep(callStackEntry, this, arguments));
                 return main;
             }
 			else

@@ -12,9 +12,9 @@ namespace Alice.Tweedle
         {
         }
 
-        protected override void Finalize(Parse.TweedleSystem inSystem)
+        protected override void LinkImpl(Parse.TweedleSystem inSystem)
         {
-            base.Finalize(inSystem);
+            base.LinkImpl(inSystem);
 
             m_Default = TValue.FromInt(0);
         }

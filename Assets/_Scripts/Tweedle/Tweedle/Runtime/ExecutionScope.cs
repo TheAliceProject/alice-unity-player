@@ -45,11 +45,6 @@ namespace Alice.Tweedle
 			this.parent = parent;
 		}
 
-		internal TType ClassNamed(string name)
-		{
-			return vm?.Library?.ClassNamed(name);
-		}
-
 		internal TType TypeNamed(string name)
 		{
 			return vm?.Library?.TypeNamed(name);
@@ -173,9 +168,19 @@ namespace Alice.Tweedle
 			return child;
 		}
 
-		internal ConstructorScope ForInstantiation(TType tweedleClass)
+		internal ConstructorScope InstantiationScope(TType inType)
 		{
-			return new ConstructorScope(this, tweedleClass);
+			return new ConstructorScope(this, inType);
+		}
+
+		internal ConstructorScope EnumInstantiationScope(TEnumType inEnumType, TEnumValueInitializer inValueInitializer)
+		{
+			return new ConstructorScope(this, inEnumType, inValueInitializer);
+        }
+
+		internal StaticConstructorScope StaticInstantiationScope(TType inType)
+		{
+			return new StaticConstructorScope(this, inType);
 		}
 
 		internal MethodScope MethodCallScope(string methodName, bool invokeSuper)

@@ -97,15 +97,15 @@ namespace Alice.Tweedle.Parse
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
 						TType tweClass = (TType)tweedleParser.ParseType(tweedleCode);
-						system.AddClass(tweClass);
+						system.AddType(tweClass);
 					}
 					return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
 				case ContentType.Enum:
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
-						// string tweedleCode = ReadEntry(resourceRef.files[j]);
-						// TweedleEnum tweedleEnum = (TweedleEnum)tweedleParser.ParseType(tweedleCode);
-						// system.AddEnum(tweedleEnum);
+						string tweedleCode = ReadEntry(resourceRef.files[j]);
+						TEnumType tweedleEnum = (TEnumType)tweedleParser.ParseType(tweedleCode);
+						system.AddType(tweedleEnum);
 					}
 					return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
 				case ContentType.Image:

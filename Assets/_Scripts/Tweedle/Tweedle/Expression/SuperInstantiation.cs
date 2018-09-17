@@ -18,5 +18,25 @@ namespace Alice.Tweedle
 			ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(m_Arguments);
 			return superScope.InvocationStep("super()", m_Arguments);
 		}
+
+		public override string ToTweedle()
+		{
+			using(PooledStringBuilder pooledString = PooledStringBuilder.Alloc())
+			{
+                pooledString.Builder.Append("super(");
+                for (int i = 0; i < m_Arguments.Length; ++i)
+				{
+					if (i > 0)
+					{
+                        pooledString.Builder.Append(", ");
+                    }
+
+                    pooledString.Builder.Append(m_Arguments[i].Name).Append(": ").Append(m_Arguments[i].Argument.ToTweedle());
+                }
+                pooledString.Builder.Append(')');
+
+                return pooledString.ToString();
+            }
+		}
 	}
 }

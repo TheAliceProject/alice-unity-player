@@ -38,6 +38,11 @@ namespace Alice.Tweedle
             return m_Getter(inScope, ref inValue);
         }
 
+        public override bool HasInitializer()
+        {
+            return false;
+        }
+
         public override ExecutionStep InitializeStep(ExecutionScope inScope, ref TValue inValue)
         {
             return null;
@@ -45,7 +50,7 @@ namespace Alice.Tweedle
 
         public override void Set(ExecutionScope inScope, ref TValue inValue, TValue inNewValue)
         {
-            CheckSet(inScope, ref inNewValue);
+            CheckSet(inScope, ref inValue, ref inNewValue);
             
             if (m_Setter == null)
                 throw new TweedleRuntimeException("No setter provided for property " + Name);

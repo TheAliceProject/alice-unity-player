@@ -489,7 +489,6 @@ namespace Alice.Tweedle.Parse
 		///
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void EnumNamedSameAsBooleanPrimitiveShouldCreateSomething()
 		{
 			TType tested = ParseType("enum Boolean {TRUE, FALSE}");
@@ -498,73 +497,66 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void SomethingShouldBeCreatedForAnEnum()
 		{
-			// TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
+			TEnumType tested = (TEnumType)ParseType("enum Direction {UP, DOWN}");
 
-			// Assert.NotNull(tested, "The parser should have returned something.");
+			Assert.NotNull(tested, "The parser should have returned something.");
 		}
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void AnEnumShouldBeCreated()
 		{
-			// TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
+			TEnumType tested = (TEnumType)ParseType("enum Direction {UP, DOWN}");
 
-			// Assert.IsInstanceOf<TweedleEnum>(tested, "The parser should have returned a TweedleEnum.");
+			Assert.IsInstanceOf<TEnumType>(tested, "The parser should have returned a TEnumType.");
 		}
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void NameShouldBeReturnedOnEnum()
 		{
-			// TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
+			TEnumType tested = (TEnumType)ParseType("enum Direction {UP, DOWN}");
 
-			// Assert.AreEqual("Direction",
-			// 				tested.Name,
-			// 				"The enum name should have been Direction.");
+			Assert.AreEqual("Direction",
+							tested.Name,
+							"The enum name should have been Direction.");
 		}
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void EnumShouldIncludeTwoValues()
 		{
-			// TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
+			TEnumType tested = (TEnumType)ParseType("enum Direction {UP, DOWN}");
 
-			// Assert.AreEqual(2,
-			// 				tested.Values.Count,
-			// 				"The enum Direction should have two values.");
+			Assert.AreEqual(2,
+							tested.ValueInitializers().Length,
+							"The enum Direction should have two values.");
 		}
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void EnumShouldIncludeUpValue()
 		{
-			// TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
+			TEnumType tested = (TEnumType)ParseType("enum Direction {UP, DOWN}");
 
-			// Assert.True(tested.Values.Contains("UP"),
-			// 			"The enum Direction should include UP.");
+			Assert.NotNull(tested.GetValueInitializer("UP"),
+						"The enum Direction should include UP.");
 		}
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void EnumShouldIncludeDownValue()
 		{
-			// TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
+			TEnumType tested = (TEnumType)ParseType("enum Direction {UP, DOWN}");
 
-			// Assert.True(tested.Values.Contains("DOWN"),
-			// 			"The enum Direction should include DOWN.");
+			Assert.NotNull(tested.GetValueInitializer("DOWN"),
+						"The enum Direction should include DOWN.");
 		}
 
 		[Test]
-		[Ignore("Enums not implemented")]
 		public void EnumShouldNotIncludeLeftValue()
 		{
-			// TweedleEnum tested = (TweedleEnum)ParseType("enum Direction {UP, DOWN}");
+			TEnumType tested = (TEnumType)ParseType("enum Direction {UP, DOWN}");
 
-			// Assert.False(tested.Values.Contains("LEFT"),
-			// 			 "The enum Direction should not include LEFT.");
+			Assert.Null(tested.GetValueInitializer("LEFT"),
+						 "The enum Direction should not include LEFT.");
 		}
 
 		///
