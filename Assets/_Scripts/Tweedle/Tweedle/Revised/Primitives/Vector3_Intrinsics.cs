@@ -6,7 +6,7 @@
 using System;
 using System.Runtime.CompilerServices;
  
-namespace Alice.Tweedle.Primatives
+namespace Alice.Tweedle.Primitives
 {
     // This file contains the definitions for all of the JIT intrinsic methods and properties that are recognized by the current x64 JIT compiler.
     // The implementation defined here is used in any circumstance where the JIT fails to recognize these members as intrinsic.

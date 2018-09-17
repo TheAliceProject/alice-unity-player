@@ -6,7 +6,7 @@
 using System.Globalization;
 using System;
  
-namespace Alice.Tweedle.Primatives
+namespace Alice.Tweedle.Primitives
 {
     /// <summary>
     /// A structure encapsulating a four-dimensional vector (x,y,z,w), 

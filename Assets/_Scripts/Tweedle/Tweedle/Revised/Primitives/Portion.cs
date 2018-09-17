@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Alice.Tweedle.Interop;
 
-namespace Alice.Tweedle.Primatives
+namespace Alice.Tweedle.Primitives
 {
     [PInteropType]
     public sealed class Portion

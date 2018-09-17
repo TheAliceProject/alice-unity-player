@@ -9,7 +9,7 @@ using System.Text;
 using System.Numerics;
 using System;
 
-namespace Alice.Tweedle.Primatives
+namespace Alice.Tweedle.Primitives
 {
     /// <summary>
     /// A structure encapsulating three Double precision doubleing point values
