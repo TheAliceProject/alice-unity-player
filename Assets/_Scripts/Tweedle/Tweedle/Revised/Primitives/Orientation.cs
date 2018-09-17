@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using System;
 
-namespace Alice.Tweedle.Primatives
+namespace Alice.Tweedle.Primitives
 {
     [PInteropType]
     public sealed class Orientation

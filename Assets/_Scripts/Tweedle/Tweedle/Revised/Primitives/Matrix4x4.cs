@@ -6,7 +6,7 @@
 using System.Globalization;
 using System;
 
-namespace Alice.Tweedle.Primatives
+namespace Alice.Tweedle.Primitives
 {
     /// <summary>
     /// A structure encapsulating a 4x4 matrix.
