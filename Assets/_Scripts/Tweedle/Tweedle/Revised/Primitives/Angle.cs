@@ -30,9 +30,10 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropConstructor]
-        public Angle(double radians)
+        public Angle(double revolutions)
         {
-            this.radians = radians;
+            const double rev2rad = System.Math.PI*2;
+            this.radians = revolutions*rev2rad;
         }
 
         [PInteropConstructor]
@@ -48,15 +49,15 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public Angle plus(Angle addend) 
+        public Angle plus(Angle angle) 
         {
-            return new Angle(radians + addend);
+            return new Angle(radians + angle.radians);
         }
 
         [PInteropMethod]
-        public Angle minus(Angle subtrahend)
+        public Angle minus(Angle angle)
         {
-            return new Angle(radians - subtrahend);
+            return new Angle(radians - angle.radians);
         }
 
         [PInteropMethod]

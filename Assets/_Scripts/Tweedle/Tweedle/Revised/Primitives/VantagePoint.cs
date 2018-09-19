@@ -8,6 +8,10 @@ namespace Alice.Tweedle.Primitives
 
 		public Matrix4x4 value = Matrix4x4.Identity;
 
+		[PInteropField]
+		public Orientation orientation { get { return new Orientation(Quaternion.CreateFromRotationMatrix(value)); } }
+		[PInteropField]
+		public Position translation { get { return new Position(value.Translation); } }
 
 		[PInteropConstructor]
 		public VantagePoint() {}
@@ -18,6 +22,11 @@ namespace Alice.Tweedle.Primitives
                          	double m41, double m42, double m43, double m44) 
 		{
 			value = new Matrix4x4(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
+		}
+
+		public VantagePoint(Orientation orientation, Position translation) {
+			value = Matrix4x4.CreateFromQuaternion(orientation.value);
+			value.Translation = translation.value;
 		}
 
 		[PInteropConstructor]

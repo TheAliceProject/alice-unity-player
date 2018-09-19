@@ -30,13 +30,13 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public Portion plus(Portion addend) {
-            return new Portion(System.Math.Min(value + addend, 1));
+        public Portion plus(Portion portion) {
+            return new Portion(System.Math.Min(value + portion, 1));
         }
 
         [PInteropMethod]
-        public Portion minus(Portion subtrahend) {
-            return new Portion(System.Math.Max(value - subtrahend, 0));
+        public Portion minus(Portion portion) {
+            return new Portion(System.Math.Max(value - portion, 0));
         }
 
         public static Portion lerp(Portion a, Portion b, Portion t) {

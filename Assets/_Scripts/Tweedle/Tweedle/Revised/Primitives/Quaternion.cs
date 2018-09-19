@@ -220,7 +220,7 @@ namespace Alice.Tweedle.Primitives
         /// </summary>
         /// <param name="matrix">The rotation matrix.</param>
         /// <returns>The created Quaternion.</returns>
-		/*
+		
         public static Quaternion CreateFromRotationMatrix(Matrix4x4 matrix)
         {
             double trace = matrix.M11 + matrix.M22 + matrix.M33;
@@ -269,7 +269,7 @@ namespace Alice.Tweedle.Primitives
  
             return q;
         }
-		*/
+		
 
         /// <summary>
         /// Calculates the dot product of two Quaternions.
