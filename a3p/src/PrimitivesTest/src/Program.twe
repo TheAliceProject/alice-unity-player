@@ -16,13 +16,13 @@ class Program {
     $Debug.log(string: "Portion");
     Portion p <- new Portion(number: 0.25);
     Portion clone <- new Portion(clone: p);
-    Portion sum <- clone.plus(addend: new Portion(number: 0.5));
+    Portion sum <- clone.plus(portion: new Portion(number: 0.5));
     $Debug.log(string: "Portion: " .. sum.value);
 
     // angles
     $Debug.log(string: "Angle");
-    Angle angle <- new Angle(radians: 3.14);
-    $Debug.log(string: "Angle: " .. angle.radians);
+    Angle angle <- new Angle(revolutions: 0.5);
+    $Debug.log(string: "Angle radians: " .. angle.radians);
 
     // positions
     $Debug.log(string: "Position");
@@ -36,7 +36,7 @@ class Program {
 
     // Orientation
     $Debug.log(string: "Orientation");
-    Orientation orientation <- new Orientation(direction: new Direction(right: 1, up: 0, backward: 0), angle: new Angle(radians: 1.62));
+    Orientation orientation <- new Orientation(direction: new Direction(right: 1, up: 0, backward: 0), angle: new Angle(revolutions: 0.25));
     $Debug.dump(object: orientation);
   }
   

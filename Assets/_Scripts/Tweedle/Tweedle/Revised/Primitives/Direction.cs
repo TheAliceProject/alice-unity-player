@@ -3,9 +3,23 @@ using Alice.Tweedle.Interop;
 
 namespace Alice.Tweedle.Primitives
 {
+
+
     [PInteropType]
     public sealed class Direction
     {
+        [PInteropMethod]
+        public static Direction NegativeXAxis() { return new Direction(-1, 0, 0); }
+        [PInteropMethod]
+        public static Direction PositiveXAxis() { return new Direction(1, 0, 0); }
+        [PInteropMethod]
+        public static Direction NegativeYAxis() { return new Direction(0, -1, 0); }
+        [PInteropMethod]
+        public static Direction PositiveYAxis() { return new Direction(0, 1, 0); }
+        [PInteropMethod]
+        public static Direction NegativeZAxis() { return new Direction(0, 0, -1); }
+        [PInteropMethod]
+        public static Direction PositiveZAxis() { return new Direction(0, 0, 1); }
 
         public readonly Vector3 value = Vector3.Zero;
 
