@@ -34,6 +34,9 @@ class Program {
     Direction dir <- new Direction(right: 2, up: 5, backward: 3);
     $Debug.log(string: "Direction (Right: " .. dir.getRight() .. " Up: " .. dir.getUp() .. " Backward: " .. dir.getBackward() .. ")");
 
+    Direction right <- Direction.PositiveXAxis();
+    $Debug.log(string: "Right Direction (Right: " .. right.getRight() .. " Up: " .. right.getUp() .. " Backward: " .. right.getBackward() .. ")");
+
     // Orientation
     $Debug.log(string: "Orientation");
     Orientation orientation <- new Orientation(direction: new Direction(right: 1, up: 0, backward: 0), angle: new Angle(revolutions: 0.25));

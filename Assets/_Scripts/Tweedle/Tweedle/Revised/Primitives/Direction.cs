@@ -83,9 +83,9 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public Direction scale(double scale) 
+        public Direction scaledBy(double multiplier) 
         {
-            return new Direction(value * scale);
+            return new Direction(value * multiplier);
         }
 
         public Direction normalized() 
