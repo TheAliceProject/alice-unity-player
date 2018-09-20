@@ -6,16 +6,16 @@ namespace Alice.Tweedle.Primitives
     [PInteropType]
     public sealed class Portion
     {
-        [PInteropField]
+       
         public readonly double value;
 
-        #region  Interop Interfaces
+        #region Interop Interface 
         [PInteropConstructor]
-        public Portion(double number)
+        public Portion(double portion)
         {
-            if (number < 0 || number > 1)
-                throw new TweedleRuntimeException("Cannot instantiate Portion with value " + number + " - must be between 0 and 1");
-            value = number;
+            if (portion < 0 || portion > 1)
+                throw new TweedleRuntimeException("Cannot instantiate Portion with value " + portion + " - must be between 0 and 1");
+            value = portion;
         }
 
         [PInteropConstructor]
@@ -25,24 +25,25 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public bool equals(Portion portion) {
-            return value == portion;
+        public bool equals(Portion other) {
+            return value == other;
         }
 
         [PInteropMethod]
-        public Portion plus(Portion portion) {
-            return new Portion(System.Math.Min(value + portion, 1));
+        public Portion add(Portion other) {
+            return new Portion(System.Math.Min(value + other, 1));
         }
 
         [PInteropMethod]
-        public Portion minus(Portion portion) {
-            return new Portion(System.Math.Max(value - portion, 0));
+        public Portion subtract(Portion other) {
+            return new Portion(System.Math.Max(value - other, 0));
         }
 
-        public static Portion lerp(Portion a, Portion b, Portion t) {
-            return new Portion((b.value-a.value)*t.value + a.value);
+        [PInteropMethod]
+        public Portion interpolatePortion(Portion end, double portion) {
+            return new Portion((end.value-value)*portion + value);
         }
-        #endregion
+        #endregion // Interop Interfaces
 
 
 
@@ -52,7 +53,9 @@ namespace Alice.Tweedle.Primitives
         }
 
        
-
+        public override string ToString() {
+            return string.Format("Portion({0:0.####})", value);
+        }
         
     }
 }

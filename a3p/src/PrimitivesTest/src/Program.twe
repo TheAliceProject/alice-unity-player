@@ -14,15 +14,14 @@ class Program {
   void execute() {
     // portions
     $Debug.log(string: "Portion");
-    Portion p <- new Portion(number: 0.25);
-    Portion clone <- new Portion(clone: p);
-    Portion sum <- clone.plus(portion: new Portion(number: 0.5));
-    $Debug.log(string: "Portion: " .. sum.value);
+    Portion p <- new Portion(portion: 0.25);
+    Portion sum <- p.add(other: new Portion(portion: 0.5));
+    $Debug.log(string: "portion sum <- " .. sum);
 
     // angles
     $Debug.log(string: "Angle");
     Angle angle <- new Angle(revolutions: 0.5);
-    $Debug.log(string: "angle <- " .. angle);
+    $Debug.log(string: "angle radians <- " .. angle);
 
     // AABB
     $Debug.log(string: "AxisAlignedBox");

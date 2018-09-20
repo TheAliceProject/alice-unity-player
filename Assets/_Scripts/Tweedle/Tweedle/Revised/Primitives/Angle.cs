@@ -74,7 +74,7 @@ namespace Alice.Tweedle.Primitives
 
         [PInteropMethod]
         public Angle interpolatePortion(Angle end, double portion) {
-            return new Angle(radians + (end.radians - radians)*portion);
+            return new Angle((end.radians - radians)*portion + radians);
         }
         #endregion // Interop Interfaces
 

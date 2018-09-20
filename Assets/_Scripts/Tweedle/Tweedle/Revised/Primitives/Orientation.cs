@@ -36,8 +36,8 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public bool equals(Orientation orientation) {
-            return value.Equals(orientation.value);
+        public bool equals(Orientation other) {
+            return value.Equals(other.value);
         }
 
         [PInteropMethod]

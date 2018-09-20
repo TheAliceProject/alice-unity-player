@@ -49,9 +49,9 @@ namespace Alice.Tweedle.Primitives
         }
        
         [PInteropMethod]
-        public bool equals(Direction direction) 
+        public bool equals(Direction other) 
         {
-            return value == direction.value;
+            return value == other.value;
         }
 
         [PInteropMethod]
