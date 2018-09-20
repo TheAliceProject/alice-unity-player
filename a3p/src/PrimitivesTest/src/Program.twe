@@ -22,7 +22,12 @@ class Program {
     // angles
     $Debug.log(string: "Angle");
     Angle angle <- new Angle(revolutions: 0.5);
-    $Debug.log(string: "Angle radians: " .. angle.radians);
+    $Debug.log(string: "angle <- " .. angle);
+
+    // AABB
+    $Debug.log(string: "AxisAlignedBox");
+    AxisAlignedBox box <- new AxisAlignedBox(minimum: new Position(x: -0.5, y: -0.5, z: -0.5), maximum: new Position(x: 0.5, y: 0.5, z: 0.5));
+    $Debug.log(string: "box <- " .. box);
 
     // positions
     $Debug.log(string: "Position");

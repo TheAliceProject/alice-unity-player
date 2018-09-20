@@ -58,7 +58,7 @@ namespace Alice.Tweedle.Primitives
 
         [PInteropMethod]
         public Position interpolatePortion(Position end, double portion) {
-            return new Position(Vector3.Lerp(value, end.value, portion));      
+            return new Position(Vector3.Lerp(value, end.value, portion));
         }
 
         [PInteropMethod]

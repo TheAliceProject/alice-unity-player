@@ -3,43 +3,47 @@ using Alice.Tweedle.Interop;
 
 namespace Alice.Tweedle.Primitives
 {
-
-
     [PInteropType]
     public sealed class AxisAlignedBox
     {
-
-        public readonly Vector3 minimum = Vector3.Zero;
-        public readonly Vector3 maximum = Vector3.Zero;
+        public readonly Vector3 minValue = Vector3.Zero;
+        public readonly Vector3 maxValue = Vector3.Zero;
 
         public AxisAlignedBox(Vector3 inMin, Vector3 inMax)
         {
-            minimum = inMin;
-            maximum = inMax;
+            this.minValue = inMin;
+            this.maxValue = inMax;
         }
 
+        #region Interop Interfaces
+        [PInteropField]
+        public Position minimum { get { return new Position(minValue);} }
+        [PInteropField]
+        public Position maximum { get { return new Position(minValue);} }
+
+        [PInteropConstructor]
+        public AxisAlignedBox(Position minimum, Position maximum)
+        {
+            minValue = minimum.value;
+            maxValue = maximum.value;
+        }
+
+        [PInteropConstructor]
         public AxisAlignedBox(AxisAlignedBox clone)
         {
-            minimum = clone.minimum;
-            minimum = clone.maximum;
-        }
-
-        [PInteropMethod]
-        public Position getMinimum()
-        {
-	        return new Position(minimum);
-	    }
-
-        [PInteropMethod]
-        public Position getMaximum()
-        {
-            return new Position(maximum);
+            minValue = clone.minValue;
+            maxValue = clone.maxValue;
         }
 
         [PInteropMethod]
         public bool equals(AxisAlignedBox box) 
         {
-            return maximum == box.maximum && minimum == box.minimum;
+            return maxValue == box.maxValue && minValue == box.minValue;
+        }
+        #endregion // Interop Interfaces
+
+        public override string ToString() {
+            return string.Format("AABB[min({0:0.##},{1:0.##},{2:0.##}),max({3:0.##},{4:0.##},{5:0.##})]", minValue.X, minValue.Y, minValue.Z, maxValue.X, maxValue.Y, maxValue.Z);
         }
     }
 }
