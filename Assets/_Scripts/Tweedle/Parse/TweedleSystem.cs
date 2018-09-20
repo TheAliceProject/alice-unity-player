@@ -52,6 +52,7 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(Primitives.Angle)));
             AddType(TInterop.GenerateType(typeof(Primitives.AxisAlignedBox)));
             AddType(TInterop.GenerateType(typeof(Primitives.Size)));
+            AddType(TInterop.GenerateType(typeof(Primitives.Scale)));
         }
 
         public void AddLibrary(LibraryManifest libAsset)

@@ -8,18 +8,20 @@ namespace Alice.Tweedle.Primitives
     {
         public readonly Vector3 value;
 
-        [PInteropField]
-        public double x { get {return value.X; } }
-        [PInteropField]
-        public double y { get {return value.Y; } }
-        [PInteropField]
-        public double z { get {return value.Z; } }
-
         public Size(Vector3 inVector)
         {
             value = inVector;
         }
 
+        #region Interop Interfaces
+        [PInteropField]
+        public double width { get {return value.X; } }
+        [PInteropField]
+        public double height { get {return value.Y; } }
+        [PInteropField]
+        public double depth { get {return value.Z; } }
+
+       
         [PInteropConstructor]
         public Size(double width, double height, double depth)
         {
@@ -33,27 +35,28 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public double getWidth() {
-	        return value.X;
-	    }
-
-        [PInteropMethod]
-        public double getHeight() {
-            return value.Y;
+        public bool equals(Size other) {
+            return value == other.value;
         }
 
         [PInteropMethod]
-        public double getDepth() {
-            return value.Z;
+        public Size scaledBy(double factor) {
+            return new Size(value*factor);
         }
 
-        public static Size lerp(Size a, Size b, Portion t) {
-            return new Size(Vector3.Lerp(a.value, b.value, t.value));
+        [PInteropMethod]
+        public Size interpolatePortion(Size end, double portion) {
+            return new Size(Vector3.Lerp(value, end.value, portion));
         }
-        
+        #endregion
+
         static public implicit operator UnityEngine.Vector3(Size inPosition)
         {
             return inPosition != null ? new UnityEngine.Vector3((float)inPosition.value.X, (float)inPosition.value.Y, (float)inPosition.value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+        }
+
+        public override string ToString() {
+            return string.Format("Size({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
         }
 
     }

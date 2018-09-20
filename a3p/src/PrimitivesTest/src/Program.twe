@@ -28,7 +28,7 @@ class Program {
     AxisAlignedBox box <- new AxisAlignedBox(minimum: new Position(x: -0.5, y: -0.5, z: -0.5), maximum: new Position(x: 0.5, y: 0.5, z: 0.5));
     $Debug.log(string: "box <- " .. box);
 
-    // positions
+    // position
     $Debug.log(string: "Position");
     Position pos <- new Position(x: 1, y: 2, z: 4);
     $Debug.log(string: "pos <- " .. pos);
@@ -37,6 +37,16 @@ class Program {
     $Debug.log(string: "Direction");
     Direction dir <- new Direction(x: 2, y: 5, z: 3);
     $Debug.log(string: "dir <- " .. dir);
+
+    // size
+    $Debug.log(string: "Size");
+    Size size <- new Size(width: 15, height: 6, depth: 10);
+    $Debug.log(string: "size <- " .. size);
+
+    // scale
+    $Debug.log(string: "Scale");
+    Scale scale <- new Scale(x: 1, y: 1.1, z: 0.5);
+    $Debug.log(string: "scale <- " .. scale);
 
     Direction right <- Direction.POSITIVE_X_AXIS;
     $Debug.log(string: "right <- " .. right);
