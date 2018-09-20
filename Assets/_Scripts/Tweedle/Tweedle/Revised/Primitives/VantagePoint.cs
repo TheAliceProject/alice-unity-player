@@ -4,7 +4,7 @@ using Alice.Tweedle.Interop;
 namespace Alice.Tweedle.Primitives
 {
 	[PInteropType]
-	public class VantagePoint {
+	public sealed class VantagePoint {
 
 		public Matrix4x4 value = Matrix4x4.Identity;
 
