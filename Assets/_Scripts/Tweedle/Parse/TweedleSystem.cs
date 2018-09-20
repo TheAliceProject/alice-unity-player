@@ -42,6 +42,7 @@ namespace Alice.Tweedle.Parse
 
             AddType(TInterop.GenerateType(typeof(Modules.DebugModule)));
             AddType(TInterop.GenerateType(typeof(Modules.DirectionEnum)));
+            AddType(TInterop.GenerateType(typeof(Modules.AnimationStyleEnum)));
 
             AddType(TInterop.GenerateType(typeof(Primitives.Portion)));
             AddType(TInterop.GenerateType(typeof(Primitives.Position)));

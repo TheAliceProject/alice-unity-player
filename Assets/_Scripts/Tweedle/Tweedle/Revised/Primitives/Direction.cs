@@ -23,6 +23,13 @@ namespace Alice.Tweedle.Primitives
 
         public readonly Vector3 value = Vector3.Zero;
 
+        [PInteropField]
+        public double x { get { return value.X; } }
+        [PInteropField]
+        public double y { get { return value.Y; } }
+        [PInteropField]
+        public double z { get { return value.Z; } }
+
         public Direction(Vector3 inVector)
         {
             value = inVector;

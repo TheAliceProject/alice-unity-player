@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // Source: https://referencesource.microsoft.com/#System.Numerics/System/Numerics/Quaternion.cs
-// Modified to use doubles instead of doubles
+// Modified to use doubles instead of singles
 
 using System.Globalization;
 using System;
