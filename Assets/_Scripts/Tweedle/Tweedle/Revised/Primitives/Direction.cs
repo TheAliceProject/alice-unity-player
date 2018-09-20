@@ -8,20 +8,26 @@ namespace Alice.Tweedle.Primitives
     [PInteropType]
     public sealed class Direction
     {
-        [PInteropMethod]
-        public static Direction NegativeXAxis() { return new Direction(-1, 0, 0); }
-        [PInteropMethod]
-        public static Direction PositiveXAxis() { return new Direction(1, 0, 0); }
-        [PInteropMethod]
-        public static Direction NegativeYAxis() { return new Direction(0, -1, 0); }
-        [PInteropMethod]
-        public static Direction PositiveYAxis() { return new Direction(0, 1, 0); }
-        [PInteropMethod]
-        public static Direction NegativeZAxis() { return new Direction(0, 0, -1); }
-        [PInteropMethod]
-        public static Direction PositiveZAxis() { return new Direction(0, 0, 1); }
-
         public readonly Vector3 value = Vector3.Zero;
+
+        public Direction(Vector3 inVector)
+        {
+            value = inVector;
+        }
+
+        #region Interop Interfaces
+        [PInteropField]
+        public static readonly Direction POSITIVE_X_AXIS  = new Direction(1, 0, 0);
+        [PInteropField]
+        public static readonly Direction NEGATIVE_X_AXIS  = new Direction(-1, 0, 0);
+        [PInteropField]
+        public static readonly Direction POSITIVE_Y_AXIS  = new Direction(0, 1, 0);
+        [PInteropField]
+        public static readonly Direction NEGATIVE_Y_AXIS  = new Direction(0, -1, 0);
+        [PInteropField]
+        public static readonly Direction POSITIVE_Z_AXIS  = new Direction(0, 0, 1);
+        [PInteropField]
+        public static readonly Direction NEGATIVE_Z_AXIS  = new Direction(0, 0, -1);
 
         [PInteropField]
         public double x { get { return value.X; } }
@@ -30,16 +36,10 @@ namespace Alice.Tweedle.Primitives
         [PInteropField]
         public double z { get { return value.Z; } }
 
-        public Direction(Vector3 inVector)
-        {
-            value = inVector;
-        }
-
-
         [PInteropConstructor]
-        public Direction(double right, double up, double backward)
+        public Direction(double x, double y, double z)
         {
-            value = new Vector3(right, up, backward);
+            value = new Vector3(x, y, z);
         }
 
         [PInteropConstructor]
@@ -47,30 +47,7 @@ namespace Alice.Tweedle.Primitives
         {
             value = clone.value;
         }
-
-        static public implicit operator UnityEngine.Vector3(Direction inDirection)
-        {
-            return inDirection != null ? new UnityEngine.Vector3((float)inDirection.value.X, (float)inDirection.value.Y, (float)inDirection.value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
-        }
-
-        [PInteropMethod]
-        public double getRight()
-        {
-	        return value.X;
-	    }
-
-        [PInteropMethod]
-        public double getUp() 
-        {
-            return value.Y;
-        }
-
-        [PInteropMethod]
-        public double getBackward() 
-        {
-            return value.Z;
-        }
-
+       
         [PInteropMethod]
         public bool equals(Direction direction) 
         {
@@ -78,27 +55,73 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public Direction plus(Direction direction) 
+        public Direction add(Direction other) 
         {
-            return new Direction(value + direction.value);
+            return new Direction(value + other.value);
         }
 
         [PInteropMethod]
-        public Direction minus(Direction direction) 
+        public Direction negated() 
         {
-            return new Direction(value - direction.value);
+            return new Direction(-value);
         }
 
         [PInteropMethod]
-        public Direction scaledBy(double multiplier) 
+        public Direction scaledBy(double factor) 
         {
-            return new Direction(value * multiplier);
+            return new Direction(value * factor);
         }
 
+        [PInteropMethod]
         public Direction normalized() 
         {
             return new Direction(Vector3.Normalize(value));
         }
+
+        public double dotProduct(Direction other) {
+            return Vector3.Dot(value, other.value);
+        }
+
+        public Direction crossProduct(Direction other) {
+            return new Direction(Vector3.Cross(value, other.value));
+        }
+
+        [PInteropMethod]
+        public Direction interpolatePortion(Direction end, double portion) {
+            return new Direction(Vector3.Lerp(value, end.value, portion));      
+        }
+
+        [PInteropMethod]
+        public bool isPositiveXAxis() {
+            return value == POSITIVE_X_AXIS.value;
+        }
+
+        [PInteropMethod]
+        public bool isNegativeXAxis() {
+            return value == NEGATIVE_X_AXIS.value;
+        }
+
+        [PInteropMethod]
+        public bool isPositiveYAxis() {
+            return value == POSITIVE_Y_AXIS.value;
+        }
+
+        [PInteropMethod]
+        public bool isNegativeYAxis() {
+            return value == NEGATIVE_Y_AXIS.value;
+        }
+
+        [PInteropMethod]
+        public bool isPositiveZAxis() {
+            return value == POSITIVE_Z_AXIS.value;
+        }
+
+        [PInteropMethod]
+        public bool isNegativeZAxis() {
+            return value == NEGATIVE_Z_AXIS.value;
+        }
+
+        #endregion //Interop Interfaces
 
         public static Direction lerp(Direction a, Direction b, Portion t) {
             return new Direction(Vector3.Lerp(a.value, b.value, t.value));
@@ -112,8 +135,14 @@ namespace Alice.Tweedle.Primitives
             return new Direction(Vector3.Transform(value, orientation.value));
         }
 
+        static public implicit operator UnityEngine.Vector3(Direction inDirection)
+        {
+            return inDirection != null ? new UnityEngine.Vector3((float)inDirection.value.X, (float)inDirection.value.Y, (float)inDirection.value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+        }
+
+
         public override string ToString() {
-            return string.Format("Position({0.d3},{1.d3},{2.d3})", value.X, value.Y, value.Z);
+            return string.Format("Direction({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
         }
 
     }
