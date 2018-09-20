@@ -112,5 +112,9 @@ namespace Alice.Tweedle.Primitives
             return new Direction(Vector3.Transform(value, orientation.value));
         }
 
+        public override string ToString() {
+            return string.Format("Position({0.d3},{1.d3},{2.d3})", value.X, value.Y, value.Z);
+        }
+
     }
 }

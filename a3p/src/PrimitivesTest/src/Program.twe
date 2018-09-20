@@ -26,8 +26,8 @@ class Program {
 
     // positions
     $Debug.log(string: "Position");
-    Position pos <- new Position(right: 1, up: 2, backward: 4);
-    $Debug.log(string: "Position (Right: " .. pos.getRight() .. " Up: " .. pos.getUp() .. " Backward: " .. pos.getBackward() .. ")");
+    Position pos <- new Position(x: 1, y: 2, z: 4);
+    $Debug.log(string: "pos <- " .. pos);
 
     // direction
     $Debug.log(string: "Direction");
