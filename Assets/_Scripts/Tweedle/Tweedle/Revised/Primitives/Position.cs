@@ -8,6 +8,15 @@ namespace Alice.Tweedle.Primitives
     {
         public readonly Vector3 value;
 
+        public Position(Vector3 inVector)
+        {
+            value = inVector;
+        }
+
+        #region Interop Interfaces
+        [PInteropField]
+        public static readonly Position NaV = new Position(double.NaN, double.NaN, double.NaN);
+
         [PInteropField]
         public double x { get { return value.X; } }
         [PInteropField]
@@ -15,15 +24,10 @@ namespace Alice.Tweedle.Primitives
         [PInteropField]
         public double z { get { return value.Z; } }
 
-        public Position(Vector3 inVector)
-        {
-            value = inVector;
-        }
-
         [PInteropConstructor]
-        public Position(double right, double up, double backward)
+        public Position(double x, double y, double z)
         {
-            value = new Vector3(right, up, backward);
+            value = new Vector3(x, y, z);
         }
 
         [PInteropConstructor]
@@ -32,27 +36,42 @@ namespace Alice.Tweedle.Primitives
             value = clone.value;
         }
 
-
         [PInteropMethod]
-        public double getRight() {
-	        return value.X;
-	    }
-
-        [PInteropMethod]
-        public double getUp() {
-            return value.Y;
-        }
-
-        [PInteropMethod]
-        public double getBackward() {
-            return value.Z;
-        }
-
-        [PInteropMethod]
-        public Position move(Direction direction) {
-            return new Position(value + direction.value);
+        public Position add(Direction other) {
+            return new Position(value + other.value);
         }
  
+        [PInteropMethod]
+        public Position subtract(Direction other) {
+            return new Position(value + other.value);
+        }
+
+        [PInteropMethod]
+        public Direction subtract(Position other) {
+            return new Direction(value + other.value);
+        }
+
+        [PInteropMethod]
+        public Position scaledBy(double factor) {
+            return new Position(value*factor);
+        }
+
+        [PInteropMethod]
+        public Position interpolatePortion(Position end, double portion) {
+            return new Position(Vector3.Lerp(value, end.value, portion));      
+        }
+
+        [PInteropMethod]
+        public double distanceSquared(Position other) {
+            return Vector3.DistanceSquared(value, other.value);
+        }
+
+        [PInteropMethod]
+        public double distance(Position other) {
+            return Vector3.Distance(value, other.value);
+        }
+        #endregion // Interop Interfaces
+
         public Position transform(VantagePoint vantagePoint) {
             return new Position(Vector3.Transform(value, vantagePoint.value));
         }
@@ -60,14 +79,14 @@ namespace Alice.Tweedle.Primitives
         public Position rotate(Orientation orientation) {
             return new Position(Vector3.Transform(value, orientation.value));
         }
-
-        public static Position lerp(Position a, Position b, Portion t) {
-            return new Position(Vector3.Lerp(a.value, b.value, t.value));
-        }
-        
+       
         static public implicit operator UnityEngine.Vector3(Position inPosition)
         {
             return inPosition != null ? new UnityEngine.Vector3((float)inPosition.value.X, (float)inPosition.value.Y, (float)inPosition.value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+        }
+
+        public override string ToString() {
+            return string.Format("Position({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
         }
 
     }
