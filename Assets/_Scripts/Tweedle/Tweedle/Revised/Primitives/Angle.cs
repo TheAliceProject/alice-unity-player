@@ -7,7 +7,7 @@ namespace Alice.Tweedle.Primitives
     [PInteropType]
     public sealed class Angle
     {
-
+        #region Interop Interfaces
         [PInteropField]
         public readonly double radians;
 
@@ -43,25 +43,25 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public bool equals(Angle angle) 
+        public bool equals(Angle other) 
         {
-            return this.radians == angle.radians;
+            return this.radians == other.radians;
         }
 
         [PInteropMethod]
-        public Angle plus(Angle angle) 
+        public Angle add(Angle other) 
         {
-            return new Angle(radians + angle.radians);
+            return new Angle(radians + other.radians);
         }
 
         [PInteropMethod]
-        public Angle minus(Angle angle)
+        public Angle subtract(Angle other)
         {
-            return new Angle(radians - angle.radians);
+            return new Angle(radians - other.radians);
         }
 
         [PInteropMethod]
-        public Angle times(double factor) 
+        public Angle scaledBy(double factor) 
         {
             return new Angle(radians * factor);
         }
@@ -70,18 +70,21 @@ namespace Alice.Tweedle.Primitives
         public Angle dividedBy(double divisor)
         {
             return new Angle(radians / divisor);
-        }       
-
-        // TODO: Talk to Daniel if this should use absolute values or account for wrapping
-        public static Angle lerp(Angle a, Angle b, Portion t) {
-            return new Angle(a.radians + (b.radians - a.radians)*t.value);
         }
+
+        [PInteropMethod]
+        public Angle interpolatePortion(Angle end, double portion) {
+            return new Angle(radians + (end.radians - radians)*portion);
+        }
+        #endregion // Interop Interfaces
 
         static public implicit operator double(Angle inAngle)
         {
             return inAngle != null ? inAngle.radians : double.NaN;
         }
 
-         
+        public override string ToString() {
+            return string.Format("Angle({0:0.##})", radians);
+        }
     }
 }
