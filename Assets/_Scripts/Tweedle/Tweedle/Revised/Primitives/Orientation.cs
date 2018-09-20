@@ -15,8 +15,8 @@ namespace Alice.Tweedle.Primitives
         }
 
         #region  Interop Interfaces
-        [PInteropConstructor]
-        public Orientation() {}
+        [PInteropField]
+        public static readonly Orientation identity = new Orientation(Quaternion.Identity);
 
         [PInteropConstructor]
         public Orientation(double x, double y, double z, double w)
