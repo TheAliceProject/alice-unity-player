@@ -31,15 +31,15 @@ class Program {
 
     // direction
     $Debug.log(string: "Direction");
-    Direction dir <- new Direction(right: 2, up: 5, backward: 3);
-    $Debug.log(string: "Direction (Right: " .. dir.getRight() .. " Up: " .. dir.getUp() .. " Backward: " .. dir.getBackward() .. ")");
+    Direction dir <- new Direction(x: 2, y: 5, z: 3);
+    $Debug.log(string: "dir <- " .. dir);
 
-    Direction right <- Direction.PositiveXAxis();
-    $Debug.log(string: "Right Direction (Right: " .. right.getRight() .. " Up: " .. right.getUp() .. " Backward: " .. right.getBackward() .. ")");
+    Direction right <- Direction.POSITIVE_X_AXIS;
+    $Debug.log(string: "right <- " .. right);
 
     // Orientation
     $Debug.log(string: "Orientation");
-    Orientation orientation <- new Orientation(direction: new Direction(right: 1, up: 0, backward: 0), angle: new Angle(revolutions: 0.25));
+    Orientation orientation <- new Orientation(direction: new Direction(x: 1, y: 0, z: 0), angle: new Angle(revolutions: 0.25));
     $Debug.dump(object: orientation);
   }
   
