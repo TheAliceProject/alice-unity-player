@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Alice.Tweedle.Interop;
-
+using System; 
 namespace Alice.Tweedle.Primitives
 {
     [PInteropType]
@@ -40,6 +40,38 @@ namespace Alice.Tweedle.Primitives
         {
             return maxValue == other.maxValue && minValue == other.minValue;
         }
+
+        [PInteropMethod]
+        public AxisAlignedBox transform(VantagePoint vantagePoint) {      
+            // transformed all corner points
+            Vector3[] verts = {
+                // bottom
+                Vector3.Transform(minValue, vantagePoint.value),
+                Vector3.Transform(new Vector3(minValue.X, maxValue.Y, minValue.Z), vantagePoint.value),
+                Vector3.Transform(new Vector3(maxValue.X, minValue.Y, minValue.Z), vantagePoint.value),
+                Vector3.Transform(new Vector3(maxValue.X, maxValue.Y, minValue.Z), vantagePoint.value),
+                // top
+                Vector3.Transform(new Vector3(minValue.X, minValue.Y, maxValue.Z), vantagePoint.value),
+                Vector3.Transform(new Vector3(minValue.X, maxValue.Y, maxValue.Z), vantagePoint.value),
+                Vector3.Transform(new Vector3(maxValue.X, minValue.Y, maxValue.Z), vantagePoint.value),
+                Vector3.Transform(maxValue, vantagePoint.value)
+            };
+
+            Vector3 min = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
+            Vector3 max = new Vector3(double.MinValue, double.MinValue, double.MinValue);
+            for (int i = 0; i < verts.Length; ++i) {
+                Vector3 p = verts[i];
+                min.X = Math.Min(min.X, p.X);
+                min.Y = Math.Min(min.Y, p.Y);
+                min.Z = Math.Min(min.Z, p.Z);
+                max.X = Math.Max(max.X, p.X);
+                max.Y = Math.Max(max.Y, p.Y);
+                max.Z = Math.Max(max.Z, p.Z);
+            }
+
+            return new AxisAlignedBox(min, max);
+        }
+
         #endregion // Interop Interfaces
 
         public override string ToString() {
