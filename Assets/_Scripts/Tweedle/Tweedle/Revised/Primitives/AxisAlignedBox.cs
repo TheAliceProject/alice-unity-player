@@ -36,9 +36,9 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
-        public bool equals(AxisAlignedBox box) 
+        public bool equals(AxisAlignedBox other) 
         {
-            return maxValue == box.maxValue && minValue == box.minValue;
+            return maxValue == other.maxValue && minValue == other.minValue;
         }
         #endregion // Interop Interfaces
 
