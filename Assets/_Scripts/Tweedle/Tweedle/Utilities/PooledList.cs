@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Alice
+namespace Alice.Utils
 {
     public sealed class PooledList<T> : List<T>, IDisposable
     {

@@ -1,5 +1,5 @@
 using Alice.Tweedle;
-using Alice.VM;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle.Parse
 {

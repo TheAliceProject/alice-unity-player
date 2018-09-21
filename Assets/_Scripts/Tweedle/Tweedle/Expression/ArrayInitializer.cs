@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Alice.VM;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
 {

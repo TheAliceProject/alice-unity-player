@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Alice.Tweedle 
+namespace Alice.Utils
 {
 	public static class Epsilon 
 	 {

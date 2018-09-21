@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Alice
+namespace Alice.Utils
 {
     public sealed class PooledStringBuilder : IDisposable
     {

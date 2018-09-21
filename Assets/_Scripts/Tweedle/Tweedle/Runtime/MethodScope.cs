@@ -1,4 +1,4 @@
-﻿namespace Alice.Tweedle
+﻿namespace Alice.Tweedle.VM
 {
 	class MethodScope : InvocationScope
 	{

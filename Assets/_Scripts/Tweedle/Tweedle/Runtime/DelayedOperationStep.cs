@@ -1,7 +1,7 @@
 ﻿using System;
 using Alice.Tweedle;
 
-namespace Alice.VM
+namespace Alice.Tweedle.VM
 {
 	// A step to execute an action only after all preceeding steps are complete.
 	// Used to invoke methods, constructors, and lambdas.

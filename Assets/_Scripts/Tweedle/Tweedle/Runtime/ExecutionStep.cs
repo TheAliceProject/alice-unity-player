@@ -1,6 +1,6 @@
 ﻿using Alice.Tweedle;
 
-namespace Alice.VM
+namespace Alice.Tweedle.VM
 {
 	public class ExecutionStep
 	{
