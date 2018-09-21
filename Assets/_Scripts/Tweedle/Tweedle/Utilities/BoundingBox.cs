@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Alice.Tweedle
+namespace Alice.Utils
 {
 	[System.Serializable]
 	public class BoundingBox

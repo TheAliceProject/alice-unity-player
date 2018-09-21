@@ -1,7 +1,7 @@
 ﻿using System;
 using Alice.Tweedle;
 
-namespace Alice.VM
+namespace Alice.Tweedle.VM
 {
 	internal class TwoValueComputationStep : ExecutionStep
 	{

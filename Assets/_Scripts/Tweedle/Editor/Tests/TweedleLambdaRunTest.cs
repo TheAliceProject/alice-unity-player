@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Alice.VM;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle.Parse
 {

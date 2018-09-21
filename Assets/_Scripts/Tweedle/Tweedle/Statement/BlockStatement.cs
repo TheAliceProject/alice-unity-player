@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Alice.Tweedle.Parse;
-using Alice.VM;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
 {

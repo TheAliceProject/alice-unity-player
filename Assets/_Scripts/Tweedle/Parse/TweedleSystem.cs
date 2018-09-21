@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using Alice.Tweedle.File;
 using Alice.Tweedle.Interop;
-using Alice.VM;
+using Alice.Tweedle.VM;
+using Alice.Player.Primitives;
+using Alice.Player.Modules;
 
 namespace Alice.Tweedle.Parse
 {
@@ -40,34 +42,33 @@ namespace Alice.Tweedle.Parse
             foreach (var prim in TStaticTypes.ALL_PRIMITIVE_TYPES)
                 AddType(prim);
 
-            AddType(TInterop.GenerateType(typeof(Modules.DebugModule)));
-            AddType(TInterop.GenerateType(typeof(Modules.SceneGraphModule)));
-            AddType(TInterop.GenerateType(typeof(Modules.DirectionEnum)));
-            AddType(TInterop.GenerateType(typeof(Modules.AnimationStyleEnum)));
+            AddType(TInterop.GenerateType(typeof(DebugModule)));
+            AddType(TInterop.GenerateType(typeof(SceneGraphModule)));
+            AddType(TInterop.GenerateType(typeof(AnimationStyleEnum)));
 
             // interop primitives
-            AddType(TInterop.GenerateType(typeof(Primitives.Portion)));
-            AddType(TInterop.GenerateType(typeof(Primitives.Position)));
-            AddType(TInterop.GenerateType(typeof(Primitives.Direction)));
-            AddType(TInterop.GenerateType(typeof(Primitives.Orientation)));
-            AddType(TInterop.GenerateType(typeof(Primitives.VantagePoint)));
-            AddType(TInterop.GenerateType(typeof(Primitives.Angle)));
-            AddType(TInterop.GenerateType(typeof(Primitives.AxisAlignedBox)));
-            AddType(TInterop.GenerateType(typeof(Primitives.Size)));
-            AddType(TInterop.GenerateType(typeof(Primitives.Scale)));
+            AddType(TInterop.GenerateType(typeof(Portion)));
+            AddType(TInterop.GenerateType(typeof(Position)));
+            AddType(TInterop.GenerateType(typeof(Direction)));
+            AddType(TInterop.GenerateType(typeof(Orientation)));
+            AddType(TInterop.GenerateType(typeof(VantagePoint)));
+            AddType(TInterop.GenerateType(typeof(Angle)));
+            AddType(TInterop.GenerateType(typeof(AxisAlignedBox)));
+            AddType(TInterop.GenerateType(typeof(Size)));
+            AddType(TInterop.GenerateType(typeof(Scale)));
 
             // properties
-            AddType(TInterop.GenerateType(typeof(Modules.DecimalNumberProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.WholeNumberProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.AngleProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.PortionProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.PositionProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.DirectionProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.SizeProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.ScaleProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.OrientationProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.AxisAlignedBoxProperty)));
-            AddType(TInterop.GenerateType(typeof(Modules.VantagePointProperty)));
+            AddType(TInterop.GenerateType(typeof(DecimalNumberProperty)));
+            AddType(TInterop.GenerateType(typeof(WholeNumberProperty)));
+            AddType(TInterop.GenerateType(typeof(AngleProperty)));
+            AddType(TInterop.GenerateType(typeof(PortionProperty)));
+            AddType(TInterop.GenerateType(typeof(PositionProperty)));
+            AddType(TInterop.GenerateType(typeof(DirectionProperty)));
+            AddType(TInterop.GenerateType(typeof(SizeProperty)));
+            AddType(TInterop.GenerateType(typeof(ScaleProperty)));
+            AddType(TInterop.GenerateType(typeof(OrientationProperty)));
+            AddType(TInterop.GenerateType(typeof(AxisAlignedBoxProperty)));
+            AddType(TInterop.GenerateType(typeof(VantagePointProperty)));
 
         }
 

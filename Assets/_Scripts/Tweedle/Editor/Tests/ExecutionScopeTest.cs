@@ -1,4 +1,4 @@
-﻿using Alice.VM;
+﻿using Alice.Tweedle.VM;
 using NUnit.Framework;
 
 namespace Alice.Tweedle.Parse

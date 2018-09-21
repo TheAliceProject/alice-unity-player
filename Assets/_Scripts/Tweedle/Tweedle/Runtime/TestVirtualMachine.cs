@@ -2,7 +2,7 @@
 using Alice.Tweedle;
 using Alice.Tweedle.Parse;
 
-namespace Alice.VM
+namespace Alice.Tweedle.VM
 {
 	// For use running unit tests.
 	public class TestVirtualMachine : VirtualMachine

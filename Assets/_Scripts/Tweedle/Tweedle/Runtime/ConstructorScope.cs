@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Alice.VM;
 
-namespace Alice.Tweedle
+namespace Alice.Tweedle.VM
 {
 	public class ConstructorScope : InvocationScope
 	{

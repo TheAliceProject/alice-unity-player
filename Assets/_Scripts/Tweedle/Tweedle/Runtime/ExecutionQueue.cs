@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Alice.Tweedle;
 
-namespace Alice.VM
+namespace Alice.Tweedle.VM
 {
 
 	public class ExecutionQueue

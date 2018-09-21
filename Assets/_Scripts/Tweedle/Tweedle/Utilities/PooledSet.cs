@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Alice.Tweedle
+namespace Alice.Utils
 {
     /// <summary>
     /// Pooled version of a Set.

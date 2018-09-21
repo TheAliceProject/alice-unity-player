@@ -1,4 +1,5 @@
-﻿namespace Alice.Tweedle.File
+﻿using Alice.Utils;
+namespace Alice.Tweedle.File
 {
 	[System.Serializable]
 	public class StructureReference : ResourceReference

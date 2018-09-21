@@ -2,7 +2,7 @@
 using Alice.Tweedle;
 using Alice.Tweedle.Parse;
 
-namespace Alice.VM
+namespace Alice.Tweedle.VM
 {
 	public class VirtualMachine // : MonoBehaviour
 	{

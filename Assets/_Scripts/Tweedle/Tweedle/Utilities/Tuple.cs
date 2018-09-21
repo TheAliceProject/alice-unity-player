@@ -1,4 +1,4 @@
-﻿namespace Alice
+﻿namespace Alice.Utils
 {
     public class Tuple<T1, T2>
     {

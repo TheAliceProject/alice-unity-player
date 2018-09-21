@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Alice.Tweedle {
+namespace Alice.Utils {
     public static class MathUtil {
         public static double Min(params double[] values) {
             return Enumerable.Min(values);
