@@ -57,5 +57,15 @@ namespace Alice.Tweedle.Primitives
             return string.Format("Portion({0:0.####})", value);
         }
         
+        public override bool Equals(object obj) {
+            if (obj is Portion) {
+                return equals((Portion)obj);
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return value.GetHashCode();
+        }
     }
 }

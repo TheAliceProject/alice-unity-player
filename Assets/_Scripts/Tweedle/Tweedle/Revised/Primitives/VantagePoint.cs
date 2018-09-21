@@ -43,10 +43,13 @@ namespace Alice.Tweedle.Primitives
 		}
 
 		[PInteropMethod]
-		public VantagePoint multiply(VantagePoint vantagePoint) {
-			VantagePoint result = new VantagePoint();
-			result.value = Matrix4x4.Multiply(value, vantagePoint.value);
-			return result;
+		public bool equals(VantagePoint other) {
+			return value == other.value;
+		}
+
+		[PInteropMethod]
+		public VantagePoint multiply(VantagePoint other) {
+			return new VantagePoint(Matrix4x4.Multiply(value, other.value));
 		}
 
 		[PInteropMethod]
@@ -69,6 +72,17 @@ namespace Alice.Tweedle.Primitives
 			value.M14, value.M24, value.M34, value.M44
 			);
 		}
+
+		public override bool Equals(object obj) {
+            if (obj is VantagePoint) {
+                return equals((VantagePoint)obj);
+            }
+            return false;
+        }
+		
+		public override int GetHashCode() {
+            return value.GetHashCode();
+        }
 	}
 	
 }

@@ -74,5 +74,15 @@ namespace Alice.Tweedle.Primitives
             return string.Format("Orientation({0:0.##},{1:0.##},{2:0.##},{3:0.##})", value.X, value.Y, value.Z, value.W);
         }
 
+        public override bool Equals(object obj) {
+            if (obj is Orientation) {
+                return equals((Orientation)obj);
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return value.GetHashCode();
+        }
     }
 }

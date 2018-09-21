@@ -93,5 +93,16 @@ namespace Alice.Tweedle.Primitives
         public override string ToString() {
             return string.Format("Angle({0:0.##})", value);
         }
+
+        public override bool Equals(object obj) {
+            if (obj is Angle) {
+                return equals((Angle)obj);
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return value.GetHashCode();
+        }
     }
 }
