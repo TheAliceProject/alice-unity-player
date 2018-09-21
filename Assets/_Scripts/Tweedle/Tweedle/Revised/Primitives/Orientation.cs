@@ -55,6 +55,11 @@ namespace Alice.Tweedle.Primitives
             return new Orientation(Quaternion.Inverse(value));
         }
 
+        [PInteropMethod]
+        public Orientation interpolatePortion(Orientation end, double portion) {
+            return new Orientation(Quaternion.Slerp(value, end.value, portion));
+        }
+
         #endregion // Interop Interfaces
 
         public static Orientation slerp(Orientation a, Orientation b, Portion t) {

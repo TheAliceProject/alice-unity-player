@@ -1,0 +1,14 @@
+using Alice.Tweedle.Interop;
+using Alice.Tweedle.Primitives;
+
+namespace Alice.Tweedle.Modules {
+    [PInteropType]
+    public class ScaleProperty : PropertyBase<Scale> {
+        [PInteropConstructor]
+        public ScaleProperty(TValue owner, Scale value) : base(owner, value) {}
+
+        public override Scale Interpolate(Scale a, Scale b, double t) {
+            return a.interpolatePortion(b, t);
+        }
+    }
+}

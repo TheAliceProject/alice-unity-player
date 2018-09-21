@@ -58,6 +58,11 @@ namespace Alice.Tweedle.Primitives
 			Matrix4x4.Invert(value, out result.value);
 			return result;
 		}
+
+		[PInteropMethod]
+        public VantagePoint interpolatePortion(VantagePoint end, double portion) {
+            return new VantagePoint(Matrix4x4.Lerp(value, end.value, portion));
+        }
 		#endregion // interop interfaces
 
 		public override string ToString() {
