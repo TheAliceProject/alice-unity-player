@@ -72,6 +72,10 @@ namespace Alice.Tweedle.Primitives
             return new AxisAlignedBox(min, max);
         }
 
+        [PInteropMethod]
+        public AxisAlignedBox interpolatePortion(AxisAlignedBox end, double portion) {
+            return new AxisAlignedBox(Vector3.Lerp(minValue, end.minValue, portion), Vector3.Lerp(maxValue, end.maxValue, portion));
+        }
         #endregion // Interop Interfaces
 
         public override string ToString() {
