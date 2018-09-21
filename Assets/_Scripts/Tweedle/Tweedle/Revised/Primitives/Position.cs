@@ -16,6 +16,8 @@ namespace Alice.Tweedle.Primitives
         #region Interop Interfaces
         [PInteropField]
         public static readonly Position NaV = new Position(double.NaN, double.NaN, double.NaN);
+        [PInteropField]
+        public static readonly Position ZERO = new Position(0, 0, 0);
 
         [PInteropField]
         public double x { get { return value.X; } }

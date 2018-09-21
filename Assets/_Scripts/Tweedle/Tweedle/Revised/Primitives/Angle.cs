@@ -7,16 +7,23 @@ namespace Alice.Tweedle.Primitives
     [PInteropType]
     public sealed class Angle
     {
+        public readonly double value;
+
         #region Interop Interfaces
         [PInteropField]
-        public readonly double radians;
+        public double radians 
+        { 
+            get {
+                return value; 
+            }
+        }
 
         [PInteropField]
         public double degrees 
         { 
             get {
                 const double rad2Deg = 180/System.Math.PI;
-                return rad2Deg*radians; 
+                return rad2Deg*value; 
             }
         }
 
@@ -25,7 +32,7 @@ namespace Alice.Tweedle.Primitives
         {
             get {
                 const double rad2Rev = 1/(System.Math.PI*2);
-                return radians*rad2Rev;
+                return value*rad2Rev;
             }
         }
 
@@ -33,58 +40,58 @@ namespace Alice.Tweedle.Primitives
         public Angle(double revolutions)
         {
             const double rev2rad = System.Math.PI*2;
-            this.radians = revolutions*rev2rad;
+            this.value = revolutions*rev2rad;
         }
 
         [PInteropConstructor]
         public Angle(Angle clone)
         {
-            radians = clone.radians;
+            value = clone.value;
         }
 
         [PInteropMethod]
         public bool equals(Angle other) 
         {
-            return this.radians == other.radians;
+            return this.value == other.value;
         }
 
         [PInteropMethod]
         public Angle add(Angle other) 
         {
-            return new Angle(radians + other.radians);
+            return new Angle(value + other.value);
         }
 
         [PInteropMethod]
         public Angle subtract(Angle other)
         {
-            return new Angle(radians - other.radians);
+            return new Angle(value - other.value);
         }
 
         [PInteropMethod]
         public Angle scaledBy(double factor) 
         {
-            return new Angle(radians * factor);
+            return new Angle(value * factor);
         }
 
         [PInteropMethod]
         public Angle dividedBy(double divisor)
         {
-            return new Angle(radians / divisor);
+            return new Angle(value / divisor);
         }
 
         [PInteropMethod]
         public Angle interpolatePortion(Angle end, double portion) {
-            return new Angle((end.radians - radians)*portion + radians);
+            return new Angle((end.value - value)*portion + value);
         }
         #endregion // Interop Interfaces
 
         static public implicit operator double(Angle inAngle)
         {
-            return inAngle != null ? inAngle.radians : double.NaN;
+            return inAngle != null ? inAngle.value : double.NaN;
         }
 
         public override string ToString() {
-            return string.Format("Angle({0:0.##})", radians);
+            return string.Format("Angle({0:0.##})", value);
         }
     }
 }
