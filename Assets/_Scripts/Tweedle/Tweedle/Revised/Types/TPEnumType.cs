@@ -82,7 +82,7 @@ namespace Alice.Tweedle
 
         public override object ConvertToPObject(ref TValue inValue)
         {
-            return inValue;
+            return inValue.RawObject<object>();
         }
 
         #endregion // Conversion Semantics

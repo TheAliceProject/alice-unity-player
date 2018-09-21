@@ -64,6 +64,15 @@ class Program {
 
     AxisAlignedBox transformedAABB <- aabb.transform(vantagePoint: vp);
     $Debug.log(string: "transformedAABB <- " .. transformedAABB);
+
+    DecimalNumberProperty deciProp <- new DecimalNumberProperty(owner: this, value: 2.5);
+    deciProp.animateValue(endValue: 10, duration: 3, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+
+    WholeNumberProperty wholeProp <- new WholeNumberProperty(owner: this, value: 0);
+    wholeProp.animateValue(endValue: 10, duration: 2, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+
+    PositionProperty posProp <- new PositionProperty(owner: this, value: Position.ZERO);
+    posProp.animateValue(endValue: new Position(x: 1, y: 2, z: 3), duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
   
   }
   

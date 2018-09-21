@@ -17,6 +17,8 @@ namespace Alice.Tweedle.Primitives
 
         #region Interop Interfaces
         [PInteropField]
+        public static readonly Direction NaV = new Direction(double.NaN, double.NaN, double.NaN);
+        [PInteropField]
         public static readonly Direction POSITIVE_X_AXIS  = new Direction(1, 0, 0);
         [PInteropField]
         public static readonly Direction NEGATIVE_X_AXIS  = new Direction(-1, 0, 0);

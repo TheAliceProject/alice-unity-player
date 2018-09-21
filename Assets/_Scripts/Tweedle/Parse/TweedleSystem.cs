@@ -41,6 +41,7 @@ namespace Alice.Tweedle.Parse
                 AddType(prim);
 
             AddType(TInterop.GenerateType(typeof(Modules.DebugModule)));
+            AddType(TInterop.GenerateType(typeof(Modules.SceneGraphModule)));
             AddType(TInterop.GenerateType(typeof(Modules.DirectionEnum)));
             AddType(TInterop.GenerateType(typeof(Modules.AnimationStyleEnum)));
 
@@ -53,6 +54,10 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(Primitives.AxisAlignedBox)));
             AddType(TInterop.GenerateType(typeof(Primitives.Size)));
             AddType(TInterop.GenerateType(typeof(Primitives.Scale)));
+
+            AddType(TInterop.GenerateType(typeof(Modules.DecimalNumberProperty)));
+            AddType(TInterop.GenerateType(typeof(Modules.WholeNumberProperty)));
+            AddType(TInterop.GenerateType(typeof(Modules.PositionProperty)));
         }
 
         public void AddLibrary(LibraryManifest libAsset)
