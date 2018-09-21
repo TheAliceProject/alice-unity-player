@@ -39,6 +39,12 @@ namespace Alice.Tweedle.Primitives
         }
 
         [PInteropMethod]
+        public bool equals(Position other) 
+        {
+            return value == other.value;
+        }
+
+        [PInteropMethod]
         public Position add(Direction other) {
             return new Position(value + other.value);
         }
@@ -89,6 +95,17 @@ namespace Alice.Tweedle.Primitives
 
         public override string ToString() {
             return string.Format("Position({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
+        }
+
+        public override bool Equals(object obj) {
+            if (obj is Position) {
+                return equals((Position)obj);
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return value.GetHashCode();
         }
 
     }

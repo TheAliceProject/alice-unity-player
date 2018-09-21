@@ -77,5 +77,16 @@ namespace Alice.Tweedle.Primitives
         public override string ToString() {
             return string.Format("AABB[min({0:0.##},{1:0.##},{2:0.##}),max({3:0.##},{4:0.##},{5:0.##})]", minValue.X, minValue.Y, minValue.Z, maxValue.X, maxValue.Y, maxValue.Z);
         }
+
+        public override bool Equals(object obj) {
+            if (obj is AxisAlignedBox) {
+                return equals((AxisAlignedBox)obj);
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return minValue.GetHashCode() + maxValue.GetHashCode();
+        }
     }
 }

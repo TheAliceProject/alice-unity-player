@@ -61,5 +61,16 @@ namespace Alice.Tweedle.Primitives
             return string.Format("Scale({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
         }
 
+        public override bool Equals(object obj) {
+            if (obj is Scale) {
+                return equals((Scale)obj);
+            }
+            return false;
+        }
+
+        public override int GetHashCode() {
+            return value.GetHashCode();
+        }
+
     }
 }
