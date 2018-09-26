@@ -7,14 +7,14 @@ namespace Alice.Player.Primitives
     [PInteropType]
     public sealed class Angle
     {
-        public readonly double value;
+        public readonly double Value;
 
         #region Interop Interfaces
         [PInteropField]
         public double radians 
         { 
             get {
-                return value; 
+                return Value; 
             }
         }
 
@@ -23,7 +23,7 @@ namespace Alice.Player.Primitives
         { 
             get {
                 const double rad2Deg = 180/System.Math.PI;
-                return rad2Deg*value; 
+                return rad2Deg*Value; 
             }
         }
 
@@ -32,7 +32,7 @@ namespace Alice.Player.Primitives
         {
             get {
                 const double rad2Rev = 1/(System.Math.PI*2);
-                return value*rad2Rev;
+                return Value*rad2Rev;
             }
         }
 
@@ -40,58 +40,58 @@ namespace Alice.Player.Primitives
         public Angle(double revolutions)
         {
             const double rev2rad = System.Math.PI*2;
-            this.value = revolutions*rev2rad;
+            this.Value = revolutions*rev2rad;
         }
 
         [PInteropConstructor]
         public Angle(Angle clone)
         {
-            value = clone.value;
+            Value = clone.Value;
         }
 
         [PInteropMethod]
         public bool equals(Angle other) 
         {
-            return this.value == other.value;
+            return this.Value == other.Value;
         }
 
         [PInteropMethod]
         public Angle add(Angle other) 
         {
-            return new Angle(value + other.value);
+            return new Angle(Value + other.Value);
         }
 
         [PInteropMethod]
         public Angle subtract(Angle other)
         {
-            return new Angle(value - other.value);
+            return new Angle(Value - other.Value);
         }
 
         [PInteropMethod]
         public Angle scaledBy(double factor) 
         {
-            return new Angle(value * factor);
+            return new Angle(Value * factor);
         }
 
         [PInteropMethod]
         public Angle dividedBy(double divisor)
         {
-            return new Angle(value / divisor);
+            return new Angle(Value / divisor);
         }
 
         [PInteropMethod]
         public Angle interpolatePortion(Angle end, double portion) {
-            return new Angle((end.value - value)*portion + value);
+            return new Angle((end.Value - Value)*portion + Value);
         }
         #endregion // Interop Interfaces
 
         static public implicit operator double(Angle inAngle)
         {
-            return inAngle != null ? inAngle.value : double.NaN;
+            return inAngle != null ? inAngle.Value : double.NaN;
         }
 
         public override string ToString() {
-            return string.Format("Angle({0:0.##})", value);
+            return string.Format("Angle({0:0.##})", Value);
         }
 
         public override bool Equals(object obj) {
@@ -102,7 +102,7 @@ namespace Alice.Player.Primitives
         }
 
         public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
     }
 }

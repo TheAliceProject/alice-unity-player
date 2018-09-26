@@ -6,11 +6,11 @@ namespace Alice.Player.Primitives
     [PInteropType]
     public sealed class Position
     {
-        public readonly Vector3 value;
+        public readonly Vector3 Value;
 
         public Position(Vector3 inVector)
         {
-            value = inVector;
+            Value = inVector;
         }
 
         #region Interop Interfaces
@@ -20,81 +20,81 @@ namespace Alice.Player.Primitives
         public static readonly Position ZERO = new Position(0, 0, 0);
 
         [PInteropField]
-        public double x { get { return value.X; } }
+        public double x { get { return Value.X; } }
         [PInteropField]
-        public double y { get { return value.Y; } }
+        public double y { get { return Value.Y; } }
         [PInteropField]
-        public double z { get { return value.Z; } }
+        public double z { get { return Value.Z; } }
 
         [PInteropConstructor]
         public Position(double x, double y, double z)
         {
-            value = new Vector3(x, y, z);
+            Value = new Vector3(x, y, z);
         }
 
         [PInteropConstructor]
         public Position(Position clone)
         {
-            value = clone.value;
+            Value = clone.Value;
         }
 
         [PInteropMethod]
         public bool equals(Position other) 
         {
-            return value == other.value;
+            return Value == other.Value;
         }
 
         [PInteropMethod]
         public Position add(Direction other) {
-            return new Position(value + other.value);
+            return new Position(Value + other.Value);
         }
  
         [PInteropMethod]
         public Position subtract(Direction other) {
-            return new Position(value + other.value);
+            return new Position(Value + other.Value);
         }
 
         [PInteropMethod]
         public Direction subtract(Position other) {
-            return new Direction(value + other.value);
+            return new Direction(Value + other.Value);
         }
 
         [PInteropMethod]
         public Position scaledBy(double factor) {
-            return new Position(value*factor);
+            return new Position(Value*factor);
         }
 
         [PInteropMethod]
         public Position interpolatePortion(Position end, double portion) {
-            return new Position(Vector3.Lerp(value, end.value, portion));
+            return new Position(Vector3.Lerp(Value, end.Value, portion));
         }
 
         [PInteropMethod]
         public double distanceSquared(Position other) {
-            return Vector3.DistanceSquared(value, other.value);
+            return Vector3.DistanceSquared(Value, other.Value);
         }
 
         [PInteropMethod]
         public double distance(Position other) {
-            return Vector3.Distance(value, other.value);
+            return Vector3.Distance(Value, other.Value);
         }
         #endregion // Interop Interfaces
 
-        public Position transform(VantagePoint vantagePoint) {
-            return new Position(Vector3.Transform(value, vantagePoint.value));
+        public Position Transform(VantagePoint vantagePoint) {
+            return new Position(Vector3.Transform(Value, vantagePoint.Value));
         }
 
-        public Position rotate(Orientation orientation) {
-            return new Position(Vector3.Transform(value, orientation.value));
+        public Position Rotate(Orientation orientation) {
+            return new Position(Vector3.Transform(Value, orientation.Value));
         }
        
         static public implicit operator UnityEngine.Vector3(Position inPosition)
         {
-            return inPosition != null ? new UnityEngine.Vector3((float)inPosition.value.X, (float)inPosition.value.Y, (float)inPosition.value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+            return inPosition != null ? new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
         }
 
         public override string ToString() {
-            return string.Format("Position({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
+            return string.Format("Position({0:0.##},{1:0.##},{2:0.##})", Value.X, Value.Y, Value.Z);
         }
 
         public override bool Equals(object obj) {
@@ -105,7 +105,7 @@ namespace Alice.Player.Primitives
         }
 
         public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 
     }

@@ -6,57 +6,57 @@ namespace Alice.Player.Primitives
     [PInteropType]
     public sealed class Size
     {
-        public readonly Vector3 value;
+        public readonly Vector3 Value;
 
         public Size(Vector3 inVector)
         {
-            value = inVector;
+            Value = inVector;
         }
 
         #region Interop Interfaces
         [PInteropField]
-        public double width { get {return value.X; } }
+        public double width { get {return Value.X; } }
         [PInteropField]
-        public double height { get {return value.Y; } }
+        public double height { get {return Value.Y; } }
         [PInteropField]
-        public double depth { get {return value.Z; } }
+        public double depth { get {return Value.Z; } }
 
        
         [PInteropConstructor]
         public Size(double width, double height, double depth)
         {
-            value = new Vector3(width, height, depth);
+            Value = new Vector3(width, height, depth);
         }
 
         [PInteropConstructor]
         public Size(Size clone)
         {
-            value = clone.value;
+            Value = clone.Value;
         }
 
         [PInteropMethod]
         public bool equals(Size other) {
-            return value == other.value;
+            return Value == other.Value;
         }
 
         [PInteropMethod]
         public Size scaledBy(double factor) {
-            return new Size(value*factor);
+            return new Size(Value*factor);
         }
 
         [PInteropMethod]
         public Size interpolatePortion(Size end, double portion) {
-            return new Size(Vector3.Lerp(value, end.value, portion));
+            return new Size(Vector3.Lerp(Value, end.Value, portion));
         }
         #endregion
 
         static public implicit operator UnityEngine.Vector3(Size inPosition)
         {
-            return inPosition != null ? new UnityEngine.Vector3((float)inPosition.value.X, (float)inPosition.value.Y, (float)inPosition.value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+            return inPosition != null ? new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
         }
 
         public override string ToString() {
-            return string.Format("Size({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
+            return string.Format("Size({0:0.##},{1:0.##},{2:0.##})", Value.X, Value.Y, Value.Z);
         }
 
         public override bool Equals(object obj) {
@@ -67,7 +67,7 @@ namespace Alice.Player.Primitives
         }
 
         public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
     
     }
