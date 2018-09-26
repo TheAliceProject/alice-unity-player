@@ -85,13 +85,13 @@ class Program {
     deciProp.animateValue(endValue: 10, duration: 3, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
 
     WholeNumberProperty wholeProp <- new WholeNumberProperty(owner: this, value: 0);
-    wholeProp.animateValue(endValue: 10, duration: 2, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+    wholeProp.animateValue(endValue: 20, duration: 2, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
 
     PositionProperty posProp <- new PositionProperty(owner: this, value: Position.ZERO);
     posProp.animateValue(endValue: new Position(x: 1, y: 2, z: 3), duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
 
-    ColorProperty colorProp <- new ColorProperty(owner: this, value: redColor);
-    colorProp.animateValue(endValue: blueColor, duration: 1.6, animationStyle: AnimationStyle.BEGIN_GENTLY_AND_END_ABRUPTLY);
+    ColorProperty colorProp <- new ColorProperty(owner: this, value: Color.RED);
+    colorProp.animateValue(endValue: Color.BLUE, duration: 1.6, animationStyle: AnimationStyle.BEGIN_GENTLY_AND_END_ABRUPTLY);
   
   }
   
