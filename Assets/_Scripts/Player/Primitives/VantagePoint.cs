@@ -6,17 +6,17 @@ namespace Alice.Player.Primitives
 	[PInteropType]
 	public sealed class VantagePoint {
 
-		public Matrix4x4 value = Matrix4x4.Identity;
+		public Matrix4x4 Value = Matrix4x4.Identity;
 
 		public VantagePoint(Matrix4x4 inMatrix) {
-			value = inMatrix;
+			Value = inMatrix;
 		}
 
 		#region Interop Interfaces
 		[PInteropField]
-		public Orientation orientation { get { return new Orientation(Quaternion.CreateFromRotationMatrix(value)); } }
+		public Orientation orientation { get { return new Orientation(Quaternion.CreateFromRotationMatrix(Value)); } }
 		[PInteropField]
-		public Position translation { get { return new Position(value.Translation); } }
+		public Position translation { get { return new Position(Value.Translation); } }
 
 		[PInteropConstructor]
 		public VantagePoint() {}
@@ -27,41 +27,41 @@ namespace Alice.Player.Primitives
                          	double m31, double m32, double m33, double m34,
                          	double m41, double m42, double m43, double m44) 
 		{
-			value = new Matrix4x4(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
+			Value = new Matrix4x4(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
 		}
 
 		[PInteropConstructor]
 		public VantagePoint(Orientation orientation, Position translation) {
-			value = Matrix4x4.CreateFromQuaternion(orientation.value);
-			value.Translation = translation.value;
+			Value = Matrix4x4.CreateFromQuaternion(orientation.Value);
+			Value.Translation = translation.Value;
 		}
 
 		[PInteropConstructor]
 		public VantagePoint(VantagePoint clone) 
 		{
-			value = clone.value;
+			Value = clone.Value;
 		}
 
 		[PInteropMethod]
 		public bool equals(VantagePoint other) {
-			return value == other.value;
+			return Value == other.Value;
 		}
 
 		[PInteropMethod]
 		public VantagePoint multiply(VantagePoint other) {
-			return new VantagePoint(Matrix4x4.Multiply(value, other.value));
+			return new VantagePoint(Matrix4x4.Multiply(Value, other.Value));
 		}
 
 		[PInteropMethod]
 		public VantagePoint inverse() {
 			VantagePoint result = new VantagePoint();
-			Matrix4x4.Invert(value, out result.value);
+			Matrix4x4.Invert(Value, out result.Value);
 			return result;
 		}
 
 		[PInteropMethod]
         public VantagePoint interpolatePortion(VantagePoint end, double portion) {
-            return new VantagePoint(Matrix4x4.Lerp(value, end.value, portion));
+            return new VantagePoint(Matrix4x4.Lerp(Value, end.Value, portion));
         }
 		#endregion // interop interfaces
 
@@ -71,10 +71,10 @@ namespace Alice.Player.Primitives
 			"\t{4:0.##},{5:0.##},{6:0.##},{7:0.##}\n" +
 			"\t{8:0.##},{9:0.##},{10:0.##},{11:0.##}\n" + 
 			"\t{12:0.##},{13:0.##},{14:0.##},{15:0.##})",
-			value.M11, value.M21, value.M31, value.M41,
-			value.M12, value.M22, value.M32, value.M42,
-			value.M13, value.M23, value.M33, value.M43,
-			value.M14, value.M24, value.M34, value.M44
+			Value.M11, Value.M21, Value.M31, Value.M41,
+			Value.M12, Value.M22, Value.M32, Value.M42,
+			Value.M13, Value.M23, Value.M33, Value.M43,
+			Value.M14, Value.M24, Value.M34, Value.M44
 			);
 		}
 
@@ -86,7 +86,7 @@ namespace Alice.Player.Primitives
         }
 		
 		public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 	}
 	

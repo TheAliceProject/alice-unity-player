@@ -8,7 +8,7 @@ namespace Alice.Player.Primitives
     public sealed class Portion
     {
        
-        public readonly double value;
+        public readonly double Value;
 
         #region Interop Interface 
         [PInteropConstructor]
@@ -16,33 +16,33 @@ namespace Alice.Player.Primitives
         {
             if (portion < 0 || portion > 1)
                 throw new TweedleRuntimeException("Cannot instantiate Portion with value " + portion + " - must be between 0 and 1");
-            value = portion;
+            Value = portion;
         }
 
         [PInteropConstructor]
         public Portion(Portion clone)
         {
-            value = clone.value;
+            Value = clone.Value;
         }
 
         [PInteropMethod]
         public bool equals(Portion other) {
-            return value == other;
+            return Value == other;
         }
 
         [PInteropMethod]
         public Portion add(Portion other) {
-            return new Portion(System.Math.Min(value + other, 1));
+            return new Portion(System.Math.Min(Value + other, 1));
         }
 
         [PInteropMethod]
         public Portion subtract(Portion other) {
-            return new Portion(System.Math.Max(value - other, 0));
+            return new Portion(System.Math.Max(Value - other, 0));
         }
 
         [PInteropMethod]
         public Portion interpolatePortion(Portion end, double portion) {
-            return new Portion((end.value-value)*portion + value);
+            return new Portion((end.Value-Value)*portion + Value);
         }
         #endregion // Interop Interfaces
 
@@ -50,12 +50,12 @@ namespace Alice.Player.Primitives
 
         static public implicit operator double(Portion inPortion)
         {
-            return inPortion != null ? inPortion.value : double.NaN;
+            return inPortion != null ? inPortion.Value : double.NaN;
         }
 
        
         public override string ToString() {
-            return string.Format("Portion({0:0.####})", value);
+            return string.Format("Portion({0:0.####})", Value);
         }
         
         public override bool Equals(object obj) {
@@ -66,7 +66,7 @@ namespace Alice.Player.Primitives
         }
 
         public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
     }
 }
