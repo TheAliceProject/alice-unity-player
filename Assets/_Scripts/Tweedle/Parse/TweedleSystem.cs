@@ -71,6 +71,9 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(OrientationProperty)));
             AddType(TInterop.GenerateType(typeof(AxisAlignedBoxProperty)));
             AddType(TInterop.GenerateType(typeof(VantagePointProperty)));
+            AddType(TInterop.GenerateType(typeof(PaintProperty)));
+            AddType(TInterop.GenerateType(typeof(ColorProperty)));
+
 
         }
 
