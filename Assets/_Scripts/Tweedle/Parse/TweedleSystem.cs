@@ -56,6 +56,8 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(AxisAlignedBox)));
             AddType(TInterop.GenerateType(typeof(Size)));
             AddType(TInterop.GenerateType(typeof(Scale)));
+            AddType(TInterop.GenerateType(typeof(Paint)));
+            AddType(TInterop.GenerateType(typeof(Color)));
 
             // properties
             AddType(TInterop.GenerateType(typeof(DecimalNumberProperty)));
