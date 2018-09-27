@@ -21,6 +21,12 @@ namespace Alice.Player.Primitives
             TextureValue = null;
         }
 
+        public Paint(double red, double green, double blue)
+        {
+            ColorValue = new Color4(red, green, blue, 1);
+            TextureValue = null;
+        }
+
         #region Interop Interfaces
         [PInteropField]
         public double red { get { return ColorValue.R; } }
@@ -30,14 +36,6 @@ namespace Alice.Player.Primitives
         public double blue { get { return ColorValue.B; } }
         [PInteropField]
         public double alpha { get { return ColorValue.A; } }
-
-      
-        [PInteropConstructor]
-        public Paint(double red, double green, double blue)
-        {
-            ColorValue = new Color4(red, green, blue, 1);
-            TextureValue = null;
-        }
 
         [PInteropConstructor]
         public Paint(string resource)
