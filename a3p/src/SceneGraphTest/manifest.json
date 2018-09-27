@@ -1,0 +1,37 @@
+{
+  "description": {
+    "name": "SceneGraphTest",
+    "icon": "thumbnail.png",
+    "tags": [],
+    "groupTags": [],
+    "themeTags": []},
+  "provenance": {
+    "aliceVersion": "3.4.0.0-alpha",
+    "creationYear": "2018",
+    "creator": "Alice Project"},
+  "metadata": {
+    "identifier": {
+      "id": "970a310f-90a7-4d29-8380-5b2a742e3ee4",
+      "version": "1.0",
+      "type": "World"}
+  },
+  "prerequisites": [],
+  "resources": [
+    {
+      "id": "Default",
+      "format": "tweedle",
+      "files": ["src/Default.twe"],
+      "type": "Class"
+    }, {
+      "id": "Box",
+      "format": "tweedle",
+      "files": ["src/Box.twe"],
+      "type": "Class"
+    }, {
+      "id": "Program",
+      "format": "tweedle",
+      "files": ["src/Program.twe"],
+      "type": "Class"
+    }
+  ]
+}

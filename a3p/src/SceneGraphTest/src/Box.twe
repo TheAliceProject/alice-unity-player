@@ -1,0 +1,14 @@
+class Box {
+  Box() 
+  {
+    SGEntity entity <- $SceneGraph.createEntity(shape: ShapeModel.BOX);
+    entity.bindSizeProperty(name: SGBox.SIZE_PROPERTY_NAME, property: size);
+  }
+
+  void animateSize(Size size, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
+  }
+
+  @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
+} 

@@ -1,0 +1,15 @@
+class Program {
+  Program() {
+  }
+
+
+  static void main() {
+    Program story <- new Program();
+    story.execute();
+  }
+  
+  void execute() {
+  	Box box <- new Box();
+    box.animateSize(size: new Size(width: 2, height: 1.5, depth: 0.5));
+  }
+}

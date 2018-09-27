@@ -1,0 +1,9 @@
+class Default {
+  static DecimalNumber duration() {
+    return 1.0;
+  }
+
+	static AnimationStyle animationStyle() {
+	  return AnimationStyle.BEGIN_AND_END_GENTLY;
+	}
+}
