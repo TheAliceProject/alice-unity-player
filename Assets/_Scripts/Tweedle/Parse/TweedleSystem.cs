@@ -43,7 +43,7 @@ namespace Alice.Tweedle.Parse
                 AddType(prim);
 
             AddType(TInterop.GenerateType(typeof(DebugModule)));
-            AddType(TInterop.GenerateType(typeof(SceneGraphModule)));
+            
             AddType(TInterop.GenerateType(typeof(AnimationStyleEnum)));
 
             // interop primitives
@@ -74,6 +74,11 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(PaintProperty)));
             AddType(TInterop.GenerateType(typeof(ColorProperty)));
 
+            // SceneGraph
+            AddType(TInterop.GenerateType(typeof(SceneGraphModule)));
+            AddType(TInterop.GenerateType(typeof(SGEntity)));
+            AddType(TInterop.GenerateType(typeof(SGBox)));
+            AddType(TInterop.GenerateType(typeof(ShapeModelEmum)));
 
         }
 

@@ -28,7 +28,6 @@ namespace Alice.Player.Unity {
 
         public void Step(double dt) {
             Property.setValue(Property.Interpolate(StartValue, EndValue, CalculatePortion(Time, Duration, Style)));
-            UnityEngine.Debug.Log(Property.getValue().ToString());
             Time += dt;
         }
 
@@ -38,7 +37,6 @@ namespace Alice.Player.Unity {
 
         public void Finish() {
             Property.setValue(EndValue);
-            UnityEngine.Debug.Log(Property.getValue().ToString());
             if (m_OnFinished != null) {
                 m_OnFinished.Invoke();
             }
