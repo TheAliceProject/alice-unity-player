@@ -3,10 +3,11 @@ using Alice.Player.Unity;
 using Alice.Tweedle;
 
 namespace Alice.Player.Modules {
+    
 
-    public abstract class PropertyBase<T> {
+    public abstract class PropertyBase<T>  {
+        
         public delegate void ValueChangedDelegate(PropertyBase<T> inProperty);
-
         protected TValue m_Owner;
         protected T m_Value;
 

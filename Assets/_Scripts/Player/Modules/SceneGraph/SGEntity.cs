@@ -3,6 +3,8 @@ using Alice.Player.Modules;
 using Alice.Player.Primitives;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
+using System;
+using System.Collections.Generic;
 
 namespace Alice.Player.Modules {
     
@@ -14,6 +16,9 @@ namespace Alice.Player.Modules {
             var entity = go.AddComponent<T>();
             return entity;
         }
+
+        private Dictionary<string, PropertyCallbackBinding> m_PropertyBindings = new Dictionary<string, PropertyCallbackBinding>();
+        private Dictionary<string, object> m_Properties = new Dictionary<string, object>();
 
         private Renderer m_Renderer;
         private Material m_Material;
@@ -29,7 +34,32 @@ namespace Alice.Player.Modules {
         public const string SIZE_PROPERTY_NAME = "Size";
 
         [PInteropMethod]
-        public void bindPositionProperty(string name, PositionProperty property) {
+        public void bindDecimalNumberProperty(string name, DecimalNumberProperty property) {
+            BindProperty(name, property);
+        }
+
+        [PInteropMethod]
+        public void bindWholeNumberProperty(string name, WholeNumberProperty property) {
+            BindProperty(name, property);
+        }
+
+        [PInteropMethod]
+        public void bindAngleProperty(string name, AngleProperty property) {
+            BindProperty(name, property);
+        }
+
+        [PInteropMethod]
+        public void bindAxisAlignedBoxProperty(string name, AxisAlignedBoxProperty property) {
+            BindProperty(name, property);
+        }
+
+        [PInteropMethod]
+        public void bindColorProperty(string name, ColorProperty property) {
+            BindProperty(name, property);
+        }
+
+        [PInteropMethod]
+        public void bindDirectionProperty(string name, DirectionProperty property) {
             BindProperty(name, property);
         }
 
@@ -39,7 +69,24 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public void bindDecimalNumberProperty(string name, DecimalNumberProperty property) {
+        public void bindPaintProperty(string name, PaintProperty property) {
+            BindProperty(name, property);
+        }
+
+        [PInteropMethod]
+        public void bindPortionProperty(string name, PortionProperty property) {
+            BindProperty(name, property);
+        }
+
+
+        [PInteropMethod]
+        public void bindPositionProperty(string name, PositionProperty property) {
+            BindProperty(name, property);
+        }
+
+        
+        [PInteropMethod]
+        public void bindScaleProperty(string name, ScaleProperty property) {
             BindProperty(name, property);
         }
 
@@ -49,33 +96,68 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public void bindPaintProperty(string name, PaintProperty property) {
+        public void bindVantagePointProperty(string name, VantagePointProperty property) {
             BindProperty(name, property);
+        }
+
+        [PInteropMethod]
+        public void unbindProperty(string name) {
+            PropertyCallbackBinding binding;
+            if (m_PropertyBindings.TryGetValue(name, out binding)) {
+                UnbindProperty(name, binding.type, binding.callback);
+            }
+           
         }
         #endregion
 
-
+        
         protected virtual void Init(Renderer inRenderer) {
             m_Renderer = inRenderer;
             m_Material = new Material(inRenderer.material);
             inRenderer.sharedMaterial = m_Material;
+
+            RegisterPropertyBinding<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
         }
 
         protected virtual void OnDestroy() {
             Destroy(m_Material);
         }
 
-        protected virtual void BindProperty<T>(string inName, PropertyBase<T> inProperty) {
-            if (inName == PAINT_PROPERTY_NAME) {
-                var paintProperty = inProperty as PaintProperty;
-                if (paintProperty == null) {
-                    throw new SceneGraphException(string.Format("Expecting PaintProperty when binding property named {0}.", inName));
-                }
-
-                OnPaintPropertyChanged(paintProperty);
-                paintProperty.OnValueChanged += OnPaintPropertyChanged;
+        protected void RegisterPropertyBinding<T>(string inName, PropertyBase<T>.ValueChangedDelegate inCallback) {
+            if (m_PropertyBindings.ContainsKey(inName)) {
+                throw new SceneGraphException(string.Format("Property \"{0}\" binding already registered.", inName));
+            } else {
+                m_PropertyBindings.Add(inName, new PropertyCallbackBinding() {type = typeof(T), callback = inCallback});
             }
         }
+
+        private void BindProperty<T>(string inName, PropertyBase<T> inProperty) {
+
+            if (m_Properties.ContainsKey(inName)) {
+                throw new SceneGraphException(string.Format("Property \"{0}\" already bound.", inName));
+            } else {
+                
+                PropertyCallbackBinding binding;
+                if (m_PropertyBindings.TryGetValue(inName, out binding)) {
+                    var callback = (PropertyBase<T>.ValueChangedDelegate)binding.callback;
+                    callback(inProperty);
+                    inProperty.OnValueChanged += callback;
+                    m_Properties.Add(inName, inProperty);
+                } else {
+                    throw new SceneGraphException(string.Format("Property \"{0}\" cannot be bound because no valid callback has been registered.", inName));
+                }
+            }
+        }
+
+        private void UnbindProperty<T>(string inName, T inType, object callbackObj) {
+            object propertyObj;
+            if (m_Properties.TryGetValue(inName, out propertyObj)) {
+                var property = (PropertyBase<T>)propertyObj;
+                var callback = (PropertyBase<T>.ValueChangedDelegate)callbackObj;
+                property.OnValueChanged -= callback;
+                m_Properties.Remove(inName);
+            }
+        } 
 
         private void OnPaintPropertyChanged(PropertyBase<Paint> inProperty) {
             var paint = inProperty.getValue();
