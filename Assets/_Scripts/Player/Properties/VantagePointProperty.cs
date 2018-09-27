@@ -5,7 +5,7 @@ namespace Alice.Player.Modules {
     [PInteropType]
     public class VantagePointProperty : PropertyBase<VantagePoint> {
         [PInteropConstructor]
-        public VantagePointProperty(TValue owner, VantagePoint value) : base(owner, value) {}
+        public VantagePointProperty(VantagePoint value) : base(value) {}
 
         public override VantagePoint Interpolate(VantagePoint a, VantagePoint b, double t) {
             return a.interpolatePortion(b, t);

@@ -6,7 +6,7 @@ namespace Alice.Player.Modules {
     [PInteropType]
     public class SizeProperty : PropertyBase<Size> {
         [PInteropConstructor]
-        public SizeProperty(TValue owner, Size value) : base(owner, value) {}
+        public SizeProperty(Size value) : base(value) {}
 
         public override Size Interpolate(Size a, Size b, double t) {
             return a.interpolatePortion(b, t);
