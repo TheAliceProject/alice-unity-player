@@ -47,7 +47,7 @@ namespace Alice.Player.Modules {
                 
                 IsAnimating = true;
                 var tween = new PropertyTween<T>(this, m_Value, endValue, duration, animationStyle, FinishAnimation);
-                UnitySceneGraph.Instance.QueueTween(tween);
+                UnitySceneGraph.Current.QueueTween(tween);
             }
         }
         #endregion // Interop Interfaces

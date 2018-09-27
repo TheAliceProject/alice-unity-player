@@ -8,12 +8,9 @@ namespace Alice.Player.Modules {
     public sealed class SGBox : SGEntity {
 
         private Transform m_BoxTransform;
-        private MeshRenderer m_Renderer;
 
         #region Interop Interfaces
-
-        [PInteropField]
-        public static string SIZE_PROPERTY_NAME = "Size";
+        
         #endregion //Interop Interafaces
 
         private void Awake() {
@@ -22,7 +19,7 @@ namespace Alice.Player.Modules {
             m_BoxTransform.SetParent(transform, false);
             m_BoxTransform.localPosition = UnityEngine.Vector3.zero;
             m_BoxTransform.localRotation = UnityEngine.Quaternion.identity;
-            m_Renderer = go.GetComponent<MeshRenderer>();
+            Init(go.GetComponent<MeshRenderer>());
         }
 
         protected override void BindProperty<T>(string inName, PropertyBase<T> inProperty) {
@@ -34,11 +31,13 @@ namespace Alice.Player.Modules {
 
                 OnSizePropertyChanged(sizeProperty);
                 sizeProperty.OnValueChanged += OnSizePropertyChanged;
+            } else {
+                base.BindProperty(inName, inProperty);
             }
         }
 
-        private void OnSizePropertyChanged(PropertyBase<Size> property) {
-            m_BoxTransform.localScale = property.getValue();
+        private void OnSizePropertyChanged(PropertyBase<Size> inProperty) {
+            m_BoxTransform.localScale = inProperty.getValue();
         }
 
     }

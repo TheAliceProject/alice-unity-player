@@ -27,8 +27,8 @@ namespace Alice.Player.Unity {
         }
 
         public void Step(double dt) {
-            Property.setValue(Property.Interpolate(StartValue, EndValue, CalculatePortion(Time, Duration, Style)));
             Time += dt;
+            Property.setValue(Property.Interpolate(StartValue, EndValue, CalculatePortion(Time, Duration, Style)));
         }
 
         public bool IsDone() {

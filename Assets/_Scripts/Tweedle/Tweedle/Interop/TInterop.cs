@@ -142,7 +142,7 @@ namespace Alice.Tweedle.Interop
             }
 
             object obj = inValue.ToPObject();
-            if (obj != null && obj.GetType().TypeHandle.Value != typePtr)
+            if (obj != null && !inType.IsClass && obj.GetType().TypeHandle.Value != typePtr)
             {
                 obj = Convert.ChangeType(obj, inType);
             }

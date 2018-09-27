@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Collections;
 using UnityEngine;
 
 using ICSharpCode.SharpZipLib.Zip;
@@ -8,7 +9,7 @@ namespace Alice.Tweedle.Parse
 {
 	public class UnityObjectParser : MonoBehaviour
 	{
-		static string project_ext = "a3p";
+		const string project_ext = "a3p";
 
 		VirtualMachine vm;
 
@@ -39,15 +40,15 @@ namespace Alice.Tweedle.Parse
 			vm = new VirtualMachine();
 		}
 
-		// MonoBehaviour Update is called once per frame
-		void Update()
-		{
-
-		}
-
 		private void StartQueueProcessing()
 		{
-			StartCoroutine(vm.ProcessQueue());
+			StartCoroutine(WaitAndStartProcessing());
+		}
+
+		IEnumerator WaitAndStartProcessing() {
+			yield return null;
+			yield return null;
+			yield return vm.ProcessQueue();
 		}
 	}
 }
