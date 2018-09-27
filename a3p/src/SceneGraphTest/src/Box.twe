@@ -2,7 +2,8 @@ class Box {
   Box() 
   {
     SGEntity entity <- $SceneGraph.createEntity(shape: ShapeModel.BOX);
-    entity.bindSizeProperty(name: SGBox.SIZE_PROPERTY_NAME, property: size);
+    entity.bindSizeProperty(name: SGEntity.SIZE_PROPERTY_NAME, property: size);
+    entity.bindPaintProperty(name: SGEntity.PAINT_PROPERTY_NAME, property: paint);
   }
 
   void animateSize(Size size, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
@@ -10,5 +11,16 @@ class Box {
     this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
   }
 
+  void setSize(Size size, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
+  }
+
+  void setPaint(Paint paint, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.paint.animateValue(endValue: paint, duration: duration, animationStyle: animationStyle);
+  }
+
   @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
+  @CompletelyHidden PaintProperty paint <- new PaintProperty(owner: this, value: Color.WHITE);
 } 

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     public sealed class UnitySceneGraph : MonoBehaviour {
-        private static UnitySceneGraph s_Instance;
+        private static UnitySceneGraph s_Current;
 
-        public static UnitySceneGraph Instance {
+        public static UnitySceneGraph Current {
             get {
-                if (ReferenceEquals(s_Instance, null)) {
-                    s_Instance = FindObjectOfType<UnitySceneGraph>();
-                    if (ReferenceEquals(s_Instance, null)) {
+                if (ReferenceEquals(s_Current, null)) {
+                    s_Current = FindObjectOfType<UnitySceneGraph>();
+                    if (ReferenceEquals(s_Current, null)) {
                         var go = new GameObject("PropertyManager");
-                        s_Instance = go.AddComponent<UnitySceneGraph>();
+                        s_Current = go.AddComponent<UnitySceneGraph>();
                     }
                 }
-                return s_Instance;
+                return s_Current;
             }
         }
 
@@ -22,17 +22,17 @@ namespace Alice.Player.Unity {
         private bool m_IsUpdating;
 
         private void Awake() {
-            if (!ReferenceEquals(s_Instance, null) && !ReferenceEquals(s_Instance, this)) {
+            if (!ReferenceEquals(s_Current, null) && !ReferenceEquals(s_Current, this)) {
                 Destroy(this);
                 return;
-            } else if (ReferenceEquals(s_Instance, null)) {
-                s_Instance = this;
+            } else if (ReferenceEquals(s_Current, null)) {
+                s_Current = this;
             }
         }
 
         private void Destroy() {
-            if (ReferenceEquals(s_Instance, this)) {
-                s_Instance = null;
+            if (ReferenceEquals(s_Current, this)) {
+                s_Current = null;
             }
         }
 
@@ -41,12 +41,11 @@ namespace Alice.Player.Unity {
             // process tweens in order
             double dt = Time.deltaTime;
             for (int i = 0; i < m_Tweens.Count; ++i) {
+                m_Tweens[i].Step(dt);
                 if (m_Tweens[i].IsDone()) {
                     m_Tweens[i].Finish();
                     m_Tweens.RemoveAt(i);
                     --i;
-                } else {
-                    m_Tweens[i].Step(dt);
                 }
             }
             m_IsUpdating = false;
