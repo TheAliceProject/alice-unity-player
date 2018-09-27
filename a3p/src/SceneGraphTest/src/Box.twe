@@ -1,7 +1,7 @@
 class Box {
   Box() 
   {
-    SGEntity entity <- $SceneGraph.createEntity(shape: ShapeModel.BOX);
+    SGEntity entity <- $SceneGraph.createShapeEntity(owner: this, shape: ShapeModel.BOX);
     entity.bindSizeProperty(name: SGEntity.SIZE_PROPERTY_NAME, property: size);
     entity.bindPaintProperty(name: SGEntity.PAINT_PROPERTY_NAME, property: paint);
   }
@@ -21,6 +21,6 @@ class Box {
     this.paint.animateValue(endValue: paint, duration: duration, animationStyle: animationStyle);
   }
 
-  @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
-  @CompletelyHidden PaintProperty paint <- new PaintProperty(owner: this, value: Color.WHITE);
+  @CompletelyHidden SizeProperty size <- new SizeProperty(value: new Size(width: 1, height: 1, depth: 1));
+  @CompletelyHidden PaintProperty paint <- new PaintProperty(value: Color.WHITE);
 } 

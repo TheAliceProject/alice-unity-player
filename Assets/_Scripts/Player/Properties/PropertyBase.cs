@@ -8,15 +8,13 @@ namespace Alice.Player.Modules {
     public abstract class PropertyBase<T>  {
         
         public delegate void ValueChangedDelegate(PropertyBase<T> inProperty);
-        protected TValue m_Owner;
         protected T m_Value;
 
         public bool IsAnimating { get; protected set; }
 
         public event ValueChangedDelegate OnValueChanged;
         
-        public PropertyBase(TValue inOwner, T inValue) {
-            m_Owner = inOwner;
+        public PropertyBase(T inValue) {
             m_Value = inValue;
         }
 

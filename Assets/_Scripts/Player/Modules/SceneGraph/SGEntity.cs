@@ -11,11 +11,14 @@ namespace Alice.Player.Modules {
     [PInteropType]
     public abstract class SGEntity : MonoBehaviour {
         
-        public static T Create<T>(string inName = "SGEntity") where T : SGEntity {
+        public static T Create<T>(TValue owner, string inName = "SGEntity") where T : SGEntity {
             var go = new GameObject(inName);
             var entity = go.AddComponent<T>();
+            entity.m_Owner = owner;
             return entity;
         }
+
+        private TValue m_Owner;
 
         private Dictionary<string, PropertyCallbackBinding> m_PropertyBindings = new Dictionary<string, PropertyCallbackBinding>();
         private Dictionary<string, object> m_Properties = new Dictionary<string, object>();
