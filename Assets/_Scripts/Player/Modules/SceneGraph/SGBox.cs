@@ -22,18 +22,9 @@ namespace Alice.Player.Modules {
             Init(go.GetComponent<MeshRenderer>());
         }
 
-        protected override void BindProperty<T>(string inName, PropertyBase<T> inProperty) {
-            if (inName == SIZE_PROPERTY_NAME) {
-                var sizeProperty = inProperty as SizeProperty;
-                if (sizeProperty == null) {
-                    throw new SceneGraphException("Expecting SizeProperty when binding.");
-                }
-
-                OnSizePropertyChanged(sizeProperty);
-                sizeProperty.OnValueChanged += OnSizePropertyChanged;
-            } else {
-                base.BindProperty(inName, inProperty);
-            }
+        protected override void Init(Renderer inRenderer) {
+            base.Init(inRenderer);
+            RegisterPropertyBinding<Size>(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
         }
 
         private void OnSizePropertyChanged(PropertyBase<Size> inProperty) {
