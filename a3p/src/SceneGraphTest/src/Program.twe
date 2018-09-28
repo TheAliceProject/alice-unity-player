@@ -10,12 +10,14 @@ class Program {
   
   void execute() {
   	SBox box <- new SBox();
-    box.setSize(size: new Size(width: 2, height: 1.5, depth: 0.5));
-    $Clock.delay(0);
-    box.setPaint(paint: new Color(red: 1, green: 0, blue: 0), duration: 4.2);
+
+    doTogether {
+      box.setSize(size: new Size(width: 2, height: 1.5, depth: 0.5));
+      box.setPaint(paint: new Color(red: 1, green: 0, blue: 0), duration: 4.2);
+    }
 
     SSphere sphere <- new SSphere();
-    //sphere.setRadius(radius: 0.1, duration: 0);
+    sphere.setRadius(radius: 0.1, duration: 0);
     sphere.setRadius(radius: 2, duration: 10);
   }
 }

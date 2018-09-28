@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 
 namespace Alice.Player.Modules {
-    public struct PropertyCallbackBinding {
-        public Type type;
-        public object callback;
+    public struct PropertyDelegateBinding {
+        public Type Type;
+        public object Delegate;
     }
 }
