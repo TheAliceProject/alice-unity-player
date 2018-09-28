@@ -9,7 +9,7 @@ namespace Alice.Player.Modules {
         public ColorProperty(Color value) : base(value) {}
 
         public override Color Interpolate(Color a, Color b, double t) {
-            return a.interpolatePortion(b, t);
+            return new Color(Color4.Lerp(a.Value, b.Value, t));
         }
     }
 }

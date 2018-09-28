@@ -20,7 +20,7 @@ namespace Alice.Player.Modules {
 
         private TValue m_Owner;
 
-        private Dictionary<string, PropertyCallbackBinding> m_PropertyBindings = new Dictionary<string, PropertyCallbackBinding>();
+        private Dictionary<string, PropertyDelegateBinding> m_PropertyBindings = new Dictionary<string, PropertyDelegateBinding>();
         private Dictionary<string, object> m_Properties = new Dictionary<string, object>();
 
         private Renderer m_Renderer;
@@ -105,9 +105,9 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public void unbindProperty(string name) {
-            PropertyCallbackBinding binding;
+            PropertyDelegateBinding binding;
             if (m_PropertyBindings.TryGetValue(name, out binding)) {
-                UnbindProperty(name, binding.type, binding.callback);
+                UnbindProperty(name, binding.Type, binding.Delegate);
             }
            
         }
@@ -119,18 +119,18 @@ namespace Alice.Player.Modules {
             m_Material = new Material(inRenderer.material);
             inRenderer.sharedMaterial = m_Material;
 
-            RegisterPropertyCallback<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
+            RegisterPropertyDelegate<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
         }
 
         protected virtual void OnDestroy() {
             Destroy(m_Material);
         }
 
-        protected void RegisterPropertyCallback<T>(string inName, PropertyBase<T>.ValueChangedDelegate inCallback) {
+        protected void RegisterPropertyDelegate<T>(string inName, PropertyBase<T>.ValueChangedDelegate inDelegate) {
             if (m_PropertyBindings.ContainsKey(inName)) {
                 throw new SceneGraphException(string.Format("Property \"{0}\" binding already registered.", inName));
             } else {
-                m_PropertyBindings.Add(inName, new PropertyCallbackBinding() {type = typeof(T), callback = inCallback});
+                m_PropertyBindings.Add(inName, new PropertyDelegateBinding() {Type = typeof(T), Delegate = inDelegate});
             }
         }
 
@@ -140,11 +140,11 @@ namespace Alice.Player.Modules {
                 throw new SceneGraphException(string.Format("Property \"{0}\" already bound.", inName));
             } else {
                 
-                PropertyCallbackBinding binding;
+                PropertyDelegateBinding binding;
                 if (m_PropertyBindings.TryGetValue(inName, out binding)) {
-                    var callback = (PropertyBase<T>.ValueChangedDelegate)binding.callback;
-                    callback(inProperty);
-                    inProperty.OnValueChanged += callback;
+                    var del = (PropertyBase<T>.ValueChangedDelegate)binding.Delegate;
+                    del(inProperty);
+                    inProperty.OnValueChanged += del;
                     m_Properties.Add(inName, inProperty);
                 } else {
                     throw new SceneGraphException(string.Format("Property \"{0}\" cannot be bound because no valid callback has been registered.", inName));
@@ -152,20 +152,19 @@ namespace Alice.Player.Modules {
             }
         }
 
-        private void UnbindProperty<T>(string inName, T inType, object callbackObj) {
+        private void UnbindProperty<T>(string inName, T inType, object delegateObj) {
             object propertyObj;
             if (m_Properties.TryGetValue(inName, out propertyObj)) {
                 var property = (PropertyBase<T>)propertyObj;
-                var callback = (PropertyBase<T>.ValueChangedDelegate)callbackObj;
-                property.OnValueChanged -= callback;
+                var del = (PropertyBase<T>.ValueChangedDelegate)delegateObj;
+                property.OnValueChanged -= del;
                 m_Properties.Remove(inName);
             }
         } 
 
         private void OnPaintPropertyChanged(PropertyBase<Paint> inProperty) {
             var paint = inProperty.getValue();
-            m_Material.mainTexture = paint.TextureValue;
-            m_Material.color = paint.TextureValue == null ? paint : UnityEngine.Color.white;
+            paint.Apply(m_Material);
         }
     }
 }

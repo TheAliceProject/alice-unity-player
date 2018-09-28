@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Alice.Tweedle.Interop;
+using Alice.Tweedle;
 using System;
 
 namespace Alice.Player.Primitives
@@ -7,8 +8,12 @@ namespace Alice.Player.Primitives
     [PInteropType]
     public sealed class Color : Paint
     {
-        public Color(Color4 inColor) : base(inColor)
+
+        public readonly Color4 Value;
+
+        public Color(Color4 inColor)
         {
+            Value = inColor;
         }
 
         #region Interop Interfaces
@@ -47,47 +52,69 @@ namespace Alice.Player.Primitives
 	    [PInteropField]
         public static readonly Color BROWN = new Color( 162.0 / 255.0, 42.0 / 255.0, 42.0 / 255.0 );
 
+        [PInteropField]
+        public double red { get { return Value.R; } }
+        [PInteropField]
+        public double green { get { return Value.G; } }
+        [PInteropField]
+        public double blue { get { return Value.B; } }
+        [PInteropField]
+        public double alpha { get { return Value.A; } }
+
         [PInteropConstructor]
-        public Color(double red, double green, double blue) : base(red, green, blue)
+        public Color(double red, double green, double blue) 
         {
+            Value = new Color4(red, green, blue, 1);
         }
 
         [PInteropConstructor]
-        public Color(Color clone) : base(clone)
+        public Color(Color clone)
         {
+            Value = clone.Value;
         }
 
         [PInteropMethod]
-        public bool equals(Color other) 
+        public override bool equals(Paint other) 
         {
-            return ColorValue == other.ColorValue;
+            return Equals(other);
         }
 
         [PInteropMethod]
-        public Color interpolatePortion(Color end, double portion) 
-        {
-            return new Color(Color4.Lerp(ColorValue, end.ColorValue, portion));
+        public override Paint interpolatePortion(Paint end, double portion) 
+        {   
+            if (end.PaintType == PaintTypeID.Color) {
+                return new Color(Color4.Lerp(Value, ((Color)end).Value, portion));
+            }
+
+            if (end.PaintType == PaintTypeID.ImageSource) {
+                return portion == 0 ? (Paint)new Color(this) : new ImageSource((ImageSource)end);
+            }
+
+            throw new TweedleRuntimeException("Could not interpolate paint type");
+
         }
         #endregion // Interop Interfaces
 
-        static public implicit operator UnityEngine.Color(Color inColor)
-        {
-            return inColor != null ? new UnityEngine.Color((float)inColor.red, (float)inColor.green, (float)inColor.blue, (float)inColor.alpha) : new UnityEngine.Color(float.NaN,float.NaN,float.NaN);
+        public override PaintTypeID PaintType { get { return PaintTypeID.Color; } }
+
+        public override void Apply(UnityEngine.Material inMaterial) {
+            inMaterial.color = new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, (float)Value.A);
+            inMaterial.mainTexture = null;
         }
 
         public override string ToString() {
-            return string.Format("Color({0:0.##},{1:0.##},{2:0.##},{3:0.##})", red, green, blue, alpha);
+            return string.Format("Color({0:0.##},{1:0.##},{2:0.##},{3:0.##})", Value.R, Value.G, Value.B, Value.A);
         }
 
         public override bool Equals(object obj) {
             if (obj is Color) {
-                return equals((Color)obj);
+                return ((Color)obj).Value == Value;
             }
             return false;
         }
 
         public override int GetHashCode() {
-            return ColorValue.GetHashCode();
+            return Value.GetHashCode();
         }
     }
 }

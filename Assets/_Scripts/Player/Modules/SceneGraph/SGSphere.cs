@@ -26,7 +26,7 @@ namespace Alice.Player.Modules {
 
         protected override void Init(Renderer inRenderer) {
             base.Init(inRenderer);
-            RegisterPropertyCallback<double>(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
+            RegisterPropertyDelegate<double>(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
         }
 
         private void OnRadiusPropertyChanged(PropertyBase<double> inProperty) {
