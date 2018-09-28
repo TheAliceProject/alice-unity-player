@@ -8,12 +8,16 @@ namespace Alice.Player.Modules {
     public abstract class PropertyBase<T>  {
         
         public delegate void ValueChangedDelegate(PropertyBase<T> inProperty);
-        protected T m_Value;
+      
 
-        public bool IsAnimating { get; protected set; }
+    
+        public bool IsAnimating { get {return m_AnimationCount > 0;} }
 
         public event ValueChangedDelegate OnValueChanged;
-        
+
+        protected T m_Value;
+        private int m_AnimationCount = 0; 
+
         public PropertyBase(T inValue) {
             m_Value = inValue;
         }
@@ -36,24 +40,24 @@ namespace Alice.Player.Modules {
 
         // TODO: return blocking mechanism to VM
         [PInteropMethod]
-        public void animateValue(T endValue, double duration, AnimationStyleEnum animationStyle) {
-            if (!IsAnimating) {
-                if (duration <= 0) {
-                    setValue(endValue);
-                    FinishAnimation();
-                    return;
-                }
-                
-                IsAnimating = true;
-                var tween = new PropertyTween<T>(this, m_Value, endValue, duration, animationStyle, FinishAnimation);
-                UnitySceneGraph.Current.QueueTween(tween);
+        public AsyncReturn animateValue(T endValue, double duration, AnimationStyleEnum animationStyle) {
+
+            if (duration <= 0) {
+                setValue(endValue);
+                return null;
             }
+            
+            m_AnimationCount++;
+            
+            var asyncReturn = new AsyncReturn();
+            var tween = new PropertyTween<T>(this, m_Value, endValue, duration, animationStyle, asyncReturn);
+            UnitySceneGraph.Current.QueueTween(tween);
+            return asyncReturn;
         }
         #endregion // Interop Interfaces
 
-        // TODO: unblock current executition step
-        protected void FinishAnimation() {
-            IsAnimating = false;
+        internal void FinishAnimation() {
+            m_AnimationCount--;
         }
 
         public abstract T Interpolate(T a, T b, double t);

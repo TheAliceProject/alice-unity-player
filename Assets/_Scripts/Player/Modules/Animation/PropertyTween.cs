@@ -14,16 +14,16 @@ namespace Alice.Player.Unity {
         public readonly double Duration;
         public double Time { get; private set; }
         
-        private FinishedDelegate m_OnFinished;
+        private AsyncReturn m_AsyncReturn;
 
-        public PropertyTween(PropertyBase<T> inProp, T inStart, T inEnd, double inDuration, AnimationStyleEnum inStyle, FinishedDelegate inEndedDelegate = null) {
+        public PropertyTween(PropertyBase<T> inProp, T inStart, T inEnd, double inDuration, AnimationStyleEnum inStyle, AsyncReturn inReturn) {
             Property = inProp;
             StartValue = inStart;
             EndValue = inEnd;
             Duration = inDuration;
             Style = inStyle;
             Time = 0;
-            m_OnFinished = inEndedDelegate;
+            m_AsyncReturn = inReturn;
         }
 
         public void Step(double dt) {
@@ -37,9 +37,8 @@ namespace Alice.Player.Unity {
 
         public void Finish() {
             Property.setValue(EndValue);
-            if (m_OnFinished != null) {
-                m_OnFinished.Invoke();
-            }
+            Property.FinishAnimation();
+            m_AsyncReturn?.Return();
         }
 
         // Ported from TraditionalStyle java enum  
