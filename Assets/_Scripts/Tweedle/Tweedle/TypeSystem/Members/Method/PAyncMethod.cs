@@ -31,10 +31,17 @@ namespace Alice.Tweedle
                 new DelayedAsyncOperationStep("call", inScope, () => {
                     object thisVal = PrepForInvoke(inScope);
                     IAsyncReturn asyncReturn = (IAsyncReturn)Invoke(thisVal, GetCachedArgs());
-                    asyncReturn.OnReturn((obj) =>
+                    if (asyncReturn != null)
                     {
-                        ReturnValue(inScope, obj);
-                    });
+                        asyncReturn.OnReturn((obj) =>
+                        {
+                            ReturnValue(inScope, obj);
+                        });
+                    }
+                    else
+                    {
+                        ReturnValue(inScope, null);
+                    }
                     return asyncReturn;
                 })
             );
