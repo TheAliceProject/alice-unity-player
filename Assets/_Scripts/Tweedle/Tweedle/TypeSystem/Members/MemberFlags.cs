@@ -30,6 +30,9 @@ namespace Alice.Tweedle
 		Constructor		= 0x020,
 
 		// From proxy/platform type
-		PInterop		= 0x040
+		PInterop		= 0x040,
+
+		// Is an asynchronous method
+		Async			= 0x080
 	}
 }
