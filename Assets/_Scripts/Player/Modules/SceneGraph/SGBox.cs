@@ -24,7 +24,7 @@ namespace Alice.Player.Modules {
 
         protected override void Init(Renderer inRenderer) {
             base.Init(inRenderer);
-            RegisterPropertyBinding<Size>(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
+            RegisterPropertyCallback<Size>(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
         }
 
         private void OnSizePropertyChanged(PropertyBase<Size> inProperty) {

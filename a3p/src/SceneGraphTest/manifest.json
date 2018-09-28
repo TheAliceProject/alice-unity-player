@@ -23,9 +23,24 @@
       "files": ["src/Default.twe"],
       "type": "Class"
     }, {
-      "id": "Box",
+      "id": "SModel",
       "format": "tweedle",
-      "files": ["src/Box.twe"],
+      "files": ["src/SModel.twe"],
+      "type": "Class"
+    }, {
+      "id": "SShape",
+      "format": "tweedle",
+      "files": ["src/SShape.twe"],
+      "type": "Class"
+    }, {
+      "id": "SBox",
+      "format": "tweedle",
+      "files": ["src/SBox.twe"],
+      "type": "Class"
+    }, {
+      "id": "SSphere",
+      "format": "tweedle",
+      "files": ["src/SSphere.twe"],
       "type": "Class"
     }, {
       "id": "Program",

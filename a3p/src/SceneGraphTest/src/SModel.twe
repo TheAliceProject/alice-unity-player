@@ -1,0 +1,19 @@
+class SModel 
+{
+  SModel(TextString resource) {
+    this.entity <- $SceneGraph.createEntity(model: this, resource: resource);
+    this.entity.bindPaintProperty(name: SGEntity.PAINT_PROPERTY_NAME, property: this.paint);
+  }
+
+  Paint getPaint() {
+    return this.paint.getValue();
+  }
+
+  void setPaint(Paint paint, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.paint.animateValue(endValue: paint, duration: duration, animationStyle: animationStyle);
+  }
+
+  @CompletelyHidden SGEntity entity;
+  @CompletelyHidden PaintProperty paint <- new PaintProperty(value: Color.WHITE);
+} 
