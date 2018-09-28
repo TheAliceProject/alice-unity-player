@@ -60,12 +60,12 @@ namespace Alice.Tweedle
 
         #region Link
 
-        protected override void LinkImpl(Parse.TweedleSystem inSystem)
+        protected override void LinkImpl(TAssembly[] inAssemblies)
         {
-            base.LinkImpl(inSystem);
+            base.LinkImpl(inAssemblies);
 
-            LinkMembers(m_Fields, inSystem, this);
-            LinkMembers(m_Methods, inSystem, this);
+            LinkMembers(m_Fields, inAssemblies, this);
+            LinkMembers(m_Methods, inAssemblies, this);
         }
 
         #endregion // Link

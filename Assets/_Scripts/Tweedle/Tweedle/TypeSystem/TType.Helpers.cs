@@ -50,11 +50,11 @@ namespace Alice.Tweedle
         /// <summary>
         /// Resolves all members.
         /// </summary>
-        static protected void LinkMembers<T>(T[] inMembers, TweedleSystem inSystem, TType inType) where T : ITypeMember
+        static protected void LinkMembers<T>(T[] inMembers, TAssembly[] inAssemblies, TType inType) where T : ITypeMember
         {
             for (int i = 0; i < inMembers.Length; ++i)
             {
-                inMembers[i].Link(inSystem, inType);
+                inMembers[i].Link(inAssemblies, inType);
             }
         }
 

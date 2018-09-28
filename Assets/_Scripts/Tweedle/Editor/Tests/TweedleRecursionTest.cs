@@ -28,7 +28,7 @@ namespace Alice.Tweedle.Parse
 		TweedleSystem NewSystem()
 		{
 			TweedleSystem system = new TweedleSystem();
-			system.AddType(ParseClass(fib));
+			system.GetAssembly().Add(ParseClass(fib));
 			return system;
 		}
 

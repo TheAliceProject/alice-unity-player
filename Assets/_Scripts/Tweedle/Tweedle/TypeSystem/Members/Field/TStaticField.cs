@@ -24,9 +24,9 @@ namespace Alice.Tweedle
 
         #region TField
 
-        public override void Link(TweedleSystem inSystem, TType inOwnerType)
+        public override void Link(TAssembly[] inAssemblies, TType inOwnerType)
         {
-            base.Link(inSystem, inOwnerType);
+            base.Link(inAssemblies, inOwnerType);
             
             // This is stored here instead of being retrieved from a TTypeRef
             // so that static fields accessed through subclasses are still

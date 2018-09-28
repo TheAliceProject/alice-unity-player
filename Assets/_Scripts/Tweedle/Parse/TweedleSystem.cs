@@ -18,8 +18,13 @@ namespace Alice.Tweedle.Parse
 
         public Dictionary<ResourceIdentifier, ResourceReference> Resources { get; private set; }
 
-        private List<TType> m_AllTypes = new List<TType>();
-        public Dictionary<string, TType> Types { get; private set; }
+        private List<TAssembly> m_StaticAssemblies = new List<TAssembly>();
+        private List<TAssembly> m_DynamicAssemblies = new List<TAssembly>();
+
+        private TAssembly m_RuntimeAssembly;
+
+        private List<TType> m_TypeList = new List<TType>();
+        private Dictionary<string, TType> m_TypeMap = new Dictionary<string, TType>();
 
         public TweedleSystem()
         {
@@ -31,47 +36,15 @@ namespace Alice.Tweedle.Parse
 
             Resources = new Dictionary<ResourceIdentifier, ResourceReference>();
 
-            // Classes = new Dictionary<string, TClassType>();
-            // Enums = new Dictionary<string, TweedleEnum>();
-            Types = new Dictionary<string, TType>();
             InitializePrimitives();
         }
 
         private void InitializePrimitives()
         {
-            foreach (var prim in TStaticTypes.ALL_PRIMITIVE_TYPES)
-                AddType(prim);
-
-            AddType(TInterop.GenerateType(typeof(DebugModule)));
-            AddType(TInterop.GenerateType(typeof(SceneGraphModule)));
-            AddType(TInterop.GenerateType(typeof(AnimationStyleEnum)));
-            AddType(TInterop.GenerateType(typeof(ClockModule)));
-
-            // interop primitives
-            AddType(TInterop.GenerateType(typeof(Portion)));
-            AddType(TInterop.GenerateType(typeof(Position)));
-            AddType(TInterop.GenerateType(typeof(Direction)));
-            AddType(TInterop.GenerateType(typeof(Orientation)));
-            AddType(TInterop.GenerateType(typeof(VantagePoint)));
-            AddType(TInterop.GenerateType(typeof(Angle)));
-            AddType(TInterop.GenerateType(typeof(AxisAlignedBox)));
-            AddType(TInterop.GenerateType(typeof(Size)));
-            AddType(TInterop.GenerateType(typeof(Scale)));
-
-            // properties
-            AddType(TInterop.GenerateType(typeof(DecimalNumberProperty)));
-            AddType(TInterop.GenerateType(typeof(WholeNumberProperty)));
-            AddType(TInterop.GenerateType(typeof(AngleProperty)));
-            AddType(TInterop.GenerateType(typeof(PortionProperty)));
-            AddType(TInterop.GenerateType(typeof(PositionProperty)));
-            AddType(TInterop.GenerateType(typeof(DirectionProperty)));
-            AddType(TInterop.GenerateType(typeof(SizeProperty)));
-            AddType(TInterop.GenerateType(typeof(ScaleProperty)));
-            AddType(TInterop.GenerateType(typeof(OrientationProperty)));
-            AddType(TInterop.GenerateType(typeof(AxisAlignedBoxProperty)));
-            AddType(TInterop.GenerateType(typeof(VantagePointProperty)));
-
+            AddStaticAssembly(TStaticTypes.Assembly());
         }
+
+        #region Adding Resources
 
         public void AddLibrary(LibraryManifest libAsset)
         {
@@ -91,62 +64,100 @@ namespace Alice.Tweedle.Parse
             Models.Add(modelAsset.Identifier.id, modelAsset);
         }
 
-        public void AddType(TType tweClass)
-        {
-            Types.Add(tweClass.Name, tweClass);
-            m_AllTypes.Add(tweClass);
-        }
-
-        public void Link()
-        {
-            for (int i = 0; i < m_AllTypes.Count; ++i)
-            {
-                m_AllTypes[i].Link(this);
-            }
-
-            for (int i = 0; i < m_AllTypes.Count; ++i)
-            {
-                m_AllTypes[i].PostLink(this);
-            }
-
-            // Sort based on inheritance depth
-            m_AllTypes.Sort();
-
-			foreach(var type in m_AllTypes)
-			{
-                UnityEngine.Debug.Log(TType.DumpOutline(type));
-            }
-        }
-
-        public void Prep(VirtualMachine virtualMachine)
-        {
-            ITweedleExpression staticInitializer;
-            for (int i = 0; i < m_AllTypes.Count; ++i)
-            {
-                staticInitializer = m_AllTypes[i].Prep();
-                if (staticInitializer != null)
-                    virtualMachine.Queue(staticInitializer);
-            }
-        }
-
-        internal TType TypeNamed(string name)
-        {
-            TType type;
-            Types.TryGetValue(name, out type);
-            return type;
-        }
-
         public void AddResource(ResourceReference resourceAsset)
         {
             ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
             Resources.Add(identifier, resourceAsset);
         }
 
+        public void AddDynamicAssembly(TAssembly assembly)
+        {
+            m_DynamicAssemblies.Add(assembly);
+        }
+
+        public void AddStaticAssembly(TAssembly assembly)
+        {
+            m_StaticAssemblies.Add(assembly);
+        }
+
+        #endregion // Adding Resources
+
+        #region Steps
+
+        public void Link()
+        {
+            foreach(var assembly in m_StaticAssemblies)
+                Link(assembly);
+            foreach(var assembly in m_DynamicAssemblies)
+                Link(assembly);
+        }
+
+        private void Link(TAssembly inAssembly)
+        {
+            inAssembly.Link();
+
+            var allTypes = inAssembly.AllTypes();
+            for (int i = 0; i < allTypes.Count; ++i)
+            {
+                TType type = allTypes[i];
+                m_TypeList.Add(type);
+                m_TypeMap.Add(type.Name, type);
+            }
+        }
+
+        public void Prep(VirtualMachine inVM)
+        {
+            ITweedleExpression staticInitializer;
+            for (int i = 0; i < m_TypeList.Count; ++i)
+            {
+                m_TypeList[i].Prep(out staticInitializer);
+                if (staticInitializer != null)
+                    inVM.Queue(staticInitializer);
+            }
+        }
+
+        public void Unload()
+        {
+            for (int i = m_DynamicAssemblies.Count - 1; i >= 0; --i)
+            {
+                m_DynamicAssemblies[i].Unload();
+            }
+            m_DynamicAssemblies.Clear();
+            m_RuntimeAssembly = null;
+        }
+
+        #endregion // Steps
+
+        public TAssembly GetAssembly()
+        {
+            if (m_RuntimeAssembly == null)
+            {
+                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies.ToArray());
+                m_DynamicAssemblies.Add(m_RuntimeAssembly);
+            }
+            return m_RuntimeAssembly;
+        }
+
+        public TType TypeNamed(string name)
+        {
+            TType type;
+            m_TypeMap.TryGetValue(name, out type);
+            return type;
+        }
+
+        internal void DumpTypes()
+        {
+            foreach (var type in m_TypeList)
+            {
+                UnityEngine.Debug.Log(TType.DumpOutline(type));
+            }
+        }
+
         internal void QueueProgramMain(VirtualMachine vm)
         {
             TType prog;
             vm.Initialize(this);
-            if (Types.TryGetValue("Program", out prog))
+            if (m_TypeMap.TryGetValue("Program", out prog))
             {
                 TValue progVal = TStaticTypes.TYPE_REF.Instantiate(prog);
                 NamedArgument[] arguments = NamedArgument.EMPTY_ARGS;

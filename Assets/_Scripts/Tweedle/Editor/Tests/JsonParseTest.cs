@@ -196,7 +196,7 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\":\"Program\",\"format\":\"tweedle\",\"files\":[\"src/Program.twe\"],\"type\":\"Class\"}" +
 				"]}";
-			Assert.NotNull(StoredSystem(manifest).Types["Program"], "Type should be stored by name, not be null.");
+			Assert.NotNull(StoredSystem(manifest).TypeNamed("Program"), "Type should be stored by name, not be null.");
 		}
 
 		[Test]
@@ -211,7 +211,7 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\":\"Program\",\"format\":\"tweedle\",\"files\":[\"src/Program.twe\"],\"type\":\"Class\"}" +
 				"]}";
-			Assert.NotNull(StoredSystem(manifest).Types["Program"], "Class should be stored by name, not be null.");
+			Assert.NotNull(StoredSystem(manifest).TypeNamed("Program"), "Class should be stored by name, not be null.");
 		}
 
 		[Test]
@@ -226,7 +226,7 @@ namespace Alice.Tweedle.Parse
 				"\"resources\":[" +
 					"{\"id\":\"TurnDirection\",\"format\":\"tweedle\",\"files\":[\"src/TurnDirection.twe\"],\"type\":\"Enum\"}" +
 				"]}";
-			Assert.NotNull(StoredSystem(manifest).Types["TurnDirection"], "Enum should be stored by name, not be null.");
+			Assert.NotNull(StoredSystem(manifest).TypeNamed("TurnDirection"), "Enum should be stored by name, not be null.");
 		}
 
 		[Test]

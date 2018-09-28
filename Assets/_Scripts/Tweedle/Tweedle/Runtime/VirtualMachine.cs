@@ -23,6 +23,8 @@ namespace Alice.Tweedle.VM
 
 		internal void Initialize(TweedleSystem tweedleSystem)
 		{
+			executionQueue.ClearQueue();
+			
 			Library = tweedleSystem;
             Library?.Prep(this);
         }
