@@ -13,11 +13,14 @@ namespace Alice.Player.Modules
         [PInteropMethod]
         static public AsyncReturn delay(double duration)
         {
-            if (duration <= 0)
-                return null;
-
             AsyncReturn returnVal = new AsyncReturn();
-            UnitySceneGraph.Instance.StartCoroutine(DelayImpl(returnVal, duration));
+            if (duration <= 0) {
+                returnVal.Return();
+                return returnVal;
+            }
+
+            
+            UnitySceneGraph.Current.StartCoroutine(DelayImpl(returnVal, duration));
             return returnVal;
         }
 
@@ -25,7 +28,7 @@ namespace Alice.Player.Modules
         static public AsyncReturn<bool> returnRandomBool(double duration)
         {
             AsyncReturn<bool> returnVal = new AsyncReturn<bool>();
-            UnitySceneGraph.Instance.StartCoroutine(ReturnWithDelay(returnVal, duration, Random.value < 0.5));
+            UnitySceneGraph.Current.StartCoroutine(ReturnWithDelay(returnVal, duration, Random.value < 0.5));
             return returnVal;
         }
 
