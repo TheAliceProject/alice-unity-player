@@ -119,14 +119,14 @@ namespace Alice.Player.Modules {
             m_Material = new Material(inRenderer.material);
             inRenderer.sharedMaterial = m_Material;
 
-            RegisterPropertyBinding<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
+            RegisterPropertyCallback<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
         }
 
         protected virtual void OnDestroy() {
             Destroy(m_Material);
         }
 
-        protected void RegisterPropertyBinding<T>(string inName, PropertyBase<T>.ValueChangedDelegate inCallback) {
+        protected void RegisterPropertyCallback<T>(string inName, PropertyBase<T>.ValueChangedDelegate inCallback) {
             if (m_PropertyBindings.ContainsKey(inName)) {
                 throw new SceneGraphException(string.Format("Property \"{0}\" binding already registered.", inName));
             } else {

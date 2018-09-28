@@ -78,7 +78,7 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(SceneGraphModule)));
             AddType(TInterop.GenerateType(typeof(SGEntity)));
             AddType(TInterop.GenerateType(typeof(SGBox)));
-            AddType(TInterop.GenerateType(typeof(ShapeModelEmum)));
+            AddType(TInterop.GenerateType(typeof(SGSphere)));
 
         }
 
