@@ -4,9 +4,21 @@ namespace Alice.Tweedle.VM
 {
 	public class ExecutionStep
 	{
+		#region Types
+
+		protected enum StepStatus
+		{
+			Ready,
+			WaitingOnSteps,
+			WaitingOnFrame,
+			Completed
+		}
+
+		#endregion // Types
+
 		internal ExecutionStep next;
 		int blockerCount = 0;
-		StepStatus status;
+		protected StepStatus status;
 		internal string callStack;
 		protected internal ExecutionScope scope;
 
@@ -116,12 +128,4 @@ namespace Alice.Tweedle.VM
 			return callStack;
 		}
 	}
-}
-
-enum StepStatus
-{
-	Ready,
-	WaitingOnSteps,
-	WaitingOnFrame,
-	Completed
 }
