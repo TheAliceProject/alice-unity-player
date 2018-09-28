@@ -19,6 +19,9 @@ namespace Alice.Tweedle.Interop
         static private readonly IntPtr TYPEPTR_STRING = GetTypePtr<string>();
         static private readonly IntPtr TYPEPTR_BOOLEAN = GetTypePtr<bool>();
 
+        // Async types
+        static private readonly Type TYPE_IASYNCRETURN = typeof(IAsyncReturn);
+
         #region To TValue
 
         static public TValue ToTValue(object inObject, TweedleSystem inLibrary)
@@ -267,7 +270,14 @@ namespace Alice.Tweedle.Interop
             foreach(var pMethod in pMethods)
             {
                 if (PInteropMethodAttribute.IsDefined(pMethod))
-                    tMethods.Add(new PMethod(pMethod));
+                {
+                    PMethodBase tMethod;
+                    if (TYPE_IASYNCRETURN.IsAssignableFrom(pMethod.ReturnType))
+                        tMethod = new PAsyncMethod(pMethod);
+                    else
+                        tMethod = new PMethod(pMethod);
+                    tMethods.Add(tMethod);
+                }
             }
 
             return tMethods.ToArray();

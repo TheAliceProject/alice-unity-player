@@ -73,12 +73,14 @@ namespace Alice.Tweedle
         {
             ioMain.AddStep(
                 new DelayedOperationStep("call", inScope, () => {
-                    Invoke(inScope);
+                    object thisVal = PrepForInvoke(inScope);
+                    object retVal = Invoke(thisVal, m_CachedArgs);
+                    ReturnValue(inScope, retVal);
                 })
             );
         }
 
-        private void Invoke(InvocationScope inScope)
+        protected object PrepForInvoke(InvocationScope inScope)
         {
             for (int i = 0; i < m_ParameterNames.Length; ++i)
                 m_CachedArgs[i] = TInterop.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i]);
@@ -89,8 +91,17 @@ namespace Alice.Tweedle
             else
                 thisVal = TInterop.ToPObject(inScope.GetThis());
 
-            object retVal = Invoke(thisVal, m_CachedArgs);
-            inScope.Return(TInterop.ToTValue(retVal, inScope.vm.Library));
+            return thisVal;
+        }
+
+        protected object[] GetCachedArgs()
+        {
+            return m_CachedArgs;
+        }
+
+        protected void ReturnValue(InvocationScope inScope, object inValue)
+        {
+            inScope.Return(TInterop.ToTValue(inValue, inScope.vm.Library));
         }
 
         protected virtual object Invoke(object thisVal, object[] inCachedArgs)
