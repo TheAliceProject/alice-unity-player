@@ -1,6 +1,7 @@
 class Program {
   
   static void main() {
+    $Clock.delay(duration: 0);
     $Clock.delay(duration: 1.5);
     forLoop(start: 0, end: 100);
   }

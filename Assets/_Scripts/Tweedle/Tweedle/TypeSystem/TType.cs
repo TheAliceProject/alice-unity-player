@@ -111,11 +111,12 @@ namespace Alice.Tweedle
         /// Preps the type for execution.
         /// Returns any additional steps that need to be executed on the VM.
         /// </summary>
-        public ITweedleExpression Prep()
+        public void Prep(out ITweedleExpression outAdditionalPrep)
         {
             if (m_Status == Status.Prepped)
             {
-                return null;
+                outAdditionalPrep = null;
+                return;
             }
 
             m_StaticStorage?.Clear();
@@ -123,10 +124,12 @@ namespace Alice.Tweedle
 
             if (HasStaticConstructor())
             {
-                return new StaticInstantiation(this.SelfRef);
+                outAdditionalPrep = new StaticInstantiation(this.SelfRef);
             }
-
-            return null;
+            else
+            {
+                outAdditionalPrep = null;
+            }
         }
 
         public virtual void AddStaticInitializer(ExecutionScope inScope, StepSequence ioSteps)
@@ -259,33 +262,33 @@ namespace Alice.Tweedle
 
         #region Linker
 
-        public void Link(TweedleSystem inSystem)
+        public void Link(TAssembly[] inAssemblies)
         {
             if (m_Status == Status.Unlinked)
             {
-                LinkImpl(inSystem);
+                LinkImpl(inAssemblies);
                 m_Status = Status.Linked;
             }
         }
 
-        protected virtual void LinkImpl(TweedleSystem inSystem)
+        protected virtual void LinkImpl(TAssembly[] inAssemblies)
         {
             if (SuperType != null)
             {
-                SuperType.Resolve(inSystem);
+                SuperType.Resolve(inAssemblies);
             }
         }
 
-        public void PostLink(TweedleSystem inSystem)
+        public void PostLink(TAssembly[] inAssemblies)
         {
             if (m_Status == Status.Linked)
             {
-                PostLinkImpl(inSystem);
+                PostLinkImpl(inAssemblies);
                 m_Status = Status.PostLinked;
             }
         }
 
-        protected virtual void PostLinkImpl(TweedleSystem inSystem)
+        protected virtual void PostLinkImpl(TAssembly[] inAssemblies)
         {
             m_InheritanceDepth = CalculateInheritanceDepth(this);
         }

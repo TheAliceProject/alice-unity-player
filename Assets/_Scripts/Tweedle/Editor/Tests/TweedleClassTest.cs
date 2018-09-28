@@ -66,9 +66,9 @@ namespace Alice.Tweedle.Parse
 		TweedleSystem NewSystem()
 		{
 			TweedleSystem system = new TweedleSystem();
-			system.AddType(ParseClass(classToHave));
-			system.AddType(ParseClass(parentClass));
-			system.AddType(ParseClass(childClass));
+			system.GetAssembly().Add(ParseClass(classToHave));
+			system.GetAssembly().Add(ParseClass(parentClass));
+			system.GetAssembly().Add(ParseClass(childClass));
             system.Link();
             return system;
 		}

@@ -14,9 +14,9 @@ namespace Alice.Tweedle
         {
         }
 
-        protected override void LinkImpl(Parse.TweedleSystem inSystem)
+        protected override void LinkImpl(TAssembly[] inAssemblies)
         {
-            base.LinkImpl(inSystem);
+            base.LinkImpl(inAssemblies);
 
             m_Default = TValue.FromInt(0);
         }

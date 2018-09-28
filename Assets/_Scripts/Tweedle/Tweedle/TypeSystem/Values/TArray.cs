@@ -64,7 +64,7 @@ namespace Alice.Tweedle
             m_ValueHolders = new ValueHolder[inLength];
             for (int i = 0; i < m_ValueHolders.Length; ++i)
             {
-                ValueHolder holder = new ValueHolder(inElementType, inElementType.DefaultValue());
+                ValueHolder holder = new ValueHolder(inElementType);
                 m_ValueHolders[i] = holder;
             }
         }

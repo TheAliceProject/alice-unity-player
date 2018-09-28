@@ -5,6 +5,39 @@ namespace Alice.Tweedle
     /// </summary>
     static public class TStaticTypes
     {
+        #region Assembly
+
+        static private TAssembly s_LanguageAssembly;
+
+        /// <summary>
+        /// Returns a shared assembly containing language primitives.
+        /// </summary>
+        static public TAssembly Assembly()
+        {
+            if (s_LanguageAssembly == null)
+                s_LanguageAssembly = GenerateAssembly();
+            return s_LanguageAssembly;
+        }
+
+        static private TAssembly GenerateAssembly()
+        {
+            TAssembly assembly = new TAssembly("LanguageTypes", TAssembly.NO_DEPENDENCIES);
+            assembly.Add(VOID);
+            assembly.Add(NULL);
+            assembly.Add(ANY);
+            assembly.Add(NUMBER);
+            assembly.Add(WHOLE_NUMBER);
+            assembly.Add(DECIMAL_NUMBER);
+            assembly.Add(BOOLEAN);
+            assembly.Add(TEXT_STRING);
+            assembly.Add(TYPE_REF);
+            return assembly;
+        }
+
+        #endregion // Assembly
+
+        #region Types
+
         static public readonly TVoidType VOID = new TVoidType();
         static public readonly TNullType NULL = new TNullType();
         
@@ -19,8 +52,6 @@ namespace Alice.Tweedle
 
         static public readonly TTypeRefType TYPE_REF = new TTypeRefType();
 
-        static public readonly TType[] ALL_PRIMITIVE_TYPES = {
-            VOID, NULL, NUMBER, WHOLE_NUMBER, DECIMAL_NUMBER, BOOLEAN, TEXT_STRING, TYPE_REF
-        };
+        #endregion // Types
     }
 }

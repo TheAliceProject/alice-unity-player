@@ -26,6 +26,13 @@ namespace Alice.Tweedle.VM
 			AddToCorrectQueue(step);
 		}
 
+		internal void ClearQueue()
+		{
+            stepsForNextFrame.Clear();
+            stepsForThisFrame.Clear();
+            isProcessing = false;
+        }
+
 		private void AddToCorrectQueue(ExecutionStep step)
 		{
 			if (step.CanRunThisFrame())

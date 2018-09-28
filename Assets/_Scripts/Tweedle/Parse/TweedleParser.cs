@@ -738,14 +738,7 @@ namespace Alice.Tweedle.Parse
 
 		private static TType GetPrimitiveType(string type)
 		{
-			foreach (TType prim in TStaticTypes.ALL_PRIMITIVE_TYPES)
-			{
-				if (prim.Name == type)
-				{
-					return prim;
-				}
-			}
-			return null;
+            return TStaticTypes.Assembly().TypeNamed(type);
 		}
 
 		// private static TweedleLambdaType GetLambdaType([NotNull] Tweedle.TweedleParser.LambdaTypeSignatureContext context)

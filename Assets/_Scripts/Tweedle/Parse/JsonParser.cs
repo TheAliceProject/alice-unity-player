@@ -7,20 +7,20 @@ namespace Alice.Tweedle.Parse
 {
 	public class JsonParser
 	{
-		private TweedleSystem system;
-		private TweedleParser tweedleParser;
-		private ZipFile zipFile;
+		private TweedleSystem m_System;
+        private TweedleParser m_Parser;
+		private ZipFile m_ZipFile;
 
 		public TweedleSystem StoredSystem
 		{
-			get { return system; }
+			get { return m_System; }
 		}
 
-		public JsonParser(TweedleSystem system, ZipFile zipFile)
+		public JsonParser(TweedleSystem inSystem, ZipFile inZipFile)
 		{
-			this.system = system;
-			this.zipFile = zipFile;
-			tweedleParser = new TweedleParser();
+			m_System = inSystem;
+			m_ZipFile = inZipFile;
+			m_Parser = new TweedleParser();
 		}
 
 		internal void Parse()
@@ -32,7 +32,12 @@ namespace Alice.Tweedle.Parse
 		{
 			Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(manifestJson);
 			JSONObject jsonObj = new JSONObject(manifestJson);
-			ParseResourceDetails(
+
+            // TODO: Use manifest to determine player assembly version
+            string playerAssembly = Player.PlayerAssemblies.CURRENT;
+            m_System.AddDynamicAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
+
+            ParseResourceDetails(
 				asset.resources,
 				jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)]
 				);
@@ -41,22 +46,22 @@ namespace Alice.Tweedle.Parse
 			{
 				case ProjectType.Library:
 					LibraryManifest libAsset = new LibraryManifest(asset);
-					system.AddLibrary(libAsset);
+					m_System.AddLibrary(libAsset);
 					break;
 				case ProjectType.World:
 					ProgramDescription worldAsset = new ProgramDescription(asset);
-					system.AddProgram(worldAsset);
+					m_System.AddProgram(worldAsset);
 					break;
 				case ProjectType.Model:
 					ModelManifest modelAsset = UnityEngine.JsonUtility.FromJson<ModelManifest>(manifestJson);
-					system.AddModel(modelAsset);
+					m_System.AddModel(modelAsset);
 					break;
 			}
 		}
 
 		string ReadEntry(string location)
 		{
-			ZipEntry entry = zipFile.GetEntry(location);
+			ZipEntry entry = m_ZipFile.GetEntry(location);
 			if (entry == null)
 			{
 				UnityEngine.Debug.Log("Did not find entry for: " + location);
@@ -66,7 +71,7 @@ namespace Alice.Tweedle.Parse
 
 		string ReadEntry(ZipEntry entry)
 		{
-			Stream entryStream = zipFile.GetInputStream(entry);
+			Stream entryStream = m_ZipFile.GetInputStream(entry);
 			return (new StreamReader(entryStream)).ReadToEnd();
 		}
 
@@ -82,7 +87,7 @@ namespace Alice.Tweedle.Parse
 			{
 				ResourceReference strictResource = ReadResource(resources[i], json.list[i].ToString());
 				resources[i] = strictResource;
-				system.AddResource(strictResource);
+				m_System.AddResource(strictResource);
 			}
 		}
 
@@ -96,16 +101,16 @@ namespace Alice.Tweedle.Parse
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TType tweClass = (TType)tweedleParser.ParseType(tweedleCode);
-						system.AddType(tweClass);
+						TType tweClass = (TType)m_Parser.ParseType(tweedleCode);
+						m_System.GetAssembly().Add(tweClass);
 					}
 					return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
 				case ContentType.Enum:
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TEnumType tweedleEnum = (TEnumType)tweedleParser.ParseType(tweedleCode);
-						system.AddType(tweedleEnum);
+						TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode);
+						m_System.GetAssembly().Add(tweedleEnum);
 					}
 					return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
 				case ContentType.Image:
