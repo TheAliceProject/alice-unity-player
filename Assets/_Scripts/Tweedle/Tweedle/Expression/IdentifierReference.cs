@@ -16,5 +16,10 @@ namespace Alice.Tweedle
 		{
 			return new ValueStep("Get Identifier " + Name, scope, scope.GetValue(Name));
 		}
+
+		public override string ToTweedle()
+		{
+            return Name;
+        }
 	}
 }

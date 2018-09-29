@@ -124,6 +124,11 @@ namespace Alice.Tweedle
             return m_TypeList;
         }
 
+        public override string ToString()
+        {
+            return string.Format("Assembly:{0} ({1} types)", m_Name, m_TypeList.Count);
+        }
+
         /// <summary>
         /// Retrieves the type with the given name, searching through
         /// all the given assemblies.

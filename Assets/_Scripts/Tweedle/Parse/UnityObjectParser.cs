@@ -33,11 +33,11 @@ namespace Alice.Tweedle.Parse
 				{
 					JsonParser reader = new JsonParser(m_System, zipFile);
 					reader.Parse();
-					// TODO store the TweedleSystem
 				}
 			}
 			
             m_System.Link();
+            m_System.DumpTypes();
             m_System.QueueProgramMain(m_VM);
 			StartQueueProcessing();
 		}

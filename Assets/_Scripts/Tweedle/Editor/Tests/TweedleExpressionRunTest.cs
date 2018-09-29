@@ -64,18 +64,16 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void APrimitiveArrayShouldBeCreated()
 		{
 			Init();
 			RunStatement("WholeNumber[] a <- new WholeNumber[] {3, 4, 5};", scope);
 
 			TValue tested = scope.GetValue("a");
-			Assert.IsInstanceOf<TArray>(tested);
+			Assert.IsInstanceOf<TArray>(tested.Array());
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void ArrayValueShouldBeReturned()
 		{
 			Init();

@@ -1,0 +1,160 @@
+using Alice.Tweedle.VM;
+
+namespace Alice.Tweedle
+{
+    /// <summary>
+    /// Array type.
+    /// </summary>
+    public sealed class TArrayType : TType
+    {
+        private TField[] m_Fields;
+        private TMethod[] m_Methods;
+
+        public TArrayType(TTypeRef inElementType)
+            : base(inElementType.Name + "[]")
+        {
+            ElementType = inElementType;
+            m_Fields = new TField[]
+            {
+                LengthField()
+            };
+            m_Methods = new TMethod[]
+            {
+                
+            };
+        }
+
+        public readonly TTypeRef ElementType;
+
+        #region Custom Members
+
+        private TField LengthField()
+        {
+            return new TPropertyField("length", TStaticTypes.WHOLE_NUMBER, MemberFlags.Readonly, (ExecutionScope inScope, ref TValue inValue) =>
+            {
+                return TValue.FromInt(inValue.Array().Length);
+            });
+        }
+
+        #endregion // Custom Members
+
+        #region Link
+
+        protected override void LinkImpl(TAssembly[] inAssemblies)
+        {
+            base.LinkImpl(inAssemblies);
+
+            ElementType.Resolve(inAssemblies);
+
+            LinkMembers(m_Fields, inAssemblies, this);
+            LinkMembers(m_Methods, inAssemblies, this);
+        }
+
+        #endregion // Link
+
+        #region Object Semantics
+
+        public override TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
+        {
+            return FindMember(m_Fields, inName, inFlags);
+        }
+
+        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
+        {
+            return FindMember(m_Methods, inName, inFlags);
+        }
+
+        public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
+        {
+            // TODO(Alex): Replace
+            throw new System.NotImplementedException();
+        }
+
+        public override bool IsReferenceType()
+        {
+            return true;
+        }
+
+        public override TField[] Fields(ExecutionScope inScope, ref TValue inValue)
+        {
+            return m_Fields;
+        }
+
+        public override TMethod[] Methods(ExecutionScope inScope, ref TValue inValue)
+        {
+            return m_Methods;
+        }
+
+        #endregion // Object Semantics
+
+        #region Comparison Semantics
+
+        public override bool Equals(ref TValue inValA, ref TValue inValB)
+        {
+            return base.Equals(ref inValA, ref inValB)
+                && inValA.Array() == inValB.Array();
+        }
+
+        public override bool LessThan(ref TValue inValA, ref TValue inValB)
+        {
+            return false;
+        }
+
+        #endregion // Comparison Semantics
+
+        #region Lifecycle
+
+        public override TValue Instantiate()
+        {
+            return TValue.NULL;
+        }
+
+        public TValue Instantiate(TValue[] inValues)
+        {
+            return TValue.FromObject(this, new TArray(ElementType, inValues));
+        }
+
+        public override TValue DefaultValue()
+        {
+            return TValue.NULL;
+        }
+
+        #endregion // Lifecycle
+
+        #region Tweedle Casting
+
+        #endregion // Tweedle Casting
+
+        #region Conversion Semantics
+
+        public override string ConvertToString(ref TValue inValue)
+        {
+            AssertValueIsType(ref inValue);
+            return inValue.Array().ToString();
+        }
+
+        public override object ConvertToPObject(ref TValue inValue)
+        {
+            AssertValueIsType(ref inValue);
+            return inValue.Array();
+        }
+
+        #endregion // Conversion Semantics
+
+        #region Misc
+
+        public override int GetHashCode(ref TValue inValue)
+        {
+            AssertValueIsType(ref inValue);
+            return inValue.Array().GetHashCode();
+        }
+
+        public override string ToTweedle(ref TValue inValue)
+        {
+            AssertValueIsType(ref inValue);
+            return inValue.Array().ToString();
+        }
+
+        #endregion // Misc
+    }
+}

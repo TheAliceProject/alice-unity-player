@@ -130,77 +130,68 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void SomethingShouldBeCreatedForForEach()
         {
-            TweedleStatement tested = ParseStatement("forEach(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
+            TweedleStatement tested = ParseStatement("forEach(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
             Assert.NotNull(tested, "The parser should have returned something.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void AForEachLoopShouldBeCreatedForForEach()
         {
-            TweedleStatement tested = ParseStatement("forEach(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
+            TweedleStatement tested = ParseStatement("forEach(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
             Assert.IsInstanceOf<ForEachInArrayLoop>(tested, "The parser should have returned a ForEachLoop.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void SomethingShouldBeCreatedTweedleEachInArrayTogether()
         {
-            TweedleStatement tested = ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
+            TweedleStatement tested = ParseStatement("eachTogether(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
             Assert.NotNull(tested, "The parser should have returned something.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void ATweedleEachInArrayTogetherShouldBeCreatedTweedleEachInArrayTogether()
         {
-            TweedleStatement tested = ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
+            TweedleStatement tested = ParseStatement("eachTogether(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
             Assert.IsInstanceOf<EachInArrayTogether>(tested, "The parser should have returned a TweedleEachInArrayTogether.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void AnEachTogetherShouldHaveTypedVariable()
         {
-            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
-            Assert.AreEqual("SModel", tested.ItemVariable.Type.Name, "The EachTogether should have an SModel variable.");
+            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
+            Assert.AreEqual("TextString", tested.ItemVariable.Type.Name, "The EachTogether should have an TextString variable.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void AnEachTogetherValuesShouldHaveArrayType()
         {
-            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
-            // Assert.IsInstanceOf<TweedleArrayType>(tested.Array.Type, "The EachTogether values should be typed as an array.");
+            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
+            Assert.IsInstanceOf<TArrayType>(tested.Array.Type.Get(), "The EachTogether values should be typed as an array.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
-        public void AnEachTogetherValuesShouldHaveElementTypeSModel()
+        public void AnEachTogetherValuesShouldHaveElementTypeTextString()
         {
-            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
-            // TweedleArrayType valArrayType = (TweedleArrayType)tested.Array.Type;
-            // Assert.AreEqual(valArrayType.ValueType,
-            //                 tested.ItemVariable.Type,
-            //                 "The EachTogether individual values should be typed as SModel.");
+            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
+            TArrayType valArrayType = (TArrayType)tested.Array.Type;
+            Assert.AreEqual(valArrayType.ElementType,
+                            tested.ItemVariable.Type,
+                            "The EachTogether individual values should be typed as TextString.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void AnEachTogetherShouldHaveBlockOfStatements()
         {
-            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
+            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
             Assert.NotNull(tested.Body.Statements, "The EachTogether should have a list of statements.");
         }
 
         [Test]
-        [Ignore("Arrays not implemented")]
         public void AnEachTogetherShouldHaveEmptyBlockOfStatements()
         {
-            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(SModel x in new SModel[] {this.sphere, this.walrus} ) {}");
+            EachInArrayTogether tested = (EachInArrayTogether)ParseStatement("eachTogether(TextString x in new TextString[] {this.sphere, this.walrus} ) {}");
             Assert.IsEmpty(tested.Body.Statements, "The EachTogether should have an empty list of statements.");
         }
 

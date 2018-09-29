@@ -29,7 +29,8 @@ namespace Alice.Tweedle.Parse
 		{
 			TweedleSystem system = new TweedleSystem();
 			system.GetAssembly().Add(ParseClass(fib));
-			return system;
+            system.Link();
+            return system;
 		}
 
 		TestVirtualMachine vm;

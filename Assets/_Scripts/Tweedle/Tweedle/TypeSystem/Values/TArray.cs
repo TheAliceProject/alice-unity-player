@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
@@ -83,5 +84,22 @@ namespace Alice.Tweedle
         }
 
 		#endregion // IEnumerable
+
+        public override string ToString()
+        {
+            using(PooledStringBuilder psb = PooledStringBuilder.Alloc())
+            {
+                psb.Builder.Append('[');
+                for (int i = 0; i < m_ValueHolders.Length; ++i)
+                {
+                    if (i > 0)
+                        psb.Builder.Append(", ");
+                    psb.Builder.Append(m_ValueHolders[i].Value.ToString());
+                }
+                psb.Builder.Append(']');
+
+                return psb.Builder.ToString();
+            }
+        }
     }
 }

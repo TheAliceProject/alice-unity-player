@@ -3,17 +3,22 @@ class Program {
   static void main() {
     $Clock.delay(duration: 0);
     $Clock.delay(duration: 1.5);
-    forLoop(start: 0, end: 100);
+
+    writeEnum();
+    forLoop(array: new TestEnum[] { TestEnum.UP, TestEnum.DOWN });
   }
 
-  static void forLoop(WholeNumber start, WholeNumber end) {
-    WholeNumber i <- start;
+  static void writeEnum(TestEnum e <- TestEnum.DOWN) {
+    $Debug.log(string: "" .. e);
+  }
 
-    while (i <= end) {
+  static void forLoop(TestEnum[] array) {
+    WholeNumber length <- array.length;
+    $Debug.log(string: "Array length is " .. length);
+
+    forEach(TestEnum i in array) {
+      $Clock.delay(duration: 0.2);
       $Debug.log(string: "" .. i);
-      i <- i + 1;
-      Boolean rand <- $Clock.returnRandomBool(duration: 1);
-      $Debug.log(string: "Random bool " .. rand);
     }
 
   }
