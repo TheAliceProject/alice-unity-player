@@ -56,7 +56,7 @@ namespace Alice.Tweedle.Parse
         public void ATweedleCountLoopShouldHaveWholeNumberVariable()
         {
             CountLoop tested = (CountLoop)ParseStatement("countUpTo( indexB < 2 ) {}");
-            Assert.AreEqual(TStaticTypes.WHOLE_NUMBER, tested.Variable.Type, "The TweedleCountLoop should have a Variable of type WholeNumber.");
+            Assert.AreEqual(TBuiltInTypes.WHOLE_NUMBER, tested.Variable.Type, "The TweedleCountLoop should have a Variable of type WholeNumber.");
         }
 
         [Test]
@@ -388,7 +388,7 @@ namespace Alice.Tweedle.Parse
         public void AWholeNumberTypeReturnShouldBeCreatedForReturnWithValue()
         {
             ReturnStatement tested = (ReturnStatement)ParseStatement("return 4;");
-            Assert.AreEqual(TStaticTypes.WHOLE_NUMBER, tested.Type, "The TweedleReturnStatement should be type WholeNumber.");
+            Assert.AreEqual(TBuiltInTypes.WHOLE_NUMBER, tested.Type, "The TweedleReturnStatement should be type WholeNumber.");
         }
 
         [Test]

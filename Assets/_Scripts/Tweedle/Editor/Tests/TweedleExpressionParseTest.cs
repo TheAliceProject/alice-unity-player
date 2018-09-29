@@ -183,7 +183,7 @@ namespace Alice.Tweedle.Parse
 		public void ConcatenationShouldKnowItsType()
 		{
 			ITweedleExpression tested = ParseExpression("\"hello\" .. \" there\"");
-			Assert.AreEqual(TStaticTypes.TEXT_STRING,
+			Assert.AreEqual(TBuiltInTypes.TEXT_STRING,
 				tested.Type,
 				"The type should be TextString");
 		}
@@ -288,7 +288,7 @@ namespace Alice.Tweedle.Parse
 		public void WholeNumberAdditionShouldNotKnowItsType()
 		{
 			ITweedleExpression tested = ParseExpression("3 + 4");
-			Assert.AreEqual(TStaticTypes.NUMBER, tested.Type, "The type should be Number");
+			Assert.AreEqual(TBuiltInTypes.NUMBER, tested.Type, "The type should be Number");
 		}
 
 		[Test]
@@ -331,7 +331,7 @@ namespace Alice.Tweedle.Parse
 		public void DecimalNumberAdditionShouldNotKnowItsType()
 		{
 			ITweedleExpression tested = ParseExpression("3.4 + 4.1");
-			Assert.AreEqual(TStaticTypes.NUMBER, tested.Type, "The type should be Number");
+			Assert.AreEqual(TBuiltInTypes.NUMBER, tested.Type, "The type should be Number");
 		}
 
 		[Test]

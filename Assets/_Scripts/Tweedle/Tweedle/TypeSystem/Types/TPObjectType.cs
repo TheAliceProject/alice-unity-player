@@ -13,16 +13,16 @@ namespace Alice.Tweedle
         private Type m_Type;
         private bool m_IsModule;
 
-        public TPObjectType(Type inType)
-            : base(TInterop.TTypeNameForType(inType), TInterop.TTypeFor(inType.BaseType))
+        public TPObjectType(TAssembly inAssembly, Type inType)
+            : base(inAssembly, TInterop.InteropTypeName(inType), TInterop.TTypeFor(inType.BaseType, inAssembly))
         {
             m_Type = inType;
             m_IsModule = m_Type.IsAbstract && m_Type.IsSealed;
 
             AssignMembers(
-                TInterop.GenerateFields(m_Type),
-                TInterop.GenerateMethods(m_Type),
-                TInterop.GenerateConstructors(m_Type)
+                TInterop.GenerateFields(inAssembly, m_Type),
+                TInterop.GenerateMethods(inAssembly, m_Type),
+                TInterop.GenerateConstructors(inAssembly, m_Type)
             );
         }
 

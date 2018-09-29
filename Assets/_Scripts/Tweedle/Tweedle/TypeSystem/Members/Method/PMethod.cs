@@ -12,8 +12,8 @@ namespace Alice.Tweedle
     /// </summary>
     public class PMethod : PMethodBase
     {
-        public PMethod(MethodInfo inMethod)
-            : base(inMethod, inMethod.ReturnType, MemberFlags.None)
+        public PMethod(TAssembly inAssembly, MethodInfo inMethod)
+            : base(inAssembly, inMethod, inMethod.ReturnType, MemberFlags.None)
         {
         }
     }

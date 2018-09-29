@@ -5,8 +5,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TAbstractNumberType : TAbstractType
     {
-        public TAbstractNumberType()
-            : base("Number")
+        public TAbstractNumberType(TAssembly inAssembly)
+            : base(inAssembly, "Number")
         {
         }
 

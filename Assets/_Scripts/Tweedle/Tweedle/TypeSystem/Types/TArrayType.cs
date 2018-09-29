@@ -10,8 +10,8 @@ namespace Alice.Tweedle
         private TField[] m_Fields;
         private TMethod[] m_Methods;
 
-        public TArrayType(TTypeRef inElementType)
-            : base(inElementType.Name + "[]")
+        public TArrayType(TAssembly inAssembly, TTypeRef inElementType)
+            : base(inAssembly, inElementType.Name + "[]")
         {
             ElementType = inElementType;
             m_Fields = new TField[]
@@ -30,7 +30,7 @@ namespace Alice.Tweedle
 
         private TField LengthField()
         {
-            return new TPropertyField("length", TStaticTypes.WHOLE_NUMBER, MemberFlags.Readonly, (ExecutionScope inScope, ref TValue inValue) =>
+            return new TPropertyField("length", TBuiltInTypes.WHOLE_NUMBER, MemberFlags.Readonly, (ExecutionScope inScope, ref TValue inValue) =>
             {
                 return TValue.FromInt(inValue.Array().Length);
             });
@@ -40,14 +40,14 @@ namespace Alice.Tweedle
 
         #region Link
 
-        protected override void LinkImpl(TAssembly[] inAssemblies)
+        protected override void LinkImpl(TAssemblyLinkContext inContext)
         {
-            base.LinkImpl(inAssemblies);
+            base.LinkImpl(inContext);
 
-            ElementType.Resolve(inAssemblies);
+            ElementType.Resolve(inContext);
 
-            LinkMembers(m_Fields, inAssemblies, this);
-            LinkMembers(m_Methods, inAssemblies, this);
+            LinkMembers(m_Fields, inContext, this);
+            LinkMembers(m_Methods, inContext, this);
         }
 
         #endregion // Link
@@ -112,6 +112,11 @@ namespace Alice.Tweedle
         public TValue Instantiate(TValue[] inValues)
         {
             return TValue.FromObject(this, new TArray(ElementType, inValues));
+        }
+
+        public TValue Instantiate(int inLength)
+        {
+            return TValue.FromObject(this, new TArray(ElementType, inLength));
         }
 
         public override TValue DefaultValue()

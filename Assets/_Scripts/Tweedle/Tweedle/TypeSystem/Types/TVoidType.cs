@@ -7,8 +7,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TVoidType : TType
     {
-        public TVoidType()
-            : base("void")
+        public TVoidType(TAssembly inAssembly)
+            : base(inAssembly, "void")
         {
         }
 

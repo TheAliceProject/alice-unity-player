@@ -47,9 +47,9 @@ namespace Alice.Tweedle.Parse
 
 		private class TypeVisitor : TweedleParserBaseVisitor<TType>
 		{
-			public TypeVisitor(TAssembly inAssembly)
+			public TypeVisitor(TAssembly assembly)
 			{
-                assembly = inAssembly;
+                this.assembly = assembly;
             }
 
             private TAssembly assembly;
@@ -80,12 +80,12 @@ namespace Alice.Tweedle.Parse
 
                 if (superclass != null)
                 {
-                	return new TClassType(className, superclass,
+                	return new TClassType(assembly, className, superclass,
                 		body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
                 }
                 else
                 {
-                	return new TClassType(className,
+                	return new TClassType(assembly, className,
 						body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
                 }
             }
@@ -109,12 +109,12 @@ namespace Alice.Tweedle.Parse
                 	NamedArgument[] arguments = new NamedArgument[0];
                 	if (enumConst.arguments() != null)
                 	{
-                		arguments = TweedleParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList(), this.assembly);
+                		arguments = TweedleParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList(), assembly);
                 	}
                 	enumValues.Add(new TEnumValueInitializer(name, arguments));
                 });
 
-                TEnumType tweedleEnum = new TEnumType(enumName, enumValues.ToArray(), body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
+                TEnumType tweedleEnum = new TEnumType(assembly, enumName, enumValues.ToArray(), body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
                 return tweedleEnum;;
             }
 		}
@@ -158,7 +158,7 @@ namespace Alice.Tweedle.Parse
 
 			public override ITypeMember VisitFieldDeclaration([NotNull] Tweedle.TweedleParser.FieldDeclarationContext context)
 			{
-				TTypeRef type = GetTypeRef(context.typeType(), this.assembly);
+				TTypeRef type = GetTypeRef(context.typeType(), assembly);
 				string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
 				TField property;
 				if (context.variableDeclarator().variableInitializer() != null)
@@ -188,10 +188,10 @@ namespace Alice.Tweedle.Parse
 				TTMethod method = new TTMethod(
 						context.IDENTIFIER().GetText(), 
 						modifiers,
-						GetTypeOrVoid(context.typeTypeOrVoid(), this.assembly),
+						GetTypeOrVoid(context.typeTypeOrVoid(), assembly),
 						RequiredParameters(context.formalParameters()),
 						OptionalParameters(context.formalParameters()),
-						CollectBlockStatements(context.methodBody().block().blockStatement(), this.assembly)
+						CollectBlockStatements(context.methodBody().block().blockStatement(), assembly)
 					);
 				body.methods.Add(method);
 				return base.VisitMethodDeclaration(context);
@@ -205,7 +205,7 @@ namespace Alice.Tweedle.Parse
 						GetTypeRef(context.IDENTIFIER().GetText()),
 						RequiredParameters(context.formalParameters()),
 						OptionalParameters(context.formalParameters()),
-						CollectBlockStatements(context.constructorBody.blockStatement(), this.assembly)
+						CollectBlockStatements(context.constructorBody.blockStatement(), assembly)
 					);
 				body.constructors.Add(method);
 				return base.VisitConstructorDeclaration(context);
@@ -220,7 +220,7 @@ namespace Alice.Tweedle.Parse
 
 				return context.formalParameterList().requiredParameter().Select(field =>
 				{
-					TTypeRef type = GetTypeRef(field.typeType(), this.assembly);
+					TTypeRef type = GetTypeRef(field.typeType(), assembly);
 					return TParameter.RequiredParameter(
 						type,
 						field.variableDeclaratorId().IDENTIFIER().GetText()
@@ -237,7 +237,7 @@ namespace Alice.Tweedle.Parse
 
 				return context.formalParameterList().optionalParameter().Select(field =>
 				{
-					TTypeRef type = GetTypeRef(field.typeType(), this.assembly);
+					TTypeRef type = GetTypeRef(field.typeType(), assembly);
 					return TParameter.OptionalParameter(
 						type,
 						field.variableDeclaratorId().IDENTIFIER().GetText(),
@@ -252,15 +252,15 @@ namespace Alice.Tweedle.Parse
 			private TTypeRef expectedType;
             private TAssembly assembly;
 
-            public ExpressionVisitor(TAssembly inAssembly, TTypeRef expectedType)
+            public ExpressionVisitor(TAssembly assembly, TTypeRef expectedType)
 			{
-                this.assembly = inAssembly;
+                this.assembly = assembly;
                 this.expectedType = expectedType;
 			}
 
-			public ExpressionVisitor(TAssembly inAssembly)
+			public ExpressionVisitor(TAssembly assembly)
 			{
-                this.assembly = inAssembly;
+                this.assembly = assembly;
                 this.expectedType = null;
 			}
 
@@ -288,12 +288,12 @@ namespace Alice.Tweedle.Parse
 					switch (prefix.Text)
 					{
 						case "+":
-							return TypedExpression(context, TStaticTypes.NUMBER)[0];
+							return TypedExpression(context, TBuiltInTypes.NUMBER)[0];
 						case "-":
 
-							return NegativeExpression(TypedExpression(context, TStaticTypes.NUMBER)[0]);
+							return NegativeExpression(TypedExpression(context, TBuiltInTypes.NUMBER)[0]);
 						case "!":
-							return new LogicalNotExpression(TypedExpression(context, TStaticTypes.BOOLEAN)[0]);
+							return new LogicalNotExpression(TypedExpression(context, TBuiltInTypes.BOOLEAN)[0]);
 						default:
 							throw new System.Exception("Expression has prefix name but cannot be converted to prefix expression.");
 					}
@@ -308,24 +308,24 @@ namespace Alice.Tweedle.Parse
 						case "..":
 							return NewBinaryExpression<StringConcatenationExpression>(context, null);
 						case "*":
-							return NewBinaryExpression<MultiplicationExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<MultiplicationExpression>(context, TBuiltInTypes.NUMBER);
 						case "/":
-							return NewBinaryExpression<DivisionExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<DivisionExpression>(context, TBuiltInTypes.NUMBER);
 						case "%":
-							expressions = TypedExpression(context, TStaticTypes.WHOLE_NUMBER);
+							expressions = TypedExpression(context, TBuiltInTypes.WHOLE_NUMBER);
 							return new ModuloExpression(expressions[0], expressions[1]);
 						case "+":
-							return NewBinaryExpression<AdditionExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<AdditionExpression>(context, TBuiltInTypes.NUMBER);
 						case "-":
-							return NewBinaryExpression<SubtractionExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<SubtractionExpression>(context, TBuiltInTypes.NUMBER);
 						case "<=":
-							return NewBinaryExpression<LessThanOrEqualExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<LessThanOrEqualExpression>(context, TBuiltInTypes.NUMBER);
 						case ">=":
-							return NewBinaryExpression<GreaterThanOrEqualExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<GreaterThanOrEqualExpression>(context, TBuiltInTypes.NUMBER);
 						case ">":
-							return NewBinaryExpression<GreaterThanExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<GreaterThanExpression>(context, TBuiltInTypes.NUMBER);
 						case "<":
-							return NewBinaryExpression<LessThanExpression>(context, TStaticTypes.NUMBER);
+							return NewBinaryExpression<LessThanExpression>(context, TBuiltInTypes.NUMBER);
 						case "==":
 							expressions = TypedExpression(context, null);
 							return new EqualToExpression(expressions[0], expressions[1]);
@@ -333,10 +333,10 @@ namespace Alice.Tweedle.Parse
 							expressions = TypedExpression(context, null);
 							return new NotEqualToExpression(expressions[0], expressions[1]);
 						case "&&":
-							expressions = TypedExpression(context, TStaticTypes.BOOLEAN);
+							expressions = TypedExpression(context, TBuiltInTypes.BOOLEAN);
 							return new LogicalAndExpression(expressions[0], expressions[1]);
 						case "||":
-							expressions = TypedExpression(context, TStaticTypes.BOOLEAN);
+							expressions = TypedExpression(context, TBuiltInTypes.BOOLEAN);
 							return new LogicalOrExpression(expressions[0], expressions[1]);
 						case "<-":
 							expressions = TypedExpression(context, null);
@@ -347,8 +347,8 @@ namespace Alice.Tweedle.Parse
 				}
 				else if (bracket != null)
 				{
-					ITweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(this.assembly, TGenerics.GetArrayType(TStaticTypes.ANY, this.assembly)));
-					ITweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(this.assembly, TStaticTypes.WHOLE_NUMBER));
+					ITweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(assembly, TGenerics.GetArrayType(TBuiltInTypes.ANY, assembly)));
+					ITweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(assembly, TBuiltInTypes.WHOLE_NUMBER));
 					return new ArrayIndexExpression(array, index);
 				}
 				// else if (context.lambdaCall() != null)
@@ -392,13 +392,13 @@ namespace Alice.Tweedle.Parse
 				if (context.DECIMAL_LITERAL() != null)
 				{
 					int value = System.Convert.ToInt32(context.DECIMAL_LITERAL().GetText());
-					return TStaticTypes.WHOLE_NUMBER.Instantiate(value);
+					return TBuiltInTypes.WHOLE_NUMBER.Instantiate(value);
 				}
 
 				if (context.FLOAT_LITERAL() != null)
 				{
 					double value = System.Convert.ToDouble(context.FLOAT_LITERAL().GetText());
-					return TStaticTypes.DECIMAL_NUMBER.Instantiate(value);
+					return TBuiltInTypes.DECIMAL_NUMBER.Instantiate(value);
 				}
 
 				if (context.NULL_LITERAL() != null)
@@ -409,13 +409,13 @@ namespace Alice.Tweedle.Parse
 				if (context.BOOL_LITERAL() != null)
 				{
 					bool value = System.Convert.ToBoolean(context.BOOL_LITERAL().GetText());
-					return TStaticTypes.BOOLEAN.Instantiate(value);
+					return TBuiltInTypes.BOOLEAN.Instantiate(value);
 				}
 
 				if (context.STRING_LITERAL() != null)
 				{
 					string value = context.STRING_LITERAL().GetText();
-					return TStaticTypes.TEXT_STRING.Instantiate(value.Substring(1, value.Length - 2));
+					return TBuiltInTypes.TEXT_STRING.Instantiate(value.Substring(1, value.Length - 2));
 				}
 
 				throw new System.Exception("Literal couldn't be found in grammar.");
@@ -427,7 +427,7 @@ namespace Alice.Tweedle.Parse
                 {
                 	if (context.arguments() != null)
                 	{
-                		return MethodCallExpression.Super(context.IDENTIFIER().GetText(), TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList(), this.assembly));
+                		return MethodCallExpression.Super(context.IDENTIFIER().GetText(), TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList(), assembly));
                 	}
                 	else
                 	{
@@ -436,7 +436,7 @@ namespace Alice.Tweedle.Parse
                 }
                 else if (context.arguments() != null)
                 {
-                	return new SuperInstantiation(TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList(), this.assembly));
+                	return new SuperInstantiation(TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList(), assembly));
                 }
                 throw new System.Exception("Super suffix could not be constructed."); ;
             }
@@ -456,7 +456,7 @@ namespace Alice.Tweedle.Parse
 			public override ITweedleExpression VisitMethodCall([NotNull] Tweedle.TweedleParser.MethodCallContext context)
 			{
 				return new MethodCallExpression(context.IDENTIFIER().GetText(),
-												TweedleParser.VisitLabeledArguments(context.labeledExpressionList(), this.assembly));
+												TweedleParser.VisitLabeledArguments(context.labeledExpressionList(), assembly));
 			}
 
 			public override ITweedleExpression VisitCreator([NotNull] Tweedle.TweedleParser.CreatorContext context)
@@ -468,7 +468,7 @@ namespace Alice.Tweedle.Parse
                     TTypeRef memberType = GetPrimitiveType(typeName);
                     memberType = memberType ?? GetTypeRef(typeName);
 
-                    TArrayType arrayMemberType = TGenerics.GetArrayType(memberType, this.assembly);
+                    TArrayType arrayMemberType = TGenerics.GetArrayType(memberType, assembly);
                     
 					if (arrayCreator.arrayInitializer() != null)
                     {
@@ -476,7 +476,7 @@ namespace Alice.Tweedle.Parse
                         if (arrayCreator.arrayInitializer().unlabeledExpressionList() != null)
                     	{
                     		elements = arrayCreator.arrayInitializer().unlabeledExpressionList().expression()
-								.Select(a => a.Accept(new ExpressionVisitor(this.assembly, memberType))).ToArray();
+								.Select(a => a.Accept(new ExpressionVisitor(assembly, memberType))).ToArray();
                     	}
 						else
 						{
@@ -490,7 +490,7 @@ namespace Alice.Tweedle.Parse
                     {
                     	return new ArrayInitializer(
                     		arrayMemberType,
-                    		arrayCreator.expression().Accept(new ExpressionVisitor(this.assembly))
+                    		arrayCreator.expression().Accept(new ExpressionVisitor(assembly))
                     		);
                     }
                 }
@@ -498,7 +498,7 @@ namespace Alice.Tweedle.Parse
                 {
                 	TTypeRef typeRef = GetTypeRef(typeName);
                 	Tweedle.TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
-                	NamedArgument[] arguments = TweedleParser.VisitLabeledArguments(argsContext, this.assembly);
+                	NamedArgument[] arguments = TweedleParser.VisitLabeledArguments(argsContext, assembly);
                 	return new Instantiation(
                 			typeRef,
                 			arguments
@@ -509,7 +509,7 @@ namespace Alice.Tweedle.Parse
 			private ITweedleExpression FieldOrMethodRef(Tweedle.TweedleParser.ExpressionContext context)
 			{
 				// Use untyped expression visitor for target
-				ITweedleExpression target = context.expression(0).Accept(new ExpressionVisitor(this.assembly));
+				ITweedleExpression target = context.expression(0).Accept(new ExpressionVisitor(assembly));
 				if (context.IDENTIFIER() != null)
 				{
 					return new FieldAccess(target, context.IDENTIFIER().GetText());
@@ -520,7 +520,7 @@ namespace Alice.Tweedle.Parse
 					NamedArgument[] arguments = new NamedArgument[0];
 					if (argsContext != null)
 					{
-						arguments = TweedleParser.VisitLabeledArguments(argsContext, this.assembly);
+						arguments = TweedleParser.VisitLabeledArguments(argsContext, assembly);
 					}
 					return new MethodCallExpression(target,
 						context.methodCall().IDENTIFIER().GetText(),
@@ -532,18 +532,18 @@ namespace Alice.Tweedle.Parse
 
 			private ITweedleExpression[] TypedExpression(Tweedle.TweedleParser.ExpressionContext context, TType type)
 			{
-				ExpressionVisitor expVisitor = new ExpressionVisitor(this.assembly, type);
+				ExpressionVisitor expVisitor = new ExpressionVisitor(assembly, type);
 				return context.expression().Select(exp => exp.Accept(expVisitor)).ToArray();
 			}
 
 			private ITweedleExpression NegativeExpression(ITweedleExpression exp)
 			{
 				NegativeExpression negativeExp;
-				if (exp.Type == TStaticTypes.DECIMAL_NUMBER)
+				if (exp.Type == TBuiltInTypes.DECIMAL_NUMBER)
 				{
 					negativeExp = new NegativeDecimalExpression(exp);
 				}
-				else if (exp.Type == TStaticTypes.WHOLE_NUMBER)
+				else if (exp.Type == TBuiltInTypes.WHOLE_NUMBER)
 				{
 					negativeExp = new NegativeWholeExpression(exp);
 				}
@@ -577,14 +577,14 @@ namespace Alice.Tweedle.Parse
 		{
             private readonly TAssembly assembly;
 
-            public StatementVisitor(TAssembly inAssembly)
+            public StatementVisitor(TAssembly assembly)
 			{
-                assembly = inAssembly;
+                this.assembly = assembly;
             }
 
 			public override TweedleStatement VisitLocalVariableDeclaration([NotNull] Tweedle.TweedleParser.LocalVariableDeclarationContext context)
 			{
-				TTypeRef type = GetTypeRef(context.typeType(), this.assembly);
+				TTypeRef type = GetTypeRef(context.typeType(), assembly);
 				string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
 				TLocalVariable decl;
 				if (context.variableDeclarator().variableInitializer() != null)
@@ -621,26 +621,26 @@ namespace Alice.Tweedle.Parse
 				if (context.COUNT_UP_TO() != null)
 				{
 					return new CountLoop(context.IDENTIFIER().GetText(),
-										   context.expression().Accept(new ExpressionVisitor(assembly, TStaticTypes.WHOLE_NUMBER)),
-										   CollectBlockStatements(context.block(0).blockStatement(), this.assembly));
+										   context.expression().Accept(new ExpressionVisitor(assembly, TBuiltInTypes.WHOLE_NUMBER)),
+										   CollectBlockStatements(context.block(0).blockStatement(), assembly));
 				}
 				if (context.IF() != null)
 				{
-					ITweedleExpression condition = context.parExpression().expression().Accept(new ExpressionVisitor(assembly, TStaticTypes.BOOLEAN));
-					TweedleStatement[] thenBlock = CollectBlockStatements(context.block(0).blockStatement(), this.assembly);
+					ITweedleExpression condition = context.parExpression().expression().Accept(new ExpressionVisitor(assembly, TBuiltInTypes.BOOLEAN));
+					TweedleStatement[] thenBlock = CollectBlockStatements(context.block(0).blockStatement(), assembly);
 					TweedleStatement[] elseBlock = context.ELSE() != null
-															  ? CollectBlockStatements(context.block(1).blockStatement(), this.assembly)
+															  ? CollectBlockStatements(context.block(1).blockStatement(), assembly)
 															  : new TweedleStatement[0];
 					return new ConditionalStatement(condition, thenBlock, elseBlock);
 				}
 				if (context.forControl() != null)
 				{
-					TTypeRef valueType = GetTypeRef(context.forControl().typeType(), this.assembly);
+					TTypeRef valueType = GetTypeRef(context.forControl().typeType(), assembly);
 					TArrayType arrayType = TGenerics.GetArrayType(valueType, assembly);
 					TLocalVariable loopVar =
 									new TLocalVariable(valueType, context.forControl().variableDeclaratorId().GetText());
 					ITweedleExpression loopValues = context.forControl().expression().Accept(new ExpressionVisitor(assembly, arrayType));
-					TweedleStatement[] statements = CollectBlockStatements(context.block(0).blockStatement(), this.assembly);
+					TweedleStatement[] statements = CollectBlockStatements(context.block(0).blockStatement(), assembly);
 					if (context.FOR_EACH() != null)
 					{
 						return new ForEachInArrayLoop(loopVar, loopValues, statements);
@@ -653,22 +653,22 @@ namespace Alice.Tweedle.Parse
 				}
 				if (context.WHILE() != null)
 				{
-					return new WhileLoop(context.parExpression().expression().Accept(new ExpressionVisitor(assembly, TStaticTypes.BOOLEAN)),
-												CollectBlockStatements(context.block(0).blockStatement(), this.assembly));
+					return new WhileLoop(context.parExpression().expression().Accept(new ExpressionVisitor(assembly, TBuiltInTypes.BOOLEAN)),
+												CollectBlockStatements(context.block(0).blockStatement(), assembly));
 				}
 				if (context.DO_IN_ORDER() != null)
 				{
-					return new DoInOrder(CollectBlockStatements(context.block(0).blockStatement(), this.assembly));
+					return new DoInOrder(CollectBlockStatements(context.block(0).blockStatement(), assembly));
 				}
 				if (context.DO_TOGETHER() != null)
 				{
-					return new DoTogether(CollectBlockStatements(context.block(0).blockStatement(), this.assembly));
+					return new DoTogether(CollectBlockStatements(context.block(0).blockStatement(), assembly));
 				}
 				if (context.RETURN() != null)
 				{
 					if (context.expression() != null)
 					{
-						return new ReturnStatement(context.expression().Accept(new ExpressionVisitor(this.assembly)));
+						return new ReturnStatement(context.expression().Accept(new ExpressionVisitor(assembly)));
 					}
 					else
 					{
@@ -678,19 +678,19 @@ namespace Alice.Tweedle.Parse
 				Tweedle.TweedleParser.ExpressionContext expContext = context.statementExpression;
 				if (expContext != null)
 				{
-					return new ExpressionStatement(context.expression().Accept(new ExpressionVisitor(this.assembly)));
+					return new ExpressionStatement(context.expression().Accept(new ExpressionVisitor(assembly)));
 				}
 				throw new System.Exception("Found a statement that was not expected: " + context);
 			}
 		}
 
-		private static TweedleStatement[] CollectBlockStatements(Tweedle.TweedleParser.BlockStatementContext[] contexts, TAssembly inAssembly)
+		private static TweedleStatement[] CollectBlockStatements(Tweedle.TweedleParser.BlockStatementContext[] contexts, TAssembly assembly)
 		{
-			StatementVisitor statementVisitor = new StatementVisitor(inAssembly);
+			StatementVisitor statementVisitor = new StatementVisitor(assembly);
 			return contexts.Select(stmt => stmt.Accept(statementVisitor)).ToArray();
 		}
 
-		private static NamedArgument[] VisitLabeledArguments(Tweedle.TweedleParser.LabeledExpressionListContext context, TAssembly inAssembly)
+		private static NamedArgument[] VisitLabeledArguments(Tweedle.TweedleParser.LabeledExpressionListContext context, TAssembly assembly)
 		{
 			NamedArgument[] arguments;
 			if (context != null)
@@ -700,7 +700,7 @@ namespace Alice.Tweedle.Parse
                 int i = 0;
                 Array.ForEach(args, (arg =>
 				{
-					ITweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor(inAssembly));
+					ITweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor(assembly));
 					arguments[i++] = new NamedArgument(arg.IDENTIFIER().GetText(), argValue);
 				}));
 			}
@@ -719,16 +719,16 @@ namespace Alice.Tweedle.Parse
 					: listContext.expression().Select(exp => exp.Accept(expressionVisitor)).ToArray();
 		}
 
-		private static TTypeRef GetTypeOrVoid(Tweedle.TweedleParser.TypeTypeOrVoidContext context, TAssembly inAssembly)
+		private static TTypeRef GetTypeOrVoid(Tweedle.TweedleParser.TypeTypeOrVoidContext context, TAssembly assembly)
 		{
 			if (context.VOID() != null)
 			{
-				return TStaticTypes.VOID;
+				return TBuiltInTypes.VOID;
 			}
-			return GetTypeRef(context.typeType(), inAssembly);
+			return GetTypeRef(context.typeType(), assembly);
 		}
 
-		private static TTypeRef GetTypeRef(Tweedle.TweedleParser.TypeTypeContext context, TAssembly inAssembly)
+		private static TTypeRef GetTypeRef(Tweedle.TweedleParser.TypeTypeContext context, TAssembly assembly)
 		{
 			if (context.lambdaTypeSignature() != null)
 			{
@@ -748,7 +748,7 @@ namespace Alice.Tweedle.Parse
 				}
 				if (context.ChildCount > 1 && baseType != null)
 				{
-                    baseType = TGenerics.GetArrayType(baseType, inAssembly);
+                    baseType = TGenerics.GetArrayType(baseType, assembly);
                 }
 				return baseType;
 			}
@@ -761,7 +761,7 @@ namespace Alice.Tweedle.Parse
 
 		private static TType GetPrimitiveType(string type)
 		{
-            return TStaticTypes.Assembly().TypeNamed(type);
+            return TBuiltInTypes.Assembly().TypeNamed(type);
 		}
 
 		// private static TweedleLambdaType GetLambdaType([NotNull] Tweedle.TweedleParser.LambdaTypeSignatureContext context)

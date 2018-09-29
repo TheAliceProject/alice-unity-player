@@ -7,7 +7,7 @@ namespace Alice.Tweedle
 		ITweedleExpression expression;
 
 		public LogicalNotExpression(ITweedleExpression expression)
-			: base(TStaticTypes.BOOLEAN)
+			: base(TBuiltInTypes.BOOLEAN)
 		{
 			this.expression = expression;
 		}
@@ -21,7 +21,7 @@ namespace Alice.Tweedle
 
 		static TValue NotPrimitive(TValue value)
 		{
-			return TStaticTypes.BOOLEAN.Instantiate(!value.ToBoolean());
+			return TBuiltInTypes.BOOLEAN.Instantiate(!value.ToBoolean());
 		}
 
         public override TValue EvaluateLiteral()

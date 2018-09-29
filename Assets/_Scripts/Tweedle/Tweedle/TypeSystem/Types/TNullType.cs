@@ -7,8 +7,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TNullType : TType
     {
-        public TNullType()
-            : base("null")
+        public TNullType(TAssembly inAssembly)
+            : base(inAssembly, "null")
         {
         }
 

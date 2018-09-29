@@ -11,7 +11,7 @@ namespace Alice.Tweedle
 
 		public CountLoop(string variableName, ITweedleExpression count, TweedleStatement[] body) : base(body)
 		{
-			Variable = new TLocalVariable(TStaticTypes.WHOLE_NUMBER, variableName);
+			Variable = new TLocalVariable(TBuiltInTypes.WHOLE_NUMBER, variableName);
 			this.count = count;
 		}
 
@@ -45,7 +45,7 @@ namespace Alice.Tweedle
 		{
 			if (index < maxCount)
 			{
-				var loopScope = scope.ChildScope("Count loop", statement.Variable, TStaticTypes.WHOLE_NUMBER.Instantiate(index++));
+				var loopScope = scope.ChildScope("Count loop", statement.Variable, TBuiltInTypes.WHOLE_NUMBER.Instantiate(index++));
 				statement.Body.AddSequentialStep(loopScope, this);
 			}
 			else

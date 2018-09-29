@@ -17,7 +17,7 @@ namespace Alice.Tweedle
         private string[] m_ParameterNames;
         private Type[] m_ParameterTypes;
 
-        protected PMethodBase(MethodBase inMethodBase, Type inReturnType, MemberFlags inFlags)
+        protected PMethodBase(TAssembly inAssembly, MethodBase inMethodBase, Type inReturnType, MemberFlags inFlags)
         {
             m_Method = inMethodBase;
 
@@ -27,13 +27,13 @@ namespace Alice.Tweedle
             else
                 flags |= MemberFlags.Instance;
 
-            TTypeRef tReturnType = TInterop.TTypeFor(inReturnType);
+            TTypeRef tReturnType = TInterop.TTypeFor(inReturnType, inAssembly);
             SetupMember(inMethodBase.Name, tReturnType, flags);
 
-            ParseArguments(tReturnType);
+            ParseArguments(inAssembly, tReturnType);
         }
 
-        private void ParseArguments(TTypeRef inReturnType)
+        private void ParseArguments(TAssembly inAssembly, TTypeRef inReturnType)
         {
             var parameters = m_Method.GetParameters();
             m_CachedArgs = new object[parameters.Length];
@@ -53,14 +53,14 @@ namespace Alice.Tweedle
                 if (param.IsOptional)
                 {
                     tParam = TParameter.OptionalParameter(
-                        TInterop.TTypeFor(param.ParameterType), param.Name, TInterop.ToTValue(param.DefaultValue)
+                        TInterop.TTypeFor(param.ParameterType, inAssembly), param.Name, TInterop.ToTValue(param.DefaultValue)
                     );
                     optionalParams.Add(tParam);
                 }
                 else
                 {
                     tParam = TParameter.RequiredParameter(
-                        TInterop.TTypeFor(param.ParameterType), param.Name
+                        TInterop.TTypeFor(param.ParameterType, inAssembly), param.Name
                     );
                     requiredParams.Add(tParam);
                 }

@@ -41,7 +41,7 @@ namespace Alice.Tweedle.Parse
 
         private void InitializePrimitives()
         {
-            AddStaticAssembly(TStaticTypes.Assembly());
+            AddStaticAssembly(TBuiltInTypes.Assembly());
         }
 
         #region Adding Resources
@@ -70,11 +70,19 @@ namespace Alice.Tweedle.Parse
             Resources.Add(identifier, resourceAsset);
         }
 
+        /// <summary>
+        /// Adds a dynamic assembly to the system.
+        /// Dynamically loaded assemblies will be unloaded when the system is unloaded.
+        /// </summary>
         public void AddDynamicAssembly(TAssembly assembly)
         {
             m_DynamicAssemblies.Add(assembly);
         }
 
+        /// <summary>
+        /// Adds a static assembly to the system.
+        /// Statically loaded assemblies will not be unloaded when the system is unloaded.
+        /// </summary>
         public void AddStaticAssembly(TAssembly assembly)
         {
             m_StaticAssemblies.Add(assembly);
@@ -84,6 +92,10 @@ namespace Alice.Tweedle.Parse
 
         #region Steps
 
+        /// <summary>
+        /// Performs linking steps for all loaded assemblies.
+        /// Will skip over assemblies that have already been linked.
+        /// </summary>
         public void Link()
         {
             foreach(var assembly in m_StaticAssemblies)
@@ -105,6 +117,11 @@ namespace Alice.Tweedle.Parse
             }
         }
 
+        /// <summary>
+        /// Runs static initializers for all loaded types,
+        /// and queues up any additional execution steps
+        /// on the given VM.
+        /// </summary>
         public void Prep(VirtualMachine inVM)
         {
             ITweedleExpression staticInitializer;
@@ -116,6 +133,9 @@ namespace Alice.Tweedle.Parse
             }
         }
 
+        /// <summary>
+        /// Unloads all dynamically-loaded assemblies.
+        /// </summary>
         public void Unload()
         {
             for (int i = m_DynamicAssemblies.Count - 1; i >= 0; --i)
@@ -128,11 +148,15 @@ namespace Alice.Tweedle.Parse
 
         #endregion // Steps
 
-        public TAssembly GetAssembly()
+        /// <summary>
+        /// Returns a runtime assembly for this system.
+        /// This assembly will be unloaded when the system is unloaded.
+        /// </summary>
+        public TAssembly GetRuntimeAssembly()
         {
             if (m_RuntimeAssembly == null)
             {
-                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies.ToArray());
+                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies.ToArray(), TAssemblyFlags.Runtime);
                 m_DynamicAssemblies.Add(m_RuntimeAssembly);
             }
             return m_RuntimeAssembly;
@@ -159,7 +183,7 @@ namespace Alice.Tweedle.Parse
             vm.Initialize(this);
             if (m_TypeMap.TryGetValue("Program", out prog))
             {
-                TValue progVal = TStaticTypes.TYPE_REF.Instantiate(prog);
+                TValue progVal = TBuiltInTypes.TYPE_REF.Instantiate(prog);
                 NamedArgument[] arguments = NamedArgument.EMPTY_ARGS;
                 vm.Queue(new MethodCallExpression(progVal, "main", arguments));
             }

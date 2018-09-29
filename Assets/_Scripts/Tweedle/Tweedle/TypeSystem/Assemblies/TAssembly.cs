@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle
 {
@@ -21,26 +20,26 @@ namespace Alice.Tweedle
 
         #endregion // Types
 
-        private string m_Name;
+        public readonly string Name;
+        public readonly TAssemblyFlags Flags;
+
         private Status m_Status = Status.Unlinked;
 
         private List<TType> m_TypeList;
         private Dictionary<string, TType> m_TypeMap;
-        private TAssembly[] m_RequiredAssembliesAndThis;
+        private TAssembly[] m_Dependencies;
 
         /// <summary>
         /// Creates a new assembly with the given name and dependencies.
         /// </summary>
-        public TAssembly(string inName, TAssembly[] inDependencies)
+        public TAssembly(string inName, TAssembly[] inDependencies, TAssemblyFlags inFlags)
         {
-            m_Name = inName;
+            Name = inName;
+            Flags = inFlags;
+
             m_TypeList = new List<TType>();
             m_TypeMap = new Dictionary<string, TType>();
-
-            m_RequiredAssembliesAndThis = new TAssembly[inDependencies.Length + 1];
-            for (int i = 0; i < inDependencies.Length; ++i)
-                m_RequiredAssembliesAndThis[i] = inDependencies[i];
-            m_RequiredAssembliesAndThis[inDependencies.Length] = this;
+            m_Dependencies = inDependencies;
         }
 
         /// <summary>
@@ -49,9 +48,11 @@ namespace Alice.Tweedle
         public void Add(TType inType)
         {
             if (m_Status != Status.Unlinked)
-                throw new TweedleLinkException("Assembly " + m_Name + " is " + m_Status + " - no new types can be added");
+                throw new Exception("Assembly " + Name + " is " + m_Status + " - no new types can be added");
             if (m_TypeMap.ContainsKey(inType.Name))
-                throw new TweedleLinkException("Type with name " + inType.Name + " already exists");
+                throw new Exception("Type with name " + inType.Name + " already exists");
+            if (inType.Assembly != null && inType.Assembly != this)
+                throw new Exception("Type " + inType.Name + " cannot be added to assembly " + Name + " - should be added to " + inType.Assembly?.Name + " instead");
 
             m_TypeList.Add(inType);
             m_TypeMap.Add(inType.Name, inType);
@@ -68,19 +69,21 @@ namespace Alice.Tweedle
             m_Status = Status.Linking;
             {
                 // Make sure to link dependencies first
-                for (int i = 0; i < m_RequiredAssembliesAndThis.Length - 1; ++i)
+                for (int i = 0; i < m_Dependencies.Length; ++i)
                 {
-                    m_RequiredAssembliesAndThis[i].Link();
+                    m_Dependencies[i].Link();
+                }
+
+                TAssemblyLinkContext linkingContext = new TAssemblyLinkContext(this, m_Dependencies);
+
+                for (int i = 0; i < m_TypeList.Count; ++i)
+                {
+                    m_TypeList[i].Link(linkingContext);
                 }
 
                 for (int i = 0; i < m_TypeList.Count; ++i)
                 {
-                    m_TypeList[i].Link(m_RequiredAssembliesAndThis);
-                }
-
-                for (int i = 0; i < m_TypeList.Count; ++i)
-                {
-                    m_TypeList[i].PostLink(m_RequiredAssembliesAndThis);
+                    m_TypeList[i].PostLink(linkingContext);
                 }
 
                 m_TypeList.Sort();
@@ -98,11 +101,7 @@ namespace Alice.Tweedle
             if (m_Status != Status.Unloaded)
             {
                 m_Status = Status.Unloaded;
-
-                for (int i = m_TypeList.Count - 1; i >= 0; --i)
-                {
-                    TGenerics.Unload(m_TypeList[i]);
-                }
+                TGenerics.Unload(this);
             }
         }
 
@@ -126,28 +125,29 @@ namespace Alice.Tweedle
 
         public override string ToString()
         {
-            return string.Format("Assembly:{0} ({1} types)", m_Name, m_TypeList.Count);
-        }
-
-        /// <summary>
-        /// Retrieves the type with the given name, searching through
-        /// all the given assemblies.
-        /// </summary>
-        static public TType TypeNamed(TAssembly[] inAssemblies, string inName)
-        {
-            for (int i = inAssemblies.Length - 1; i >= 0; --i)
-            {
-                TType type = inAssemblies[i].TypeNamed(inName);
-                if (type != null)
-                    return type;
-            }
-
-            return null;
+            return string.Format("TAssembly:{0} ({1} types)", Name, m_TypeList.Count);
         }
 
         /// <summary>
         /// Dependency array representing no dependencies.
         /// </summary>
         static public readonly TAssembly[] NO_DEPENDENCIES = new TAssembly[0];
+    }
+
+    /// <summary>
+    /// Attributes for TAssemblies.
+    /// </summary>
+    public enum TAssemblyFlags
+    {
+        None = 0,
+
+        // The assembly cannot be unloaded.
+        CannotUnload = 0x001,
+
+        // This assembly is embedded in the system.
+        Embedded = 0x002,
+
+        // This is a runtime assembly.
+        Runtime = 0x004
     }
 }

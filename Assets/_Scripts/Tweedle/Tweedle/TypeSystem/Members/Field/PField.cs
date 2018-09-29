@@ -13,7 +13,7 @@ namespace Alice.Tweedle
         private FieldInfo m_FieldInfo;
         private bool m_IsStatic;
 
-        public PField(FieldInfo inFieldInfo)
+        public PField(TAssembly inAssembly, FieldInfo inFieldInfo)
         {
             m_FieldInfo = inFieldInfo;
             m_IsStatic = inFieldInfo.IsStatic;
@@ -27,7 +27,7 @@ namespace Alice.Tweedle
             if (inFieldInfo.IsInitOnly)
                 flags |= MemberFlags.Readonly;
 
-            TTypeRef tType = TInterop.TTypeFor(inFieldInfo.FieldType);
+            TTypeRef tType = TInterop.TTypeFor(inFieldInfo.FieldType, inAssembly);
             SetupMember(inFieldInfo.Name, tType, flags);
         }
 
