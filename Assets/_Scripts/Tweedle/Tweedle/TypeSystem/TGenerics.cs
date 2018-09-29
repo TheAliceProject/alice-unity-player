@@ -23,6 +23,7 @@ namespace Alice.Tweedle
                 arrayType = new TArrayType(inElementType);
                 s_ArraySpecializationMap.Add(inElementType.Name, arrayType);
                 inForAssembly?.Add(arrayType);
+                // UnityEngine.Debug.Log("[TGenerics] Generated array type " + arrayType);
             }
 
             return arrayType;
@@ -33,7 +34,8 @@ namespace Alice.Tweedle
             TArrayType arrayType;
             if (s_ArraySpecializationMap.TryGetValue(inElementType.Name, out arrayType))
             {
-                s_ArraySpecializationMap.Remove(arrayType.Name);
+                // UnityEngine.Debug.Log("[TGenerics] Unloaded array type " + arrayType);
+                s_ArraySpecializationMap.Remove(inElementType.Name);
                 Unload(arrayType);
             }
         }

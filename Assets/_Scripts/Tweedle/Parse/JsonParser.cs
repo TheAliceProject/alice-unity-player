@@ -35,7 +35,7 @@ namespace Alice.Tweedle.Parse
 
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
-            m_System.AddDynamicAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
+            m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
             ParseResourceDetails(
 				asset.resources,
