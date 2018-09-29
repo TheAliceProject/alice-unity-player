@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Alice.Tweedle.VM;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
@@ -104,5 +105,29 @@ namespace Alice.Tweedle
         }
 
 		#endregion // IEnumerable
+
+		public override string ToString()
+        {
+            using(PooledStringBuilder psb = PooledStringBuilder.Alloc())
+            {
+                psb.Builder.Append('{');
+                int valueCount = 0;
+				foreach(var kv in m_Attributes)
+				{
+					if (valueCount > 0)
+                        psb.Builder.Append(", ");
+
+                    psb.Builder.Append(kv.Key)
+                        .Append(": ")
+                        .Append(kv.Value.ToString());
+
+                    ++valueCount;
+                }
+
+                psb.Builder.Append('}');
+
+                return psb.Builder.ToString();
+            }
+        }
     }
 }

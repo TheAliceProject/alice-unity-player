@@ -155,7 +155,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void NestedCountLoopsShouldEvaluateNxNxNTimes()
 		{
 			ExecutionScope scope = GetTestScope();
@@ -166,7 +165,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void ForEachLoopShouldEvaluateNTimes()
 		{
 			ExecutionScope scope = GetTestScope();
@@ -177,7 +175,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void ForEachLoopInnerDeclarationsShouldNotLeak()
 		{
 			ExecutionScope scope = GetTestScope();
@@ -206,7 +203,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void EachTogetherShouldChangeParentValues()
 		{
 			ExecutionScope scope = GetTestScope();
@@ -216,7 +212,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void EachTogetherInnerDeclarationsShouldNotLeak()
 		{
 			ExecutionScope scope = GetTestScope();

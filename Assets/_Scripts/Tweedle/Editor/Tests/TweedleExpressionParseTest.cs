@@ -552,7 +552,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void SomethingShouldBeCreatedForPrimitiveArray()
 		{
 			ITweedleExpression tested = ParseExpression("new WholeNumber[] {3, 4, 5}");
@@ -560,15 +559,13 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void APrimitiveArrayInitializerShouldBeCreated()
 		{
 			ITweedleExpression tested = ParseExpression("new WholeNumber[] {3, 4, 5}");
-			// Assert.IsInstanceOf<ArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
+			Assert.IsInstanceOf<ArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void SomethingShouldBeCreatedForArrayIndex()
 		{
 			ITweedleExpression tested = ParseExpression("stuff[x]");
@@ -576,27 +573,24 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void AnArrayIndexShouldBeCreated()
 		{
 			ITweedleExpression tested = ParseExpression("stuff[x]");
-			// Assert.IsInstanceOf<ArrayIndexExpression>(tested, "The parser should have returned an ArrayIndexExpression.");
+			Assert.IsInstanceOf<ArrayIndexExpression>(tested, "The parser should have returned an ArrayIndexExpression.");
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void SomethingShouldBeCreatedForObjectArray()
 		{
-			ITweedleExpression tested = ParseExpression("new SModel[] {this.sphere, this.walrus}");
+			ITweedleExpression tested = ParseExpression("new TextString[] {this.sphere, this.walrus}");
 			Assert.NotNull(tested, "The parser should have returned something.");
 		}
 
 		[Test]
-		[Ignore("Arrays not implemented")]
 		public void AnObjectArrayInitializerShouldBeCreated()
 		{
-			ITweedleExpression tested = ParseExpression("new SModel[] {this.sphere, this.walrus}");
-			// Assert.IsInstanceOf<ArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
+			ITweedleExpression tested = ParseExpression("new TextString[] {this.sphere, this.walrus}");
+			Assert.IsInstanceOf<ArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
 		}
 	}
 }

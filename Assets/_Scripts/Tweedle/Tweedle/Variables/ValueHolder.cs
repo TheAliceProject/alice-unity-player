@@ -56,7 +56,7 @@
 		{
 			if (inValue.Type == null || !inValue.Type.CanCast(inType))
 			{
-				throw new TweedleRuntimeException("Unable to treat " + inValue + " as type " + inType);
+				throw new TweedleRuntimeException("Unable to treat type " + inValue.Type + " as type " + inType);
 			}
 		}
 	}

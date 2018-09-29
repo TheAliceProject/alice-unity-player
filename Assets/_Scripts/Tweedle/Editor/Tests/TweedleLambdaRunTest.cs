@@ -52,12 +52,14 @@ namespace Alice.Tweedle.Parse
 				"    });\n" +
 				"  }\n" +
 				"}";
-			lambdaTest = (TClassType)parser.ParseType(sourceWithLambdas);
+            TGenerics.Reset();
+            lambdaTest = (TClassType)parser.ParseType(sourceWithLambdas);
 			TweedleSystem system = new TweedleSystem();
 			system.GetAssembly().Add(lambdaTest);
 			vm = new TestVirtualMachine(system);
 			scope = new ExecutionScope("Test", vm);
-			ExecuteStatement("LambdaTest lam <- new LambdaTest();");
+            system.Link();
+            ExecuteStatement("LambdaTest lam <- new LambdaTest();");
 		}
 
 		void ExecuteStatement(string src)
@@ -66,6 +68,7 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
+		[Ignore("Lamdas not implemented")]
 		public void ClassShouldHaveMethods()
 		{
 			Assert.False(lambdaTest.Methods(null).Length.Equals(0), "The class should have methods.");

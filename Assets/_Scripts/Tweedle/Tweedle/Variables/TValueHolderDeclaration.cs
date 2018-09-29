@@ -47,7 +47,7 @@ namespace Alice.Tweedle
 			}
 			else
 			{
-				return Type.Name + " " + Name + " <- " + Initializer;
+				return Type.Name + " " + Name + " <- " + Initializer.ToTweedle();
 			}
 		}
 	}

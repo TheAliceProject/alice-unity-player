@@ -35,5 +35,10 @@ namespace Alice.Tweedle
 					target => target.Get(scope, FieldName)));
 			return targetStep;
 		}
+
+		public override string ToTweedle()
+		{
+            return Target.ToTweedle() + "." + FieldName;
+        }
 	}
 }

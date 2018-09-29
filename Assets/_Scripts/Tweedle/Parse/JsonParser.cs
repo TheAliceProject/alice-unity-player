@@ -101,7 +101,7 @@ namespace Alice.Tweedle.Parse
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TType tweClass = (TType)m_Parser.ParseType(tweedleCode);
+						TType tweClass = (TType)m_Parser.ParseType(tweedleCode, m_System.GetAssembly());
 						m_System.GetAssembly().Add(tweClass);
 					}
 					return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
@@ -109,7 +109,7 @@ namespace Alice.Tweedle.Parse
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode);
+						TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode, m_System.GetAssembly());
 						m_System.GetAssembly().Add(tweedleEnum);
 					}
 					return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
