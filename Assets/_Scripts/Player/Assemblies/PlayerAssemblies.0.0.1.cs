@@ -14,34 +14,34 @@ namespace Alice.Player
 
         static private void GenerateVersion_0_0_1(TAssembly inAssembly)
         {
-            inAssembly.Add(TInterop.GenerateType(typeof(DebugModule)));
-            inAssembly.Add(TInterop.GenerateType(typeof(SceneGraphModule)));
-            inAssembly.Add(TInterop.GenerateType(typeof(AnimationStyleEnum)));
-            inAssembly.Add(TInterop.GenerateType(typeof(ClockModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DebugModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SceneGraphModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AnimationStyleEnum)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ClockModule)));
 
             // interop primitives
-            inAssembly.Add(TInterop.GenerateType(typeof(Portion)));
-            inAssembly.Add(TInterop.GenerateType(typeof(Position)));
-            inAssembly.Add(TInterop.GenerateType(typeof(Direction)));
-            inAssembly.Add(TInterop.GenerateType(typeof(Orientation)));
-            inAssembly.Add(TInterop.GenerateType(typeof(VantagePoint)));
-            inAssembly.Add(TInterop.GenerateType(typeof(Angle)));
-            inAssembly.Add(TInterop.GenerateType(typeof(AxisAlignedBox)));
-            inAssembly.Add(TInterop.GenerateType(typeof(Size)));
-            inAssembly.Add(TInterop.GenerateType(typeof(Scale)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Portion)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Position)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Direction)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Orientation)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(VantagePoint)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Angle)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AxisAlignedBox)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Size)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Scale)));
 
             // properties
-            inAssembly.Add(TInterop.GenerateType(typeof(DecimalNumberProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(WholeNumberProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(AngleProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(PortionProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(PositionProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(DirectionProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(SizeProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(ScaleProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(OrientationProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(AxisAlignedBoxProperty)));
-            inAssembly.Add(TInterop.GenerateType(typeof(VantagePointProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DecimalNumberProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(WholeNumberProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AngleProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(PortionProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(PositionProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DirectionProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SizeProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ScaleProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(OrientationProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AxisAlignedBoxProperty)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(VantagePointProperty)));
         }
     }
 }

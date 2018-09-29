@@ -11,8 +11,8 @@ namespace Alice.Tweedle
     {
         private Type m_Type;
 
-        public TPEnumType(Type inType)
-            : base(TInterop.TTypeNameForType(inType))
+        public TPEnumType(TAssembly inAssembly, Type inType)
+            : base(inAssembly, TInterop.InteropTypeName(inType))
         {
             m_Type = inType;
 
@@ -22,7 +22,7 @@ namespace Alice.Tweedle
             for (int i = 0; i < values.Length; ++i)
             {
                 var value = values.GetValue(i);
-                enumFields[i] = new PConstant(value.ToString(), value);
+                enumFields[i] = new PConstant(inAssembly, value.ToString(), m_Type, value);
             }
 
             AssignMembers(enumFields, TMethod.EMPTY_ARRAY, TMethod.EMPTY_ARRAY);

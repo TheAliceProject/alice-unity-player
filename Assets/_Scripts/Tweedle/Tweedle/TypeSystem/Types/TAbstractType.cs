@@ -7,13 +7,13 @@ namespace Alice.Tweedle
     /// </summary>
     public class TAbstractType : TType
     {
-        public TAbstractType(string inName)
-            : base(inName)
+        public TAbstractType(TAssembly inAssembly, string inName)
+            : base(inAssembly, inName)
         {
         }
 
-        public TAbstractType(string inName, TType inBase)
-            : base(inName, inBase)
+        public TAbstractType(TAssembly inAssembly, string inName, TType inBase)
+            : base(inAssembly, inName, inBase)
         {
         }
 

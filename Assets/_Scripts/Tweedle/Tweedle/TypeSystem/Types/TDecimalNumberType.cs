@@ -9,14 +9,14 @@ namespace Alice.Tweedle
     {
         private TValue m_Default;
 
-        public TDecimalNumberType(TType inBase)
-            : base("DecimalNumber", inBase)
+        public TDecimalNumberType(TAssembly inAssembly, TType inBase)
+            : base(inAssembly, "DecimalNumber", inBase)
         {
         }
 
-        protected override void LinkImpl(TAssembly[] inAssemblies)
+        protected override void LinkImpl(TAssemblyLinkContext inContext)
         {
-            base.LinkImpl(inAssemblies);
+            base.LinkImpl(inContext);
 
             m_Default = TValue.FromNumber(double.NaN);
         }
@@ -54,7 +54,7 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValA);
 
-            if (inValB.Type == TStaticTypes.WHOLE_NUMBER)
+            if (inValB.Type == TBuiltInTypes.WHOLE_NUMBER)
             {
                 return ConvertToDouble(ref inValA) == inValB.ToDouble();
             }
@@ -67,7 +67,7 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValA);
 
-            if (inValB.Type == TStaticTypes.WHOLE_NUMBER)
+            if (inValB.Type == TBuiltInTypes.WHOLE_NUMBER)
             {
                 return ConvertToDouble(ref inValA) < inValB.ToDouble();
             }

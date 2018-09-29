@@ -4,6 +4,8 @@ class Program {
     $Clock.delay(duration: 0);
     $Clock.delay(duration: 1.5);
 
+    TestEnum[] emptyArray <- new TestEnum[20];
+
     writeEnum();
     forLoop(array: new TestEnum[] { TestEnum.UP, TestEnum.DOWN });
   }

@@ -54,8 +54,8 @@ namespace Alice.Tweedle.Parse
 		public void AnAssignmentExpressionShouldUpdateTheScope()
 		{
 			Init();
-			TLocalVariable xDec = new TLocalVariable(TStaticTypes.WHOLE_NUMBER, "x");
-			scope.SetLocalValue(xDec, TStaticTypes.WHOLE_NUMBER.Instantiate(12));
+			TLocalVariable xDec = new TLocalVariable(TBuiltInTypes.WHOLE_NUMBER, "x");
+			scope.SetLocalValue(xDec, TBuiltInTypes.WHOLE_NUMBER.Instantiate(12));
 
 			TValue noResult = RunExpression("x <- 3", scope);
 

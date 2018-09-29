@@ -37,7 +37,7 @@ namespace Alice.Tweedle.Interop
 
             if (!TryConvertConstant(typePtr, inObject, out retVal))
             {
-                TType ttype = inLibrary.TypeNamed(TTypeNameForType(type));
+                TType ttype = inLibrary.TypeNamed(InteropTypeName(type));
                 if (ttype != null)
                 {
                     retVal = TValue.FromObject(ttype, inObject);
@@ -156,57 +156,69 @@ namespace Alice.Tweedle.Interop
     
         #region Types
 
-        static public TTypeRef TTypeFor(object inObject)
-        {
-            if (inObject == null)
-                return TStaticTypes.NULL;
-            if (inObject is TValue)
-                return ((TValue)inObject).Type;
+        // static public TTypeRef TTypeFor(object inObject)
+        // {
+        //     if (inObject == null)
+        //         return TBuiltInTypes.NULL;
+        //     if (inObject is TValue)
+        //         return ((TValue)inObject).Type;
 
-            return TTypeFor(inObject.GetType());
-        }
+        //     return TTypeFor(inObject.GetType());
+        // }
 
-        static public TTypeRef TTypeFor(Type inType)
+        static public TTypeRef TTypeFor(Type inType, TAssembly inAssembly)
         {
             if (inType == null)
                 return null;
 
+            if (inType.IsArray)
+            {
+                Type elementType = inType.GetElementType();
+                TTypeRef elementTypeRef = TTypeFor(elementType, inAssembly);
+                return TGenerics.GetArrayType(elementTypeRef, inAssembly);
+            }
+
             IntPtr typePtr = inType.TypeHandle.Value;
             if (typePtr == TYPEPTR_VOID)
             {
-                return TStaticTypes.VOID;
+                return TBuiltInTypes.VOID;
             }
             if (typePtr == TYPEPTR_INT)
             {
-                return TStaticTypes.WHOLE_NUMBER;
+                return TBuiltInTypes.WHOLE_NUMBER;
             }
             else if (typePtr == TYPEPTR_DOUBLE || typePtr == TYPEPTR_FLOAT)
             {
-                return TStaticTypes.DECIMAL_NUMBER;
+                return TBuiltInTypes.DECIMAL_NUMBER;
             }
             else if (typePtr == TYPEPTR_STRING)
             {
-                return TStaticTypes.TEXT_STRING;
+                return TBuiltInTypes.TEXT_STRING;
             }
             else if (typePtr == TYPEPTR_BOOLEAN)
             {
-                return TStaticTypes.BOOLEAN;
+                return TBuiltInTypes.BOOLEAN;
             }
             else if (typePtr == TYPEPTR_TVALUE)
             {
-                return TStaticTypes.ANY;
+                return TBuiltInTypes.ANY;
             }
             else
             {
-                string typeName = TTypeNameForType(inType);
+                string typeName = InteropTypeName(inType);
                 if (!string.IsNullOrEmpty(typeName))
+                {
+                    TType existingType = inAssembly?.TypeNamed(typeName);
+                    if (existingType != null)
+                        return existingType;
                     return new TTypeRef(typeName);
+                }
 
                 return null;
             }
         }
 
-        static public string TTypeNameForType(Type inType)
+        static public string InteropTypeName(Type inType)
         {
             return PInteropTypeAttribute.GetTweedleName(inType);
         }
@@ -215,32 +227,17 @@ namespace Alice.Tweedle.Interop
     
         #region Types
 
-        static public TType[] GenerateTypes(params Type[] inTypes)
-        {
-            TType[] types = new TType[inTypes.Length];
-            for (int i = 0; i < types.Length; ++i)
-            {
-                types[i] = GenerateType(inTypes[i]);
-            }
-            return types;
-        }
-
-        static public TType GenerateType(Type inType)
+        static public TType GenerateType(TAssembly inAssembly, Type inType)
         {
             if (inType.IsClass)
-                return new TPObjectType(inType);
+                return new TPObjectType(inAssembly, inType);
             else if (inType.IsEnum)
-                return new TPEnumType(inType);
+                return new TPEnumType(inAssembly, inType);
             else
                 throw new Exception("Unable to convert type " + inType.Name + " to a tweedle type");
         }
 
-        static public TType GenerateType<T>()
-        {
-            return new TPObjectType(typeof(T));
-        }
-
-        static public TField[] GenerateFields(Type inType)
+        static public TField[] GenerateFields(TAssembly inAssembly, Type inType)
         {
             List<TField> tFields = new List<TField>();
             
@@ -249,20 +246,20 @@ namespace Alice.Tweedle.Interop
             {
                 // UnityEngine.Debug.Log("Parsing field " + pField.Name);
                 if (PInteropFieldAttribute.IsDefined(pField))
-                    tFields.Add(new PField(pField));
+                    tFields.Add(new PField(inAssembly, pField));
             }
 
             var pProps = inType.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
             foreach(var pProp in pProps)
             {
                 if (PInteropFieldAttribute.IsDefined(pProp))
-                    tFields.Add(new PProperty(pProp));
+                    tFields.Add(new PProperty(inAssembly, pProp));
             }
 
             return tFields.ToArray();
         }
 
-        static public TMethod[] GenerateMethods(Type inType)
+        static public TMethod[] GenerateMethods(TAssembly inAssembly, Type inType)
         {
             List<TMethod> tMethods = new List<TMethod>();
 
@@ -273,9 +270,9 @@ namespace Alice.Tweedle.Interop
                 {
                     PMethodBase tMethod;
                     if (TYPE_IASYNCRETURN.IsAssignableFrom(pMethod.ReturnType))
-                        tMethod = new PAsyncMethod(pMethod);
+                        tMethod = new PAsyncMethod(inAssembly, pMethod);
                     else
-                        tMethod = new PMethod(pMethod);
+                        tMethod = new PMethod(inAssembly, pMethod);
                     tMethods.Add(tMethod);
                 }
             }
@@ -283,7 +280,7 @@ namespace Alice.Tweedle.Interop
             return tMethods.ToArray();
         }
 
-        static public TMethod[] GenerateConstructors(Type inType)
+        static public TMethod[] GenerateConstructors(TAssembly inAssembly, Type inType)
         {
             List<TMethod> tConstructors = new List<TMethod>();
 
@@ -291,7 +288,7 @@ namespace Alice.Tweedle.Interop
             foreach(var pConstructor in pConstructors)
             {
                 if (PInteropConstructorAttribute.IsDefined(pConstructor))
-                    tConstructors.Add(new PConstructor(pConstructor));
+                    tConstructors.Add(new PConstructor(inAssembly, pConstructor));
             }
 
             return tConstructors.ToArray();

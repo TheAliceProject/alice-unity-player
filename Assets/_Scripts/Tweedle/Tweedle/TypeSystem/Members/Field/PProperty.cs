@@ -13,7 +13,7 @@ namespace Alice.Tweedle
         private PropertyInfo m_PropertyInfo;
         private bool m_IsStatic;
 
-        public PProperty(PropertyInfo inFieldInfo)
+        public PProperty(TAssembly inAssembly, PropertyInfo inFieldInfo)
         {
             m_PropertyInfo = inFieldInfo;
             m_IsStatic = inFieldInfo.GetGetMethod().IsStatic;
@@ -27,7 +27,7 @@ namespace Alice.Tweedle
             if (!inFieldInfo.CanWrite)
                 flags |= MemberFlags.Readonly;
 
-            TTypeRef tType = TInterop.TTypeFor(inFieldInfo.PropertyType);
+            TTypeRef tType = TInterop.TTypeFor(inFieldInfo.PropertyType, inAssembly);
             SetupMember(inFieldInfo.Name, tType, flags);
         }
 

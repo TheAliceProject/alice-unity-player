@@ -124,7 +124,7 @@ namespace Alice.Tweedle.VM
             TTypeRef type = GetTypeNamed(varName);
 			if (type != null)
 			{
-				return TStaticTypes.TYPE_REF.Instantiate(type);
+				return TBuiltInTypes.TYPE_REF.Instantiate(type);
 			}
 			if (localValues.ContainsKey(varName))
 			{

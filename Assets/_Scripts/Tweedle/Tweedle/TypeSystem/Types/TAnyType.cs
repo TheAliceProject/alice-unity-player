@@ -7,8 +7,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TAnyType : TType
     {
-        public TAnyType()
-            : base("Any")
+        public TAnyType(TAssembly inAssembly)
+            : base(inAssembly, "Any")
         {
         }
 

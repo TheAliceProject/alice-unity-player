@@ -7,8 +7,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TTypeRefType : TType
     {
-        public TTypeRefType()
-            : base("TypeRef")
+        public TTypeRefType(TAssembly inAssembly)
+            : base(inAssembly, "TypeRef")
         {
         }
 

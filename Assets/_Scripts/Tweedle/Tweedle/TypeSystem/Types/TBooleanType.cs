@@ -7,8 +7,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TBooleanType : TType
     {
-        public TBooleanType()
-            : base("Boolean")
+        public TBooleanType(TAssembly inAssembly)
+            : base(inAssembly, "Boolean")
         {
         }
 

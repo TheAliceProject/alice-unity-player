@@ -101,16 +101,16 @@ namespace Alice.Tweedle.Parse
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TType tweClass = (TType)m_Parser.ParseType(tweedleCode, m_System.GetAssembly());
-						m_System.GetAssembly().Add(tweClass);
+						TType tweClass = (TType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
+						m_System.GetRuntimeAssembly().Add(tweClass);
 					}
 					return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
 				case ContentType.Enum:
 					for (int j = 0; j < resourceRef.files.Count; j++)
 					{
 						string tweedleCode = ReadEntry(resourceRef.files[j]);
-						TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode, m_System.GetAssembly());
-						m_System.GetAssembly().Add(tweedleEnum);
+						TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
+						m_System.GetRuntimeAssembly().Add(tweedleEnum);
 					}
 					return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
 				case ContentType.Image:

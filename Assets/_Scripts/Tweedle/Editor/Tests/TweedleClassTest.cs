@@ -4,13 +4,13 @@ using NUnit.Framework;
 namespace Alice.Tweedle.Parse
 {
 	[TestFixture]
-	public class TClassTypeTest
+	public class TweedleClassTest
 	{
 		static TweedleParser parser = new TweedleParser();
 
-		static TClassType ParseClass(string src)
+		static TClassType ParseClass(string src, TAssembly assembly = null)
 		{
-			return (TClassType)parser.ParseType(src);
+			return (TClassType)parser.ParseType(src, assembly);
 		}
 
 		static string classToHave =
@@ -66,9 +66,10 @@ namespace Alice.Tweedle.Parse
 		TweedleSystem NewSystem()
 		{
 			TweedleSystem system = new TweedleSystem();
-			system.GetAssembly().Add(ParseClass(classToHave));
-			system.GetAssembly().Add(ParseClass(parentClass));
-			system.GetAssembly().Add(ParseClass(childClass));
+            TAssembly assembly = system.GetRuntimeAssembly();
+            assembly.Add(ParseClass(classToHave, assembly));
+			assembly.Add(ParseClass(parentClass, assembly));
+			assembly.Add(ParseClass(childClass, assembly));
             system.Link();
             return system;
 		}

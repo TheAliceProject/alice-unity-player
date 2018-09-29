@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
-using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle
 {
@@ -50,11 +48,11 @@ namespace Alice.Tweedle
         /// <summary>
         /// Resolves all members.
         /// </summary>
-        static protected void LinkMembers<T>(T[] inMembers, TAssembly[] inAssemblies, TType inType) where T : ITypeMember
+        static protected void LinkMembers<T>(T[] inMembers, TAssemblyLinkContext inContext, TType inType) where T : ITypeMember
         {
             for (int i = 0; i < inMembers.Length; ++i)
             {
-                inMembers[i].Link(inAssemblies, inType);
+                inMembers[i].Link(inContext, inType);
             }
         }
 
@@ -71,7 +69,7 @@ namespace Alice.Tweedle
                 type = inSource.SuperType.Get();
             }
 
-            return inSource == TStaticTypes.ANY;
+            return inSource == TBuiltInTypes.ANY;
         }
 
         /// <summary>
@@ -82,7 +80,7 @@ namespace Alice.Tweedle
             TType type = inValue.Type;
             if (type == inType)
                 return true;
-            if (inbAllowTypeRef && type == TStaticTypes.TYPE_REF)
+            if (inbAllowTypeRef && type == TBuiltInTypes.TYPE_REF)
                 type = inValue.TypeRef().Get();
             return IsAssignableFrom(inType, type);
         }

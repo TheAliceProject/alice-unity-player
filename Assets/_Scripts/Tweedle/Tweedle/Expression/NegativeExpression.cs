@@ -36,13 +36,13 @@ namespace Alice.Tweedle
 	{
 
 		public NegativeWholeExpression(ITweedleExpression expression)
-			: base(TStaticTypes.WHOLE_NUMBER, expression)
+			: base(TBuiltInTypes.WHOLE_NUMBER, expression)
 		{
 		}
 
 		internal override TValue Negate(TValue value)
 		{
-			return TStaticTypes.WHOLE_NUMBER.Instantiate(0 - value.ToInt());
+			return TBuiltInTypes.WHOLE_NUMBER.Instantiate(0 - value.ToInt());
 		}
 	}
 
@@ -50,13 +50,13 @@ namespace Alice.Tweedle
 	{
 
 		public NegativeDecimalExpression(ITweedleExpression expression)
-			: base(TStaticTypes.DECIMAL_NUMBER, expression)
+			: base(TBuiltInTypes.DECIMAL_NUMBER, expression)
 		{
 		}
 
 		internal override TValue Negate(TValue value)
 		{
-			return TStaticTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble());
+			return TBuiltInTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble());
 		}
 	}
 }

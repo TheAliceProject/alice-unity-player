@@ -287,7 +287,7 @@ namespace Alice.Tweedle.Parse
 			TClassType tested = (TClassType)ParseType(scene);
 			TTMethod sumThing = (TTMethod)tested.Methods(null)[0];
 
-			Assert.AreEqual(TStaticTypes.WHOLE_NUMBER, sumThing.Type, "The method should return a WholeNumber.");
+			Assert.AreEqual(TBuiltInTypes.WHOLE_NUMBER, sumThing.Type, "The method should return a WholeNumber.");
 		}
 
 		[Test]

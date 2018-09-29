@@ -26,25 +26,35 @@ namespace Alice.Tweedle
             TArrayType arrayType = (TArrayType)this.m_TypeRef;
             StepSequence main = new StepSequence("new Array", scope);
 
-            ExecutionStep sizeStep;
             if (m_Size != null)
             {
-                sizeStep = m_Size.AsStep(scope);
+                int desiredSize = 0;
+                ExecutionStep sizeStep = m_Size.AsStep(scope);
+                ExecutionStep storeStep = new ValueComputationStep("Store Value", scope, (res) =>
+                {
+                    desiredSize = (int)res.RawNumber();
+                    return res;
+                });
+                sizeStep.OnCompletionNotify(storeStep);
+                main.AddStep(sizeStep);
+
+                main.AddStep(new ValueGenerationStep(
+                    "CreateArray", scope,
+                    () =>
+                    {
+                        return arrayType.Instantiate(desiredSize);
+                    }));
             }
             else
             {
-                sizeStep = new ValueStep("new Array size", scope, TStaticTypes.WHOLE_NUMBER.Instantiate(m_Elements.Count()));
+                TValue[] elements = AddElementSteps(main, scope);
+                main.AddStep(new ValueGenerationStep(
+                    "CreateArray", scope,
+                    () =>
+                    {
+                        return arrayType.Instantiate(elements);
+                    }));
             }
-
-            main.AddStep(sizeStep);
-
-            TValue[] elements = AddElementSteps(main, scope);
-            main.AddStep(new ValueGenerationStep(
-                "CreateArray", scope,
-                () =>
-                {
-                    return arrayType.Instantiate(elements);
-                }));
 
             return main;
         }
