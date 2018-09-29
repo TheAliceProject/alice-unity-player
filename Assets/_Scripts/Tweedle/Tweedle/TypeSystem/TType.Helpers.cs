@@ -128,6 +128,7 @@ namespace Alice.Tweedle
             {
                 builder.Append(" extends ").Append(inType.SuperType);
             }
+            builder.Append(" (ID=" + inType.ID + ")");
             builder.Append(" {")
                 .Append("\n");
 

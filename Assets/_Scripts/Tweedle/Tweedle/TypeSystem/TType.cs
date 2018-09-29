@@ -21,6 +21,8 @@ namespace Alice.Tweedle
 
         #endregion // Enums
 
+        public readonly Guid ID = Guid.NewGuid();
+
         public readonly string Name;
         public readonly TTypeRef SuperType;
         public readonly TTypeRef SelfRef;
