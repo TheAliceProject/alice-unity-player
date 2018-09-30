@@ -1,3 +1,5 @@
+using System;
+using Alice.Tweedle.Interop;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -25,6 +27,8 @@ namespace Alice.Tweedle
         }
 
         public readonly TTypeRef ElementType;
+
+        private Type m_ConvertedType;
 
         #region Custom Members
 
@@ -141,7 +145,31 @@ namespace Alice.Tweedle
         public override object ConvertToPObject(ref TValue inValue)
         {
             AssertValueIsType(ref inValue);
-            return inValue.Array();
+            return inValue;
+        }
+
+        public override Type GetPObjectType()
+        {
+            if (m_ConvertedType == null)
+            {
+                Type elementType = ElementType.Get().GetPObjectType();
+                m_ConvertedType = elementType.MakeArrayType();
+            }
+            return m_ConvertedType;
+        }
+
+        public Array ConvertToPArray(ref TValue inValue, Type inElementType)
+        {
+            AssertValueIsType(ref inValue);
+
+            Type elementType = ElementType.Get().GetPObjectType();
+            
+            TArray src = inValue.Array();
+            Array dst = Array.CreateInstance(elementType, src.Length);
+            for (int i = 0; i < src.Length; ++i)
+                dst.SetValue(TInterop.ToPObject(src[i], elementType), i);
+
+            return dst;
         }
 
         #endregion // Conversion Semantics

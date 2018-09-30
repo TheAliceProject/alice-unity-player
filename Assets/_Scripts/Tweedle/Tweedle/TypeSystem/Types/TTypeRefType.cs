@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -103,6 +104,11 @@ namespace Alice.Tweedle
         public override object ConvertToPObject(ref TValue inValue)
         {
             return inValue.TypeRef();
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(TTypeRef);
         }
 
         #endregion // Conversion Semantics

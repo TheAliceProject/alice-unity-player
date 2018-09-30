@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -85,6 +86,11 @@ namespace Alice.Tweedle
             AssertValueIsType(ref inValue);
 
             return null;
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(object);
         }
 
         #endregion // Conversion Semantics

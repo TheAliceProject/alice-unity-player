@@ -37,6 +37,23 @@ namespace Alice.Tweedle.Interop
 
             if (!TryConvertConstant(typePtr, inObject, out retVal))
             {
+                if (type.IsArray)
+                {
+                    Array array = (Array)inObject;
+                    int length = array.Length;
+                    TValue[] elements = new TValue[length];
+                    for (int i = 0; i < length; ++i)
+                    {
+                        elements[i] = ToTValue(array.GetValue(i), inLibrary);
+                    }
+
+                    TAssembly assembly = inLibrary.GetRuntimeAssembly();
+                    TTypeRef elementType = TTypeFor(type.GetElementType(), assembly);
+                    TArrayType arrayType = TGenerics.GetArrayType(elementType, assembly);
+
+                    return arrayType.Instantiate(elements);
+                }
+
                 TType ttype = inLibrary.TypeNamed(InteropTypeName(type));
                 if (ttype != null)
                 {
@@ -51,7 +68,7 @@ namespace Alice.Tweedle.Interop
             return retVal;
         }
 
-        static public TValue ToTValue(object inObject)
+        static public TValue ToTValueConst(object inObject)
         {
             if (inObject == null)
                 return TValue.NULL;
@@ -131,11 +148,6 @@ namespace Alice.Tweedle.Interop
 
         #region To PObject
 
-        static public object ToPObject(TValue inValue)
-        {
-            return inValue.ToPObject();
-        }
-
         static public object ToPObject(TValue inValue, Type inType)
         {
             IntPtr typePtr = inType.TypeHandle.Value;
@@ -144,8 +156,16 @@ namespace Alice.Tweedle.Interop
                 return (object)inValue;
             }
 
+            // Only if we're asking for a c# array do we invoke the ConvertToPArray call
+            // Otherwise, it's fine to just pass up the TArray without converting it
+            if (inType.IsArray)
+            {
+                TArrayType arrayType = (TArrayType)inValue.Type;
+                return arrayType.ConvertToPArray(ref inValue, inType.GetElementType());
+            }
+
             object obj = inValue.ToPObject();
-            if (obj != null && obj.GetType().TypeHandle.Value != typePtr)
+            if (obj != null && !inType.IsClass && obj.GetType().TypeHandle.Value != typePtr)
             {
                 obj = Convert.ChangeType(obj, inType);
             }
@@ -155,16 +175,6 @@ namespace Alice.Tweedle.Interop
         #endregion // To PObject
     
         #region Types
-
-        // static public TTypeRef TTypeFor(object inObject)
-        // {
-        //     if (inObject == null)
-        //         return TBuiltInTypes.NULL;
-        //     if (inObject is TValue)
-        //         return ((TValue)inObject).Type;
-
-        //     return TTypeFor(inObject.GetType());
-        // }
 
         static public TTypeRef TTypeFor(Type inType, TAssembly inAssembly)
         {
@@ -225,7 +235,7 @@ namespace Alice.Tweedle.Interop
 
         #endregion // Types
     
-        #region Types
+        #region Type Generation
 
         static public TType GenerateType(TAssembly inAssembly, Type inType)
         {
@@ -294,6 +304,6 @@ namespace Alice.Tweedle.Interop
             return tConstructors.ToArray();
         }
 
-        #endregion // Members
+        #endregion // Type Generation
     }
 }
