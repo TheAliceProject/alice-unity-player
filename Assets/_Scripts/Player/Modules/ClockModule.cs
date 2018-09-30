@@ -22,6 +22,18 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
+        static public void callOnDelay(TValue lambda, double delay)
+        {
+            if (delay <= 0)
+            {
+                TInterop.QueueLambda(lambda.Lambda());
+                return;
+            }
+
+            UnitySceneGraph.Instance.StartCoroutine(CallOnDelay(lambda.Lambda(), delay));
+        }
+
+        [PInteropMethod]
         static public AsyncReturn<bool> returnRandomBool(double duration)
         {
             AsyncReturn<bool> returnVal = new AsyncReturn<bool>();
@@ -39,6 +51,12 @@ namespace Alice.Player.Modules
         {
             yield return new WaitForSeconds((float)inDuration);
             inReturn.Return(inValue);
+        }
+
+        static private IEnumerator CallOnDelay(TLambda lambda, double inDelay)
+        {
+            yield return new WaitForSeconds((float)inDelay);
+            TInterop.QueueLambda(lambda);
         }
     }
 }

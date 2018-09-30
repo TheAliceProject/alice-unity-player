@@ -15,6 +15,10 @@ class Program {
 
     WholeNumber[] arrayFromInterop <- $Debug.generateArray(start: 0, end: -150);
     $Debug.log(string: "Array from interop is " .. arrayFromInterop);
+
+    $Clock.callOnDelay(lambda: () -> {
+      $Debug.log(string: "This was called on a delay!");
+    }, delay: 2);
   }
 
   static void writeEnum(TestEnum e <- TestEnum.DOWN) {

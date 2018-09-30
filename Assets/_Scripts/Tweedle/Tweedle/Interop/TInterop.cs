@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Alice.Tweedle.Parse;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle.Interop
 {
@@ -19,8 +20,9 @@ namespace Alice.Tweedle.Interop
         static private readonly IntPtr TYPEPTR_STRING = GetTypePtr<string>();
         static private readonly IntPtr TYPEPTR_BOOLEAN = GetTypePtr<bool>();
 
-        // Async types
+        // Additional types
         static private readonly Type TYPE_IASYNCRETURN = typeof(IAsyncReturn);
+        static private readonly Type TYPE_DELEGATE = typeof(Delegate); // TODO: Convert from lambdas to invokable delegates?
 
         #region To TValue
 
@@ -146,9 +148,29 @@ namespace Alice.Tweedle.Interop
 
         #endregion // To TValue
 
+        #region Lambdas
+
+        static public void QueueLambda(TLambda inLambda, params object[] inArguments)
+        {
+            var vm = inLambda.GetOwner();
+            TweedleSystem system = vm.Library;
+            ITweedleExpression[] values = new ITweedleExpression[inArguments.Length];
+            for (int i = 0; i < values.Length; ++i)
+            {
+                values[i] = ToTValue(inArguments[i], system);
+            }
+
+            var eval = inLambda.Evaluation(values);
+            vm.Queue(eval);
+        }
+
+        #endregion // Lambdas
+
         #region To PObject
 
-        static public object ToPObject(TValue inValue, Type inType)
+        // NOTE: Scope is not used yet, but it could potentially be used to convert lambdas to invokable C# delegates.
+        // ExecutionScope would provide the VM and thus the means to queue the LambdaEvaluation
+        static public object ToPObject(TValue inValue, Type inType, ExecutionScope inScope)
         {
             IntPtr typePtr = inType.TypeHandle.Value;
             if (typePtr == TYPEPTR_TVALUE)
@@ -156,12 +178,16 @@ namespace Alice.Tweedle.Interop
                 return (object)inValue;
             }
 
-            // Only if we're asking for a c# array do we invoke the ConvertToPArray call
-            // Otherwise, it's fine to just pass up the TArray without converting it
             if (inType.IsArray)
             {
-                TArrayType arrayType = (TArrayType)inValue.Type;
-                return arrayType.ConvertToPArray(ref inValue, inType.GetElementType());
+                Type elementType = inType.GetElementType();
+
+                TArray srcArr = inValue.Array();
+                Array dstArr = Array.CreateInstance(elementType, srcArr.Length);
+                for (int i = 0; i < srcArr.Length; ++i)
+                    dstArr.SetValue(ToPObject(srcArr[i], elementType, inScope), i);
+                    
+                return dstArr;
             }
 
             object obj = inValue.ToPObject();

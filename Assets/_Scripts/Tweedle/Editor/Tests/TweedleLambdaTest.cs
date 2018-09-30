@@ -78,7 +78,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerShouldHaveOneArg()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
@@ -89,116 +88,107 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
-		public void AddSceneActivationListenerOneArgShouldBeLambda()
+        public void AddSceneActivationListenerOneArgShouldBeLambda()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// Assert.IsInstanceOf<LambdaExpression>(methodCall.GetArg("listener"),
-			// 	"The addSceneActivationListener should have a listener arg.");
+			Assert.IsInstanceOf<LambdaExpression>(methodCall.GetArg("listener"),
+				"The addSceneActivationListener should have a listener arg.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerLambdaShouldHaveOneParameter()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// Assert.AreEqual(1, listener.Parameters.Length,
-			// 	"The lambda listener should have a parameter.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			Assert.AreEqual(1, listener.Parameters.Length,
+				"The lambda listener should have a parameter.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneParameterNamedEvent()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// TParameter parameter = listener.Parameters[0];
-			// Assert.AreEqual("event", parameter.Name,
-			// 	"The lambda listener should have a parameter.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			TParameter parameter = listener.Parameters[0];
+			Assert.AreEqual("event", parameter.Name,
+				"The lambda listener should have a parameter.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneParameterTypedReference()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// TParameter parameter = listener.Parameters[0];
-			// Assert.IsInstanceOf<TweedleTypeReference>(parameter.Type,
-			// 	"The lambda listener should have a parameter.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			TParameter parameter = listener.Parameters[0];
+			Assert.IsInstanceOf<TTypeRef>(parameter.Type,
+				"The lambda listener should have a parameter.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneParameterTypedSceneActivationEvent()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// TParameter parameter = listener.Parameters[0];
-			// TweedleTypeReference type = (TweedleTypeReference)parameter.Type;
-			// Assert.AreEqual("SceneActivationEvent", type.Name,
-			// 	"The lambda listener should have parameter typed SceneActivationEvent.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			TParameter parameter = listener.Parameters[0];
+			TTypeRef type = parameter.Type;
+			Assert.AreEqual("SceneActivationEvent", type.Name,
+				"The lambda listener should have parameter typed SceneActivationEvent.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerSecondLambdaParameterShouldHaveOneParameterTypedArrowKeyEvent()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[1];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// TParameter parameter = listener.Parameters[0];
-			// TweedleTypeReference  type = (TweedleTypeReference)parameter.Type;
-			// Assert.AreEqual("ArrowKeyEvent", type.Name,
-			// 	"The lambda listener should have parameter typed ArrowKeyEvent.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			TParameter parameter = listener.Parameters[0];
+			TTypeRef type = parameter.Type;
+			Assert.AreEqual("ArrowKeyEvent", type.Name,
+				"The lambda listener should have parameter typed ArrowKeyEvent.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneStatement()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// Assert.AreEqual(1, listener.Body.Statements.Length,
-			// 	"The lambda listener should have parameter typed SceneActivationEvent.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			Assert.AreEqual(1, listener.Body.Statements.Length,
+				"The lambda listener should have parameter typed SceneActivationEvent.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneNonNullStatement()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// Assert.NotNull(listener.Body.Statements[0],
-			// 	"The lambda listener should have parameter typed SceneActivationEvent.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			Assert.NotNull(listener.Body.Statements[0],
+				"The lambda listener should have parameter typed SceneActivationEvent.");
 		}
 
 		[Test]
-        [Ignore("Lambdas not implemented")]
 		public void AddSceneActivationListenerLambdaParameterShouldHaveOneExpressionStatement()
 		{
 			TTMethod initListeners = (TTMethod)tested.Methods(null)[0];
 			ExpressionStatement statement = (ExpressionStatement)initListeners.Body.Statements[0];
 			MethodCallExpression methodCall = (MethodCallExpression)statement.Expression;
-			// LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
-			// Assert.IsInstanceOf<ExpressionStatement>(listener.Body.Statements[0],
-			// 	"The lambda listener should have parameter typed SceneActivationEvent.");
+			LambdaExpression listener = (LambdaExpression)methodCall.GetArg("listener");
+			Assert.IsInstanceOf<ExpressionStatement>(listener.Body.Statements[0],
+				"The lambda listener should have parameter typed SceneActivationEvent.");
 		}
 	}
 }

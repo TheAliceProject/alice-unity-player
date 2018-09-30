@@ -21,6 +21,13 @@ namespace Alice.Tweedle
             if (arrType != null)
             {
                 UnloadArray(arrType.ElementType);
+                return;
+            }
+
+            TLambdaType lambdaType = inType as TLambdaType;
+            if (lambdaType != null)
+            {
+                UnloadLambda(lambdaType.Signature);
             }
         }
 
@@ -52,6 +59,35 @@ namespace Alice.Tweedle
         }
 
         #endregion // Arrays
+
+        #region Lambdas
+
+        // Map
+        static private Dictionary<string, TLambdaType> s_LambdaSpecializationMap = new Dictionary<string, TLambdaType>();
+
+        /// <summary>
+        /// Returns the lambda type for the given signature.
+        /// </summary>
+        static public TLambdaType GetLambdaType(TLambdaSignature inSignature, TAssembly inForAssembly)
+        {
+            TLambdaType lambdaType;
+            if (!s_LambdaSpecializationMap.TryGetValue(inSignature.Name, out lambdaType))
+            {
+                lambdaType = new TLambdaType(inForAssembly, inSignature);
+                s_LambdaSpecializationMap.Add(inSignature.Name, lambdaType);
+                s_GeneratedTypes.Add(lambdaType);
+                inForAssembly?.Add(lambdaType);
+            }
+
+            return lambdaType;
+        }
+
+        static private void UnloadLambda(TLambdaSignature inSignature)
+        {
+            s_LambdaSpecializationMap.Remove(inSignature.Name);
+        }
+
+        #endregion // Lambdas
 
         /// <summary>
         /// Unloads all generic types from the given assembly.

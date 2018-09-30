@@ -61,7 +61,7 @@ namespace Alice.Tweedle
         public override void Set(ExecutionScope inScope, ref TValue inValue, TValue inNewValue)
         {
             CheckSet(inScope, ref inValue, ref inNewValue);
-            object newVal = TInterop.ToPObject(inNewValue, m_PropertyInfo.PropertyType);
+            object newVal = TInterop.ToPObject(inNewValue, m_PropertyInfo.PropertyType, inScope);
             if (m_IsStatic)
             {
                 m_PropertyInfo.SetValue(null, newVal);

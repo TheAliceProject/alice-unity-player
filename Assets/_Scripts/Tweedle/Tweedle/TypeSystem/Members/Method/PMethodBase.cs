@@ -83,13 +83,13 @@ namespace Alice.Tweedle
         protected object PrepForInvoke(InvocationScope inScope)
         {
             for (int i = 0; i < m_ParameterNames.Length; ++i)
-                m_CachedArgs[i] = TInterop.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i]);
+                m_CachedArgs[i] = TInterop.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i], inScope);
 
             object thisVal;
             if ((Flags & (MemberFlags.Static | MemberFlags.Constructor)) != 0)
                 thisVal = null;
             else
-                thisVal = TInterop.ToPObject(inScope.GetThis(), m_Method.DeclaringType);
+                thisVal = TInterop.ToPObject(inScope.GetThis(), m_Method.DeclaringType, inScope);
 
             return thisVal;
         }
