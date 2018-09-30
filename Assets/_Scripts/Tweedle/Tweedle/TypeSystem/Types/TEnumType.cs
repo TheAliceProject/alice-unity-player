@@ -130,6 +130,11 @@ namespace Alice.Tweedle
             return inValue;
         }
 
+        public override Type GetPObjectType()
+        {
+            return typeof(TValue);
+        }
+
         #endregion // Conversion Semantics
 
         #region Misc

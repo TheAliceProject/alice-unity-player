@@ -53,7 +53,7 @@ namespace Alice.Tweedle
                 if (param.IsOptional)
                 {
                     tParam = TParameter.OptionalParameter(
-                        TInterop.TTypeFor(param.ParameterType, inAssembly), param.Name, TInterop.ToTValue(param.DefaultValue)
+                        TInterop.TTypeFor(param.ParameterType, inAssembly), param.Name, TInterop.ToTValueConst(param.DefaultValue)
                     );
                     optionalParams.Add(tParam);
                 }
@@ -89,7 +89,7 @@ namespace Alice.Tweedle
             if ((Flags & (MemberFlags.Static | MemberFlags.Constructor)) != 0)
                 thisVal = null;
             else
-                thisVal = TInterop.ToPObject(inScope.GetThis());
+                thisVal = TInterop.ToPObject(inScope.GetThis(), m_Method.DeclaringType);
 
             return thisVal;
         }

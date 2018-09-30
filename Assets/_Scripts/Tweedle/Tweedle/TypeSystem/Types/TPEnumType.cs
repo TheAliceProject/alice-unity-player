@@ -85,6 +85,11 @@ namespace Alice.Tweedle
             return inValue.RawObject<object>();
         }
 
+        public override Type GetPObjectType()
+        {
+            return m_Type;
+        }
+
         #endregion // Conversion Semantics
 
         #region Misc

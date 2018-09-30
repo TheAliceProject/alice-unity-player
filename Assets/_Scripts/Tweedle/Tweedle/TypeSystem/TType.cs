@@ -239,6 +239,11 @@ namespace Alice.Tweedle
             throw new TweedleRuntimeException("This type (" + this + ") cannot convert the value " + inValue + " to a c-sharp object.");
         }
 
+        public virtual Type GetPObjectType()
+        {
+            throw new TweedleRuntimeException("Values of this type (" + this + ") cannot be converted to c-sharp objects.");
+        }
+
         #endregion // Conversion Semantics
 
         #region Misc

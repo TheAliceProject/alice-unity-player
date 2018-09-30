@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -99,6 +100,11 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValue);
             return (object)(inValue.RawNumber() != 0 ? true : false);
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(bool);
         }
 
         #endregion // Conversion Semantics
