@@ -11,7 +11,7 @@ namespace Alice.Tweedle
 			get { return expression; }
 		}
 
-		public TType Type
+		public TTypeRef Type
 		{
 			get { return expression.Type; }
 		}

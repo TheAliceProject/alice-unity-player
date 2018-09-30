@@ -158,20 +158,6 @@ namespace Alice.Tweedle
             return m_ConvertedType;
         }
 
-        public Array ConvertToPArray(ref TValue inValue, Type inElementType)
-        {
-            AssertValueIsType(ref inValue);
-
-            Type elementType = ElementType.Get().GetPObjectType();
-            
-            TArray src = inValue.Array();
-            Array dst = Array.CreateInstance(elementType, src.Length);
-            for (int i = 0; i < src.Length; ++i)
-                dst.SetValue(TInterop.ToPObject(src[i], elementType), i);
-
-            return dst;
-        }
-
         #endregion // Conversion Semantics
 
         #region Misc

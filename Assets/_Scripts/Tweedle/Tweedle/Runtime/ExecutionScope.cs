@@ -6,7 +6,7 @@ namespace Alice.Tweedle.VM
 	public class ExecutionScope
 	{
 		ExecutionScope parent;
-		public VirtualMachine vm;
+		public readonly VirtualMachine vm;
 		protected TValue thisValue;
 		protected internal string callStackEntry;
 
@@ -187,9 +187,9 @@ namespace Alice.Tweedle.VM
 			return new MethodScope(this, methodName, invokeSuper);
 		}
 
-		// internal LambdaScope LambdaScope()
-		// {
-		// 	return new LambdaScope(this);
-		// }
+		internal LambdaScope LambdaScope()
+		{
+			return new LambdaScope(this);
+		}
 	}
 }

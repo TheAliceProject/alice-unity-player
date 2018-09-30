@@ -351,20 +351,20 @@ namespace Alice.Tweedle.Parse
 					ITweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(assembly, TBuiltInTypes.WHOLE_NUMBER));
 					return new ArrayIndexExpression(array, index);
 				}
-				// else if (context.lambdaCall() != null)
-				// {
-				// 	ITweedleExpression lambdaSourceExp = TypedExpression(context, null)[0];
-				// 	if (context.lambdaCall().unlabeledExpressionList() == null)
-				// 	{
-				// 		return new LambdaEvaluation(lambdaSourceExp);
-				// 	}
-				// 	else
-				// 	{
-				// 		List<ITweedleExpression> elements =
-				// 						VisitUnlabeledArguments(context.lambdaCall().unlabeledExpressionList(), new ExpressionVisitor());
-				// 		return new LambdaEvaluation(lambdaSourceExp, elements);
-				// 	}
-				// }
+				else if (context.lambdaCall() != null)
+				{
+					ITweedleExpression lambdaSourceExp = TypedExpression(context, null)[0];
+					if (context.lambdaCall().unlabeledExpressionList() == null)
+					{
+						return new LambdaEvaluation(lambdaSourceExp);
+					}
+					else
+					{
+						ITweedleExpression[] elements =
+										VisitUnlabeledArguments(context.lambdaCall().unlabeledExpressionList(), new ExpressionVisitor(assembly));
+						return new LambdaEvaluation(lambdaSourceExp, elements);
+					}
+				}
 				return base.VisitChildren(context);
 			}
 
@@ -443,14 +443,13 @@ namespace Alice.Tweedle.Parse
 
 			public override ITweedleExpression VisitLambdaExpression([NotNull] Tweedle.TweedleParser.LambdaExpressionContext context)
 			{
-                // List<TParameter> parameters = context.lambdaParameters().requiredParameter()
-                // 	.Select(field => new TParameter(
-                // 		GetTypeType(field.typeType()),
-                // 		field.variableDeclaratorId().IDENTIFIER().GetText()
-                // 	)).ToList();
-                // TweedleStatement[] statements = CollectBlockStatements(context.block().blockStatement());
-                // return new LambdaExpression(parameters, statements);
-                return null;
+                TParameter[] parameters = context.lambdaParameters().requiredParameter()
+                	.Select(field => TParameter.RequiredParameter(
+                		GetTypeRef(field.typeType(), assembly),
+                		field.variableDeclaratorId().IDENTIFIER().GetText()
+                	)).ToArray();
+                TweedleStatement[] statements = CollectBlockStatements(context.block().blockStatement(), assembly);
+                return new LambdaExpression(GetLambdaType(parameters, statements, assembly), parameters, statements);
             }
 
 			public override ITweedleExpression VisitMethodCall([NotNull] Tweedle.TweedleParser.MethodCallContext context)
@@ -732,8 +731,7 @@ namespace Alice.Tweedle.Parse
 		{
 			if (context.lambdaTypeSignature() != null)
 			{
-                // return GetLambdaType(context.lambdaTypeSignature());
-                return null;
+                return GetLambdaType(context.lambdaTypeSignature(), assembly);
             }
 			else
 			{
@@ -764,14 +762,59 @@ namespace Alice.Tweedle.Parse
             return TBuiltInTypes.Assembly().TypeNamed(type);
 		}
 
-		// private static TweedleLambdaType GetLambdaType([NotNull] Tweedle.TweedleParser.LambdaTypeSignatureContext context)
-		// {
-		// 	Tweedle.TweedleParser.TypeTypeContext[] typeTypeContext = context.typeList().typeType();
-		// 	List<TType> typeList = typeTypeContext == null ?
-		// 		new List<TType>() :
-		// 		typeTypeContext.Select(type => GetTypeType(type)).ToList();
-		// 	return new TweedleLambdaType(typeList, GetTypeOrVoid(context.typeTypeOrVoid()));
-		// }
+		private static TLambdaType GetLambdaType([NotNull] Tweedle.TweedleParser.LambdaTypeSignatureContext context, TAssembly assembly)
+		{
+			Tweedle.TweedleParser.TypeTypeContext[] typeTypeContext = context.typeList().typeType();
+			TTypeRef[] typeList = typeTypeContext == null ?
+				new TTypeRef[0] :
+				typeTypeContext.Select(type => GetTypeRef(type, assembly)).ToArray();
+
+			TLambdaSignature signature = new TLambdaSignature(typeList, GetTypeOrVoid(context.typeTypeOrVoid(), assembly));
+            return TGenerics.GetLambdaType(signature, assembly);
+        }
+
+		private static TLambdaType GetLambdaType(TParameter[] inParameters, TweedleStatement[] inStatements, TAssembly assembly)
+		{
+            TTypeRef returnType = ExtractReturnType(inStatements);
+            TTypeRef[] paramTypes = new TTypeRef[inParameters.Length];
+            for (int i = 0; i < paramTypes.Length; ++i)
+                paramTypes[i] = inParameters[i].Type;
+			
+			TLambdaSignature signature = new TLambdaSignature(paramTypes, returnType);
+            return TGenerics.GetLambdaType(signature, assembly);
+        }
+
+		// NOTE: This will not generate the correct return type for return statements with unknown return types
+		// For example: If the ReturnStatement contains an IdentifierReference expression (no type known at parse time)
+		// then we'll end up with a null type
+		// Once return types are more solidly defined
+		private static TTypeRef ExtractReturnType(TweedleStatement[] inStatements)
+		{
+			if (inStatements == null || inStatements.Length == 0)
+			{
+                return TBuiltInTypes.VOID;
+            }
+
+			// TODO: If multiple possible return statements, determine common type
+			// and use that instead of just the type of the first return statement.
+            for (int i = inStatements.Length - 1; i >= 0; --i)
+			{
+                TweedleStatement statement = inStatements[i];
+                ReturnStatement returnStatement = statement as ReturnStatement;
+                if (returnStatement != null)
+                {
+					if (returnStatement.Expression is TValue && (TValue)(returnStatement.Expression) == TValue.UNDEFINED)
+					    return TBuiltInTypes.VOID;
+
+					// See above comment - some expressions don't have type information
+					// available at parse time
+                    TTypeRef type = returnStatement.Type;
+                    return type ?? TBuiltInTypes.ANY;
+                }
+            }
+
+            return TBuiltInTypes.VOID;
+        }
 
 		private static MemberFlags GetModifiers(string[] inModifiers)
 		{

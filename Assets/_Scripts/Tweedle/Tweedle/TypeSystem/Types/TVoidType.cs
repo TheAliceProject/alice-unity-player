@@ -60,8 +60,7 @@ namespace Alice.Tweedle
 
         public override bool CanCast(TType inType)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            return this == inType;
         }
 
         #endregion // Tweedle Casting

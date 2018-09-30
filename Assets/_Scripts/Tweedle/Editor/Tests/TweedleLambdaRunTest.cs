@@ -68,14 +68,12 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-		[Ignore("Lamdas not implemented")]
 		public void ClassShouldHaveMethods()
 		{
 			Assert.False(lambdaTest.Methods(null).Length.Equals(0), "The class should have methods.");
 		}
 
 		[Test]
-        [Ignore("Lamdas not implemented")]
 		public void LambdaShouldBePassed()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendLambda();");
@@ -85,7 +83,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-        [Ignore("Lamdas not implemented")]
 		public void LambdaShouldBeEvaluated()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendLambdaToEval();");
@@ -95,7 +92,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-        [Ignore("Lamdas not implemented")]
 		public void SumLambdaShouldBeEvaluated()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendSumLambda();");
@@ -105,7 +101,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-        [Ignore("Lamdas not implemented")]
 		public void MultLambdaShouldBeEvaluated()
 		{
 			ExecuteStatement("WholeNumber x <- lam.sendMultLambda();");
@@ -115,7 +110,6 @@ namespace Alice.Tweedle.Parse
 		}
 
 		[Test]
-        [Ignore("Lamdas not implemented")]
 		public void SingleParamLambdaShouldBeRejectedAsMultiParamLambda()
 		{
 			Assert.Throws<TweedleRuntimeException>(
