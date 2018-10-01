@@ -105,11 +105,11 @@ namespace Alice.Tweedle
         static protected int CalculateInheritanceDepth(TType inType)
         {
             int depth = 0;
-            TType type = inType.SuperType;
+            TType type = (TType)inType.SuperType;
             while(type != null)
             {
                 ++depth;
-                type = type.SuperType;
+                type = (TType)type.SuperType;
             }
             return depth;
         }

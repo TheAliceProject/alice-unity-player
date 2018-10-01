@@ -158,6 +158,8 @@ namespace Alice.Tweedle
 
     public sealed class TLambdaSignature : IEquatable<TLambdaSignature>
     {
+        static private readonly TTypeRef[] EMPTY_PARAMETER_TYPES = new TTypeRef[0];
+
         public readonly TTypeRef[] Parameters;
         public readonly TTypeRef ReturnType;
         
@@ -165,7 +167,7 @@ namespace Alice.Tweedle
 
         public TLambdaSignature(TTypeRef[] inParameters, TTypeRef inReturnType)
         {
-            Parameters = inParameters;
+            Parameters = inParameters ?? EMPTY_PARAMETER_TYPES;
             ReturnType = inReturnType;
 
             using(PooledStringBuilder psb = PooledStringBuilder.Alloc())

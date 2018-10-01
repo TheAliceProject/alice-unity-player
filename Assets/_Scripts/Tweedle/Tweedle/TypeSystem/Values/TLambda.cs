@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Alice.Tweedle.Interop;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -42,24 +45,31 @@ namespace Alice.Tweedle
 			return new ValueComputationStep("call", scope, arg => scope.Result);
 		}
 
-		// TODO(Alex): Remove, replace with some other mechanism
-		public VirtualMachine GetOwner()
+		public void QueueEvaluation(TValue[] inArguments)
 		{
-            return creationScope.vm;
+            ITweedleExpression[] argsAsExpressions = new ITweedleExpression[inArguments.Length];
+            for (int i = 0; i < argsAsExpressions.Length; ++i)
+                argsAsExpressions[i] = inArguments[i];
+            QueueEvaluation(argsAsExpressions);
         }
 
-		public LambdaEvaluation Evaluation(ITweedleExpression[] inArguments)
+		public AsyncReturn<TValue> QueueEvaluation(ITweedleExpression[] inArguments)
 		{
             TValue thisVal = ((TLambdaType)this.source.Type.Get()).Instantiate(this);
+            LambdaEvaluation eval;
 
             if (inArguments != null && inArguments.Length > 0)
             {
-                return new LambdaEvaluation(thisVal, inArguments);
+                eval = new LambdaEvaluation(thisVal, inArguments);
             }
 			else
 			{
-				return new LambdaEvaluation(thisVal);
+				eval = new LambdaEvaluation(thisVal);
 			}
-		}
-	}
+
+            var onComplete = eval.OnCompletion();
+            creationScope.vm.Queue(eval);
+            return onComplete;
+        }
+    }
 }

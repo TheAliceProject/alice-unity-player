@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Alice.Tweedle.Interop;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -7,8 +8,9 @@ namespace Alice.Tweedle
 	{
 		ITweedleExpression target;
 		ITweedleExpression[] arguments;
+        AsyncReturn<TValue> onComplete;
 
-		public ITweedleExpression[] Arguments
+        public ITweedleExpression[] Arguments
 		{
 			get { return arguments; }
 		}
@@ -24,6 +26,13 @@ namespace Alice.Tweedle
 			this.target = target;
 			this.arguments = arguments;
 		}
+
+		public AsyncReturn<TValue> OnCompletion()
+		{
+			if (onComplete == null)
+                onComplete = new AsyncReturn<TValue>();
+            return onComplete;
+        }
 
 		public override string ToTweedle()
 		{
@@ -46,8 +55,9 @@ namespace Alice.Tweedle
 			main.AddStep(new DelayedOperationStep(
 				"Invocation",
 				lambdaScope,
-				() => lambdaScope.QueueInvocationStep(main, arguments)));
-			return main;
+				() => lambdaScope.QueueInvocationStep(main, arguments, onComplete)));
+
+            return main;
 		}
 	}
 }

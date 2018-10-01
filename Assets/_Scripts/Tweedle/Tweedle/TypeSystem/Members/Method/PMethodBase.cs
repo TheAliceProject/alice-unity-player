@@ -101,7 +101,7 @@ namespace Alice.Tweedle
 
         protected void ReturnValue(InvocationScope inScope, object inValue)
         {
-            inScope.Return(TInterop.ToTValue(inValue, inScope.vm.Library));
+            inScope.Return(TInterop.ToTValue(inValue, inScope));
         }
 
         protected virtual object Invoke(object thisVal, object[] inCachedArgs)

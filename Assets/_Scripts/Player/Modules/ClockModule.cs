@@ -22,15 +22,19 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        static public void callOnDelay(TValue lambda, double delay)
+        static public void callOnDelay(PFunc<double, double, double> lambda, double delay)
         {
             if (delay <= 0)
             {
-                TInterop.QueueLambda(lambda.Lambda());
+                var res = lambda.Call(Time.time, Time.time);
+                res.OnReturn((d) =>
+                {
+                    UnityEngine.Debug.Log("[ClockModule] Got result back of " + d);
+                });
                 return;
             }
 
-            UnitySceneGraph.Instance.StartCoroutine(CallOnDelay(lambda.Lambda(), delay));
+            UnitySceneGraph.Instance.StartCoroutine(CallOnDelay(lambda, delay));
         }
 
         [PInteropMethod]
@@ -53,10 +57,15 @@ namespace Alice.Player.Modules
             inReturn.Return(inValue);
         }
 
-        static private IEnumerator CallOnDelay(TLambda lambda, double inDelay)
+        static private IEnumerator CallOnDelay(PFunc<double, double, double> lambda, double inDelay)
         {
+            double initialTime = Time.time;
             yield return new WaitForSeconds((float)inDelay);
-            TInterop.QueueLambda(lambda);
+            var res = lambda.Call(initialTime, Time.time);
+            res.OnReturn((d) =>
+            {
+                UnityEngine.Debug.Log("[ClockModule] Got result back of " + d);
+            });
         }
     }
 }

@@ -101,7 +101,7 @@ namespace Alice.Tweedle
 
         #region Implicit Conversions
 
-        public static implicit operator TType(TTypeRef inRef)
+        public static explicit operator TType(TTypeRef inRef)
         {
             return inRef?.Get();
         }

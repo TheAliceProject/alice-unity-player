@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Alice.Tweedle.Interop;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -17,9 +18,21 @@ namespace Alice.Tweedle
 			return base.InvocationStep(callStackEntry, arguments);
 		}
 
-		internal void QueueInvocationStep(StepSequence sequentialSteps, ITweedleExpression[] arguments)
+		internal void QueueInvocationStep(StepSequence sequentialSteps, ITweedleExpression[] arguments, AsyncReturn<TValue> returnVal)
 		{
 			lambda.AddInvocationSteps(this, sequentialSteps, arguments);
+			if (returnVal != null)
+			{
+				sequentialSteps.AddStep(new DelayedOperationStep(
+					"Lambda Completed",
+					this,
+					() =>
+					{
+						UnityEngine.Debug.Log(Result);
+						returnVal.Return(Result);
+					}
+				));
+			}
 		}
 	}
 }

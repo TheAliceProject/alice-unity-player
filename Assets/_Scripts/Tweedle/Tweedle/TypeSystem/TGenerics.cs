@@ -53,7 +53,7 @@ namespace Alice.Tweedle
             return arrayType;
         }
 
-        static private void UnloadArray(TType inElementType)
+        static private void UnloadArray(TTypeRef inElementType)
         {
             s_ArraySpecializationMap.Remove(inElementType.Name);
         }

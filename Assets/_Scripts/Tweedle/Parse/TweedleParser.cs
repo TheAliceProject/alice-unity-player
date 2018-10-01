@@ -270,7 +270,7 @@ namespace Alice.Tweedle.Parse
 
 				if (expectedType != null && expression != null && expression.Type != null
 					&& expectedType.IsResolved() && expression.Type.IsResolved()
-					&& !expression.Type.Get().CanCast(expectedType))
+					&& !expression.Type.Get().CanCast(expectedType.Get()))
 				{
 					throw new System.Exception("Had been expecting expression of type " + expectedType.Name + ", but it is typed as " + expression.Type.Name);
 				}
