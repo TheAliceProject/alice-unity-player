@@ -18,6 +18,7 @@ class Program {
 
     $Clock.callOnDelay(lambda: (DecimalNumber initial, DecimalNumber current) -> {
       $Debug.log(string: "This was called on a delay, starting at time " .. initial .. " and ending at time " .. current);
+      $Clock.delay(duration: 1);
       return (current - initial);
     }, delay: 2);
   }
