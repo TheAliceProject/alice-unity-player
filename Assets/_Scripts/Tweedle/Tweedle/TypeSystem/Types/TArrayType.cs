@@ -115,12 +115,12 @@ namespace Alice.Tweedle
 
         public TValue Instantiate(TValue[] inValues)
         {
-            return TValue.FromObject(this, new TArray(ElementType, inValues));
+            return TValue.FromObject(this, new TArray((TType)ElementType, inValues));
         }
 
         public TValue Instantiate(int inLength)
         {
-            return TValue.FromObject(this, new TArray(ElementType, inLength));
+            return TValue.FromObject(this, new TArray((TType)ElementType, inLength));
         }
 
         public override TValue DefaultValue()

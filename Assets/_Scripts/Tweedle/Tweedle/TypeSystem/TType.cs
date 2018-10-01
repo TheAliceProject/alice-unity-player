@@ -127,7 +127,7 @@ namespace Alice.Tweedle
 
             if (HasStaticConstructor())
             {
-                outAdditionalPrep = new StaticInstantiation(this.SelfRef);
+                outAdditionalPrep = new StaticInstantiation(this);
             }
             else
             {
@@ -183,7 +183,7 @@ namespace Alice.Tweedle
             {
                 if (type == inType)
                     return true;
-                type = type.SuperType;
+                type = (TType)type.SuperType;
             }
             return inType == TBuiltInTypes.ANY;
         }

@@ -16,8 +16,9 @@ class Program {
     WholeNumber[] arrayFromInterop <- $Debug.generateArray(start: 0, end: -150);
     $Debug.log(string: "Array from interop is " .. arrayFromInterop);
 
-    $Clock.callOnDelay(lambda: () -> {
-      $Debug.log(string: "This was called on a delay!");
+    $Clock.callOnDelay(lambda: (DecimalNumber initial, DecimalNumber current) -> {
+      $Debug.log(string: "This was called on a delay, starting at time " .. initial .. " and ending at time " .. current);
+      return (current - initial);
     }, delay: 2);
   }
 

@@ -22,9 +22,17 @@ namespace Alice.Tweedle.Interop
 
         // Additional types
         static private readonly Type TYPE_IASYNCRETURN = typeof(IAsyncReturn);
-        static private readonly Type TYPE_DELEGATE = typeof(Delegate); // TODO: Convert from lambdas to invokable delegates?
+        static private readonly Type TYPE_PLAMBDABASE = typeof(PLambdaBase);
+        static private readonly IntPtr TYPEPTR_PACTION = GetTypePtr<PAction>();
+
+        static private TLambdaSignature s_LambdaSignatureEmpty;
 
         #region To TValue
+
+        static public TValue ToTValue(object inObject, ExecutionScope inScope)
+        {
+            return ToTValue(inObject, inScope.vm.Library);
+        }
 
         static public TValue ToTValue(object inObject, TweedleSystem inLibrary)
         {
@@ -150,18 +158,12 @@ namespace Alice.Tweedle.Interop
 
         #region Lambdas
 
-        static public void QueueLambda(TLambda inLambda, params object[] inArguments)
+        static public PLambdaBase ConvertLambda(Type inType, TValue inLambda, ExecutionScope inScope)
         {
-            var vm = inLambda.GetOwner();
-            TweedleSystem system = vm.Library;
-            ITweedleExpression[] values = new ITweedleExpression[inArguments.Length];
-            for (int i = 0; i < values.Length; ++i)
-            {
-                values[i] = ToTValue(inArguments[i], system);
-            }
+            TLambdaType lambdaType = (TLambdaType)inLambda.Type;
+            TLambda lambda = inLambda.Lambda();
 
-            var eval = inLambda.Evaluation(values);
-            vm.Queue(eval);
+            return (PLambdaBase)Activator.CreateInstance(inType, lambda, inScope);
         }
 
         #endregion // Lambdas
@@ -188,6 +190,11 @@ namespace Alice.Tweedle.Interop
                     dstArr.SetValue(ToPObject(srcArr[i], elementType, inScope), i);
                     
                 return dstArr;
+            }
+
+            if (TYPE_PLAMBDABASE.IsAssignableFrom(inType))
+            {
+                return ConvertLambda(inType, inValue, inScope);
             }
 
             object obj = inValue.ToPObject();
@@ -238,6 +245,40 @@ namespace Alice.Tweedle.Interop
             else if (typePtr == TYPEPTR_TVALUE)
             {
                 return TBuiltInTypes.ANY;
+            }
+            else if (typePtr == TYPEPTR_PACTION)
+            {
+                // Get the empty lambda signature
+                if (s_LambdaSignatureEmpty == null)
+                {
+                    s_LambdaSignatureEmpty = new TLambdaSignature(new TTypeRef[0], TBuiltInTypes.VOID);
+                }
+                return TGenerics.GetLambdaType(s_LambdaSignatureEmpty, inAssembly);
+            }
+            else if (TYPE_PLAMBDABASE.IsAssignableFrom(inType))
+            {
+                TTypeRef[] parameterTypes = null;
+                TTypeRef returnType = TBuiltInTypes.VOID;
+
+                Type[] genericArguments = inType.GetGenericArguments();
+
+                // Func-type delegates have return types
+                if (inType.Name.StartsWith("PFunc", StringComparison.Ordinal))
+                {
+                    returnType = TTypeFor(genericArguments[0], inAssembly);
+                    parameterTypes = new TTypeRef[genericArguments.Length - 1];
+                    for (int i = 0; i < parameterTypes.Length; ++i)
+                        parameterTypes[i] = TTypeFor(genericArguments[1 + i], inAssembly);
+                }
+                else // Action-type delegates do not
+                {
+                    parameterTypes = new TTypeRef[genericArguments.Length];
+                    for (int i = 0; i < parameterTypes.Length; ++i)
+                        parameterTypes[i] = TTypeFor(genericArguments[i], inAssembly);
+                }
+
+                TLambdaSignature sig = new TLambdaSignature(parameterTypes, returnType);
+                return TGenerics.GetLambdaType(sig, inAssembly);
             }
             else
             {

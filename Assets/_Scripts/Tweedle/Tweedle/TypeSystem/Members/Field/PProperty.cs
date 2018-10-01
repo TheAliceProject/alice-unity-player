@@ -45,7 +45,7 @@ namespace Alice.Tweedle
                 retVal = m_PropertyInfo.GetValue(inValue.ToPObject());
             }
 
-            return TInterop.ToTValue(retVal, inScope.vm.Library);
+            return TInterop.ToTValue(retVal, inScope);
         }
 
         public override bool HasInitializer()

@@ -30,7 +30,7 @@ namespace Alice.Tweedle
         {
             if (!m_IsConverted)
             {
-                m_ConvertedValue = TInterop.ToTValue(m_Constant, inScope.vm.Library);
+                m_ConvertedValue = TInterop.ToTValue(m_Constant, inScope);
                 m_IsConverted = true;
             }
             return m_ConvertedValue;
