@@ -28,7 +28,6 @@ namespace Alice.Tweedle
 					this,
 					() =>
 					{
-						UnityEngine.Debug.Log(Result);
 						returnVal.Return(Result);
 					}
 				));

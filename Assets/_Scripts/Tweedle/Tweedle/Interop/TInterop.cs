@@ -321,7 +321,6 @@ namespace Alice.Tweedle.Interop
             var pFields = inType.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
             foreach(var pField in pFields)
             {
-                // UnityEngine.Debug.Log("Parsing field " + pField.Name);
                 if (PInteropFieldAttribute.IsDefined(pField))
                     tFields.Add(new PField(inAssembly, pField));
             }
