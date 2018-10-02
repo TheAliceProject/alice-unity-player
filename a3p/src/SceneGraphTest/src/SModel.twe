@@ -3,6 +3,31 @@ class SModel
   SModel(TextString resource) {
     this.entity <- $SceneGraph.createEntity(model: this, resource: resource);
     this.entity.bindPaintProperty(name: SGEntity.PAINT_PROPERTY_NAME, property: this.paint);
+    this.entity.bindSizeProperty(name: SGEntity.SIZE_PROPERTY_NAME, property: this.size);
+  }
+
+  Size getSize() {
+    return this.size.getValue();
+  }
+
+  void setSize(Size size, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
+  }
+
+  void setWidth(DecimalNumber width, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.size.animateWidth(width: width, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
+  }
+
+  void setHeight(DecimalNumber height, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.size.animateHeight(height: height, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
+  }
+
+  void setDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.size.animateDepth(depth: depth, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
   }
 
   Paint getPaint() {
@@ -15,5 +40,6 @@ class SModel
   }
 
   @CompletelyHidden SGEntity entity;
+  @CompletelyHidden SizeProperty size <- new SizeProperty(value: new Size(width: 1, height: 1, depth: 1));
   @CompletelyHidden PaintProperty paint <- new PaintProperty(value: Color.WHITE);
 } 

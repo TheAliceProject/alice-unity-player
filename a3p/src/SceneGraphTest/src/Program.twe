@@ -1,8 +1,7 @@
 class Program {
   Program() {
   }
-
-
+  
   static void main() {
     Program story <- new Program();
     story.execute();
@@ -12,12 +11,14 @@ class Program {
   	SBox box <- new SBox();
 
     doTogether {
-      box.setSize(size: new Size(width: 2, height: 1.5, depth: 0.5));
-      box.setPaint(paint: new Color(red: 1, green: 0, blue: 0), duration: 4.2);
+      box.setHeight(height: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME, animationStyle: AnimationStyle.BEGIN_ABRUPTLY_AND_END_GENTLY);
+      box.setPaint(paint: new Color(red: 1, green: 0, blue: 0), duration: 0.5);
     }
 
-    SSphere sphere <- new SSphere();
-    sphere.setRadius(radius: 0.1, duration: 0);
-    sphere.setRadius(radius: 2, duration: 10);
+    box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+
+    //SSphere sphere <- new SSphere();
+    //sphere.setRadius(radius: 0.1, duration: 0);
+    //sphere.setRadius(radius: 2, duration: 10);
   }
 }
