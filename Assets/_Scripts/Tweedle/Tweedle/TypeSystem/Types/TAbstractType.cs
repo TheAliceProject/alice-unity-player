@@ -94,7 +94,7 @@ namespace Alice.Tweedle
 
         public override bool IsValidIdentifier()
         {
-            return false;
+            return true;
         }
 
         public override int GetHashCode(ref TValue inValue)
