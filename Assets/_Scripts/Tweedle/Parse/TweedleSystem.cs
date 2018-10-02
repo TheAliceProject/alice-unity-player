@@ -45,6 +45,7 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(DebugModule)));
             
             AddType(TInterop.GenerateType(typeof(AnimationStyleEnum)));
+            AddType(TInterop.GenerateType(typeof(DimensionPolicyEnum)));
             AddType(TInterop.GenerateType(typeof(ClockModule)));
 
             // interop primitives

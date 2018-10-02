@@ -3,17 +3,5 @@ class SBox extends SShape
   SBox() 
   {
     super(resource: $SceneGraph.BOX);
-    this.entity.bindSizeProperty(name: SGEntity.SIZE_PROPERTY_NAME, property: this.size);
   }
-
-  Size getSize() {
-    return this.size.getValue();
-  }
-
-  void setSize(Size size, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
-  {
-    this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
-  }
-
-  @CompletelyHidden SizeProperty size <- new SizeProperty(value: new Size(width: 1, height: 1, depth: 1));
 } 
