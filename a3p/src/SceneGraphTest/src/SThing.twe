@@ -1,0 +1,89 @@
+class SThing {
+  SThing() {
+  }
+
+  /*
+  @CompletelyHidden VantagePoint getVantagePoint( SThing entity ) {
+    return this.getTransformation( target: entity );
+  }
+
+	@CompletelyHidden VantagePoint getTransformation( SThing asSeenBy ) {
+		return this.getSgComposite().getTransformation( asSeenBy: asSeenBy.getSgReferenceFrame() );
+	}
+
+	@CompletelyHidden Position getTranslation( SThing asSeenBy ) {
+		return this.getTransformation( asSeenBy: asSeenBy ).translation;
+	}
+
+	@CompletelyHidden Position getMinPoint( SThing asSeenBy ) {
+	  return this.getTranslation( asSeenBy: asSeenBy );
+	}
+
+	@CompletelyHidden Position getMaxPoint( SThing asSeenBy ) {
+	  return this.getTranslation( asSeenBy: asSeenBy );
+	}
+  
+  @CompletelyHidden SScene getScene() {
+    if ( this.getVehicle() == null ) {
+      return null;
+    } else {
+      return this.getVehicle().getScene();
+    }
+  }
+  */
+
+  @TuckedAway TextString getName() {
+    return this.name;
+  }
+
+  @TuckedAway void setName( TextString newName ) {
+    this.name <- newName;
+  }
+
+  void delay( Number duration ) {
+    $Clock.delay( duration: duration );
+  }
+
+  /*
+  void playAudio( AudioSource audioSource ) {
+    $Resource.playAudio( resource: audioSource );
+  }
+  
+
+  SThing getVehicle() {
+    return $SceneGraph.getVehicle( rider: this );
+  }
+  
+
+  Boolean isCollidingWith( SThing other ) {
+    // To be based on AabbCollisionDetector.doTheseCollide(). AABB may stand for AxisAlignedBoundingBox.
+    return $SceneGraph.doTheseCollide( targetA: this, targetB: other );
+  }
+
+  Boolean getBooleanFromUser( TextString message ) {
+    return $Dialog.getBooleanFromUser( message: message );
+  }
+
+  TextString getStringFromUser( TextString message ) {
+    return $Dialog.getStringFromUser( message: message );
+  }
+
+  DecimalNumber getDoubleFromUser( TextString message ) {
+    return $Dialog.getDoubleFromUser( message: message );
+  }
+
+  WholeNumber getIntegerFromUser( TextString message ) {
+    return $Dialog.getIntegerFromUser( message: message );
+  }
+  */
+
+  TextString toString() {
+    if( this.name != null ) {
+      return this.name;
+    } else {
+      return "unnamed ";// .. $System.getClassName( instance: this );
+    }
+  }
+
+  @CompletelyHidden TextString name;
+}

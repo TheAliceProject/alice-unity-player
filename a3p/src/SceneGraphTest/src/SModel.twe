@@ -1,4 +1,4 @@
-class SModel 
+class SModel extends SThing
 {
   SModel(TextString resource) {
     this.entity <- $SceneGraph.createEntity(model: this, resource: resource);

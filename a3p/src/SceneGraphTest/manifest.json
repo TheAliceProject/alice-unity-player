@@ -23,6 +23,11 @@
       "files": ["src/Default.twe"],
       "type": "Class"
     }, {
+      "id": "SThing",
+      "format": "tweedle",
+      "files": ["src/SThing.twe"],
+      "type": "Class"
+    }, {
       "id": "SModel",
       "format": "tweedle",
       "files": ["src/SModel.twe"],
