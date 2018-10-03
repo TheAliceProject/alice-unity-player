@@ -6,7 +6,7 @@ namespace Alice.Player.Primitives
 	[PInteropType]
 	public sealed class VantagePoint {
 
-		public Matrix4x4 Value = Matrix4x4.Identity;
+		public readonly Matrix4x4 Value = Matrix4x4.Identity;
 
 		public VantagePoint(Matrix4x4 inMatrix) {
 			Value = inMatrix;
@@ -36,12 +36,6 @@ namespace Alice.Player.Primitives
 			Value.Translation = translation.Value;
 		}
 
-		[PInteropConstructor]
-		public VantagePoint(VantagePoint clone) 
-		{
-			Value = clone.Value;
-		}
-
 		[PInteropMethod]
 		public bool equals(VantagePoint other) {
 			return Value == other.Value;
@@ -54,9 +48,9 @@ namespace Alice.Player.Primitives
 
 		[PInteropMethod]
 		public VantagePoint inverse() {
-			VantagePoint result = new VantagePoint();
-			Matrix4x4.Invert(Value, out result.Value);
-			return result;
+			Matrix4x4 result;
+			Matrix4x4.Invert(Value, out result);
+			return new VantagePoint(result);
 		}
 
 		[PInteropMethod]

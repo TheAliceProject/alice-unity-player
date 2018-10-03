@@ -16,6 +16,7 @@ namespace Alice.Player.Primitives
         public abstract bool equals(Paint other);
         public abstract Paint interpolatePortion(Paint end, double portion);
         #endregion //Interop Interfaces
+        
         public abstract PaintTypeID PaintType { get; }
         public abstract void Apply(UnityEngine.Material inMaterial);
 

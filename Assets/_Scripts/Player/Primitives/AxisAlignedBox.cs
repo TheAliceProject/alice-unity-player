@@ -28,13 +28,6 @@ namespace Alice.Player.Primitives
             MaxValue = maximum.Value;
         }
 
-        [PInteropConstructor]
-        public AxisAlignedBox(AxisAlignedBox clone)
-        {
-            MinValue = clone.MinValue;
-            MaxValue = clone.MaxValue;
-        }
-
         [PInteropMethod]
         public bool equals(AxisAlignedBox other) 
         {

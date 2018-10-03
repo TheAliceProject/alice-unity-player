@@ -19,12 +19,6 @@ namespace Alice.Player.Primitives
             Value = portion;
         }
 
-        [PInteropConstructor]
-        public Portion(Portion clone)
-        {
-            Value = clone.Value;
-        }
-
         [PInteropMethod]
         public bool equals(Portion other) {
             return Value == other;

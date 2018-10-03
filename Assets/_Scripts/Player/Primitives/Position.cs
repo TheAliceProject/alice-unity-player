@@ -32,12 +32,6 @@ namespace Alice.Player.Primitives
             Value = new Vector3(x, y, z);
         }
 
-        [PInteropConstructor]
-        public Position(Position clone)
-        {
-            Value = clone.Value;
-        }
-
         [PInteropMethod]
         public bool equals(Position other) 
         {
@@ -51,12 +45,12 @@ namespace Alice.Player.Primitives
  
         [PInteropMethod]
         public Position subtract(Direction other) {
-            return new Position(Value + other.Value);
+            return new Position(Value - other.Value);
         }
 
         [PInteropMethod]
         public Direction subtract(Position other) {
-            return new Direction(Value + other.Value);
+            return new Direction(Value - other.Value);
         }
 
         [PInteropMethod]

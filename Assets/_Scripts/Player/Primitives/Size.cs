@@ -28,12 +28,6 @@ namespace Alice.Player.Primitives
             Value = new Vector3(width, height, depth);
         }
 
-        [PInteropConstructor]
-        public Size(Size clone)
-        {
-            Value = clone.Value;
-        }
-
         [PInteropMethod]
         public bool equals(Size other) {
             return Value == other.Value;

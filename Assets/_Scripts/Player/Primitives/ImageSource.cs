@@ -22,13 +22,6 @@ namespace Alice.Player.Primitives
             Value = UnityEngine.Texture2D.whiteTexture;
         }
 
-        [PInteropConstructor]
-        public ImageSource(ImageSource clone)
-        {
-            // reference to same unity texture
-            Value = clone.Value;
-        }
-
         [PInteropMethod]
         public override bool equals(Paint other) 
         {
@@ -39,11 +32,11 @@ namespace Alice.Player.Primitives
         public override Paint interpolatePortion(Paint end, double portion) 
         {   
             if (end.PaintType == PaintTypeID.Color) {
-                return portion == 0 ? (Paint)new ImageSource(this) : new Color((Color)end);
+                return portion == 0 ? (Paint)this : end;
             }
 
             if (end.PaintType == PaintTypeID.ImageSource) {
-                return new ImageSource(portion == 0 ? this : (ImageSource)end);
+                return portion == 0 ? (Paint)this : end;
             }
 
             throw new TweedleRuntimeException("Could not interpolate paint type");

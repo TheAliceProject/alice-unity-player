@@ -43,12 +43,6 @@ namespace Alice.Player.Primitives
             this.Value = revolutions*rev2rad;
         }
 
-        [PInteropConstructor]
-        public Angle(Angle clone)
-        {
-            Value = clone.Value;
-        }
-
         [PInteropMethod]
         public bool equals(Angle other) 
         {
