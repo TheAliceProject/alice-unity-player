@@ -5,7 +5,7 @@ using Alice.Player.Primitives;
 
 namespace Alice.Player.Modules {
     [PInteropType]
-    public sealed class SGBox : SGEntity {
+    public sealed class SGBox : SGModel {
 
         private Transform m_BoxTransform;
 
@@ -22,14 +22,8 @@ namespace Alice.Player.Modules {
             Init(go.GetComponent<MeshRenderer>());
         }
 
-        protected override void Init(Renderer inRenderer) {
-            base.Init(inRenderer);
-            RegisterPropertyDelegate<Size>(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
-        }
-
-        private void OnSizePropertyChanged(PropertyBase<Size> inProperty) {
+        protected override void OnSizePropertyChanged(PropertyBase<Size> inProperty) {
             m_BoxTransform.localScale = inProperty.getValue();
-        }
-
+        }  
     }
 }

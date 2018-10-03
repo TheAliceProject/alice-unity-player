@@ -1,5 +1,6 @@
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
+using Alice.Player.Unity;
 
 namespace Alice.Player.Modules {
     [PInteropType("SceneGraph")]
@@ -21,14 +22,21 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static SGEntity createEntity(TValue model, string resource) {
+
+            SGEntity entity = null;
             switch (resource) {
                 case BOX:
-                    return SGEntity.Create<SGBox>(model, "BoxEntity");
+                    entity = SGEntity.Create<SGBox>(model, "BoxEntity");
+                    break;
                 case SPHERE:
-                    return SGEntity.Create<SGSphere>(model, "SphereEntity");
+                    entity = SGEntity.Create<SGSphere>(model, "SphereEntity");
+                    break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
             }
+
+            UnitySceneGraph.Current.AddEntity(entity);
+            return entity;
         }
     }
 }

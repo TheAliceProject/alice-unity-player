@@ -1,6 +1,7 @@
 using UnityEngine;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
+using Alice.Player.Unity;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using System;
@@ -14,11 +15,12 @@ namespace Alice.Player.Modules {
         public static T Create<T>(TValue owner, string inName = "SGEntity") where T : SGEntity {
             var go = new GameObject(inName);
             var entity = go.AddComponent<T>();
-            entity.m_Owner = owner;
+            entity.owner = owner;
             return entity;
         }
 
-        private TValue m_Owner;
+        public TValue owner { get; private set; }
+        private TValue m_Vehicle;
 
         private Dictionary<string, PropertyDelegateBinding> m_PropertyBindings = new Dictionary<string, PropertyDelegateBinding>();
         private Dictionary<string, object> m_Properties = new Dictionary<string, object>();
@@ -31,10 +33,20 @@ namespace Alice.Player.Modules {
         public const string POSITION_PROPERTY_NAME = "Position";
         [PInteropField]
         public const string ORIENTATION_PROPERTY_NAME = "Rotation";
-        [PInteropField]
-        public const string PAINT_PROPERTY_NAME = "Paint";
-        [PInteropField]
-        public const string SIZE_PROPERTY_NAME = "Size";
+
+        [PInteropMethod]
+        public void setVehicle(TValue vehicle) {
+            if (vehicle != m_Vehicle) {
+                m_Vehicle = vehicle;
+
+                var parentEntity = UnitySceneGraph.Current.FindEntity(vehicle);
+
+                Debug.Log(parentEntity);
+                transform.SetParent(parentEntity?.transform, true);
+            }
+        }
+            
+        
 
         [PInteropMethod]
         public void bindDecimalNumberProperty(string name, DecimalNumberProperty property) {
@@ -111,20 +123,9 @@ namespace Alice.Player.Modules {
             }
            
         }
+
+       
         #endregion
-
-        
-        protected virtual void Init(Renderer inRenderer) {
-            m_Renderer = inRenderer;
-            m_Material = new Material(inRenderer.material);
-            inRenderer.sharedMaterial = m_Material;
-
-            RegisterPropertyDelegate<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
-        }
-
-        protected virtual void OnDestroy() {
-            Destroy(m_Material);
-        }
 
         protected void RegisterPropertyDelegate<T>(string inName, PropertyBase<T>.ValueChangedDelegate inDelegate) {
             if (m_PropertyBindings.ContainsKey(inName)) {
@@ -162,9 +163,6 @@ namespace Alice.Player.Modules {
             }
         } 
 
-        private void OnPaintPropertyChanged(PropertyBase<Paint> inProperty) {
-            var paint = inProperty.getValue();
-            paint.Apply(m_Material);
-        }
+        
     }
 }
