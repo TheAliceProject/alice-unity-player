@@ -20,36 +20,36 @@ namespace Alice.Player.Primitives
         [PInteropField]
         public static readonly Color BLACK = new Color( 0, 0, 0 );
         [PInteropField]
-	    public static readonly Color BLUE = new Color( 0, 0, 1 );
+        public static readonly Color BLUE = new Color( 0, 0, 1 );
         [PInteropField]
-	    public static readonly Color CYAN = new Color( 0, 1, 1 );
+        public static readonly Color CYAN = new Color( 0, 1, 1 );
         [PInteropField]
-	    public static readonly Color DARK_GRAY = new Color( 64.0/255.0, 64.0/255.0, 64.0/255.0 );
+        public static readonly Color DARK_GRAY = new Color( 64.0/255.0, 64.0/255.0, 64.0/255.0 );
         [PInteropField]
-	    public static readonly Color GRAY = new Color( 128.0/255.0, 128.0/255.0, 128.0/255.0  );
+        public static readonly Color GRAY = new Color( 128.0/255.0, 128.0/255.0, 128.0/255.0  );
         [PInteropField]
-	    public static readonly Color GREEN = new Color( 0, 1, 0 );
+        public static readonly Color GREEN = new Color( 0, 1, 0 );
         [PInteropField]
-	    public static readonly Color LIGHT_GRAY = new Color( 192.0/255.0, 192.0/255.0, 192.0/255.0 );
+        public static readonly Color LIGHT_GRAY = new Color( 192.0/255.0, 192.0/255.0, 192.0/255.0 );
         [PInteropField]
-	    public static readonly Color MAGENTA = new Color( 1, 0, 1 );
+        public static readonly Color MAGENTA = new Color( 1, 0, 1 );
         [PInteropField]
-	    public static readonly Color ORANGE = new Color( 1, 200.0/255.0, 0 );
+        public static readonly Color ORANGE = new Color( 1, 200.0/255.0, 0 );
         [PInteropField]
-    	public static readonly Color PINK = new Color( 1, 175.0/255.0, 175.0/255.0 );
+        public static readonly Color PINK = new Color( 1, 175.0/255.0, 175.0/255.0 );
         [PInteropField]
-	    public static readonly Color RED = new Color( 1, 0, 0 );
+        public static readonly Color RED = new Color( 1, 0, 0 );
         [PInteropField]
-	    public static readonly Color WHITE = new Color( 1, 1, 1 );
+        public static readonly Color WHITE = new Color( 1, 1, 1 );
         [PInteropField]
-	    public static readonly Color YELLOW = new Color( 1, 1, 0 );
+        public static readonly Color YELLOW = new Color( 1, 1, 0 );
         [PInteropField]
-	    public static readonly Color LIGHT_BLUE = new Color( 149.0 / 255.0, 166.0 / 255.0, 216.0 / 255.0 );
+        public static readonly Color LIGHT_BLUE = new Color( 149.0 / 255.0, 166.0 / 255.0, 216.0 / 255.0 );
         [PInteropField]
-	    public static readonly Color DARK_BLUE = new Color( 0 / 255.0, 0 / 255.0, 150.0 / 255.0 );
+        public static readonly Color DARK_BLUE = new Color( 0 / 255.0, 0 / 255.0, 150.0 / 255.0 );
         [PInteropField]
-	    public static readonly Color PURPLE = new Color( 128.0 / 255.0, 0.0, 128.0 / 255.0 );
-	    [PInteropField]
+        public static readonly Color PURPLE = new Color( 128.0 / 255.0, 0.0, 128.0 / 255.0 );
+        [PInteropField]
         public static readonly Color BROWN = new Color( 162.0 / 255.0, 42.0 / 255.0, 42.0 / 255.0 );
 
         [PInteropField]
