@@ -5,7 +5,7 @@ using Alice.Player.Primitives;
 
 namespace Alice.Player.Modules {
     [PInteropType]
-    public sealed class SGSphere : SGEntity {
+    public sealed class SGSphere : SGModel {
 
         private Transform m_SphereTransform;
 
@@ -32,6 +32,10 @@ namespace Alice.Player.Modules {
         private void OnRadiusPropertyChanged(PropertyBase<double> inProperty) {
             float scale = ((float)inProperty.getValue())/0.5f;
             m_SphereTransform.localScale = new UnityEngine.Vector3(scale, scale, scale);
+        }
+
+        protected override void OnSizePropertyChanged(PropertyBase<Size> inProperty) {
+
         }
 
     }
