@@ -67,12 +67,6 @@ namespace Alice.Player.Primitives
             Value = new Color4(red, green, blue, 1);
         }
 
-        [PInteropConstructor]
-        public Color(Color clone)
-        {
-            Value = clone.Value;
-        }
-
         [PInteropMethod]
         public override bool equals(Paint other) 
         {
@@ -87,7 +81,7 @@ namespace Alice.Player.Primitives
             }
 
             if (end.PaintType == PaintTypeID.ImageSource) {
-                return portion == 0 ? (Paint)new Color(this) : new ImageSource((ImageSource)end);
+                return portion == 0 ? (Paint)this : end;
             }
 
             throw new TweedleRuntimeException("Could not interpolate paint type");

@@ -29,12 +29,6 @@ namespace Alice.Player.Primitives
             Value = Quaternion.CreateFromAxisAngle(direction.Value, angle.radians);
         }
 
-        [PInteropConstructor]
-        public Orientation(Orientation clone)
-        {
-            Value = clone.Value;
-        }
-
         [PInteropMethod]
         public bool equals(Orientation other) {
             return Value.Equals(other.Value);
