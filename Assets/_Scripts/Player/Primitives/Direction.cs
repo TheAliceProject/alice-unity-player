@@ -44,12 +44,6 @@ namespace Alice.Player.Primitives
             Value = new Vector3(x, y, z);
         }
 
-        [PInteropConstructor]
-        public Direction(Direction clone)
-        {
-            Value = clone.Value;
-        }
-       
         [PInteropMethod]
         public bool equals(Direction other) 
         {
