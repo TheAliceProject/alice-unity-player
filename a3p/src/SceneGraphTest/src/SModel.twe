@@ -2,8 +2,8 @@ class SModel extends SThing
 {
   SModel(TextString resource) {
     this.entity <- $SceneGraph.createEntity(model: this, resource: resource);
-    this.entity.bindPaintProperty(name: SGEntity.PAINT_PROPERTY_NAME, property: this.paint);
-    this.entity.bindSizeProperty(name: SGEntity.SIZE_PROPERTY_NAME, property: this.size);
+    this.entity.bindPaintProperty(name: SGModel.PAINT_PROPERTY_NAME, property: this.paint);
+    this.entity.bindSizeProperty(name: SGModel.SIZE_PROPERTY_NAME, property: this.size);
   }
 
   Size getSize() {
@@ -37,6 +37,10 @@ class SModel extends SThing
   void setPaint(Paint paint, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
   {
     this.paint.animateValue(endValue: paint, duration: duration, animationStyle: animationStyle);
+  }
+
+  void setVehicle(SThing vehicle) {
+    this.entity.setVehicle(vehicle: vehicle);
   }
 
   @CompletelyHidden SGEntity entity;
