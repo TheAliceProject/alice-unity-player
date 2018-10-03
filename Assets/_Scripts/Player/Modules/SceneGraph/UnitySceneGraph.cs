@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Alice.Player.Modules;
+using Alice.Tweedle;
 
 namespace Alice.Player.Unity {
     public sealed class UnitySceneGraph : MonoBehaviour {
@@ -18,8 +20,11 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public List<IPropertyTween> m_Tweens = new List<IPropertyTween>();
+        private List<IPropertyTween> m_Tweens = new List<IPropertyTween>();
+        private List<SGEntity> m_Entities = new List<SGEntity>();
+
         private bool m_IsUpdating;
+
 
         private void Awake() {
             if (!ReferenceEquals(s_Current, null) && !ReferenceEquals(s_Current, this)) {
@@ -53,6 +58,19 @@ namespace Alice.Player.Unity {
 
         public void QueueTween(IPropertyTween inTween) {
             m_Tweens.Add(inTween);
+        }
+
+        public void AddEntity(SGEntity inEntity) {
+            m_Entities.Add(inEntity);
+        }
+
+        public SGEntity FindEntity(TValue inOwner) {
+            for (int i = 0, count = m_Entities.Count; i < count; ++i) {
+                if (ReferenceEquals(m_Entities[i].owner.RawObject<object>(), inOwner.RawObject<object>())) {
+                    return m_Entities[i];
+                }
+            }
+            return null;
         }
 
     }
