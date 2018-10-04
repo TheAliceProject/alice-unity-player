@@ -2,10 +2,10 @@
 
 namespace Alice.Tweedle.File
 {
-	public class LibraryManifest : Manifest
+    public class LibraryManifest : Manifest
     {
-		public LibraryManifest(Manifest asset) : base(asset)
-		{
-		}
-	}
+        public LibraryManifest(Manifest asset) : base(asset)
+        {
+        }
+    }
 }

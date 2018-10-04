@@ -2,18 +2,18 @@
 
 namespace Alice.Tweedle
 {
-	public interface IValueHolderDeclaration
-	{
-		string Name { get; }
-		TTypeRef Type { get; }
+    public interface IValueHolderDeclaration
+    {
+        string Name { get; }
+        TTypeRef Type { get; }
         string ToTweedle();
-	}
+    }
 
-	static public class IValueHolderDeclarationExtensions
-	{
-		static public bool Accepts(this IValueHolderDeclaration inDecl, ExecutionScope inScope, TValue inValue)
-		{
-        	return inValue.Type.CanCast(inDecl.Type.Get(inScope));
-    	}
-	}
+    static public class IValueHolderDeclarationExtensions
+    {
+        static public bool Accepts(this IValueHolderDeclaration inDecl, ExecutionScope inScope, TValue inValue)
+        {
+            return inValue.Type.CanCast(inDecl.Type.Get(inScope));
+        }
+    }
 }

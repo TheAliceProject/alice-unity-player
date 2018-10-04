@@ -35,9 +35,9 @@ namespace Alice.Utils
         /// </summary>
         static public PooledSet<T> Alloc()
         {
-			if (s_ObjectPool.Count == 0) {
-				return new PooledSet<T>();
-			} 
+            if (s_ObjectPool.Count == 0) {
+                return new PooledSet<T>();
+            } 
 
             return s_ObjectPool.Pop();
         }

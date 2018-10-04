@@ -4,37 +4,37 @@ using Alice.Utils;
 
 namespace Alice.Tweedle
 {
-	public class Instantiation : TweedleExpression
-	{
+    public class Instantiation : TweedleExpression
+    {
         private readonly NamedArgument[] m_Arguments;
 
         public Instantiation(TTypeRef inType, NamedArgument[] inArguments)
-			: base(inType)
-		{
-			m_Arguments = inArguments;
-		}
+            : base(inType)
+        {
+            m_Arguments = inArguments;
+        }
 
-		public override ExecutionStep AsStep(ExecutionScope scope)
-		{
+        public override ExecutionStep AsStep(ExecutionScope scope)
+        {
             TType type = Type.Get(scope);
-			if (!type.CanInstantiate(scope))
-			{
+            if (!type.CanInstantiate(scope))
+            {
                 throw new TweedleRuntimeException("Cannot instantiate type " + type.Name + " in this context");
             }
 
             ConstructorScope ctrScope = scope.InstantiationScope(type);
-			return ctrScope.InvocationStep("Instantiation", m_Arguments);
-		}
+            return ctrScope.InvocationStep("Instantiation", m_Arguments);
+        }
 
-		public override string ToTweedle()
-		{
-			using(PooledStringBuilder pooledString = PooledStringBuilder.Alloc())
-			{
+        public override string ToTweedle()
+        {
+            using(PooledStringBuilder pooledString = PooledStringBuilder.Alloc())
+            {
                 pooledString.Builder.Append("new ").Append(m_TypeRef).Append('(');
                 for (int i = 0; i < m_Arguments.Length; ++i)
-				{
-					if (i > 0)
-					{
+                {
+                    if (i > 0)
+                    {
                         pooledString.Builder.Append(", ");
                     }
 
@@ -44,6 +44,6 @@ namespace Alice.Tweedle
 
                 return pooledString.ToString();
             }
-		}
-	}
+        }
+    }
 }

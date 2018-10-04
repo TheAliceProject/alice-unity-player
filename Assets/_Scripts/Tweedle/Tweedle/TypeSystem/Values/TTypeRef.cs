@@ -9,8 +9,8 @@ namespace Alice.Tweedle
     /// Reference to a TType.
     /// Can be linked directly or by name.
     /// </summary>
-	public sealed class TTypeRef : IEquatable<TTypeRef>, IEquatable<TType>
-	{
+    public sealed class TTypeRef : IEquatable<TTypeRef>, IEquatable<TType>
+    {
         /// <summary>
         /// Type name.
         /// </summary>
@@ -23,15 +23,15 @@ namespace Alice.Tweedle
         /// <summary>
         /// Unlinked type reference.
         /// </summary>
-		public TTypeRef(string inName)
-		{
+        public TTypeRef(string inName)
+        {
             Name = inName;
         }
 
         /// <summary>
         /// Linked type reference.
         /// </summary>
-		public TTypeRef(TType inType)
+        public TTypeRef(TType inType)
         {
             Name = inType.Name;
             m_Type = inType;

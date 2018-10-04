@@ -31,7 +31,7 @@ namespace Alice.Tweedle
 
         #region Conversions
 
-		public double ToDouble()
+        public double ToDouble()
         {
             return m_Type.ConvertToDouble(ref this);
         }
@@ -137,9 +137,9 @@ namespace Alice.Tweedle
 
         #endregion // ITweedleExpression
 
-		#region Misc
+        #region Misc
 
-		internal double RawNumber()
+        internal double RawNumber()
         {
             return m_NumberValue;
         }
@@ -149,16 +149,16 @@ namespace Alice.Tweedle
             return (T)m_ReferenceValue;
         }
 
-		public override int GetHashCode()
-		{
+        public override int GetHashCode()
+        {
             return 17 * m_Type.GetHashCode(ref this) + m_Type.GetHashCode();
         }
 
-		public int CompareTo(TValue other)
+        public int CompareTo(TValue other)
         {
             if (m_Type.LessThan(ref this, ref other))
                 return -1;
-			if (m_Type.Equals(ref this, ref other))
+            if (m_Type.Equals(ref this, ref other))
                 return 0;
             return 1;
         }
