@@ -13,8 +13,8 @@ namespace Alice.Tweedle
     {
         private ConstructorInfo m_Constructor;
 
-        public PConstructor(ConstructorInfo inMethod)
-            : base(inMethod, inMethod.DeclaringType, MemberFlags.Constructor)
+        public PConstructor(TAssembly inAssembly, ConstructorInfo inMethod)
+            : base(inAssembly, inMethod, inMethod.DeclaringType, MemberFlags.Constructor)
         {
             m_Constructor = inMethod;
         }

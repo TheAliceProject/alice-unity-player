@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Alice.Tweedle.Interop
 {
     public interface IAsyncReturn
     {
+        bool HasReturned { get; }
         void Return(object inResult);
         void OnReturn(Action<object> inCallback);
     }
@@ -14,6 +13,11 @@ namespace Alice.Tweedle.Interop
     {
         private Action<object> m_Callback;
         private bool m_Returned;
+
+        public bool HasReturned
+        {
+            get { return m_Returned; }
+        }
 
         public void Return()
         {
@@ -31,7 +35,15 @@ namespace Alice.Tweedle.Interop
             Return();
         }
 
-        public void OnReturn(Action<object> inCallback)
+        public void OnReturn(Action inCallback)
+        {
+            if (m_Returned)
+                inCallback();
+            else
+                m_Callback += (o) => inCallback();
+        }
+
+        void IAsyncReturn.OnReturn(Action<object> inCallback)
         {
             if (m_Returned)
                 inCallback(null);
@@ -42,9 +54,14 @@ namespace Alice.Tweedle.Interop
 
     public sealed class AsyncReturn<T> : IAsyncReturn
     {
-        private Action<object> m_Callback;
+        private Action<T> m_Callback;
         private bool m_Returned;
         private T m_Result;
+
+        public bool HasReturned
+        {
+            get { return m_Returned; }
+        }
 
         void IAsyncReturn.Return(object inObject)
         {
@@ -63,12 +80,20 @@ namespace Alice.Tweedle.Interop
             m_Callback?.Invoke(inValue);
         }
 
-        public void OnReturn(Action<object> inCallback)
+        public void OnReturn(Action<T> inCallback)
         {
             if (m_Returned)
                 inCallback(m_Result);
             else
                 m_Callback += inCallback;
+        }
+
+        void IAsyncReturn.OnReturn(Action<object> inCallback)
+        {
+            if (m_Returned)
+                inCallback(m_Result);
+            else
+                m_Callback += (val) => inCallback(val);
         }
     }
 }

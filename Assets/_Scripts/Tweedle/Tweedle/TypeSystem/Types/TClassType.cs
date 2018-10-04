@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -7,14 +8,14 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TClassType : TTypeWithMembers
     {
-        public TClassType(string inName, TField[] inFields, TMethod[] inMethods, TMethod[] inConstructors)
-            : base(inName)
+        public TClassType(TAssembly inAssembly, string inName, TField[] inFields, TMethod[] inMethods, TMethod[] inConstructors)
+            : base(inAssembly, inName)
         {
             AssignMembers(inFields, inMethods, inConstructors);
         }
 
-        public TClassType(string inName, string inSuperType, TField[] inFields, TMethod[] inMethods, TMethod[] inConstructors)
-            : base(inName, inSuperType)
+        public TClassType(TAssembly inAssembly, string inName, string inSuperType, TField[] inFields, TMethod[] inMethods, TMethod[] inConstructors)
+            : base(inAssembly, inName, inSuperType)
         {
             AssignMembers(inFields, inMethods, inConstructors);
         }
@@ -87,6 +88,11 @@ namespace Alice.Tweedle
         public override object ConvertToPObject(ref TValue inValue)
         {
             return inValue;
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(TValue);
         }
 
         #endregion // Conversion Semantics

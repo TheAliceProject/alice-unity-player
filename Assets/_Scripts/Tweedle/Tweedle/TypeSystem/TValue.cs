@@ -31,7 +31,7 @@ namespace Alice.Tweedle
 
         #region Conversions
 
-		public double ToDouble()
+        public double ToDouble()
         {
             return m_Type.ConvertToDouble(ref this);
         }
@@ -137,9 +137,9 @@ namespace Alice.Tweedle
 
         #endregion // ITweedleExpression
 
-		#region Misc
+        #region Misc
 
-		internal double RawNumber()
+        internal double RawNumber()
         {
             return m_NumberValue;
         }
@@ -149,16 +149,16 @@ namespace Alice.Tweedle
             return (T)m_ReferenceValue;
         }
 
-		public override int GetHashCode()
-		{
+        public override int GetHashCode()
+        {
             return 17 * m_Type.GetHashCode(ref this) + m_Type.GetHashCode();
         }
 
-		public int CompareTo(TValue other)
+        public int CompareTo(TValue other)
         {
             if (m_Type.LessThan(ref this, ref other))
                 return -1;
-			if (m_Type.Equals(ref this, ref other))
+            if (m_Type.Equals(ref this, ref other))
                 return 0;
             return 1;
         }
@@ -204,7 +204,7 @@ namespace Alice.Tweedle
         /// <summary>
         /// Null value.
         /// </summary>
-        static public readonly TValue NULL = new TValue(TStaticTypes.NULL);
+        static public readonly TValue NULL = new TValue(TBuiltInTypes.NULL);
 
         /// <summary>
         /// True constant.
@@ -225,7 +225,7 @@ namespace Alice.Tweedle
         /// </summary>
         static public TValue FromInt(int inInt)
         {
-            return new TValue(TStaticTypes.WHOLE_NUMBER, (double)inInt, null);
+            return new TValue(TBuiltInTypes.WHOLE_NUMBER, (double)inInt, null);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Alice.Tweedle
         /// </summary>
         static public TValue FromNumber(double inNumber)
         {
-            return new TValue(TStaticTypes.DECIMAL_NUMBER, inNumber, null);
+            return new TValue(TBuiltInTypes.DECIMAL_NUMBER, inNumber, null);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace Alice.Tweedle
         /// </summary>
         static public TValue FromBoolean(bool inbBoolean)
         {
-            return new TValue(TStaticTypes.BOOLEAN, inbBoolean ? 1 : 0, null);
+            return new TValue(TBuiltInTypes.BOOLEAN, inbBoolean ? 1 : 0, null);
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace Alice.Tweedle
         /// </summary>
         static public TValue FromString(string inString)
         {
-            return new TValue(TStaticTypes.TEXT_STRING, double.NaN, inString);
+            return new TValue(TBuiltInTypes.TEXT_STRING, double.NaN, inString);
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace Alice.Tweedle
         /// </summary>
         static public TValue FromType(TTypeRef inType)
         {
-            return new TValue(TStaticTypes.TYPE_REF, double.NaN, inType);
+            return new TValue(TBuiltInTypes.TYPE_REF, double.NaN, inType);
         }
 
         /// <summary>

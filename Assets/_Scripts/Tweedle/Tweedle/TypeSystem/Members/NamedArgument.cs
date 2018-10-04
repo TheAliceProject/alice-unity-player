@@ -5,8 +5,8 @@ namespace Alice.Tweedle
     /// <summary>
     /// Key-value pair of name to argument.
     /// </summary>
-	public struct NamedArgument
-	{
+    public struct NamedArgument
+    {
         public readonly string Name;
         public readonly ITweedleExpression Argument;
 

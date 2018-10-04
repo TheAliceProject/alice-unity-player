@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -9,14 +10,14 @@ namespace Alice.Tweedle
     {
         private TValue m_Default;
 
-        public TDecimalNumberType(TType inBase)
-            : base("DecimalNumber", inBase)
+        public TDecimalNumberType(TAssembly inAssembly, TType inBase)
+            : base(inAssembly, "DecimalNumber", inBase)
         {
         }
 
-        protected override void LinkImpl(Parse.TweedleSystem inSystem)
+        protected override void LinkImpl(TAssemblyLinkContext inContext)
         {
-            base.LinkImpl(inSystem);
+            base.LinkImpl(inContext);
 
             m_Default = TValue.FromNumber(double.NaN);
         }
@@ -25,20 +26,17 @@ namespace Alice.Tweedle
 
         public override TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Field");
         }
 
         public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Method");
         }
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
@@ -54,7 +52,7 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValA);
 
-            if (inValB.Type == TStaticTypes.WHOLE_NUMBER)
+            if (inValB.Type == TBuiltInTypes.WHOLE_NUMBER)
             {
                 return ConvertToDouble(ref inValA) == inValB.ToDouble();
             }
@@ -67,7 +65,7 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValA);
 
-            if (inValB.Type == TStaticTypes.WHOLE_NUMBER)
+            if (inValB.Type == TBuiltInTypes.WHOLE_NUMBER)
             {
                 return ConvertToDouble(ref inValA) < inValB.ToDouble();
             }
@@ -119,6 +117,11 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValue);
             return (object)(inValue.RawNumber());
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(double);
         }
 
         #endregion // Conversion Semantics

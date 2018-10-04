@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -7,8 +8,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TBooleanType : TType
     {
-        public TBooleanType()
-            : base("Boolean")
+        public TBooleanType(TAssembly inAssembly)
+            : base(inAssembly, "Boolean")
         {
         }
 
@@ -16,20 +17,17 @@ namespace Alice.Tweedle
 
         public override TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Field");
         }
 
         public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Method");
         }
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
@@ -99,6 +97,11 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValue);
             return (object)(inValue.RawNumber() != 0 ? true : false);
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(bool);
         }
 
         #endregion // Conversion Semantics

@@ -2,19 +2,19 @@
 
 namespace Alice.Tweedle
 {
-	public class Comment : TweedleStatement
-	{
-		string text;
+    public class Comment : TweedleStatement
+    {
+        string text;
 
-		public Comment(string text)
-		{
-			this.text = text;
-			Disable();
-		}
+        public Comment(string text)
+        {
+            this.text = text;
+            Disable();
+        }
 
-		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
-		{
-			return null;
-		}
-	}
+        internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
+        {
+            return null;
+        }
+    }
 }

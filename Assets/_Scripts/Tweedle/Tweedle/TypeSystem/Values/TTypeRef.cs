@@ -9,8 +9,8 @@ namespace Alice.Tweedle
     /// Reference to a TType.
     /// Can be linked directly or by name.
     /// </summary>
-	public sealed class TTypeRef : IEquatable<TTypeRef>, IEquatable<TType>
-	{
+    public sealed class TTypeRef : IEquatable<TTypeRef>, IEquatable<TType>
+    {
         /// <summary>
         /// Type name.
         /// </summary>
@@ -23,15 +23,15 @@ namespace Alice.Tweedle
         /// <summary>
         /// Unlinked type reference.
         /// </summary>
-		public TTypeRef(string inName)
-		{
+        public TTypeRef(string inName)
+        {
             Name = inName;
         }
 
         /// <summary>
         /// Linked type reference.
         /// </summary>
-		public TTypeRef(TType inType)
+        public TTypeRef(TType inType)
         {
             Name = inType.Name;
             m_Type = inType;
@@ -76,11 +76,11 @@ namespace Alice.Tweedle
         /// If unlinked, links this reference to its type and outputs the type.
         /// Returns if the reference had been unlinked.
         /// </summary>
-        public bool Resolve(TweedleSystem inSystem, out TType outType)
+        public bool Resolve(TAssemblyLinkContext inContext, out TType outType)
         {
             if (m_Type == null)
             {
-                m_Type = outType = inSystem.TypeNamed(Name);
+                m_Type = outType = inContext.TypeNamed(Name);
                 if (outType == null)
                     throw new TweedleLinkException("Unable to link " + Name + " - type not found");
                 return true;
@@ -93,15 +93,15 @@ namespace Alice.Tweedle
         /// If unlinked, links the reference to its type.
         /// Returns if the reference had been unlinked.
         /// </summary>
-        public bool Resolve(TweedleSystem inSystem)
+        public bool Resolve(TAssemblyLinkContext inContext)
         {
             TType unused;
-            return Resolve(inSystem, out unused);
+            return Resolve(inContext, out unused);
         }
 
         #region Implicit Conversions
 
-        public static implicit operator TType(TTypeRef inRef)
+        public static explicit operator TType(TTypeRef inRef)
         {
             return inRef?.Get();
         }

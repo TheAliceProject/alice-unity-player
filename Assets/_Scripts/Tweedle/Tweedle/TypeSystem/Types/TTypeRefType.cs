@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -7,8 +8,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TTypeRefType : TType
     {
-        public TTypeRefType()
-            : base("TypeRef")
+        public TTypeRefType(TAssembly inAssembly)
+            : base(inAssembly, "TypeRef")
         {
         }
 
@@ -40,8 +41,7 @@ namespace Alice.Tweedle
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
@@ -55,8 +55,7 @@ namespace Alice.Tweedle
 
         public override TValue Instantiate()
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "Instantiate");
         }
 
         public TValue Instantiate(string inTypeName)
@@ -76,8 +75,7 @@ namespace Alice.Tweedle
 
         public override TValue DefaultValue()
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "DefaultValue");
         }
 
         #endregion // Lifecycle
@@ -103,6 +101,11 @@ namespace Alice.Tweedle
         public override object ConvertToPObject(ref TValue inValue)
         {
             return inValue.TypeRef();
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(TTypeRef);
         }
 
         #endregion // Conversion Semantics
