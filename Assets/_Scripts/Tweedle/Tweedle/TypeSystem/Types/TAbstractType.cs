@@ -84,11 +84,6 @@ namespace Alice.Tweedle
 
         #region Misc
 
-        public override bool IsValidIdentifier()
-        {
-            return false;
-        }
-
         public override int GetHashCode(ref TValue inValue)
         {
             throw new TweedleUnsupportedException(this, "GetHashCode");
