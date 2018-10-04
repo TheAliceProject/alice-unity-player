@@ -6,13 +6,13 @@
 
         private TParameter(TTypeRef inType, string inName)
             : base(inType, inName)
-		{
+        {
             Required = true;
         }
 
         private TParameter(TTypeRef inType, string inName, ITweedleExpression inInitializer)
             : base(inType, inName, inInitializer)
-		{
+        {
             Required = false;
         }
 

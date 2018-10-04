@@ -1,21 +1,21 @@
 ﻿namespace Alice.Tweedle
 {
-	class LogicalAndExpression : BinaryExpression
-	{
+    class LogicalAndExpression : BinaryExpression
+    {
 
-		public LogicalAndExpression(ITweedleExpression lhs, ITweedleExpression rhs)
-			: base(lhs, rhs, TBuiltInTypes.BOOLEAN)
-		{
-		}
+        public LogicalAndExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+            : base(lhs, rhs, TBuiltInTypes.BOOLEAN)
+        {
+        }
 
-		protected override TValue Evaluate(TValue left, TValue right)
-		{
-			return TBuiltInTypes.BOOLEAN.Instantiate(left.ToBoolean() && right.ToBoolean());
-		}
+        protected override TValue Evaluate(TValue left, TValue right)
+        {
+            return TBuiltInTypes.BOOLEAN.Instantiate(left.ToBoolean() && right.ToBoolean());
+        }
 
-		internal override string Operator()
-		{
-			return "&&";
-		}
-	}
+        internal override string Operator()
+        {
+            return "&&";
+        }
+    }
 }

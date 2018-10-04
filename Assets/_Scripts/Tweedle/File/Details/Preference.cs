@@ -2,10 +2,10 @@
 
 namespace Alice.Tweedle.File
 {
-	[System.Serializable]
-	public class Preference
-	{
-		public string name;
-		//public List<StatementDescription> value; // TODO
-	}
+    [System.Serializable]
+    public class Preference
+    {
+        public string name;
+        //public List<StatementDescription> value; // TODO
+    }
 }

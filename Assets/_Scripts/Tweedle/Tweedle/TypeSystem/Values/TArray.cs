@@ -7,24 +7,24 @@ namespace Alice.Tweedle
     /// <summary>
     /// Fixed-length array of values.
     /// </summary>
-	public sealed class TArray : IEnumerable<TValue>
-	{
+    public sealed class TArray : IEnumerable<TValue>
+    {
         private ValueHolder[] m_ValueHolders;
 
         /// <summary>
         /// Number of elements in the array.
         /// </summary>
         public int Length
-		{
-			get { return m_ValueHolders.Length; }
-		}
+        {
+            get { return m_ValueHolders.Length; }
+        }
 
         /// <summary>
         /// Gets/sets the value at the given index.
         /// </summary>
-		public TValue this[int i]
-		{
-			get { return m_ValueHolders[i].Value; }
+        public TValue this[int i]
+        {
+            get { return m_ValueHolders[i].Value; }
             set { m_ValueHolders[i].Value = value; }
         }
 
@@ -32,15 +32,15 @@ namespace Alice.Tweedle
         /// Creates a new array with the given element type
         /// and copies values from the given list.
         /// </summary>
-		public TArray(TType inElementType, List<TValue> inValues)
-		{
+        public TArray(TType inElementType, List<TValue> inValues)
+        {
             m_ValueHolders = new ValueHolder[inValues.Count];
             for (int i = 0; i < m_ValueHolders.Length; ++i)
-			{
+            {
                 ValueHolder holder = new ValueHolder(inElementType, inValues[i]);
                 m_ValueHolders[i] = holder;
             }
-		}
+        }
 
         /// <summary>
         /// Creates a new array with the given element type
@@ -50,7 +50,7 @@ namespace Alice.Tweedle
         {
             m_ValueHolders = new ValueHolder[inValues.Length];
             for (int i = 0; i < m_ValueHolders.Length; ++i)
-			{
+            {
                 ValueHolder holder = new ValueHolder(inElementType, inValues[i]);
                 m_ValueHolders[i] = holder;
             }
@@ -70,7 +70,7 @@ namespace Alice.Tweedle
             }
         }
 
-		#region IEnumerable
+        #region IEnumerable
 
         public IEnumerator<TValue> GetEnumerator()
         {
@@ -83,7 +83,7 @@ namespace Alice.Tweedle
             return (IEnumerator)this.GetEnumerator();
         }
 
-		#endregion // IEnumerable
+        #endregion // IEnumerable
 
         public override string ToString()
         {
