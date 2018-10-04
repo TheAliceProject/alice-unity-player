@@ -70,8 +70,7 @@ namespace Alice.Tweedle
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleRuntimeException("Array constructors are implemented through ArrayInitializer");
         }
 
         public override bool IsReferenceType()

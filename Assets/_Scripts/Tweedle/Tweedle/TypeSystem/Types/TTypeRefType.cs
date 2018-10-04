@@ -41,8 +41,7 @@ namespace Alice.Tweedle
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
@@ -56,8 +55,7 @@ namespace Alice.Tweedle
 
         public override TValue Instantiate()
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "Instantiate");
         }
 
         public TValue Instantiate(string inTypeName)
@@ -77,8 +75,7 @@ namespace Alice.Tweedle
 
         public override TValue DefaultValue()
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "DefaultValue");
         }
 
         #endregion // Lifecycle

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle.Interop
@@ -28,7 +25,7 @@ namespace Alice.Tweedle.Interop
         {
             ITweedleExpression[] argsAsExpressions = BuildLambdaArgs(m_Scope, inArgs);
             var lambdaRes = m_Lambda.QueueEvaluation(argsAsExpressions);
-            
+
             AsyncReturn returnVal = new AsyncReturn();
             lambdaRes.OnReturn((tv) => returnVal.Return());
             return returnVal;
@@ -38,9 +35,9 @@ namespace Alice.Tweedle.Interop
         {
             ITweedleExpression[] argsAsExpressions = BuildLambdaArgs(m_Scope, inArgs);
             var lambdaRes = m_Lambda.QueueEvaluation(argsAsExpressions);
-            
+
             AsyncReturn<T> returnVal = new AsyncReturn<T>();
-            lambdaRes.OnReturn((tv) => returnVal.Return((T)TInterop.ToPObject(tv, typeof(T), m_Scope)));
+            lambdaRes.OnReturn((tv) => returnVal.Return((T) TInterop.ToPObject(tv, typeof(T), m_Scope)));
             return returnVal;
         }
     }
@@ -111,7 +108,7 @@ namespace Alice.Tweedle.Interop
             return InvokeNoReturnType(inArg1, inArg2, inArg3, inArg4);
         }
     }
-    
+
     #endregion // PAction (no return type)
 
     #region PFunc (return type)

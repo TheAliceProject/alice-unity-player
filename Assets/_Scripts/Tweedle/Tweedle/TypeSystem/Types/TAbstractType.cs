@@ -21,20 +21,17 @@ namespace Alice.Tweedle
 
         public override TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Field");
         }
 
         public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Method");
         }
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
@@ -48,14 +45,12 @@ namespace Alice.Tweedle
 
         public override bool Equals(ref TValue inValA, ref TValue inValB)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "Equals");
         }
 
         public override bool LessThan(ref TValue inValA, ref TValue inValB)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "LessThan");
         }
 
         #endregion // Comparison Semantics
@@ -64,14 +59,12 @@ namespace Alice.Tweedle
 
         public override TValue Instantiate()
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "Instantiate");
         }
 
         public override TValue DefaultValue()
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "DefaultValue");
         }
 
         #endregion // Lifecycle
@@ -80,8 +73,7 @@ namespace Alice.Tweedle
 
         public override bool CanCast(TType inType)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "CanCast");
         }
 
         #endregion // Tweedle Casting
@@ -99,8 +91,7 @@ namespace Alice.Tweedle
 
         public override int GetHashCode(ref TValue inValue)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleUnsupportedException(this, "GetHashCode");
         }
 
         #endregion // Misc

@@ -156,22 +156,8 @@ namespace Alice.Tweedle.Interop
 
         #endregion // To TValue
 
-        #region Lambdas
-
-        static public PLambdaBase ConvertLambda(Type inType, TValue inLambda, ExecutionScope inScope)
-        {
-            TLambdaType lambdaType = (TLambdaType)inLambda.Type;
-            TLambda lambda = inLambda.Lambda();
-
-            return (PLambdaBase)Activator.CreateInstance(inType, lambda, inScope);
-        }
-
-        #endregion // Lambdas
-
         #region To PObject
 
-        // NOTE: Scope is not used yet, but it could potentially be used to convert lambdas to invokable C# delegates.
-        // ExecutionScope would provide the VM and thus the means to queue the LambdaEvaluation
         static public object ToPObject(TValue inValue, Type inType, ExecutionScope inScope)
         {
             IntPtr typePtr = inType.TypeHandle.Value;
@@ -194,7 +180,8 @@ namespace Alice.Tweedle.Interop
 
             if (TYPE_PLAMBDABASE.IsAssignableFrom(inType))
             {
-                return ConvertLambda(inType, inValue, inScope);
+                TLambda lambda = inValue.Lambda();
+                return (PLambdaBase)Activator.CreateInstance(inType, lambda, inScope);
             }
 
             object obj = inValue.ToPObject();
