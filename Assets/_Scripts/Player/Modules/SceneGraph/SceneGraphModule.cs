@@ -21,7 +21,7 @@ namespace Alice.Player.Modules {
         public const string TORUS = "Internal/Torus";
 
         [PInteropMethod]
-        public static SGEntity createEntity(TValue model, string resource) {
+        public static void createEntity(TValue model, string resource) {
 
             SGEntity entity = null;
             switch (resource) {
@@ -36,7 +36,32 @@ namespace Alice.Player.Modules {
             }
 
             UnitySceneGraph.Current.AddEntity(entity);
-            return entity;
+        }
+
+        [PInteropMethod]
+        public static void bindPaintProperty(TValue owner, TValue property, TValue value) {
+            UnitySceneGraph.Current.BindProperty(SGModel.PAINT_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindSizeProperty(TValue owner, TValue property, TValue value) {
+            UnitySceneGraph.Current.BindProperty(SGModel.SIZE_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindRadiusProperty(TValue owner, TValue property, TValue value) {
+            UnitySceneGraph.Current.BindProperty(SGSphere.RADIUS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindOpacityProperty(TValue owner, TValue property, TValue value) {
+            UnitySceneGraph.Current.BindProperty("Opacity", owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void updateProperty(TValue owner, TValue property, TValue value) {
+            UnityEngine.Debug.LogFormat("Update {0} to ({1})", property.Type.Name, value);
+            UnitySceneGraph.Current.UpdateProperty(owner, property, value);
         }
     }
 }

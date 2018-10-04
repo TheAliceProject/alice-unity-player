@@ -8,7 +8,6 @@ using System.Collections.Generic;
 
 namespace Alice.Player.Modules {
     
-    [PInteropType]
     public abstract class SGModel : SGEntity {
 
         private Renderer m_Renderer;
@@ -36,10 +35,10 @@ namespace Alice.Player.Modules {
             Destroy(m_Material);
         }
 
-        protected abstract void OnSizePropertyChanged(PropertyBase<Size> inProperty);
+        protected abstract void OnSizePropertyChanged(TValue inValue);
 
-        private void OnPaintPropertyChanged(PropertyBase<Paint> inProperty) {
-            var paint = inProperty.getValue();
+        private void OnPaintPropertyChanged(TValue inValue) {
+            var paint = inValue.RawObject<Paint>();
             paint.Apply(m_Material);
         }
     }

@@ -4,7 +4,6 @@ using Alice.Tweedle;
 using Alice.Player.Primitives;
 
 namespace Alice.Player.Modules {
-    [PInteropType]
     public sealed class SGBox : SGModel {
 
         private Transform m_BoxTransform;
@@ -22,8 +21,9 @@ namespace Alice.Player.Modules {
             Init(go.GetComponent<MeshRenderer>());
         }
 
-        protected override void OnSizePropertyChanged(PropertyBase<Size> inProperty) {
-            m_BoxTransform.localScale = inProperty.getValue();
+        protected override void OnSizePropertyChanged(TValue inValue) {
+            var size = inValue.RawObject<Size>();
+            m_BoxTransform.localScale = size;
         }  
     }
 }

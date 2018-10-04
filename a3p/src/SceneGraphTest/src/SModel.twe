@@ -1,9 +1,9 @@
 class SModel extends SThing
 {
   SModel(TextString resource) {
-    this.entity <- $SceneGraph.createEntity(model: this, resource: resource);
-    this.entity.bindPaintProperty(name: SGModel.PAINT_PROPERTY_NAME, property: this.paint);
-    this.entity.bindSizeProperty(name: SGModel.SIZE_PROPERTY_NAME, property: this.size);
+    $SceneGraph.createEntity(model: this, resource: resource);
+    $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());
+    $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.size.getValue());
   }
 
   Size getSize() {
@@ -15,6 +15,7 @@ class SModel extends SThing
     this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
   }
 
+/*
   void setWidth(DecimalNumber width, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
   {
     this.size.animateWidth(width: width, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
@@ -29,6 +30,7 @@ class SModel extends SThing
   {
     this.size.animateDepth(depth: depth, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
   }
+  */
 
   Paint getPaint() {
     return this.paint.getValue();
@@ -40,10 +42,9 @@ class SModel extends SThing
   }
 
   void setVehicle(SThing vehicle) {
-    this.entity.setVehicle(vehicle: vehicle);
+    
   }
 
-  @CompletelyHidden SGEntity entity;
-  @CompletelyHidden SizeProperty size <- new SizeProperty(value: new Size(width: 1, height: 1, depth: 1));
-  @CompletelyHidden PaintProperty paint <- new PaintProperty(value: Color.WHITE);
+  @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
+  @CompletelyHidden PaintProperty paint <- new PaintProperty(owner: this, value: Color.WHITE);
 } 

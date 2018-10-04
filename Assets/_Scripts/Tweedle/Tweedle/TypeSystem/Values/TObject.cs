@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Alice.Tweedle.VM;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
@@ -73,6 +74,23 @@ namespace Alice.Tweedle
             }
         }
 
+        /// <summary>
+		/// Sets the value for the given field.
+		/// </summary>
+		public void Set(string inFieldName, TType inType, TValue inValue)
+		{
+            ValueHolder holder;
+			if (!m_Attributes.TryGetValue(inFieldName, out holder))
+			{
+                holder = new ValueHolder(inType, inValue);
+                m_Attributes.Add(inFieldName, holder);
+            }
+			else
+			{
+                holder.Value = inValue;
+            }
+        }
+
 		/// <summary>
 		/// Gets/sets the value for the given field.
 		/// </summary>
@@ -104,5 +122,29 @@ namespace Alice.Tweedle
         }
 
 		#endregion // IEnumerable
+
+		public override string ToString()
+        {
+            using(PooledStringBuilder psb = PooledStringBuilder.Alloc())
+            {
+                psb.Builder.Append('{');
+                int valueCount = 0;
+				foreach(var kv in m_Attributes)
+				{
+					if (valueCount > 0)
+                        psb.Builder.Append(", ");
+
+                    psb.Builder.Append(kv.Key)
+                        .Append(": ")
+                        .Append(kv.Value.ToString());
+
+                    ++valueCount;
+                }
+
+                psb.Builder.Append('}');
+
+                return psb.Builder.ToString();
+            }
+        }
     }
 }

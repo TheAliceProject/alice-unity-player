@@ -9,158 +9,76 @@ using System.Collections.Generic;
 
 namespace Alice.Player.Modules {
     
-    [PInteropType]
     public abstract class SGEntity : MonoBehaviour {
         
-        public static T Create<T>(TValue owner, string inName = "SGEntity") where T : SGEntity {
+        public delegate void UpdatePropertyDelegate(TValue inValue);
+
+        public static T Create<T>(object owner, string inName = "SGEntity") where T : SGEntity {
             var go = new GameObject(inName);
             var entity = go.AddComponent<T>();
             entity.owner = owner;
             return entity;
         }
 
-        public TValue owner { get; private set; }
-        private TValue m_Vehicle;
-
-        private Dictionary<string, PropertyDelegateBinding> m_PropertyBindings = new Dictionary<string, PropertyDelegateBinding>();
-        private Dictionary<string, object> m_Properties = new Dictionary<string, object>();
-
-        private Renderer m_Renderer;
-        private Material m_Material;
-        
-        #region Interop Interfaces
-        [PInteropField]
         public const string POSITION_PROPERTY_NAME = "Position";
-        [PInteropField]
         public const string ORIENTATION_PROPERTY_NAME = "Rotation";
 
-        [PInteropMethod]
-        public void setVehicle(TValue vehicle) {
-            if (vehicle != m_Vehicle) {
-                m_Vehicle = vehicle;
-
-                var parentEntity = UnitySceneGraph.Current.FindEntity(vehicle);
-                transform.SetParent(parentEntity?.transform, true);
-            }
-        }
-            
         
 
-        [PInteropMethod]
-        public void bindDecimalNumberProperty(string name, DecimalNumberProperty property) {
-            BindProperty(name, property);
-        }
+        private Dictionary<string, UpdatePropertyDelegate> m_PropertyBindings = new Dictionary<string, UpdatePropertyDelegate>();
+        private Dictionary<object, UpdatePropertyDelegate> m_Properties = new Dictionary<object, UpdatePropertyDelegate>();
 
-        [PInteropMethod]
-        public void bindWholeNumberProperty(string name, WholeNumberProperty property) {
-            BindProperty(name, property);
-        }
+        private SGEntity m_Vehicle;
+        private Renderer m_Renderer;
+        private Material m_Material;
 
-        [PInteropMethod]
-        public void bindAngleProperty(string name, AngleProperty property) {
-            BindProperty(name, property);
-        }
+        public object owner { get; private set; }
 
-        [PInteropMethod]
-        public void bindAxisAlignedBoxProperty(string name, AxisAlignedBoxProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void bindColorProperty(string name, ColorProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void bindDirectionProperty(string name, DirectionProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void bindOrientationProperty(string name, OrientationProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void bindPaintProperty(string name, PaintProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void bindPortionProperty(string name, PortionProperty property) {
-            BindProperty(name, property);
-        }
-
-
-        [PInteropMethod]
-        public void bindPositionProperty(string name, PositionProperty property) {
-            BindProperty(name, property);
-        }
-
-        
-        [PInteropMethod]
-        public void bindScaleProperty(string name, ScaleProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void bindSizeProperty(string name, SizeProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void bindVantagePointProperty(string name, VantagePointProperty property) {
-            BindProperty(name, property);
-        }
-
-        [PInteropMethod]
-        public void unbindProperty(string name) {
-            PropertyDelegateBinding binding;
-            if (m_PropertyBindings.TryGetValue(name, out binding)) {
-                UnbindProperty(name, binding.Type, binding.Delegate);
+        public SGEntity vehicle {
+            get { return m_Vehicle; }
+            set {
+                if (value != m_Vehicle) {
+                    m_Vehicle = value;
+                    transform.SetParent(m_Vehicle?.transform, true);
+                }
             }
-           
         }
 
-       
-        #endregion
-
-        protected void RegisterPropertyDelegate<T>(string inName, PropertyBase<T>.ValueChangedDelegate inDelegate) {
+        protected void RegisterPropertyDelegate<T>(string inName, UpdatePropertyDelegate inDelegate) {
             if (m_PropertyBindings.ContainsKey(inName)) {
                 throw new SceneGraphException(string.Format("Property \"{0}\" binding already registered.", inName));
             } else {
-                m_PropertyBindings.Add(inName, new PropertyDelegateBinding() {Type = typeof(T), Delegate = inDelegate});
+                m_PropertyBindings.Add(inName, inDelegate);
             }
         }
 
-        private void BindProperty<T>(string inName, PropertyBase<T> inProperty) {
+        public void BindProperty(string inName, TValue inProperty, TValue inInitValue) {
 
             if (m_Properties.ContainsKey(inName)) {
                 throw new SceneGraphException(string.Format("Property \"{0}\" already bound.", inName));
             } else {
                 
-                PropertyDelegateBinding binding;
-                if (m_PropertyBindings.TryGetValue(inName, out binding)) {
-                    var del = (PropertyBase<T>.ValueChangedDelegate)binding.Delegate;
-                    del(inProperty);
-                    inProperty.OnValueChanged += del;
-                    m_Properties.Add(inName, inProperty);
+                UpdatePropertyDelegate @delegate;
+                if (m_PropertyBindings.TryGetValue(inName, out @delegate)) {
+
+                    @delegate(inInitValue);
+                    m_Properties.Add(inProperty.Object(), @delegate);
                 } else {
                     throw new SceneGraphException(string.Format("Property \"{0}\" cannot be bound because no valid callback has been registered.", inName));
                 }
             }
         }
 
-        private void UnbindProperty<T>(string inName, T inType, object delegateObj) {
-            object propertyObj;
-            if (m_Properties.TryGetValue(inName, out propertyObj)) {
-                var property = (PropertyBase<T>)propertyObj;
-                var del = (PropertyBase<T>.ValueChangedDelegate)delegateObj;
-                property.OnValueChanged -= del;
-                m_Properties.Remove(inName);
+        public void UpdateProperty(TValue inProperty, TValue inValue) {
+            UpdatePropertyDelegate @delegate;
+            object propertyObj = inProperty.Object();
+            if (m_Properties.TryGetValue(propertyObj, out @delegate)) {
+                @delegate(inValue);
             }
-        } 
+        }
 
-        
+        public void UnbindProperty(TValue inProperty) {
+            m_Properties.Remove(inProperty.Object());
+        } 
     }
 }

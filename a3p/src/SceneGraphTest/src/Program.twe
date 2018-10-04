@@ -10,21 +10,27 @@ class Program {
   void execute() {
   	SBox box <- new SBox();
 
+/*
+    doTogether {
+      box.setHeight(height: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME, animationStyle: AnimationStyle.BEGIN_ABRUPTLY_AND_END_GENTLY);
+      box.setPaint(paint: new Color(red: 1, green: 0, blue: 0));
+    }
 
-      doTogether {
-        box.setHeight(height: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME, animationStyle: AnimationStyle.BEGIN_ABRUPTLY_AND_END_GENTLY);
-        box.setPaint(paint: new Color(red: 1, green: 0, blue: 0));
-      }
+    doTogether {
+      box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+      box.setPaint(paint: Color.WHITE);
+    }
+  */
 
-      doTogether {
-        box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
-        box.setPaint(paint: Color.WHITE);
-      }
-    
+    box.setSize(size: new Size(width: 2, height: 3, depth: 0.5));
+    box.setSize(size: new Size(width: 1, height: 1, depth: 1));
 
     SSphere sphere <- new SSphere();
     sphere.setVehicle(vehicle: box);
     sphere.setRadius(radius: 0.25, duration: 0);
     sphere.setRadius(radius: 1.5, duration: 1);
+
+
+    
   }
 }

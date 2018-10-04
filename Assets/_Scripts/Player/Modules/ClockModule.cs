@@ -10,6 +10,9 @@ namespace Alice.Player.Modules
     [PInteropType("Clock")]
     static public class ClockModule
     {
+        [PInteropField]
+        static public double currentTime { get { return UnityEngine.Time.time; } }
+
         [PInteropMethod]
         static public AsyncReturn delay(double duration)
         {
@@ -19,29 +22,26 @@ namespace Alice.Player.Modules
                 return returnVal;
             }
 
-            
-            UnitySceneGraph.Current.StartCoroutine(DelayImpl(returnVal, duration));
+            UnitySceneGraph.Current.QueueTimeReturn(returnVal, duration);
             return returnVal;
         }
 
         [PInteropMethod]
-        static public AsyncReturn<bool> returnRandomBool(double duration)
-        {
-            AsyncReturn<bool> returnVal = new AsyncReturn<bool>();
-            UnitySceneGraph.Current.StartCoroutine(ReturnWithDelay(returnVal, duration, Random.value < 0.5));
-            return returnVal;
+        public static AsyncReturn delayOneFrame() {
+            AsyncReturn returnValue = new AsyncReturn();
+            UnitySceneGraph.Current.QueueFrameReturn(returnValue, 1);
+            return returnValue;
         }
 
-        static private IEnumerator DelayImpl(AsyncReturn inReturn, double inDuration)
-        {
-            yield return new WaitForSeconds((float)inDuration);
-            inReturn.Return();
-        }
+        [PInteropMethod]
+        public static AsyncReturn delayFrames(double frames) {
+            if (frames <= 0) {
+                return null;
+            }
 
-        static private IEnumerator ReturnWithDelay<T>(AsyncReturn<T> inReturn, double inDuration, T inValue)
-        {
-            yield return new WaitForSeconds((float)inDuration);
-            inReturn.Return(inValue);
+            AsyncReturn returnValue = new AsyncReturn();
+            UnitySceneGraph.Current.QueueFrameReturn(returnValue, (int)frames);
+            return returnValue;
         }
     }
 }

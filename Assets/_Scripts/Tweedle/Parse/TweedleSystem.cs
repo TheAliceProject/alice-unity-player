@@ -47,6 +47,7 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(AnimationStyleEnum)));
             AddType(TInterop.GenerateType(typeof(DimensionPolicyEnum)));
             AddType(TInterop.GenerateType(typeof(ClockModule)));
+            AddType(TInterop.GenerateType(typeof(MathModule)));
 
             // interop primitives
             AddType(TInterop.GenerateType(typeof(Portion)));
@@ -61,27 +62,8 @@ namespace Alice.Tweedle.Parse
             AddType(TInterop.GenerateType(typeof(Paint)));
             AddType(TInterop.GenerateType(typeof(Color)));
 
-            // properties
-            AddType(TInterop.GenerateType(typeof(DecimalNumberProperty)));
-            AddType(TInterop.GenerateType(typeof(WholeNumberProperty)));
-            AddType(TInterop.GenerateType(typeof(AngleProperty)));
-            AddType(TInterop.GenerateType(typeof(PortionProperty)));
-            AddType(TInterop.GenerateType(typeof(PositionProperty)));
-            AddType(TInterop.GenerateType(typeof(DirectionProperty)));
-            AddType(TInterop.GenerateType(typeof(SizeProperty)));
-            AddType(TInterop.GenerateType(typeof(ScaleProperty)));
-            AddType(TInterop.GenerateType(typeof(OrientationProperty)));
-            AddType(TInterop.GenerateType(typeof(AxisAlignedBoxProperty)));
-            AddType(TInterop.GenerateType(typeof(VantagePointProperty)));
-            AddType(TInterop.GenerateType(typeof(PaintProperty)));
-            AddType(TInterop.GenerateType(typeof(ColorProperty)));
-
             // SceneGraph
             AddType(TInterop.GenerateType(typeof(SceneGraphModule)));
-            AddType(TInterop.GenerateType(typeof(SGEntity)));
-            AddType(TInterop.GenerateType(typeof(SGModel)));
-            AddType(TInterop.GenerateType(typeof(SGBox)));
-            AddType(TInterop.GenerateType(typeof(SGSphere)));
 
         }
 
