@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using Alice.Tweedle.Parse;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -21,27 +18,33 @@ namespace Alice.Tweedle
 
         #endregion // Enums
 
+        public readonly Guid ID = Guid.NewGuid();
+
         public readonly string Name;
         public readonly TTypeRef SuperType;
         public readonly TTypeRef SelfRef;
 
+        private TAssembly m_Assembly;
         private Status m_Status;
         private int m_InheritanceDepth;
         private TObject m_StaticStorage;
 
+        public TAssembly Assembly { get { return m_Assembly; } }
+
         #region Constructors
 
-        protected TType(string inName) : this(inName, (TTypeRef)null) { }
+        protected TType(TAssembly inAssembly, string inName) : this(inAssembly, inName, (TTypeRef)null) { }
 
-        protected TType(string inName, TType inSuperType) : this(inName, (TTypeRef)inSuperType) { }
+        protected TType(TAssembly inAssembly, string inName, TType inSuperType) : this(inAssembly, inName, (TTypeRef)inSuperType) { }
 
-        protected TType(string inName, string inSuperTypeName) : this(inName, new TTypeRef(inSuperTypeName)) { }
+        protected TType(TAssembly inAssembly, string inName, string inSuperTypeName) : this(inAssembly, inName, new TTypeRef(inSuperTypeName)) { }
 
-        protected TType(string inName, TTypeRef inSuperTypeRef)
+        protected TType(TAssembly inAssembly, string inName, TTypeRef inSuperTypeRef)
         {
             Name = inName;
             SuperType = inSuperTypeRef;
             SelfRef = new TTypeRef(this);
+            m_Assembly = inAssembly;
         }
 
         #endregion // Constructors
@@ -111,11 +114,12 @@ namespace Alice.Tweedle
         /// Preps the type for execution.
         /// Returns any additional steps that need to be executed on the VM.
         /// </summary>
-        public ITweedleExpression Prep()
+        public void Prep(out ITweedleExpression outAdditionalPrep)
         {
             if (m_Status == Status.Prepped)
             {
-                return null;
+                outAdditionalPrep = null;
+                return;
             }
 
             m_StaticStorage?.Clear();
@@ -123,17 +127,24 @@ namespace Alice.Tweedle
 
             if (HasStaticConstructor())
             {
-                return new StaticInstantiation(this.SelfRef);
+                outAdditionalPrep = new StaticInstantiation(this);
             }
-
-            return null;
+            else
+            {
+                outAdditionalPrep = null;
+            }
         }
 
         public virtual void AddStaticInitializer(ExecutionScope inScope, StepSequence ioSteps)
         {
         }
 
-        // Returns the backing object for static fields on this type
+        /**
+         * Returns the backing object for static fields on this type.
+         * NOTE:    Storing static values on the type itself will only hold
+         *          as long as there is a single VM. If multiple VMs execute at once,
+         *          subsequent VMs will overwrite any existing values during prep.
+         */
         internal TObject StaticStorage()
         {
             if (m_StaticStorage == null)
@@ -172,9 +183,9 @@ namespace Alice.Tweedle
             {
                 if (type == inType)
                     return true;
-                type = type.SuperType;
+                type = (TType)type.SuperType;
             }
-            return inType == TStaticTypes.ANY;
+            return inType == TBuiltInTypes.ANY;
         }
 
         public virtual TValue Cast(ref TValue inValue, TType inType)
@@ -196,7 +207,7 @@ namespace Alice.Tweedle
         protected void AssertValueIsTypeOrTypeRef(ref TValue inValue)
         {
             if (!InstanceOf(ref inValue, this, true))
-                throw new TweedleRuntimeException("Expected type " + this + " or " + TStaticTypes.TYPE_REF + ", but value was type " + inValue.Type);
+                throw new TweedleRuntimeException("Expected type " + this + " or " + TBuiltInTypes.TYPE_REF + ", but value was type " + inValue.Type);
         }
 
         #endregion // Tweedle casting
@@ -226,6 +237,11 @@ namespace Alice.Tweedle
         public virtual object ConvertToPObject(ref TValue inValue)
         {
             throw new TweedleRuntimeException("This type (" + this + ") cannot convert the value " + inValue + " to a c-sharp object.");
+        }
+
+        public virtual Type GetPObjectType()
+        {
+            throw new TweedleRuntimeException("Values of this type (" + this + ") cannot be converted to c-sharp objects.");
         }
 
         #endregion // Conversion Semantics
@@ -259,33 +275,38 @@ namespace Alice.Tweedle
 
         #region Linker
 
-        public void Link(TweedleSystem inSystem)
+        public void Link(TAssemblyLinkContext inContext)
         {
             if (m_Status == Status.Unlinked)
             {
-                LinkImpl(inSystem);
+                if (m_Assembly == null)
+                    m_Assembly = inContext.OwningAssembly;
+                else if (m_Assembly != inContext.OwningAssembly)
+                    throw new Exception("Type " + Name + " is not owned by the linking assembly " + inContext.OwningAssembly.Name);
+
+                LinkImpl(inContext);
                 m_Status = Status.Linked;
             }
         }
 
-        protected virtual void LinkImpl(TweedleSystem inSystem)
+        protected virtual void LinkImpl(TAssemblyLinkContext inContext)
         {
             if (SuperType != null)
             {
-                SuperType.Resolve(inSystem);
+                SuperType.Resolve(inContext);
             }
         }
 
-        public void PostLink(TweedleSystem inSystem)
+        public void PostLink(TAssemblyLinkContext inContext)
         {
             if (m_Status == Status.Linked)
             {
-                PostLinkImpl(inSystem);
+                PostLinkImpl(inContext);
                 m_Status = Status.PostLinked;
             }
         }
 
-        protected virtual void PostLinkImpl(TweedleSystem inSystem)
+        protected virtual void PostLinkImpl(TAssemblyLinkContext inContext)
         {
             m_InheritanceDepth = CalculateInheritanceDepth(this);
         }

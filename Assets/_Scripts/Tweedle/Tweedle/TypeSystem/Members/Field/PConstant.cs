@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle.Parse;
@@ -11,13 +12,15 @@ namespace Alice.Tweedle
     public sealed class PConstant : TField
     {
         private readonly object m_Constant;
-        
-        public PConstant(string inName, object inConstant)
+        private bool m_IsConverted;
+        private TValue m_ConvertedValue;
+
+        public PConstant(TAssembly inAssembly, string inName, Type inType, object inConstant)
         {
             m_Constant = inConstant;
             MemberFlags flags = MemberFlags.Field | MemberFlags.PInterop | MemberFlags.Readonly | MemberFlags.Static;
             
-            TTypeRef tType = TInterop.TTypeFor(inConstant?.GetType());
+            TTypeRef tType = TInterop.TTypeFor(inType, inAssembly);
             SetupMember(inName, tType, flags);
         }
 
@@ -25,7 +28,12 @@ namespace Alice.Tweedle
 
         public override TValue Get(ExecutionScope inScope, ref TValue inValue)
         {
-            return TInterop.ToTValue(m_Constant, inScope.vm.Library);
+            if (!m_IsConverted)
+            {
+                m_ConvertedValue = TInterop.ToTValue(m_Constant, inScope);
+                m_IsConverted = true;
+            }
+            return m_ConvertedValue;
         }
 
         public override bool HasInitializer()

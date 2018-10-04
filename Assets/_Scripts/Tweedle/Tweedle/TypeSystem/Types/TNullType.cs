@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -7,8 +8,8 @@ namespace Alice.Tweedle
     /// </summary>
     public sealed class TNullType : TType
     {
-        public TNullType()
-            : base("null")
+        public TNullType(TAssembly inAssembly)
+            : base(inAssembly, "null")
         {
         }
 
@@ -16,20 +17,17 @@ namespace Alice.Tweedle
 
         public override TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Field");
         }
 
         public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Method");
         }
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
@@ -85,6 +83,11 @@ namespace Alice.Tweedle
             AssertValueIsType(ref inValue);
 
             return null;
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(object);
         }
 
         #endregion // Conversion Semantics

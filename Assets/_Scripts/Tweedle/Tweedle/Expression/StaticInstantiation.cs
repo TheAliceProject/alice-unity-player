@@ -8,7 +8,7 @@ namespace Alice.Tweedle
         private TType m_TargetType;
 
         public StaticInstantiation(TType inType)
-            : base(TStaticTypes.VOID)
+            : base(TBuiltInTypes.VOID)
         {
             m_TargetType = inType;
         }

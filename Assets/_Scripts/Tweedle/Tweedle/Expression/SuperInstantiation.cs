@@ -4,31 +4,31 @@ using Alice.Utils;
 
 namespace Alice.Tweedle
 {
-	public class SuperInstantiation : TweedleExpression
-	{
+    public class SuperInstantiation : TweedleExpression
+    {
         private readonly NamedArgument[] m_Arguments;
 
         public SuperInstantiation(NamedArgument[] inArguments)
-			: base(null)
-		{
-			m_Arguments = inArguments;
-		}
+            : base(null)
+        {
+            m_Arguments = inArguments;
+        }
 
-		public override ExecutionStep AsStep(ExecutionScope scope)
-		{
-			ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(m_Arguments);
-			return superScope.InvocationStep("super()", m_Arguments);
-		}
+        public override ExecutionStep AsStep(ExecutionScope scope)
+        {
+            ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(m_Arguments);
+            return superScope.InvocationStep("super()", m_Arguments);
+        }
 
-		public override string ToTweedle()
-		{
-			using(PooledStringBuilder pooledString = PooledStringBuilder.Alloc())
-			{
+        public override string ToTweedle()
+        {
+            using(PooledStringBuilder pooledString = PooledStringBuilder.Alloc())
+            {
                 pooledString.Builder.Append("super(");
                 for (int i = 0; i < m_Arguments.Length; ++i)
-				{
-					if (i > 0)
-					{
+                {
+                    if (i > 0)
+                    {
                         pooledString.Builder.Append(", ");
                     }
 
@@ -38,6 +38,6 @@ namespace Alice.Tweedle
 
                 return pooledString.ToString();
             }
-		}
-	}
+        }
+    }
 }

@@ -12,8 +12,8 @@ namespace Alice.Tweedle
     /// </summary>
     public class PAsyncMethod : PMethodBase
     {
-        public PAsyncMethod(MethodInfo inMethod)
-            : base(inMethod, ExtractAsyncResultType(inMethod.ReturnType), MemberFlags.Async)
+        public PAsyncMethod(TAssembly inAssembly, MethodInfo inMethod)
+            : base(inAssembly, inMethod, ExtractAsyncResultType(inMethod.ReturnType), MemberFlags.Async)
         {
         }
 

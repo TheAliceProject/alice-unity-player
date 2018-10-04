@@ -5,14 +5,14 @@ using Alice.Tweedle.VM;
 namespace Alice.Tweedle
 {
     /// <summary>
-    /// Tweedle enum type.
+    /// Proxy/platform enum type.
     /// </summary>
     public sealed class TPEnumType : TTypeWithMembers
     {
         private Type m_Type;
 
-        public TPEnumType(Type inType)
-            : base(TInterop.TTypeNameForType(inType))
+        public TPEnumType(TAssembly inAssembly, Type inType)
+            : base(inAssembly, TInterop.InteropTypeName(inType))
         {
             m_Type = inType;
 
@@ -22,7 +22,7 @@ namespace Alice.Tweedle
             for (int i = 0; i < values.Length; ++i)
             {
                 var value = values.GetValue(i);
-                enumFields[i] = new PConstant(value.ToString(), value);
+                enumFields[i] = new PConstant(inAssembly, value.ToString(), m_Type, value);
             }
 
             AssignMembers(enumFields, TMethod.EMPTY_ARRAY, TMethod.EMPTY_ARRAY);
@@ -56,7 +56,7 @@ namespace Alice.Tweedle
         public override bool Equals(ref TValue inValA, ref TValue inValB)
         {
             return base.Equals(ref inValA, ref inValB)
-                && inValA.RawObject<object>() == inValA.RawObject<object>();
+                && inValA.RawObject<object>() == inValB.RawObject<object>();
         }
 
         public override bool LessThan(ref TValue inValA, ref TValue inValB)
@@ -83,6 +83,11 @@ namespace Alice.Tweedle
         public override object ConvertToPObject(ref TValue inValue)
         {
             return inValue.RawObject<object>();
+        }
+
+        public override Type GetPObjectType()
+        {
+            return m_Type;
         }
 
         #endregion // Conversion Semantics

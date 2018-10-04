@@ -8,21 +8,21 @@ namespace Alice.Tweedle
     /// <summary>
     /// Proxy class type.
     /// </summary>
-    public sealed class TPObjectType : TTypeWithMembers
+    public sealed class TPClassType : TTypeWithMembers
     {
         private Type m_Type;
         private bool m_IsModule;
 
-        public TPObjectType(Type inType)
-            : base(TInterop.TTypeNameForType(inType), TInterop.TTypeFor(inType.BaseType))
+        public TPClassType(TAssembly inAssembly, Type inType)
+            : base(inAssembly, TInterop.InteropTypeName(inType), TInterop.TTypeFor(inType.BaseType, inAssembly))
         {
             m_Type = inType;
             m_IsModule = m_Type.IsAbstract && m_Type.IsSealed;
 
             AssignMembers(
-                TInterop.GenerateFields(m_Type),
-                TInterop.GenerateMethods(m_Type),
-                TInterop.GenerateConstructors(m_Type)
+                TInterop.GenerateFields(inAssembly, m_Type),
+                TInterop.GenerateMethods(inAssembly, m_Type),
+                TInterop.GenerateConstructors(inAssembly, m_Type)
             );
         }
 
@@ -83,6 +83,11 @@ namespace Alice.Tweedle
         public override string ConvertToString(ref TValue inValue)
         {
             return inValue.RawObject<object>().ToString();
+        }
+
+        public override Type GetPObjectType()
+        {
+            return m_Type;
         }
 
         #endregion // Conversion Semantics

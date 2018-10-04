@@ -15,9 +15,9 @@ namespace Alice.Tweedle
         public TTypeRef Type { get; private set; }
         public MemberFlags Flags { get; private set; }
 
-        public virtual void Link(TweedleSystem inSystem, TType inOwnerType)
+        public virtual void Link(TAssemblyLinkContext inContext, TType inOwnerType)
         {
-            Type.Resolve(inSystem);
+            Type.Resolve(inContext);
 
             if (!Type.Get().IsValidIdentifier())
                 throw new TweedleLinkException("Field type " + Type.Name + " is not a valid field type");

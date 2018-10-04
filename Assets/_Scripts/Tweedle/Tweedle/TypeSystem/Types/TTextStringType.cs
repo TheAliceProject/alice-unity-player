@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -11,8 +12,8 @@ namespace Alice.Tweedle
         private TField[] m_Fields;
         private TMethod[] m_Methods;
 
-        public TTextStringType()
-            : base("TextString")
+        public TTextStringType(TAssembly inAssembly)
+            : base(inAssembly, "TextString")
         {
             m_Default = TValue.NULL;
             m_Fields = new TField[]
@@ -29,7 +30,7 @@ namespace Alice.Tweedle
 
         private TField LengthField()
         {
-            return new TPropertyField("length", TStaticTypes.WHOLE_NUMBER, MemberFlags.Readonly, (ExecutionScope inScope, ref TValue inValue) =>
+            return new TPropertyField("length", TBuiltInTypes.WHOLE_NUMBER, MemberFlags.Readonly, (ExecutionScope inScope, ref TValue inValue) =>
             {
                 return TValue.FromInt(inValue.RawObject<string>().Length);
             });
@@ -39,9 +40,9 @@ namespace Alice.Tweedle
         {
             return new TCustomMethod("substring", MemberFlags.Instance, this,
             new TParameter[] {
-                TParameter.RequiredParameter(TStaticTypes.WHOLE_NUMBER, "startIndex")
+                TParameter.RequiredParameter(TBuiltInTypes.WHOLE_NUMBER, "startIndex")
             }, new TParameter[] {
-                TParameter.OptionalParameter(TStaticTypes.WHOLE_NUMBER, "length", TValue.FromInt(-1))
+                TParameter.OptionalParameter(TBuiltInTypes.WHOLE_NUMBER, "length", TValue.FromInt(-1))
             }, (ExecutionScope inScope) =>
             {
                 TValue _this = inScope.GetThis();
@@ -60,12 +61,12 @@ namespace Alice.Tweedle
 
         #region Link
 
-        protected override void LinkImpl(Parse.TweedleSystem inSystem)
+        protected override void LinkImpl(TAssemblyLinkContext inContext)
         {
-            base.LinkImpl(inSystem);
+            base.LinkImpl(inContext);
 
-            LinkMembers(m_Fields, inSystem, this);
-            LinkMembers(m_Methods, inSystem, this);
+            LinkMembers(m_Fields, inContext, this);
+            LinkMembers(m_Methods, inContext, this);
         }
 
         #endregion // Link
@@ -84,8 +85,7 @@ namespace Alice.Tweedle
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
@@ -156,6 +156,11 @@ namespace Alice.Tweedle
         {
             AssertValueIsType(ref inValue);
             return inValue.RawObject<string>();
+        }
+
+        public override Type GetPObjectType()
+        {
+            return typeof(string);
         }
 
         #endregion // Conversion Semantics

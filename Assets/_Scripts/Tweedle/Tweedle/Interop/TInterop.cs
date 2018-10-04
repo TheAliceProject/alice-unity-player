@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Alice.Tweedle.Parse;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle.Interop
 {
@@ -19,10 +20,19 @@ namespace Alice.Tweedle.Interop
         static private readonly IntPtr TYPEPTR_STRING = GetTypePtr<string>();
         static private readonly IntPtr TYPEPTR_BOOLEAN = GetTypePtr<bool>();
 
-        // Async types
+        // Additional types
         static private readonly Type TYPE_IASYNCRETURN = typeof(IAsyncReturn);
+        static private readonly Type TYPE_PLAMBDABASE = typeof(PLambdaBase);
+        static private readonly IntPtr TYPEPTR_PACTION = GetTypePtr<PAction>();
+
+        static private TLambdaSignature s_LambdaSignatureEmpty;
 
         #region To TValue
+
+        static public TValue ToTValue(object inObject, ExecutionScope inScope)
+        {
+            return ToTValue(inObject, inScope.vm.Library);
+        }
 
         static public TValue ToTValue(object inObject, TweedleSystem inLibrary)
         {
@@ -37,7 +47,24 @@ namespace Alice.Tweedle.Interop
 
             if (!TryConvertConstant(typePtr, inObject, out retVal))
             {
-                TType ttype = inLibrary.TypeNamed(TTypeNameForType(type));
+                if (type.IsArray)
+                {
+                    Array array = (Array)inObject;
+                    int length = array.Length;
+                    TValue[] elements = new TValue[length];
+                    for (int i = 0; i < length; ++i)
+                    {
+                        elements[i] = ToTValue(array.GetValue(i), inLibrary);
+                    }
+
+                    TAssembly assembly = inLibrary.GetRuntimeAssembly();
+                    TTypeRef elementType = TTypeFor(type.GetElementType(), assembly);
+                    TArrayType arrayType = TGenerics.GetArrayType(elementType, assembly);
+
+                    return arrayType.Instantiate(elements);
+                }
+
+                TType ttype = inLibrary.TypeNamed(InteropTypeName(type));
                 if (ttype != null)
                 {
                     retVal = TValue.FromObject(ttype, inObject);
@@ -51,7 +78,7 @@ namespace Alice.Tweedle.Interop
             return retVal;
         }
 
-        static public TValue ToTValue(object inObject)
+        static public TValue ToTValueConst(object inObject)
         {
             if (inObject == null)
                 return TValue.NULL;
@@ -131,17 +158,30 @@ namespace Alice.Tweedle.Interop
 
         #region To PObject
 
-        static public object ToPObject(TValue inValue)
-        {
-            return inValue.ToPObject();
-        }
-
-        static public object ToPObject(TValue inValue, Type inType)
+        static public object ToPObject(TValue inValue, Type inType, ExecutionScope inScope)
         {
             IntPtr typePtr = inType.TypeHandle.Value;
             if (typePtr == TYPEPTR_TVALUE)
             {
                 return (object)inValue;
+            }
+
+            if (inType.IsArray)
+            {
+                Type elementType = inType.GetElementType();
+
+                TArray srcArr = inValue.Array();
+                Array dstArr = Array.CreateInstance(elementType, srcArr.Length);
+                for (int i = 0; i < srcArr.Length; ++i)
+                    dstArr.SetValue(ToPObject(srcArr[i], elementType, inScope), i);
+                    
+                return dstArr;
+            }
+
+            if (TYPE_PLAMBDABASE.IsAssignableFrom(inType))
+            {
+                TLambda lambda = inValue.Lambda();
+                return (PLambdaBase)Activator.CreateInstance(inType, lambda, inScope);
             }
 
             object obj = inValue.ToPObject();
@@ -156,113 +196,133 @@ namespace Alice.Tweedle.Interop
     
         #region Types
 
-        static public TTypeRef TTypeFor(object inObject)
-        {
-            if (inObject == null)
-                return TStaticTypes.NULL;
-            if (inObject is TValue)
-                return ((TValue)inObject).Type;
-
-            return TTypeFor(inObject.GetType());
-        }
-
-        static public TTypeRef TTypeFor(Type inType)
+        static public TTypeRef TTypeFor(Type inType, TAssembly inAssembly)
         {
             if (inType == null)
                 return null;
 
+            if (inType.IsArray)
+            {
+                Type elementType = inType.GetElementType();
+                TTypeRef elementTypeRef = TTypeFor(elementType, inAssembly);
+                return TGenerics.GetArrayType(elementTypeRef, inAssembly);
+            }
+
             IntPtr typePtr = inType.TypeHandle.Value;
             if (typePtr == TYPEPTR_VOID)
             {
-                return TStaticTypes.VOID;
+                return TBuiltInTypes.VOID;
             }
             if (typePtr == TYPEPTR_INT)
             {
-                return TStaticTypes.WHOLE_NUMBER;
+                return TBuiltInTypes.WHOLE_NUMBER;
             }
             else if (typePtr == TYPEPTR_DOUBLE || typePtr == TYPEPTR_FLOAT)
             {
-                return TStaticTypes.DECIMAL_NUMBER;
+                return TBuiltInTypes.DECIMAL_NUMBER;
             }
             else if (typePtr == TYPEPTR_STRING)
             {
-                return TStaticTypes.TEXT_STRING;
+                return TBuiltInTypes.TEXT_STRING;
             }
             else if (typePtr == TYPEPTR_BOOLEAN)
             {
-                return TStaticTypes.BOOLEAN;
+                return TBuiltInTypes.BOOLEAN;
             }
             else if (typePtr == TYPEPTR_TVALUE)
             {
-                return TStaticTypes.ANY;
+                return TBuiltInTypes.ANY;
+            }
+            else if (typePtr == TYPEPTR_PACTION)
+            {
+                // Get the empty lambda signature
+                if (s_LambdaSignatureEmpty == null)
+                {
+                    s_LambdaSignatureEmpty = new TLambdaSignature(new TTypeRef[0], TBuiltInTypes.VOID);
+                }
+                return TGenerics.GetLambdaType(s_LambdaSignatureEmpty, inAssembly);
+            }
+            else if (TYPE_PLAMBDABASE.IsAssignableFrom(inType))
+            {
+                TTypeRef[] parameterTypes = null;
+                TTypeRef returnType = TBuiltInTypes.VOID;
+
+                Type[] genericArguments = inType.GetGenericArguments();
+
+                // Func-type delegates have return types
+                if (inType.Name.StartsWith("PFunc", StringComparison.Ordinal))
+                {
+                    returnType = TTypeFor(genericArguments[0], inAssembly);
+                    parameterTypes = new TTypeRef[genericArguments.Length - 1];
+                    for (int i = 0; i < parameterTypes.Length; ++i)
+                        parameterTypes[i] = TTypeFor(genericArguments[1 + i], inAssembly);
+                }
+                else // Action-type delegates do not
+                {
+                    parameterTypes = new TTypeRef[genericArguments.Length];
+                    for (int i = 0; i < parameterTypes.Length; ++i)
+                        parameterTypes[i] = TTypeFor(genericArguments[i], inAssembly);
+                }
+
+                TLambdaSignature sig = new TLambdaSignature(parameterTypes, returnType);
+                return TGenerics.GetLambdaType(sig, inAssembly);
             }
             else
             {
-                string typeName = TTypeNameForType(inType);
+                string typeName = InteropTypeName(inType);
                 if (!string.IsNullOrEmpty(typeName))
+                {
+                    TType existingType = inAssembly?.TypeNamed(typeName);
+                    if (existingType != null)
+                        return existingType;
                     return new TTypeRef(typeName);
+                }
 
                 return null;
             }
         }
 
-        static public string TTypeNameForType(Type inType)
+        static public string InteropTypeName(Type inType)
         {
             return PInteropTypeAttribute.GetTweedleName(inType);
         }
 
         #endregion // Types
     
-        #region Types
+        #region Type Generation
 
-        static public TType[] GenerateTypes(params Type[] inTypes)
-        {
-            TType[] types = new TType[inTypes.Length];
-            for (int i = 0; i < types.Length; ++i)
-            {
-                types[i] = GenerateType(inTypes[i]);
-            }
-            return types;
-        }
-
-        static public TType GenerateType(Type inType)
+        static public TType GenerateType(TAssembly inAssembly, Type inType)
         {
             if (inType.IsClass)
-                return new TPObjectType(inType);
+                return new TPClassType(inAssembly, inType);
             else if (inType.IsEnum)
-                return new TPEnumType(inType);
+                return new TPEnumType(inAssembly, inType);
             else
                 throw new Exception("Unable to convert type " + inType.Name + " to a tweedle type");
         }
 
-        static public TType GenerateType<T>()
-        {
-            return new TPObjectType(typeof(T));
-        }
-
-        static public TField[] GenerateFields(Type inType)
+        static public TField[] GenerateFields(TAssembly inAssembly, Type inType)
         {
             List<TField> tFields = new List<TField>();
             
             var pFields = inType.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
             foreach(var pField in pFields)
             {
-                // UnityEngine.Debug.Log("Parsing field " + pField.Name);
                 if (PInteropFieldAttribute.IsDefined(pField))
-                    tFields.Add(new PField(pField));
+                    tFields.Add(new PField(inAssembly, pField));
             }
 
             var pProps = inType.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
             foreach(var pProp in pProps)
             {
                 if (PInteropFieldAttribute.IsDefined(pProp))
-                    tFields.Add(new PProperty(pProp));
+                    tFields.Add(new PProperty(inAssembly, pProp));
             }
 
             return tFields.ToArray();
         }
 
-        static public TMethod[] GenerateMethods(Type inType)
+        static public TMethod[] GenerateMethods(TAssembly inAssembly, Type inType)
         {
             List<TMethod> tMethods = new List<TMethod>();
 
@@ -273,9 +333,9 @@ namespace Alice.Tweedle.Interop
                 {
                     PMethodBase tMethod;
                     if (TYPE_IASYNCRETURN.IsAssignableFrom(pMethod.ReturnType))
-                        tMethod = new PAsyncMethod(pMethod);
+                        tMethod = new PAsyncMethod(inAssembly, pMethod);
                     else
-                        tMethod = new PMethod(pMethod);
+                        tMethod = new PMethod(inAssembly, pMethod);
                     tMethods.Add(tMethod);
                 }
             }
@@ -283,7 +343,7 @@ namespace Alice.Tweedle.Interop
             return tMethods.ToArray();
         }
 
-        static public TMethod[] GenerateConstructors(Type inType)
+        static public TMethod[] GenerateConstructors(TAssembly inAssembly, Type inType)
         {
             List<TMethod> tConstructors = new List<TMethod>();
 
@@ -291,12 +351,12 @@ namespace Alice.Tweedle.Interop
             foreach(var pConstructor in pConstructors)
             {
                 if (PInteropConstructorAttribute.IsDefined(pConstructor))
-                    tConstructors.Add(new PConstructor(pConstructor));
+                    tConstructors.Add(new PConstructor(inAssembly, pConstructor));
             }
 
             return tConstructors.ToArray();
         }
 
-        #endregion // Members
+        #endregion // Type Generation
     }
 }

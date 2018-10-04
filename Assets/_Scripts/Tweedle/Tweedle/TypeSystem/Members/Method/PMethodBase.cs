@@ -17,7 +17,7 @@ namespace Alice.Tweedle
         private string[] m_ParameterNames;
         private Type[] m_ParameterTypes;
 
-        protected PMethodBase(MethodBase inMethodBase, Type inReturnType, MemberFlags inFlags)
+        protected PMethodBase(TAssembly inAssembly, MethodBase inMethodBase, Type inReturnType, MemberFlags inFlags)
         {
             m_Method = inMethodBase;
 
@@ -27,13 +27,13 @@ namespace Alice.Tweedle
             else
                 flags |= MemberFlags.Instance;
 
-            TTypeRef tReturnType = TInterop.TTypeFor(inReturnType);
+            TTypeRef tReturnType = TInterop.TTypeFor(inReturnType, inAssembly);
             SetupMember(inMethodBase.Name, tReturnType, flags);
 
-            ParseArguments(tReturnType);
+            ParseArguments(inAssembly, tReturnType);
         }
 
-        private void ParseArguments(TTypeRef inReturnType)
+        private void ParseArguments(TAssembly inAssembly, TTypeRef inReturnType)
         {
             var parameters = m_Method.GetParameters();
             m_CachedArgs = new object[parameters.Length];
@@ -53,14 +53,14 @@ namespace Alice.Tweedle
                 if (param.IsOptional)
                 {
                     tParam = TParameter.OptionalParameter(
-                        TInterop.TTypeFor(param.ParameterType), param.Name, TInterop.ToTValue(param.DefaultValue)
+                        TInterop.TTypeFor(param.ParameterType, inAssembly), param.Name, TInterop.ToTValueConst(param.DefaultValue)
                     );
                     optionalParams.Add(tParam);
                 }
                 else
                 {
                     tParam = TParameter.RequiredParameter(
-                        TInterop.TTypeFor(param.ParameterType), param.Name
+                        TInterop.TTypeFor(param.ParameterType, inAssembly), param.Name
                     );
                     requiredParams.Add(tParam);
                 }
@@ -83,13 +83,13 @@ namespace Alice.Tweedle
         protected object PrepForInvoke(InvocationScope inScope)
         {
             for (int i = 0; i < m_ParameterNames.Length; ++i)
-                m_CachedArgs[i] = TInterop.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i]);
+                m_CachedArgs[i] = TInterop.ToPObject(inScope.GetValue(m_ParameterNames[i]), m_ParameterTypes[i], inScope);
 
             object thisVal;
             if ((Flags & (MemberFlags.Static | MemberFlags.Constructor)) != 0)
                 thisVal = null;
             else
-                thisVal = TInterop.ToPObject(inScope.GetThis());
+                thisVal = TInterop.ToPObject(inScope.GetThis(), m_Method.DeclaringType, inScope);
 
             return thisVal;
         }
@@ -101,7 +101,7 @@ namespace Alice.Tweedle
 
         protected void ReturnValue(InvocationScope inScope, object inValue)
         {
-            inScope.Return(TInterop.ToTValue(inValue, inScope.vm.Library));
+            inScope.Return(TInterop.ToTValue(inValue, inScope));
         }
 
         protected virtual object Invoke(object thisVal, object[] inCachedArgs)

@@ -13,18 +13,18 @@ namespace Alice.Tweedle
         
         private bool m_HasStaticConstructor;
 
-        protected TTypeWithMembers(string inName)
-            : base(inName)
+        protected TTypeWithMembers(TAssembly inAssembly, string inName)
+            : base(inAssembly, inName)
         {
         }
 
-        public TTypeWithMembers(string inName, string inSuperType)
-            : base(inName, inSuperType)
+        public TTypeWithMembers(TAssembly inAssembly, string inName, string inSuperType)
+            : base(inAssembly, inName, inSuperType)
         {
         }
 
-        public TTypeWithMembers(string inName, TTypeRef inSuperType)
-            : base(inName, inSuperType)
+        public TTypeWithMembers(TAssembly inAssembly, string inName, TTypeRef inSuperType)
+            : base(inAssembly, inName, inSuperType)
         {
         }
 
@@ -102,13 +102,13 @@ namespace Alice.Tweedle
 
         #region Link
 
-        protected override void LinkImpl(Parse.TweedleSystem inSystem)
+        protected override void LinkImpl(TAssemblyLinkContext inContext)
         {
-            base.LinkImpl(inSystem);
+            base.LinkImpl(inContext);
 
-            LinkMembers(m_Fields, inSystem, this);
-            LinkMembers(m_Methods, inSystem, this);
-            LinkMembers(m_Constructors, inSystem, this);
+            LinkMembers(m_Fields, inContext, this);
+            LinkMembers(m_Methods, inContext, this);
+            LinkMembers(m_Constructors, inContext, this);
         }
 
         #endregion // Link

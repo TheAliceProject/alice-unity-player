@@ -24,9 +24,9 @@ namespace Alice.Tweedle
 
         #region TField
 
-        public override void Link(TweedleSystem inSystem, TType inOwnerType)
+        public override void Link(TAssemblyLinkContext inContext, TType inOwnerType)
         {
-            base.Link(inSystem, inOwnerType);
+            base.Link(inContext, inOwnerType);
             
             // This is stored here instead of being retrieved from a TTypeRef
             // so that static fields accessed through subclasses are still
@@ -60,7 +60,7 @@ namespace Alice.Tweedle
                         (value) =>
                         {
                             CheckSet(inScope, ref _this, ref value);
-                            m_StaticStorage.Set(Name, value);
+                            m_StaticStorage.Set(Name, Type.Get(), value);
                         })
                     );
             }
@@ -71,7 +71,7 @@ namespace Alice.Tweedle
         public override void Set(ExecutionScope inScope, ref TValue inValue, TValue inNewValue)
         {
             CheckSet(inScope, ref inValue, ref inNewValue);
-            m_StaticStorage.Set(Name, inNewValue);
+            m_StaticStorage.Set(Name, Type.Get(), inNewValue);
         }
 
         #endregion // TField

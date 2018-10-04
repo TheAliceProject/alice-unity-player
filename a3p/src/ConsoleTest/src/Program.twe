@@ -1,18 +1,41 @@
 class Program {
   
   static void main() {
+    $Clock.delay(duration: 0);
     $Clock.delay(duration: 1.5);
-    forLoop(start: 0, end: 100);
+
+    TestEnum[] emptyArray <- new TestEnum[20];
+
+    writeEnum();
+    forLoop(array: new TestEnum[] { TestEnum.UP, TestEnum.DOWN });
+
+    WholeNumber[] arrayInTweedle <- new WholeNumber[] { 0, 1, 2, 3, 4, 5 };
+    Number[] castedArray <- arrayInTweedle;
+    
+    WholeNumber range <- $Debug.getRangeFromTweedle(array: arrayInTweedle);
+    $Debug.log(string: "Array from tweedle is " .. arrayInTweedle .. " with range " .. range);
+
+    WholeNumber[] arrayFromInterop <- $Debug.generateArray(start: 0, end: -150);
+    $Debug.log(string: "Array from interop is " .. arrayFromInterop);
+
+    $Clock.callOnDelay(lambda: (DecimalNumber initial, DecimalNumber current) -> {
+      $Debug.log(string: "This was called on a delay, starting at time " .. initial .. " and ending at time " .. current);
+      $Clock.delay(duration: 1);
+      return (current - initial);
+    }, delay: 2);
   }
 
-  static void forLoop(WholeNumber start, WholeNumber end) {
-    WholeNumber i <- start;
+  static void writeEnum(TestEnum e <- TestEnum.DOWN) {
+    $Debug.log(string: "" .. e);
+  }
 
-    while (i <= end) {
+  static void forLoop(TestEnum[] array) {
+    WholeNumber length <- array.length;
+    $Debug.log(string: "Array length is " .. length);
+
+    forEach(TestEnum i in array) {
+      $Clock.delay(duration: 0.2);
       $Debug.log(string: "" .. i);
-      i <- i + 1;
-      Boolean rand <- $Clock.returnRandomBool(duration: 1);
-      $Debug.log(string: "Random bool " .. rand);
     }
 
   }
