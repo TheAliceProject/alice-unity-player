@@ -85,8 +85,7 @@ namespace Alice.Tweedle
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()

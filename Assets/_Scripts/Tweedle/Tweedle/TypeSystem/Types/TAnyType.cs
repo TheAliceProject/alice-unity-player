@@ -16,20 +16,17 @@ namespace Alice.Tweedle
 
         public override TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Field");
         }
 
         public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Method");
         }
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            // TODO(Alex): Replace
-            throw new System.NotImplementedException();
+            throw new TweedleNoMembersException(this, "Constructor");
         }
 
         public override bool IsReferenceType()
