@@ -132,6 +132,29 @@ namespace Alice.Tweedle
 
         #region Tweedle Casting
 
+        public override bool CanCast(TType inType)
+        {
+            if (base.CanCast(inType))
+                return true;
+
+            // Arrays are castable upwards
+            // but this only affects perception, not behavior
+            // ex.
+            //      class A, class B : A
+            //      B[] can be treated as A[], but it's still a B[];
+            //      assigning an element of type A will cause a runtime error
+            TArrayType arrType = inType as TArrayType;
+            if (arrType != null)
+            {
+                TType elementType = ElementType.Get();
+                TType otherElementType = arrType.ElementType.Get();
+
+                return elementType.CanCast(otherElementType);
+            }
+
+            return false;
+        }
+
         #endregion // Tweedle Casting
 
         #region Conversion Semantics
