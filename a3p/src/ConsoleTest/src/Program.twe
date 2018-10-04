@@ -10,6 +10,8 @@ class Program {
     forLoop(array: new TestEnum[] { TestEnum.UP, TestEnum.DOWN });
 
     WholeNumber[] arrayInTweedle <- new WholeNumber[] { 0, 1, 2, 3, 4, 5 };
+    Number[] castedArray <- arrayInTweedle;
+    
     WholeNumber range <- $Debug.getRangeFromTweedle(array: arrayInTweedle);
     $Debug.log(string: "Array from tweedle is " .. arrayInTweedle .. " with range " .. range);
 
