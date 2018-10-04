@@ -13,6 +13,9 @@ namespace Alice.Tweedle
         public InvocationScope(ExecutionScope scope)
 			: base("Invocation", scope.vm)
 		{
+			// Note: ExecutionScope.parent is not set by the base constructor used above
+			// so permissions aren't inherited from the parent
+			// This prevents Readonly and Enum Instantiation permissions from creeping into invalid scopes
 			callingScope = scope;
 		}
 
