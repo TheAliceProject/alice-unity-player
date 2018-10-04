@@ -1,0 +1,48 @@
+class DecimalNumberProperty extends Property {
+  DecimalNumberProperty(SThing owner, DecimalNumber value) {
+    super(owner: owner);
+    this.value <- value;
+  }
+
+  DecimalNumber getValue() {
+    return this.value;
+  }
+
+  void setValue(DecimalNumber value) {
+    if (this.value != value) {
+      this.value <- value;
+      $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
+    }
+  }
+
+  void animateValue(DecimalNumber endValue, DecimalNumber duration <- Default.duration(), AnimationStyle animationStyle <- Default.animationStyle()) {
+     
+    if (duration <= 0) {
+      this.setValue(endValue);
+      return;
+    }
+     
+    DecimalNumber startTime <- $Clock.currentTime;
+    DecimalNumber currentTime <- startTime;
+    DecimalNumber endTime <- startTime + duration;
+
+    DecimalNumber startValue <- this.value;
+    DecimalNumber delta <- endValue - startValue;
+
+    while (currentTime < endTime) {
+      $Clock.delayOneFrame();
+
+      currentTime <- $Clock.currentTime;
+
+      if (currentTime >= endTime) {
+        setValue(value: endValue);
+      } else {
+        //TODO: use animation style
+        DecimalNumber t <- (currentTime - startTime)/duration;
+        setValue(value: delta*t + startValue);
+      }
+    }
+  }
+
+  @CompletelyHidden DecimalNumber value;
+}

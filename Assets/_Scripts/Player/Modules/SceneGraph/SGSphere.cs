@@ -4,16 +4,13 @@ using Alice.Tweedle;
 using Alice.Player.Primitives;
 
 namespace Alice.Player.Modules {
-    [PInteropType]
     public sealed class SGSphere : SGModel {
+        public const string RADIUS_PROPERTY_NAME = "Radius";
 
         private Transform m_SphereTransform;
 
-        #region Interop Interfaces
-        [PInteropField]
-        public const string RADIUS_PROPERTY_NAME = "Radius";
+        
 
-        #endregion //Interop Interafaces
 
         private void Awake() {
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -29,12 +26,13 @@ namespace Alice.Player.Modules {
             RegisterPropertyDelegate<double>(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
         }
 
-        private void OnRadiusPropertyChanged(PropertyBase<double> inProperty) {
-            float scale = ((float)inProperty.getValue())/0.5f;
+        private void OnRadiusPropertyChanged(TValue inValue) {
+
+            float scale = ((float)inValue.ToDouble())/0.5f;
             m_SphereTransform.localScale = new UnityEngine.Vector3(scale, scale, scale);
         }
 
-        protected override void OnSizePropertyChanged(PropertyBase<Size> inProperty) {
+        protected override void OnSizePropertyChanged(TValue inValue) {
 
         }
 

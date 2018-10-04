@@ -149,13 +149,16 @@ namespace Alice.Tweedle.VM
 
 		public ExecutionScope ChildScope()
 		{
-			return new ExecutionScope(this);
+			var child = new ExecutionScope(this);
+			child.thisValue = thisValue;
+			return child;
 		}
 
 		public ExecutionScope ChildScope(string stackEntry)
 		{
 			ExecutionScope child = new ExecutionScope(this);
 			child.callStackEntry = stackEntry;
+			child.thisValue = thisValue;
 			return child;
 		}
 
@@ -164,6 +167,7 @@ namespace Alice.Tweedle.VM
 			var child = new ExecutionScope(this);
 			child.SetLocalValue(declaration, value);
 			child.callStackEntry = stackEntry;
+			child.thisValue = thisValue;
 			return child;
 		}
 

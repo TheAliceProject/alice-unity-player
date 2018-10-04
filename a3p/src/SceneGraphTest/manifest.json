@@ -23,6 +23,26 @@
       "files": ["src/Default.twe"],
       "type": "Class"
     }, {
+      "id": "Property",
+      "format": "tweedle",
+      "files": ["src/Property.twe"],
+      "type": "Class"
+    }, {
+      "id": "SizeProperty",
+      "format": "tweedle",
+      "files": ["src/SizeProperty.twe"],
+      "type": "Class"
+    }, {
+      "id": "DecimalNumberProperty",
+      "format": "tweedle",
+      "files": ["src/DecimalNumberProperty.twe"],
+      "type": "Class"
+    }, {
+      "id": "PaintProperty",
+      "format": "tweedle",
+      "files": ["src/PaintProperty.twe"],
+      "type": "Class"
+    }, {
       "id": "SThing",
       "format": "tweedle",
       "files": ["src/SThing.twe"],

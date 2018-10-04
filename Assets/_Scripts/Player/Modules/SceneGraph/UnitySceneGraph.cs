@@ -1,10 +1,52 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Alice.Player.Modules;
+using Alice.Player.Primitives;
 using Alice.Tweedle;
+using Alice.Tweedle.Interop;
 
 namespace Alice.Player.Unity {
     public sealed class UnitySceneGraph : MonoBehaviour {
+
+        private interface IWaitReturn {
+            bool Step(float time);
+            AsyncReturn Return {get;}
+        }
+
+        private struct TimeReturn : IWaitReturn {
+            private float m_StartTime;
+            private float m_Duration;
+            private AsyncReturn m_Return;
+            public AsyncReturn Return {get { return m_Return;}}
+            
+            public TimeReturn(AsyncReturn inReturn, float startTime, float duration) {
+                m_Return = inReturn;
+                m_StartTime = startTime;
+                m_Duration = duration;
+            }
+
+            public bool Step(float time) {
+                return time - m_StartTime >= m_Duration;
+            }
+        }
+
+        private class FrameReturn : IWaitReturn {
+            private int m_Duration;
+            private int m_Frame;
+            private AsyncReturn m_Return;
+            public AsyncReturn Return {get { return m_Return;}}
+
+            public FrameReturn(AsyncReturn inReturn, int frames) {
+                m_Return = inReturn;
+                m_Duration = frames;
+            }
+
+            public bool Step(float time) {
+                m_Frame++;
+                return m_Frame >= m_Duration;
+            }
+        }
+
         private static UnitySceneGraph s_Current;
 
         public static UnitySceneGraph Current {
@@ -12,7 +54,7 @@ namespace Alice.Player.Unity {
                 if (ReferenceEquals(s_Current, null)) {
                     s_Current = FindObjectOfType<UnitySceneGraph>();
                     if (ReferenceEquals(s_Current, null)) {
-                        var go = new GameObject("PropertyManager");
+                        var go = new GameObject("SceneGraph");
                         s_Current = go.AddComponent<UnitySceneGraph>();
                     }
                 }
@@ -20,8 +62,10 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private List<IPropertyTween> m_Tweens = new List<IPropertyTween>();
         private List<SGEntity> m_Entities = new List<SGEntity>();
+
+         private List<IWaitReturn> m_WaitReturnsQueue = new List<IWaitReturn>();
+        private List<IWaitReturn> m_WaitReturns = new List<IWaitReturn>();
 
         private bool m_IsUpdating;
 
@@ -43,35 +87,72 @@ namespace Alice.Player.Unity {
 
         private void Update() {
             m_IsUpdating = true;
-            // process tweens in order
-            double dt = Time.deltaTime;
-            for (int i = 0; i < m_Tweens.Count; ++i) {
-                m_Tweens[i].Step(dt);
-                if (m_Tweens[i].IsDone()) {
-                    m_Tweens[i].Finish();
-                    m_Tweens.RemoveAt(i);
+
+            if (m_WaitReturnsQueue.Count != 0) {
+                m_WaitReturns.AddRange(m_WaitReturnsQueue);
+                m_WaitReturnsQueue.Clear();
+            }
+
+            for (int i = 0; i < m_WaitReturns.Count; ++i) {
+                bool done = m_WaitReturns[i].Step(Time.time);
+                if (done) {
+                    m_WaitReturns[i].Return.Return();
+                    m_WaitReturns.RemoveAt(i);
                     --i;
                 }
             }
+
             m_IsUpdating = false;
         }
 
-        public void QueueTween(IPropertyTween inTween) {
-            m_Tweens.Add(inTween);
+        internal void QueueTween(IPropertyTween inTween) {
+            
         }
 
-        public void AddEntity(SGEntity inEntity) {
+        internal void QueueFrameReturn(AsyncReturn inReturn, int inFrames) {
+            QueueWaitReturn(new FrameReturn(inReturn, inFrames));
+        }
+
+        internal void QueueTimeReturn(AsyncReturn inReturn, double inSeconds) {
+            QueueWaitReturn(new TimeReturn(inReturn, Time.time, (float)inSeconds));
+        }
+
+        private void QueueWaitReturn(IWaitReturn inReturn) {
+            if (m_IsUpdating) {
+                m_WaitReturnsQueue.Add(inReturn);
+            } else {
+                m_WaitReturns.Add(inReturn);
+            }
+        }
+
+        internal void AddEntity(SGEntity inEntity) {
             m_Entities.Add(inEntity);
         }
 
-        public SGEntity FindEntity(TValue inOwner) {
+        internal SGEntity FindEntity(TValue inOwner) {
             for (int i = 0, count = m_Entities.Count; i < count; ++i) {
-                if (ReferenceEquals(m_Entities[i].owner.RawObject<object>(), inOwner.RawObject<object>())) {
+                if (ReferenceEquals(m_Entities[i].owner, inOwner.RawObject<object>())) {
                     return m_Entities[i];
                 }
             }
             return null;
         }
 
+        internal void BindProperty(string inName, TValue inOwner, TValue inProperty, TValue inInitValue) {
+            var entity = FindEntity(inOwner);
+            if (entity) {
+                entity.BindProperty(inName, inProperty, inInitValue);
+            }
+        }
+
+        internal void UpdateProperty(TValue inOwner, TValue inProperty, TValue inValue) {
+            var entity = FindEntity(inOwner);
+            if (entity) {
+                entity.UpdateProperty(inProperty, inValue);
+            }
+        }
+
     }
+
+    
 }

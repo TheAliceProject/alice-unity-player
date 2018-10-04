@@ -677,6 +677,10 @@ namespace Alice.Tweedle.Parse
                 int i = 0;
                 Array.ForEach(args, (arg =>
 				{
+					if (arg == null || arg.expression() == null) {
+
+					}
+
 					ITweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
 					arguments[i++] = new NamedArgument(arg.IDENTIFIER().GetText(), argValue);
 				}));
