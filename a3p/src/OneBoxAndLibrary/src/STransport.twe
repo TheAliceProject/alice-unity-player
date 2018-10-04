@@ -1,0 +1,5 @@
+class STransport extends SJointedModel {
+  STransport(TextString resource) {
+    super(resource: resource);
+  }
+}

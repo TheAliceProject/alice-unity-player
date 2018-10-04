@@ -1,181 +1,208 @@
 ﻿using System;
 using System.Collections.Generic;
-using Alice.VM;
 
-namespace Alice.Tweedle
+namespace Alice.Tweedle.VM
 {
-	public class ExecutionScope
-	{
-		ExecutionScope parent;
-		public VirtualMachine vm;
-		protected TweedleValue thisValue;
-		protected internal string callStackEntry;
+    public class ExecutionScope
+    {
+        protected readonly ExecutionScope parent;
+        public readonly VirtualMachine vm;
+        protected TValue thisValue;
+        protected internal string callStackEntry;
 
-		Dictionary<string, ValueHolder> localValues =
-			new Dictionary<string, ValueHolder>();
+        protected virtual ScopePermissions GetPermissions()
+        {
+            return ScopePermissions.None;
+        }
 
-		public ExecutionScope(string stackEntry)
-		{
-			callStackEntry = stackEntry;
-			vm = new VirtualMachine();
-		}
+        internal bool HasPermissions(ScopePermissions inPermissions)
+        {
+            if ((GetPermissions() & inPermissions) == inPermissions)
+            {
+                // Early exit if permissions are located on this scope
+                return true;
+            }
+            if (parent != null)
+            {
+                // Otherwise we can traverse back up the scope stack
+                // Since InvocationScopes don't use parent for their calling scope,
+                // this doesn't pose the risk of permissions creeping into scopes where it isn't valid
+                return parent.HasPermissions(inPermissions);
+            }
+            return false;
+        }
 
-		public ExecutionScope(string stackEntry, VirtualMachine vm)
-		{
-			this.vm = vm;
-			callStackEntry = stackEntry;
-		}
+        Dictionary<string, ValueHolder> localValues =
+            new Dictionary<string, ValueHolder>();
 
-		protected ExecutionScope(ExecutionScope parent)
-		{
-			vm = parent.vm;
-			this.parent = parent;
-		}
+        public ExecutionScope(string stackEntry)
+        {
+            callStackEntry = stackEntry;
+            vm = new VirtualMachine();
+        }
 
-		internal TweedleClass ClassNamed(string name)
-		{
-			return vm?.Library?.ClassNamed(name);
-		}
+        public ExecutionScope(string stackEntry, VirtualMachine vm)
+        {
+            this.vm = vm;
+            callStackEntry = stackEntry;
+        }
 
-		internal TweedleTypeDeclaration TypeNamed(string name)
-		{
-			return vm?.Library?.TypeNamed(name);
-		}
+        protected ExecutionScope(ExecutionScope parent)
+        {
+            vm = parent.vm;
+            this.parent = parent;
+        }
 
-		private TypeValue GetTypeNamed(string name)
-		{
-			TweedleTypeDeclaration libraryType = TypeNamed(name);
-			if (libraryType != null)
-				return new TypeValue(libraryType);
-			// TODO Add catch for System Primitive types
-			return null;
-		}
+        internal TType TypeNamed(string name)
+        {
+            return vm?.Library?.TypeNamed(name);
+        }
 
-		internal virtual string StackWith(string stackTop)
-		{
-			string stack = stackTop + "\n" + callStackEntry;
-			if (parent == null)
-			{
-				return stack;
-			}
-			else
-			{
-				return parent.StackWith(stack);
-			}
-		}
+        private TTypeRef GetTypeNamed(string name)
+        {
+            TType libraryType = TypeNamed(name);
+            return libraryType != null ? new TTypeRef(libraryType) : null;
+        }
 
-		internal TweedleValue GetThis()
-		{
-			return thisValue;
-		}
+        internal virtual string StackWith(string stackTop)
+        {
+            string stack = stackTop + "\n" + callStackEntry;
+            if (parent == null)
+            {
+                return stack;
+            }
+            else
+            {
+                return parent.StackWith(stack);
+            }
+        }
 
-		public TweedleValue SetLocalValue(TweedleValueHolderDeclaration declaration, TweedleValue value)
-		{
-			//UnityEngine.Debug.Log("Initializing " + declaration.Name + " to " + value.ToTextString());
-			localValues.Add(declaration.Name,
-							new ValueHolder(declaration.Type.AsDeclaredType(this), value));
-			return value;
-		}
+        internal TValue GetThis()
+        {
+            return thisValue;
+        }
 
-		public TweedleValue SetValue(string varName, TweedleValue value)
-		{
-			if (value == null)
-			{
-				throw new TweedleRuntimeException("Can not assign null to " + varName);
-			}
-			if (UpdateScopeValue(varName, value) || SetValueOnThis(varName, value))
-			{
-				return value;
-			}
-			throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
-		}
+        public TValue SetLocalValue(TValueHolderDeclaration declaration, TValue value)
+        {
+            //UnityEngine.Debug.Log("Initializing " + declaration.Name + " to " + value.ToTextString());
+            localValues.Add(declaration.Name,
+                new ValueHolder(declaration.Type.Get(this), value));
+            return value;
+        }
 
-		public bool UpdateScopeValue(string varName, TweedleValue value)
-		{
-			if (localValues.ContainsKey(varName))
-			{
-				//UnityEngine.Debug.Log("Updating " + varName + " to " + value.ToTextString());
-				// TODO handle on property objects for animation and delay
-				localValues[varName].Value = value;
-				return true;
-			}
-			else
-			{
-				if (parent != null)
-				{
-					//UnityEngine.Debug.Log("Asking parent scope to set " + varName + " to " + value.ToTextString());
-					return parent.UpdateScopeValue(varName, value);
-				}
-			}
-			return false;
-		}
+        public TValue SetValue(string varName, TValue value)
+        {
+            if (value == TValue.UNDEFINED)
+            {
+                throw new TweedleRuntimeException("Can not assign null to " + varName);
+            }
+            if (UpdateScopeValue(varName, value) || SetValueOnThis(varName, value))
+            {
+                return value;
+            }
+            throw new TweedleRuntimeException("Attempt to write uninitialized variable <" + varName + "> failed");
+        }
 
-		bool SetValueOnThis(string varName, TweedleValue value)
-		{
-			if (thisValue == null)
-			{
-				throw new TweedleRuntimeException("The VM is unable to write to static variables yet. Can not update <" + varName + ">");
-			}
-			return thisValue.Set(varName, value, this);
-		}
+        public bool UpdateScopeValue(string varName, TValue value)
+        {
+            if (localValues.ContainsKey(varName))
+            {
+                //UnityEngine.Debug.Log("Updating " + varName + " to " + value.ToTextString());
+                // TODO handle on property objects for animation and delay
+                localValues[varName].Value = value;
+                return true;
+            }
+            else
+            {
+                if (parent != null)
+                {
+                    //UnityEngine.Debug.Log("Asking parent scope to set " + varName + " to " + value.ToTextString());
+                    return parent.UpdateScopeValue(varName, value);
+                }
+            }
+            return false;
+        }
 
-		public TweedleValue GetValue(string varName)
-		{
-			TypeValue type = GetTypeNamed(varName);
-			if (type != null)
-			{
-				return type;
-			}
-			if (localValues.ContainsKey(varName))
-			{
-				//UnityEngine.Debug.Log("Reading local " + varName + " as " + localValues[varName].Value.ToTextString());
-				return localValues[varName].Value;
-			}
-			if (parent != null)
-			{
-				//UnityEngine.Debug.Log("Asking parent for " + varName);
-				return parent.GetValue(varName);
-			}
-			if (thisValue != null && thisValue.HasSetField(varName))
-			{
-				return thisValue.Get(varName);
-			}
-			throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
-		}
+        bool SetValueOnThis(string varName, TValue value)
+        {
+            return thisValue != TValue.UNDEFINED && thisValue.Set(this, varName, value);
+        }
 
-		public ExecutionScope ChildScope()
-		{
-			return new ExecutionScope(this);
-		}
+        public TValue GetValue(string varName)
+        {
+            TTypeRef type = GetTypeNamed(varName);
+            if (type != null)
+            {
+                return TBuiltInTypes.TYPE_REF.Instantiate(type);
+            }
+            if (localValues.ContainsKey(varName))
+            {
+                //UnityEngine.Debug.Log("Reading local " + varName + " as " + localValues[varName].Value.ToTextString());
+                return localValues[varName].Value;
+            }
+            if (parent != null)
+            {
+                //UnityEngine.Debug.Log("Asking parent for " + varName);
+                return parent.GetValue(varName);
+            }
+            if (thisValue != TValue.UNDEFINED)
+            {
+                try
+                {
+                    return thisValue.Get(this, varName);
+                }
+                catch (TweedleNonexistentFieldException) { }
+            }
+            throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
+        }
 
-		public ExecutionScope ChildScope(string stackEntry)
-		{
-			ExecutionScope child = new ExecutionScope(this);
-			child.callStackEntry = stackEntry;
-			return child;
-		}
+        public ExecutionScope ChildScope()
+        {
+            ExecutionScope child = new ExecutionScope(this);
+            child.thisValue = thisValue;
+            return child;
+        }
 
-		internal ExecutionScope ChildScope(string stackEntry, TweedleValueHolderDeclaration declaration, TweedleValue value)
-		{
-			var child = new ExecutionScope(this);
-			child.SetLocalValue(declaration, value);
-			child.callStackEntry = stackEntry;
-			return child;
-		}
+        public ExecutionScope ChildScope(string stackEntry)
+        {
+            ExecutionScope child = new ExecutionScope(this);
+            child.callStackEntry = stackEntry;
+            child.thisValue = thisValue;
+            return child;
+        }
 
-		internal ConstructorScope ForInstantiation(TweedleClass tweedleClass)
-		{
-			return new ConstructorScope(this, tweedleClass);
-		}
+        internal ExecutionScope ChildScope(string stackEntry, TValueHolderDeclaration declaration, TValue value)
+        {
+            var child = new ExecutionScope(this);
+            child.SetLocalValue(declaration, value);
+            child.callStackEntry = stackEntry;
+            child.thisValue = thisValue;
+            return child;
+        }
 
-		internal MethodScope MethodCallScope(string methodName, bool invokeSuper)
-		{
-			return new MethodScope(this, methodName, invokeSuper);
-		}
+        internal ConstructorScope InstantiationScope(TType inType)
+        {
+            return new ConstructorScope(this, inType);
+        }
 
-		internal LambdaScope LambdaScope()
-		{
-			return new LambdaScope(this);
-		}
-	}
+        internal ConstructorScope EnumInstantiationScope(TEnumType inEnumType, TEnumValueInitializer inValueInitializer)
+        {
+            return new ConstructorScope(this, inEnumType, inValueInitializer);
+        }
+
+        internal StaticConstructorScope StaticInstantiationScope(TType inType)
+        {
+            return new StaticConstructorScope(this, inType);
+        }
+
+        internal MethodScope MethodCallScope(string methodName, bool invokeSuper)
+        {
+            return new MethodScope(this, methodName, invokeSuper);
+        }
+
+        internal LambdaScope LambdaScope()
+        {
+            return new LambdaScope(this);
+        }
+    }
 }

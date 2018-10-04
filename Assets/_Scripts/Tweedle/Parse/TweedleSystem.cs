@@ -1,132 +1,192 @@
 ﻿using System;
 using System.Collections.Generic;
 using Alice.Tweedle.File;
-using Alice.VM;
+using Alice.Tweedle.Interop;
+using Alice.Tweedle.VM;
+using Alice.Player.Primitives;
+using Alice.Player.Modules;
 
 namespace Alice.Tweedle.Parse
 {
-	public class TweedleSystem
-	{
-		public HashSet<ProjectIdentifier> LoadedFiles { get; private set; }
+    public class TweedleSystem
+    {
+        public HashSet<ProjectIdentifier> LoadedFiles { get; private set; }
 
-		public Dictionary<string, LibraryManifest> Libraries { get; private set; }
-		public Dictionary<string, ProgramDescription> Programs { get; private set; }
-		public Dictionary<string, ModelManifest> Models { get; private set; }
+        public Dictionary<string, LibraryManifest> Libraries { get; private set; }
+        public Dictionary<string, ProgramDescription> Programs { get; private set; }
+        public Dictionary<string, ModelManifest> Models { get; private set; }
 
-		public Dictionary<ResourceIdentifier, ResourceReference> Resources { get; private set; }
+        public Dictionary<ResourceIdentifier, ResourceReference> Resources { get; private set; }
 
-		public Dictionary<string, TweedleClass> Classes { get; private set; }
-		Dictionary<string, TweedlePrimitiveClass> primitives;
-		public Dictionary<string, TweedleEnum> Enums { get; private set; }
-		public Dictionary<string, TweedleType> Types { get; private set; }
+        private List<TAssembly> m_StaticAssemblies = new List<TAssembly>();
+        private List<TAssembly> m_DynamicAssemblies = new List<TAssembly>();
 
-		public TweedleSystem()
-		{
-			LoadedFiles = new HashSet<ProjectIdentifier>();
+        private TAssembly m_RuntimeAssembly;
 
-			Libraries = new Dictionary<string, LibraryManifest>();
-			Programs = new Dictionary<string, ProgramDescription>();
-			Models = new Dictionary<string, ModelManifest>();
+        private List<TType> m_TypeList = new List<TType>();
+        private Dictionary<string, TType> m_TypeMap = new Dictionary<string, TType>();
 
-			Resources = new Dictionary<ResourceIdentifier, ResourceReference>();
+        public TweedleSystem()
+        {
+            LoadedFiles = new HashSet<ProjectIdentifier>();
 
-			Classes = new Dictionary<string, TweedleClass>();
-			Enums = new Dictionary<string, TweedleEnum>();
-			Types = new Dictionary<string, TweedleType>();
-			InitializePrimitives();
-		}
+            Libraries = new Dictionary<string, LibraryManifest>();
+            Programs = new Dictionary<string, ProgramDescription>();
+            Models = new Dictionary<string, ModelManifest>();
 
-		private void InitializePrimitives()
-		{
-			primitives = new Dictionary<string, TweedlePrimitiveClass>();
-		}
+            Resources = new Dictionary<ResourceIdentifier, ResourceReference>();
 
-		public void AddLibrary(LibraryManifest libAsset)
-		{
-			LoadedFiles.Add(libAsset.Identifier);
-			Libraries.Add(libAsset.Identifier.id, libAsset);
-		}
+            InitializePrimitives();
+        }
 
-		public void AddProgram(ProgramDescription programAsset)
-		{
-			LoadedFiles.Add(programAsset.Identifier);
-			Programs.Add(programAsset.Identifier.id, programAsset);
-		}
+        private void InitializePrimitives()
+        {
+            AddStaticAssembly(TBuiltInTypes.Assembly());
+        }
 
-		public void AddModel(ModelManifest modelAsset)
-		{
-			LoadedFiles.Add(modelAsset.Identifier);
-			Models.Add(modelAsset.Identifier.id, modelAsset);
-		}
+        #region Adding Resources
 
-		public void AddClass(TweedleClass tweClass)
-		{
-			Classes.Add(tweClass.Name, tweClass);
-			Types.Add(tweClass.Name, tweClass);
+        public void AddLibrary(LibraryManifest libAsset)
+        {
+            LoadedFiles.Add(libAsset.Identifier);
+            Libraries.Add(libAsset.Identifier.id, libAsset);
+        }
 
-		}
+        public void AddProgram(ProgramDescription programAsset)
+        {
+            LoadedFiles.Add(programAsset.Identifier);
+            Programs.Add(programAsset.Identifier.id, programAsset);
+        }
 
-		internal TweedleClass ClassNamed(string name)
-		{
-			return Classes[name];
-		}
+        public void AddModel(ModelManifest modelAsset)
+        {
+            LoadedFiles.Add(modelAsset.Identifier);
+            Models.Add(modelAsset.Identifier.id, modelAsset);
+        }
 
-		internal TweedleEnum EnumNamed(string name)
-		{
-			return Enums[name];
-		}
+        public void AddResource(ResourceReference resourceAsset)
+        {
+            ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
+            Resources.Add(identifier, resourceAsset);
+        }
 
-		internal TweedleTypeDeclaration TypeNamed(string name)
-		{
-			if (name.StartsWith("$", StringComparison.Ordinal))
-			{
-				return PrimitiveDeclaration(name);
-			}
-			if (Classes.ContainsKey(name))
-			{
-				return Classes[name];
-			}
-			if (Enums.ContainsKey(name))
-			{
-				return Enums[name];
-			}
-			return null;
-		}
+        /// <summary>
+        /// Adds a dynamic assembly to the system.
+        /// Dynamically loaded assemblies will be unloaded when the system is unloaded.
+        /// </summary>
+        public void AddDynamicAssembly(TAssembly assembly)
+        {
+            m_DynamicAssemblies.Add(assembly);
+        }
 
-		TweedlePrimitiveClass PrimitiveDeclaration(string name)
-		{
-			if (primitives.ContainsKey(name))
-			{
-				return primitives[name];
-			}
-			UnityEngine.Debug.LogError("Attempt to invoke missing primitive namespace " + name);
-			return new AbsentPrimitiveClassStub(name);
-		}
+        /// <summary>
+        /// Adds a static assembly to the system.
+        /// Statically loaded assemblies will not be unloaded when the system is unloaded.
+        /// </summary>
+        public void AddStaticAssembly(TAssembly assembly)
+        {
+            m_StaticAssemblies.Add(assembly);
+        }
 
-		public void AddEnum(TweedleEnum tweEnum)
-		{
-			Enums.Add(tweEnum.Name, tweEnum);
-			Types.Add(tweEnum.Name, tweEnum);
-		}
+        #endregion // Adding Resources
 
-		public void AddResource(ResourceReference resourceAsset)
-		{
-			ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
-			Resources.Add(identifier, resourceAsset);
-		}
+        #region Steps
 
-		internal void QueueProgramMain(VirtualMachine vm)
-		{
-			TweedleClass prog;
-			vm.Initialize(this);
-			if (Classes.TryGetValue("Program", out prog))
-			{
-				TypeValue progVal = new TypeValue(prog);
-				Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-				arguments.Add("args", new TweedleArray(new TweedleArrayType(TweedleTypes.TEXT_STRING),
-														 new List<TweedleValue>()));
-				vm.Queue(new MethodCallExpression(progVal, "main", arguments));
-			}
-		}
-	}
+        /// <summary>
+        /// Performs linking steps for all loaded assemblies.
+        /// Will skip over assemblies that have already been linked.
+        /// </summary>
+        public void Link()
+        {
+            foreach(var assembly in m_StaticAssemblies)
+                Link(assembly);
+            foreach(var assembly in m_DynamicAssemblies)
+                Link(assembly);
+        }
+
+        private void Link(TAssembly inAssembly)
+        {
+            inAssembly.Link();
+
+            var allTypes = inAssembly.AllTypes();
+            for (int i = 0; i < allTypes.Count; ++i)
+            {
+                TType type = allTypes[i];
+                m_TypeList.Add(type);
+                m_TypeMap.Add(type.Name, type);
+            }
+        }
+
+        /// <summary>
+        /// Runs static initializers for all loaded types,
+        /// and queues up any additional execution steps
+        /// on the given VM.
+        /// </summary>
+        public void Prep(VirtualMachine inVM)
+        {
+            ITweedleExpression staticInitializer;
+            for (int i = 0; i < m_TypeList.Count; ++i)
+            {
+                m_TypeList[i].Prep(out staticInitializer);
+                if (staticInitializer != null)
+                    inVM.Queue(staticInitializer);
+            }
+        }
+
+        /// <summary>
+        /// Unloads all dynamically-loaded assemblies.
+        /// </summary>
+        public void Unload()
+        {
+            for (int i = m_DynamicAssemblies.Count - 1; i >= 0; --i)
+            {
+                m_DynamicAssemblies[i].Unload();
+            }
+            m_DynamicAssemblies.Clear();
+            m_RuntimeAssembly = null;
+        }
+
+        #endregion // Steps
+
+        /// <summary>
+        /// Returns a runtime assembly for this system.
+        /// This assembly will be unloaded when the system is unloaded.
+        /// </summary>
+        public TAssembly GetRuntimeAssembly()
+        {
+            if (m_RuntimeAssembly == null)
+            {
+                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies.ToArray(), TAssemblyFlags.Runtime);
+                m_DynamicAssemblies.Add(m_RuntimeAssembly);
+            }
+            return m_RuntimeAssembly;
+        }
+
+        public TType TypeNamed(string name)
+        {
+            TType type;
+            m_TypeMap.TryGetValue(name, out type);
+            return type;
+        }
+
+        internal void DumpTypes()
+        {
+            foreach (var type in m_TypeList)
+            {
+                UnityEngine.Debug.Log(TType.DumpOutline(type));
+            }
+        }
+
+        internal void QueueProgramMain(VirtualMachine vm)
+        {
+            TType prog;
+            vm.Initialize(this);
+            if (m_TypeMap.TryGetValue("Program", out prog))
+            {
+                TValue progVal = TBuiltInTypes.TYPE_REF.Instantiate(prog);
+                NamedArgument[] arguments = NamedArgument.EMPTY_ARGS;
+                vm.Queue(new MethodCallExpression(progVal, "main", arguments));
+            }
+        }
+    }
 }

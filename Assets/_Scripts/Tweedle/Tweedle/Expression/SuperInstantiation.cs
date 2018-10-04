@@ -1,22 +1,43 @@
 ﻿using System.Collections.Generic;
-using Alice.VM;
+using Alice.Tweedle.VM;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
-	public class SuperInstantiation : TweedleExpression
-	{
-		Dictionary<string, TweedleExpression> Arguments { get; }
+    public class SuperInstantiation : TweedleExpression
+    {
+        private readonly NamedArgument[] m_Arguments;
 
-		public SuperInstantiation(Dictionary<string, TweedleExpression> arguments)
-			: base(null)
-		{
-			Arguments = arguments;
-		}
+        public SuperInstantiation(NamedArgument[] inArguments)
+            : base(null)
+        {
+            m_Arguments = inArguments;
+        }
 
-		internal override ExecutionStep AsStep(ExecutionScope scope)
-		{
-			ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(Arguments);
-			return superScope.InvocationStep("super()", Arguments);
-		}
-	}
+        public override ExecutionStep AsStep(ExecutionScope scope)
+        {
+            ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(m_Arguments);
+            return superScope.InvocationStep("super()", m_Arguments);
+        }
+
+        public override string ToTweedle()
+        {
+            using(PooledStringBuilder pooledString = PooledStringBuilder.Alloc())
+            {
+                pooledString.Builder.Append("super(");
+                for (int i = 0; i < m_Arguments.Length; ++i)
+                {
+                    if (i > 0)
+                    {
+                        pooledString.Builder.Append(", ");
+                    }
+
+                    pooledString.Builder.Append(m_Arguments[i].Name).Append(": ").Append(m_Arguments[i].Argument.ToTweedle());
+                }
+                pooledString.Builder.Append(')');
+
+                return pooledString.ToString();
+            }
+        }
+    }
 }

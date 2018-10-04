@@ -1,41 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alice.VM;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
 {
-	public class LambdaExpression : TweedleExpression
-	{
-		List<TweedleRequiredParameter> parameters;
-		BlockStatement body;
+    public class LambdaExpression : TweedleExpression
+    {
+        private TLambdaType m_LambdaType;
+        private TParameter[] m_Parameters;
+        private BlockStatement m_Body;
 
-		public List<TweedleRequiredParameter> Parameters
-		{
-			get { return parameters; }
-		}
+        public TParameter[] Parameters
+        {
+            get { return m_Parameters; }
+        }
 
-		internal TweedleLambdaType LambdaType()
-		{
-			return (TweedleLambdaType)Type;
-		}
+        public BlockStatement Body
+        {
+            get { return m_Body; }
+        }
 
-		public BlockStatement Body
-		{
-			get { return body; }
-		}
+        public LambdaExpression(TLambdaType type, TParameter[] parameters, TweedleStatement[] statements)
+            : base(type)
+        {
+            m_LambdaType = type;
+            m_Parameters = parameters;
+            m_Body = new BlockStatement(statements);
+        }
 
-		// TODO Extract a better return type than void from the statements
-		public LambdaExpression(List<TweedleRequiredParameter> parameters, List<TweedleStatement> statements)
-			: base(new TweedleLambdaType(parameters.Select(param => param.Type).ToList(), TweedleVoidType.VOID))
-		{
-			this.parameters = parameters;
-			body = new BlockStatement(statements);
-		}
-
-		internal override ExecutionStep AsStep(ExecutionScope scope)
-		{
-			return new ValueStep(ToTweedle(), scope, new TweedleLambda(this));
-		}
-	}
+        public override ExecutionStep AsStep(ExecutionScope scope)
+        {
+            return new ValueStep(ToTweedle(), scope, m_LambdaType.Instantiate(this, scope));
+        }
+    }
 }

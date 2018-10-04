@@ -1,0 +1,34 @@
+class SProgram {
+	SScene activeScene;
+	DecimalNumber simulationSpeedFactor <- 1.0;
+
+	SScene getActiveScene() {
+		return this.activeScene;
+	}
+
+	void setActiveScene( SScene scene ) {
+		if( this.activeScene != null ) {
+			this.activeScene.deactivate( program: this );
+		}
+		this.activeScene <- scene;
+		if( this.activeScene != null ) {
+			this.activeScene.activate( program: this );
+		}
+	}
+
+	DecimalNumber getSimulationSpeedFactor() {
+		return simulationSpeedFactor;
+	}
+
+	void setSimulationSpeedFactor( Number simulationSpeedFactor ) {
+		this.simulationSpeedFactor <- simulationSpeedFactor;
+	}
+
+	void initializeInFrame() {
+	  $SceneManager.createFrame();
+	}
+
+  @CompletelyHidden void disconnectSystemListeners() {
+    $System.disconnect(program: this);
+  }
+}

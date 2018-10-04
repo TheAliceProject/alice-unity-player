@@ -1,0 +1,18 @@
+enum MoveDirection {
+	LEFT( axis: Direction.NegativeXAxis() ),
+	RIGHT( axis: Direction.PositiveXAxis() ),
+	UP( axis: Direction.PositiveYAxis() ),
+	DOWN( axis: Direction.NegativeYAxis() ),
+	FORWARD( axis: Direction.NegativeZAxis() ),
+	BACKWARD( axis: Direction.PositiveZAxis() );
+
+	Direction axis;
+
+	MoveDirection( Direction axis ) {
+		this.axis <- axis;
+	}
+
+	Direction getAxis() {
+		return this.axis;
+	}
+}

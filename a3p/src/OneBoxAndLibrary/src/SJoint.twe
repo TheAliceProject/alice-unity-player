@@ -1,0 +1,37 @@
+class SJoint extends SMovableTurnable {
+  SJoint(TextString joint, SJoint parent, SceneGraph sgModel) {
+    // ROOT <- new SJoint(joint: "root", parent: null, model: sgModel);
+  }
+
+  Boolean isPivotVisible() {
+		if( this.axes != null ) {
+			return this.axes.getParent() == this.getSgComposite();
+		} else {
+			return false;
+		}
+	}
+
+  void setPivotVisible(Boolean isPivotVisible) {
+		if( isPivotVisible ) {
+			this.getPivot().setParent( this.getSgComposite() );
+		} else {
+			if( this.axes != null ) {
+				this.axes.setParent( null );
+			}
+		}
+	}
+
+  // TODO reconcile size with minimum bounding box
+
+  DecimalNumber getWidth() {
+    this.getSize().x;
+  }
+
+  DecimalNumber getHeight() {
+    this.getSize().y;
+  }
+
+  DecimalNumber getDepth() {
+    this.getSize().z;
+  }
+}

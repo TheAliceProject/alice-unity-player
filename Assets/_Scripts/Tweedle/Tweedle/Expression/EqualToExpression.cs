@@ -1,21 +1,21 @@
 ﻿namespace Alice.Tweedle
 {
-	class EqualToExpression : BinaryExpression
-	{
+    class EqualToExpression : BinaryExpression
+    {
 
-		public EqualToExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.BOOLEAN)
-		{
-		}
+        public EqualToExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+            : base(lhs, rhs, TBuiltInTypes.BOOLEAN)
+        {
+        }
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
-		{
-			return TweedleTypes.BOOLEAN.Instantiate(left.Equals(right));
-		}
+        protected override TValue Evaluate(TValue left, TValue right)
+        {
+            return TBuiltInTypes.BOOLEAN.Instantiate(left.Equals(right));
+        }
 
-		internal override string Operator()
-		{
-			return "=";
-		}
-	}
+        internal override string Operator()
+        {
+            return "=";
+        }
+    }
 }

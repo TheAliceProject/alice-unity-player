@@ -1,0 +1,57 @@
+class SSlitherer extends SJointedModel {
+  SSlitherer(TextString resource) {
+    super(resource: resource);
+  }
+
+  SJoint getRoot() {
+    SJoint.getJoint( model: this, joint: "Root");
+  }
+
+  SJoint getNeck() {
+    SJoint.getJoint( model: this, joint: "Neck");
+  }
+
+  SJoint getHead() {
+    SJoint.getJoint( model: this, joint: "Head");
+  }
+
+  SJoint getMouth() {
+    SJoint.getJoint( model: this, joint: "Mouth");
+  }
+
+  SJoint getLeftEye() {
+    SJoint.getJoint( model: this, joint: "LeftEye");
+  }
+
+  SJoint getRightEye() {
+    SJoint.getJoint( model: this, joint: "RightEye");
+  }
+
+  SJoint getLeftEyelid() {
+    SJoint.getJoint( model: this, joint: "LeftEyelid");
+  }
+
+  SJoint getRightEyelid() {
+    SJoint.getJoint( model: this, joint: "RightEyelid");
+  }
+
+  SJoint getSpineBase() {
+    SJoint.getJoint( model: this, joint: "SpineBase");
+  }
+
+  SJoint getSpineMiddle() {
+    SJoint.getJoint( model: this, joint: "SpineMiddle");
+  }
+
+  SJoint getSpineUpper() {
+    SJoint.getJoint( model: this, joint: "SpineUpper");
+  }
+
+  SJoint[] getTailArray() {
+    SJoint.getJoint( model: this, joint: "TailArray");
+  }
+
+  SJoint getTail() {
+    SJoint.getJoint( model: this, joint: "Tail");
+  }
+}

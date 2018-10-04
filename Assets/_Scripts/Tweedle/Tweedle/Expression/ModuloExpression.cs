@@ -1,26 +1,21 @@
 ﻿namespace Alice.Tweedle
 {
-	class ModuloExpression : BinaryExpression
-	{
+    class ModuloExpression : BinaryExpression
+    {
 
-		public ModuloExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.WHOLE_NUMBER)
-		{
-		}
+        public ModuloExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+            : base(lhs, rhs, TBuiltInTypes.WHOLE_NUMBER)
+        {
+        }
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
-		{
-			return Eval((TweedlePrimitiveValue<int>)left, (TweedlePrimitiveValue<int>)right);
-		}
+        protected override TValue Evaluate(TValue left, TValue right)
+        {
+            return TBuiltInTypes.WHOLE_NUMBER.Instantiate(left.ToInt() % right.ToInt());
+        }
 
-		private TweedlePrimitiveValue<int> Eval(TweedlePrimitiveValue<int> left, TweedlePrimitiveValue<int> right)
-		{
-			return TweedleTypes.WHOLE_NUMBER.Instantiate(left.Value % right.Value);
-		}
-
-		internal override string Operator()
-		{
-			return "%";
-		}
-	}
+        internal override string Operator()
+        {
+            return "%";
+        }
+    }
 }

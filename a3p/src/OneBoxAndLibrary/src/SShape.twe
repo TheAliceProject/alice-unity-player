@@ -1,0 +1,4 @@
+class SShape extends SModel {
+  SShape() {
+  }
+}

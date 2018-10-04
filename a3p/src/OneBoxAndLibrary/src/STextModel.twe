@@ -1,0 +1,62 @@
+class STextModel extends SModel {
+  STextModel() {
+  }
+
+  TextString getValue() {
+    return this.text.getValue();
+  }
+
+  void setValue(TextString text) {
+    this.text.setValue( text: text );
+  }
+
+  void append(Object value) {
+    this.text.append( value: value );
+  }
+
+  Character charAt(WholeNumber index) {
+    return this.text.charAt( position: index );
+  }
+
+  void delete(WholeNumber start, WholeNumber end) {
+    this.text.delete( start: start, end: end);
+  }
+
+  void deleteCharAt(WholeNumber index) {
+    this.text.deleteCharAt( position: index );
+  }
+
+  WholeNumber indexOf(TextString s) {
+    return this.text.indexOf( substring: s, starting: 0 );
+  }
+
+  WholeNumber indexOf(TextString s, WholeNumber fromIndex) {
+    return this.text.indexOf( substring: s, starting: fromIndex );
+  }
+
+  void insert(WholeNumber offset, Object value) {
+    this.text.insert( offset: offset, value: value );
+  }
+
+  WholeNumber lastIndexOf(TextString s) {
+    return this.text.lastIndexOf( substring: s, starting: 0 );
+  }
+
+  WholeNumber lastIndexOf(TextString s, WholeNumber fromIndex) {
+    return this.text.lastIndexOf( substring: s, starting: fromIndex );
+  }
+
+  WholeNumber getLength() {
+    return this.text.length();
+  }
+
+  void replace(WholeNumber start, WholeNumber end, TextString s) {
+    return this.text.replace( start: start, end: end, replacement: s );
+  }
+
+  void setCharAt(WholeNumber index, Character c) {
+    return this.text.setCharAt( index: index, char: c );
+  }
+
+  @CompletelyHidden TextProperty text;
+}

@@ -1,4 +1,4 @@
-﻿namespace Alice
+﻿namespace Alice.Utils
 {
     public class Tuple<T1, T2>
     {
@@ -10,24 +10,24 @@
             Second = second;
         }
 
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != typeof(Tuple<T1, T2>)) return false;
-			return Equals((Tuple<T1, T2>)obj);
-		}
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(Tuple<T1, T2>)) return false;
+            return Equals((Tuple<T1, T2>)obj);
+        }
 
-		public bool Equals(Tuple<T1, T2> other)
-		{
-			return First.Equals(other.First) && Second.Equals(other.Second);
-		}
+        public bool Equals(Tuple<T1, T2> other)
+        {
+            return First.Equals(other.First) && Second.Equals(other.Second);
+        }
 
-		public override int GetHashCode()
-		{
-			return (((First.GetHashCode() << 5) + First.GetHashCode()) ^ Second.GetHashCode());
-		}
-	}
+        public override int GetHashCode()
+        {
+            return (((First.GetHashCode() << 5) + First.GetHashCode()) ^ Second.GetHashCode());
+        }
+    }
 
     public static class Tuple
     {

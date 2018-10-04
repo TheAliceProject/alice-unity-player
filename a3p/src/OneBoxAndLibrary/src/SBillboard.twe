@@ -1,0 +1,32 @@
+class SBillboard extends SModel {
+  SBillboard() {
+  }
+
+  void setPaint(Paint paint,
+                DecimalNumber duration <- Default.duration(),
+                AnimationStyle animationStyle <- Default.getAnimationStyle() ) {
+    super.setPaint( paint: paint, duration: duration, animationStyle: animationStyle );
+		if( paint.isImage() ) {
+			this.updateAspectRatio();
+		}
+  }
+
+  Paint getBackPaint() {
+    return this.backPaint.getValue();
+  }
+
+  void setBackPaint(Paint paint,
+                    DecimalNumber duration <- Default.duration(),
+                    AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.backPaint.animateValue( endValue: paint, duration: duration, animationStyle: animationStyle );
+		if( paint.isImage() ) {
+			this.updateAspectRatio();
+		}
+  }
+
+	@CompletelyHidden void updateAspectRatio() {
+	  //TODO get from BillboardImp
+	}
+
+  @CompletelyHidden PaintProperty backPaint;
+}

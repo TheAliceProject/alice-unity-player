@@ -1,0 +1,162 @@
+class SModel extends SMovableTurnable {
+  SModel(TextString resource) {
+    $SceneGraph.createEntity(model: this, resource: resource);
+    $SceneGraph.registerOpacityProperty(model: this, opacity: this.opacity);
+    $SceneGraph.registerPaintProperty(model: this, paint: this.paint);
+  }
+
+  SModel() {
+    $SceneGraph.registerOpacityProperty(model: this, opacity: this.opacity);
+    $SceneGraph.registerPaintProperty(model: this, paint: this.paint);
+  }
+
+  void setResource(TextString resource) {
+    $SceneGraph.updateEntity(model: this, resource: resource);
+  }
+
+  void doSomethingOverTime() {
+    someProperty.setValueOverTime(newValue: 2, duration: 2);
+    $Console.DebugLine("");
+  }
+
+	@CompletelyHidden Position getMinPoint( SThing asSeenBy ) {
+		return this.getDynamicAxisAlignedMinimumBoundingBox( asSeenBy: asSeenBy ).getMinimum();
+	}
+
+	@CompletelyHidden Position getMaxPoint( SThing asSeenBy ) {
+		return this.getDynamicAxisAlignedMinimumBoundingBox( asSeenBy: asSeenBy ).getMaximum();
+	}
+
+	//Returns a bounding box that reflects any changes to the given entity. Namely any changes to the skeleton of jointed models
+	@CompletelyHidden AxisAlignedBox getDynamicAxisAlignedMinimumBoundingBox( SThing asSeenBy ) {
+		return this.getAxisAlignedMinimumBoundingBox( asSeenBy: asSeenBy );
+	}
+
+	@CompletelyHidden AxisAlignedBox getAxisAlignedMinimumBoundingBox( SThing asSeenBy ) {
+		VantagePoint trans <- this.getTransformation( asSeenBy: asSeenBy );
+		CumulativeBound cumulativeBound <- new CumulativeBound();
+		this.updateCumulativeBound( cumulativeBound, trans );
+		return cumulativeBound.getBoundingBox();
+	}
+
+  void setVehicle(SThing vehicle) {
+    this.vehicle <- vehicle;
+  }
+
+  Paint getPaint() {
+    return this.paint.getValue();
+  }
+
+  void setPaint(Paint paint,
+                DecimalNumber duration <- Default.duration(),
+                AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.paint.animateValue( endValue: paint, duration: duration, animationStyle: animationStyle );
+  }
+
+  Portion getOpacity() {
+    return this.opacity.getValue();
+  }
+
+  void setOpacity(Portion opacity,
+                  DecimalNumber duration <- Default.duration(),
+                  AnimationStyle animationStyle <- Default.animationStyle() ) {
+		// checkArgumentIsBetween0and1( opacity );
+    this.opacity.animateValue( endValue: opacity, duration: duration, animationStyle: animationStyle );
+  }
+
+  @TuckedAway Scale getScale() {
+    return this.scale.getValue();
+  }
+
+  @TuckedAway
+  void setScale(Scale scale,
+                DecimalNumber duration <- Default.duration(),
+                AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.scale.animateValue( endValue: scale, duration: duration, animationStyle: animationStyle );
+  }
+
+  @TuckedAway Size getSize() {
+    return this.size.getValue();
+  }
+
+  @TuckedAway
+  void setSize(Size size,
+               DecimalNumber duration <- Default.duration(),
+               AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.size.animateValue( endValue: size, duration: duration, animationStyle: animationStyle );
+  }
+
+  DecimalNumber getWidth() {
+    this.getSize.x;
+  }
+
+  void setWidth(Number width,
+                DecimalNumber duration <- Default.duration(),
+                AnimationStyle animationStyle <- Default.animationStyle(),
+                DimensionPolicy dimensionPolicy <- Default.dimensionPolicy()) {
+    //checkArgumentIsPositive( width );
+    this.size.animateSetWidth( width: width, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+  }
+
+  DecimalNumber getHeight() {
+    this.getSize.y;
+  }
+
+  void setHeight(Number height,
+                 DecimalNumber duration <- Default.duration(),
+                 AnimationStyle animationStyle <- Default.animationStyle(),
+                 DimensionPolicy dimensionPolicy <- Default.dimensionPolicy()) {
+    //checkArgumentIsPositive( height );
+    this.size.animateSetHeight( height: height, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+  }
+
+  DecimalNumber getDepth() {
+    this.getSize.z;
+  }
+
+  void setDepth(Number depth,
+                DecimalNumber duration <- Default.duration(),
+                AnimationStyle animationStyle <- Default.animationStyle(),
+                DimensionPolicy dimensionPolicy <- Default.dimensionPolicy()) {
+    //checkArgumentIsPositive( depth );
+    this.size.animateSetDepth( depth: depth, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+  }
+
+  void resize(Number factor,
+              DecimalNumber duration <- Default.duration(),
+              AnimationStyle animationStyle <- Default.animationStyle(),
+              Boolean isVolumePreserved <- Default.isVolumePreserved()) {
+    //checkArgumentIsPositive( factor );
+    this.size.animateResize( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+  }
+
+  void resizeWidth(Number factor,
+                   DecimalNumber duration <- Default.duration(),
+                   AnimationStyle animationStyle <- Default.animationStyle(),
+                   Boolean isVolumePreserved <- Default.isVolumePreserved()) {
+    //checkArgumentIsPositive( factor );
+    this.size.animateResizeWidth( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+  }
+
+  void resizeHeight(Number factor,
+                    DecimalNumber duration <- Default.duration(),
+                    AnimationStyle animationStyle <- Default.animationStyle(),
+                    Boolean isVolumePreserved <- Default.isVolumePreserved()) {
+    //checkArgumentIsPositive( factor );
+    this.size.animateResizeHeight( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle, isVolumePReserved: isVolumePreserved );
+  }
+
+  void resizeDepth(Number factor,
+                   DecimalNumber duration <- Default.duration(),
+                   AnimationStyle animationStyle <- Default.animationStyle(),
+                   Boolean isVolumePreserved <- Default.isVolumePreserved()) {
+    //checkArgumentIsPositive( factor );
+    this.size.animateResizeDepth( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+  }
+
+  @CompletelyHidden PortionProperty opacity;
+  @CompletelyHidden PaintProperty paint;
+  @CompletelyHidden ScaleProperty scale;
+  // TODO reconcile size with minimum bounding box
+  @CompletelyHidden SizeProperty size;
+}

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Alice.Tweedle
+namespace Alice.Utils
 {
-	[System.Serializable]
-	public class BoundingBox
-	{
-		public List<float> min, max;
-	}
+    [System.Serializable]
+    public class BoundingBox
+    {
+        public List<float> min, max;
+    }
 }

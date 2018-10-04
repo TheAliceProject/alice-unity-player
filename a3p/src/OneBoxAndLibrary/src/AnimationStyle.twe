@@ -1,0 +1,14 @@
+enum AnimationStyle {
+	BEGIN_AND_END_ABRUPTLY, //( false, false ),
+	BEGIN_GENTLY_AND_END_ABRUPTLY, //( true, false ),
+	BEGIN_ABRUPTLY_AND_END_GENTLY, //( false, true ),
+	BEGIN_AND_END_GENTLY //( true, true );
+}
+
+//	private boolean isSlowInDesired;
+//	private boolean isSlowOutDesired;
+//
+//	AnimationStyle( boolean isSlowInDesired, boolean isSlowOutDesired ) {
+//		this.isSlowInDesired <- isSlowInDesired;
+//		this.isSlowOutDesired <- isSlowOutDesired;
+//	}

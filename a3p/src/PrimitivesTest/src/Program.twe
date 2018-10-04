@@ -1,0 +1,84 @@
+class Program {
+
+  TextString name;
+  WholeNumber id <- 0;
+
+  Program(TextString name, WholeNumber id <- 0) {
+    this.name <- name;
+  }
+
+  TextString getName() {
+    return name;
+  }
+
+  void execute() {
+    // portions
+    $Debug.log(string: "Portion");
+    Portion p <- new Portion(portion: 0.25);
+    Portion sum <- p.add(other: new Portion(portion: 0.5));
+    $Debug.log(string: "portion sum <- " .. sum);
+
+    // angles
+    $Debug.log(string: "Angle");
+    Angle angle <- new Angle(revolutions: 0.5);
+    $Debug.log(string: "angle radians <- " .. angle);
+
+
+    // position
+    $Debug.log(string: "Position");
+    Position pos <- new Position(x: 1, y: 2, z: 4);
+    $Debug.log(string: "pos <- " .. pos);
+
+    // direction
+    $Debug.log(string: "Direction");
+    Direction dir <- new Direction(x: 2, y: 5, z: 3);
+    $Debug.log(string: "dir <- " .. dir);
+
+    // size
+    $Debug.log(string: "Size");
+    Size size <- new Size(width: 15, height: 6, depth: 10);
+    $Debug.log(string: "size <- " .. size);
+
+    // scale
+    $Debug.log(string: "Scale");
+    Scale scale <- new Scale(x: 1, y: 1.1, z: 0.5);
+    $Debug.log(string: "scale <- " .. scale);
+
+    Direction right <- Direction.POSITIVE_X_AXIS;
+    $Debug.log(string: "right <- " .. right);
+
+    // Orientation
+    $Debug.log(string: "Orientation");
+    Orientation rot <- new Orientation(direction: new Direction(x: 1, y: 0, z: 0), angle: new Angle(revolutions: 0.25));
+    $Debug.log(string: "rot <- " .. rot);
+
+    // AABB
+    $Debug.log(string: "AxisAlignedBox");
+    AxisAlignedBox aabb <- new AxisAlignedBox(minimum: new Position(x: -0.5, y: -0.5, z: -0.5), maximum: new Position(x: 0.5, y: 0.5, z: 0.5));
+    $Debug.log(string: "aabb <- " .. aabb);
+    
+    // Vantage Point
+    $Debug.log(string: "Vantage Point");
+    VantagePoint vp <- new VantagePoint(orientation: rot, translation: pos);
+    $Debug.log(string: "vp <- " .. vp);
+
+    AxisAlignedBox transformedAABB <- aabb.transform(vantagePoint: vp);
+    $Debug.log(string: "transformedAABB <- " .. transformedAABB);
+
+    DecimalNumberProperty deciProp <- new DecimalNumberProperty(owner: this, value: 2.5);
+    deciProp.animateValue(endValue: 10, duration: 3, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+
+    WholeNumberProperty wholeProp <- new WholeNumberProperty(owner: this, value: 0);
+    wholeProp.animateValue(endValue: 10, duration: 2, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+
+    PositionProperty posProp <- new PositionProperty(owner: this, value: Position.ZERO);
+    posProp.animateValue(endValue: new Position(x: 1, y: 2, z: 3), duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+  
+  }
+  
+  static void main() {
+    Program p <- new Program(name: "Primitives Test");
+    $Debug.log(string: "Program name is " .. p.getName() .. " and id is " .. p.id);
+    p.execute();
+  }
+}

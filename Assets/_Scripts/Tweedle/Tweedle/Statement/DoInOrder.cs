@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
-using Alice.VM;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
 {
-	public class DoInOrder : TweedleStatement
-	{
-		public BlockStatement Body { get; }
+    public class DoInOrder : TweedleStatement
+    {
+        public BlockStatement Body { get; }
 
-		public DoInOrder(List<TweedleStatement> statements)
-		{
-			Body = new BlockStatement(statements);
-		}
+        public DoInOrder(TweedleStatement[] statements)
+        {
+            Body = new BlockStatement(statements);
+        }
 
-		internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
-		{
-			return Body.AsSequentialStep(scope, next);
-		}
-	}
+        internal override ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next)
+        {
+            return Body.AsSequentialStep(scope, next);
+        }
+    }
 }

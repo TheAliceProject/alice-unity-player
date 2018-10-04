@@ -7,6 +7,12 @@ namespace Crosstales.FB.EditorExt
     [InitializeOnLoad]
     public static class SetApiLevel
     {
+        private const ApiCompatibilityLevel TARGET_COMPATIBILITY =
+#if UNITY_2018
+            ApiCompatibilityLevel.NET_4_6;
+#else
+            ApiCompatibilityLevel.NET_2_0;
+#endif // UNITY_2018
 
         #region Constructor
 
@@ -14,15 +20,15 @@ namespace Crosstales.FB.EditorExt
         {
 #if UNITY_STANDALONE_WIN
 
-#if UNITY_2017
-            if (PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) != ApiCompatibilityLevel.NET_2_0) {
-                PlayerSettings.SetApiCompatibilityLevel(BuildTargetGroup.Standalone, ApiCompatibilityLevel.NET_2_0);
+#if UNITY_2017 || UNITY_2018
+            if (PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) != TARGET_COMPATIBILITY) {
+                PlayerSettings.SetApiCompatibilityLevel(BuildTargetGroup.Standalone, TARGET_COMPATIBILITY);
 #else
-            if (PlayerSettings.apiCompatibilityLevel != ApiCompatibilityLevel.NET_2_0)
+            if (PlayerSettings.apiCompatibilityLevel != TARGET_COMPATIBILITY)
             {
-                PlayerSettings.apiCompatibilityLevel = ApiCompatibilityLevel.NET_2_0;
+                PlayerSettings.apiCompatibilityLevel = TARGET_COMPATIBILITY;
 #endif
-                Debug.LogWarning("File Browser: API level changed to .NET 2.0.");
+                Debug.LogWarning("File Browser: API level changed to ." + TARGET_COMPATIBILITY.ToString()) ;
             }
 
 #endif

@@ -1,0 +1,85 @@
+class SMovableTurnable extends STurnable {
+  SMovableTurnable() {
+  }
+
+  Position getPositionRelativeToVehicle() {
+    return this.getLocalTransformation().translation;
+  }
+
+  void move(MoveDirection direction, Number amount,
+            SThing asSeenBy <- this,
+            DecimalNumber duration <- Default.duration(),
+            AnimationStyle style <- Default.animationStyle()) {
+    // checkArgumentIsNotNull( direction );
+    // checkArgumentIsNumber( amount );
+    // TODO
+    this.animateApplyTranslation( translation: direction.getAxis.scaledBy( multiplier: amount ), asSeenBy: asSeenBy, duration: duration, animationStyle: style);
+  }
+
+  void moveToward(SThing target, Number amount,
+                  SThing asSeenBy <- this, // Unused, but kept so existing senders won't break
+                  DecimalNumber duration <- Default.duration(),
+                  AnimationStyle style <- Default.animationStyle()) {
+    // checkArgumentIsNotNull( target );
+    // checkArgumentIsNumber( amount );
+    // TODO
+    this.internalMoveToward( target: target, distance: amount, duration: duration, animationStyle: style );
+  }
+
+  void moveAwayFrom(SThing target, Number amount,
+                    SThing asSeenBy <- this, // Unused, but kept so existing senders won't break
+                    DecimalNumber duration <- Default.duration(),
+                    AnimationStyle style <- Default.animationStyle()) {
+    // checkArgumentIsNotNull( target );
+    // checkArgumentIsNumber( amount );
+    // TODO
+    this.internalMoveToward( target: target, distance: 0 - amount, duration: duration, animationStyle: style );
+  }
+
+  void moveTo(SThing target,
+              DecimalNumber duration <- Default.duration(),
+              AnimationStyle style <- Default.animationStyle(),
+              PathStyle pathStyle <- Default.pathStyle()) {
+    // checkArgumentIsNotNull( target );
+    // TODO
+		this.animatePositionOnly( target: target, offset: null, pathStyle: pathStyle, duration: duration, animationStyle: style );
+	}
+
+  void moveAndOrientTo(SThing target,
+                       DecimalNumber duration <- Default.duration(),
+                       AnimationStyle style <- Default.animationStyle(),
+                       PathStyle pathStyle <- Default.pathStyle()) {
+    // checkArgumentIsNotNull( target );
+    // TODO
+  	this.animateTransformation( target: target, offset: null, pathStyle: pathStyle, duration: duration, animationStyle: style );
+  }
+
+  void place(SpatialRelation spatialRelation, SThing target,
+             SThing asSeenBy <- target,
+             DecimalNumber duration <- Default.duration(),
+             AnimationStyle style <- Default.animationStyle(),
+             PathStyle pathStyle <- Default.pathStyle(),
+             DecimalNumber alongAxisOffset <- 0.0 ) {
+		// checkArgumentIsNotNull( spatialRelation );
+		// checkArgumentIsNotNull( target );
+    // TODO
+		this.animatePlace( spatialRelation: spatialRelation, target: target, alongAxisOffset: alongAxisOffset, asSeenBy: asSeenBy, pathStyle: pathStyle, duration: duration, animationStyle: style );
+  }
+
+  void setPositionRelativeToVehicle(Position position,
+                                    DecimalNumber duration <- Default.duration(),
+                                    AnimationStyle style <- Default.animationStyle(),
+                                    PathStyle pathStyle <- Default.pathStyle()) {
+		// checkArgumentIsNotNull( position );
+    // TODO
+		if( this.getVehicle() != null ) {
+			this.animatePositionOnly( vehicle: vehicle, position: position, pathStyle: pathStyle, duration: duration, animationStyle: style );
+		} else {
+			AbstractTransformable sgTransformable <- this.getSgComposite();
+			VantagePoint m <- sgTransformable.getLocalTransformation();
+			m.translation.set( position: position );
+			sgTransformable.setLocalTransformation( transform: m );
+			// Logger.severe( this );
+		}
+  }
+}
