@@ -1,711 +1,840 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Alice.Tweedle.Parse
 {
-	public class TweedleParser
-	{
-		public Tweedle.TweedleParser ParseSource(string src)
-		{
-			AntlrInputStream antlerStream = new AntlrInputStream(src);
-			TweedleLexer lexer = new TweedleLexer(antlerStream);
-			CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-			return new Tweedle.TweedleParser(tokenStream);
-		}
+    public class TweedleParser
+    {
+        public Tweedle.TweedleParser ParseSource(string src)
+        {
+            AntlrInputStream antlerStream = new AntlrInputStream(src);
+            TweedleLexer lexer = new TweedleLexer(antlerStream);
+            CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+            return new Tweedle.TweedleParser(tokenStream);
+        }
 
-		public TweedleType ParseType(string src)
-		{
-			return new TypeVisitor().Visit(ParseSource(src).typeDeclaration());
-		}
+        public TType ParseType(string src, TAssembly inAssembly = null)
+        {
+            return new TypeVisitor(inAssembly).Visit(ParseSource(src).typeDeclaration());
+        }
 
-		public TweedleStatement ParseStatement(string src)
-		{
-			return new StatementVisitor().Visit(ParseSource(src).blockStatement());
-		}
+        public TweedleStatement ParseStatement(string src, TAssembly inAssembly = null)
+        {
+            return new StatementVisitor(inAssembly).Visit(ParseSource(src).blockStatement());
+        }
 
-		public TweedleExpression ParseExpression(string src)
-		{
-			return new ExpressionVisitor().Visit(ParseSource(src).expression());
-		}
+        public ITweedleExpression ParseExpression(string src, TAssembly inAssembly = null)
+        {
+            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src).expression());
+        }
 
-		private class ClassBody
-		{
-			public List<TweedleField> properties;
-			public List<TweedleMethod> methods;
-			public List<TweedleConstructor> constructors;
+        private class ClassBody
+        {
+            public List<TField> properties;
+            public List<TMethod> methods;
+            public List<TMethod> constructors;
 
-			public ClassBody()
-			{
-				this.properties = new List<TweedleField>();
-				this.methods = new List<TweedleMethod>();
-				this.constructors = new List<TweedleConstructor>();
-			}
-		}
+            public ClassBody()
+            {
+                this.properties = new List<TField>();
+                this.methods = new List<TMethod>();
+                this.constructors = new List<TMethod>();
+            }
+        }
 
-		private class TypeVisitor : TweedleParserBaseVisitor<TweedleType>
-		{
-			private ClassBody body;
-			private ClassBodyDeclarationVisitor cbdVisitor;
+        private class TypeVisitor : TweedleParserBaseVisitor<TType>
+        {
+            public TypeVisitor(TAssembly assembly)
+            {
+                this.assembly = assembly;
+            }
 
-			public override TweedleType VisitTypeDeclaration([NotNull] Tweedle.TweedleParser.TypeDeclarationContext context)
-			{
-				body = new ClassBody();
-				cbdVisitor = new ClassBodyDeclarationVisitor(body);
-				return base.VisitChildren(context);
-			}
+            private TAssembly assembly;
+            private ClassBody body;
+            private ClassBodyDeclarationVisitor cbdVisitor;
 
-			public override TweedleType VisitClassDeclaration([NotNull] Tweedle.TweedleParser.ClassDeclarationContext context)
-			{
-				context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
-				string className = context.identifier().GetText();
-				if (context.EXTENDS() != null)
-				{
-					string superclass = context.typeType().classType().GetText();
-					return new TweedleClass(className, superclass,
-						body.properties, body.methods, body.constructors);
-				}
-				else
-				{
-					return new TweedleClass(className,
-						body.properties, body.methods, body.constructors);
-				}
-			}
+            public override TType VisitTypeDeclaration([NotNull] Tweedle.TweedleParser.TypeDeclarationContext context)
+            {
+                body = new ClassBody();
+                cbdVisitor = new ClassBodyDeclarationVisitor(assembly, body);
+                return base.VisitChildren(context);
+            }
 
-			public override TweedleType VisitEnumDeclaration([NotNull] Tweedle.TweedleParser.EnumDeclarationContext context)
-			{
-				if (context.enumBodyDeclarations() != null)
-				{
-					context.enumBodyDeclarations().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
-				}
-				TweedleEnum tweedleEnum = new TweedleEnum(context.identifier().GetText(), body.properties, body.methods, body.constructors);
-				context.enumConstants().enumConstant().ToList().ForEach(enumConst =>
-				{
-					string name = enumConst.identifier().GetText();
-					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-					if (enumConst.arguments() != null)
-					{
-						arguments = TweedleParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList());
-					}
-					tweedleEnum.AddEnumValue(new TweedleEnumValue(tweedleEnum, name, arguments));
-				});
-				return tweedleEnum;
-			}
-		}
+            public override TType VisitClassDeclaration([NotNull] Tweedle.TweedleParser.ClassDeclarationContext context)
+            {
+                context.classBody().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
 
-		private class ClassBodyDeclarationVisitor : TweedleParserBaseVisitor<object>
-		{
-			private readonly ClassBody body;
+                string className = context.identifier().GetText();
+                string superclass = context.EXTENDS() != null ? context.typeType().classType().GetText() : null;
 
-			public ClassBodyDeclarationVisitor(ClassBody body)
-			{
-				this.body = body;
-			}
+                if (body.constructors.Count == 0)
+                {
+                    if (superclass != null)
+                        body.constructors.Add(TTMethod.DefaultConstructorWithSuper(new TTypeRef(className)));
+                    else
+                        body.constructors.Add(TTMethod.DefaultConstructor(new TTypeRef(className)));
+                }
 
-			public override object VisitClassBodyDeclaration([NotNull] Tweedle.TweedleParser.ClassBodyDeclarationContext context)
-			{
-				Tweedle.TweedleParser.MemberDeclarationContext memberDec = context.memberDeclaration();
-				if (memberDec != null)
-				{
-					List<string> modifiers =
-						context.classModifier().Select(classMod => (classMod.STATIC() != null) ? "static" : null).ToList();
-					memberDec.Accept(new MemberDeclarationVisitor(body, modifiers));
-				}
-				return base.VisitClassBodyDeclaration(context);
-			}
-		}
+                if (superclass != null)
+                {
+                    return new TClassType(assembly, className, superclass,
+                        body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
+                }
+                else
+                {
+                    return new TClassType(assembly, className,
+                        body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
+                }
+            }
 
-		private class MemberDeclarationVisitor : TweedleParserBaseVisitor<object>
-		{
-			private ClassBody body;
-			private List<string> modifiers;
+            public override TType VisitEnumDeclaration([NotNull] Tweedle.TweedleParser.EnumDeclarationContext context)
+            {
+                if (context.enumBodyDeclarations() != null)
+                {
+                    context.enumBodyDeclarations().classBodyDeclaration().ToList().ForEach(cbd => cbd.Accept(cbdVisitor));
+                }
 
-			public MemberDeclarationVisitor(ClassBody body, List<string> modifiers)
-			{
-				this.body = body;
-				this.modifiers = modifiers;
-			}
+                string enumName = context.identifier().GetText();
 
-			public override object VisitFieldDeclaration([NotNull] Tweedle.TweedleParser.FieldDeclarationContext context)
-			{
-				TweedleType type = GetTypeType(context.typeType());
-				string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
-				TweedleField property;
-				if (context.variableDeclarator().variableInitializer() != null)
-				{
-					ExpressionVisitor initVisitor = new ExpressionVisitor(type);
-					TweedleExpression init =
-									context.variableDeclarator().variableInitializer().Accept(initVisitor);
-					property = new TweedleField(modifiers, type, name, init);
-				}
-				else
-				{
-					property = new TweedleField(modifiers, type, name);
-				}
-				body.properties.Add(property);
-				return base.VisitFieldDeclaration(context);
-			}
+                if (body.constructors.Count == 0)
+                    body.constructors.Add(TTMethod.DefaultConstructor(new TTypeRef(enumName)));
 
-			public override object VisitMethodDeclaration([NotNull] Tweedle.TweedleParser.MethodDeclarationContext context)
-			{
-				TweedleMethod method = new TweedleMethod(
-						modifiers,
-						GetTypeOrVoid(context.typeTypeOrVoid()),
-						context.IDENTIFIER().GetText(),
-						RequiredParameters(context.formalParameters()),
-						OptionalParameters(context.formalParameters()),
-						CollectBlockStatements(context.methodBody().block().blockStatement())
-					);
-				body.methods.Add(method);
-				return base.VisitMethodDeclaration(context);
-			}
+                List<TEnumValueInitializer> enumValues = new List<TEnumValueInitializer>();
+                context.enumConstants().enumConstant().ToList().ForEach(enumConst =>
+                {
+                    string name = enumConst.identifier().GetText();
+                    NamedArgument[] arguments = new NamedArgument[0];
+                    if (enumConst.arguments() != null)
+                    {
+                        arguments = TweedleParser.VisitLabeledArguments(enumConst.arguments().labeledExpressionList(), assembly);
+                    }
+                    enumValues.Add(new TEnumValueInitializer(name, arguments));
+                });
 
-			public override object VisitConstructorDeclaration([NotNull] Tweedle.TweedleParser.ConstructorDeclarationContext context)
-			{
-				TweedleConstructor constructor = new TweedleConstructor(
-					GetTypeReference(context.IDENTIFIER().GetText()),
-					context.IDENTIFIER().GetText(),
-					RequiredParameters(context.formalParameters()),
-					OptionalParameters(context.formalParameters()),
-					CollectBlockStatements(context.constructorBody.blockStatement())
-				);
-				body.constructors.Add(constructor);
-				return base.VisitConstructorDeclaration(context);
-			}
+                TEnumType tweedleEnum = new TEnumType(assembly, enumName, enumValues.ToArray(), body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
+                return tweedleEnum;;
+            }
+        }
 
-			private List<TweedleRequiredParameter> RequiredParameters(Tweedle.TweedleParser.FormalParametersContext context)
-			{
-				if (context.formalParameterList() == null || context.formalParameterList().requiredParameter() == null)
-				{
-					return new List<TweedleRequiredParameter>();
-				}
+        private class ClassBodyDeclarationVisitor : TweedleParserBaseVisitor<object>
+        {
+            private readonly TAssembly assembly;
+            private readonly ClassBody body;
 
-				return context.formalParameterList().requiredParameter().Select(field =>
-				{
-					TweedleType type = GetTypeType(field.typeType());
-					return new TweedleRequiredParameter(
-						type,
-						field.variableDeclaratorId().IDENTIFIER().GetText()
-						);
-				}).ToList();
-			}
+            public ClassBodyDeclarationVisitor(TAssembly assembly, ClassBody body)
+            {
+                this.assembly = assembly;
+                this.body = body;
+            }
 
-			private List<TweedleOptionalParameter> OptionalParameters(Tweedle.TweedleParser.FormalParametersContext context)
-			{
-				if (context.formalParameterList() == null || context.formalParameterList().optionalParameter() == null)
-				{
-					return new List<TweedleOptionalParameter>();
-				}
+            public override object VisitClassBodyDeclaration([NotNull] Tweedle.TweedleParser.ClassBodyDeclarationContext context)
+            {
+                Tweedle.TweedleParser.MemberDeclarationContext memberDec = context.memberDeclaration();
+                if (memberDec != null)
+                {
+                    string[] modifiers =
+                        context.classModifier().Select(classMod => (classMod.STATIC() != null) ? "static" : null).ToArray();
+                    memberDec.Accept(new MemberDeclarationVisitor(assembly, body, GetModifiers(modifiers)));
+                }
+                return base.VisitClassBodyDeclaration(context);
+            }
+        }
 
-				return context.formalParameterList().optionalParameter().Select(field =>
-				{
-					TweedleType type = GetTypeType(field.typeType());
-					return new TweedleOptionalParameter(
-						type,
-						field.variableDeclaratorId().IDENTIFIER().GetText(),
-						field.Accept(new ExpressionVisitor(type))
-						);
-				}).ToList();
-			}
-		}
+        private class MemberDeclarationVisitor : TweedleParserBaseVisitor<ITypeMember>
+        {
+            private TAssembly assembly;
+            private ClassBody body;
+            private MemberFlags modifiers;
 
-		private class ExpressionVisitor : TweedleParserBaseVisitor<TweedleExpression>
-		{
-			private TweedleType expectedType;
+            public MemberDeclarationVisitor(TAssembly assembly, ClassBody body, MemberFlags modifiers)
+            {
+                this.assembly = assembly;
+                this.body = body;
+                this.modifiers = modifiers;
+            }
 
-			public ExpressionVisitor(TweedleType expectedType)
-			{
-				this.expectedType = expectedType;
-			}
+            public override ITypeMember VisitFieldDeclaration([NotNull] Tweedle.TweedleParser.FieldDeclarationContext context)
+            {
+                TTypeRef type = GetTypeRef(context.typeType(), assembly);
+                string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
+                TField property;
+                if (context.variableDeclarator().variableInitializer() != null)
+                {
+                    ExpressionVisitor initVisitor = new ExpressionVisitor(assembly, type);
+                    ITweedleExpression init =
+                                    context.variableDeclarator().variableInitializer().Accept(initVisitor);
 
-			public ExpressionVisitor()
-			{
-				this.expectedType = null;
-			}
+                    if ((modifiers & MemberFlags.Static) == MemberFlags.Static)
+                        property = new TStaticField(name, type, modifiers, init);
+                    else
+                        property = new TObjectField(name, type, modifiers, init);
+                }
+                else
+                {
+                    if ((modifiers & MemberFlags.Static) == MemberFlags.Static)
+                        property = new TStaticField(name, type, modifiers);
+                    else
+                        property = new TObjectField(name, type, modifiers);
+                }
+                body.properties.Add(property);
+                return base.VisitFieldDeclaration(context);
+            }
 
-			public override TweedleExpression VisitExpression([NotNull] Tweedle.TweedleParser.ExpressionContext context)
-			{
-				TweedleExpression expression = ParseExpression(context);
+            public override ITypeMember VisitMethodDeclaration([NotNull] Tweedle.TweedleParser.MethodDeclarationContext context)
+            {
+                TTMethod method = new TTMethod(
+                        context.IDENTIFIER().GetText(), 
+                        modifiers,
+                        GetTypeOrVoid(context.typeTypeOrVoid(), assembly),
+                        RequiredParameters(context.formalParameters()),
+                        OptionalParameters(context.formalParameters()),
+                        CollectBlockStatements(context.methodBody().block().blockStatement(), assembly)
+                    );
+                body.methods.Add(method);
+                return base.VisitMethodDeclaration(context);
+            }
 
-				if (expectedType != null && expression != null && expression.Type != null
-					&& !expectedType.AcceptsType(expression.Type) && !expression.Type.AcceptsType(expectedType))
-				{
-					throw new System.Exception("Had been expecting expression of type " + expectedType.Name + ", but it is typed as " + expression.Type.Name);
-				}
-				return expression;
-			}
+            public override ITypeMember VisitConstructorDeclaration([NotNull] Tweedle.TweedleParser.ConstructorDeclarationContext context)
+            {
+                TTMethod method = new TTMethod(
+                        TMethod.ConstructorName,
+                        modifiers | MemberFlags.Constructor,
+                        GetTypeRef(context.IDENTIFIER().GetText()),
+                        RequiredParameters(context.formalParameters()),
+                        OptionalParameters(context.formalParameters()),
+                        CollectBlockStatements(context.constructorBody.blockStatement(), assembly)
+                    );
+                body.constructors.Add(method);
+                return base.VisitConstructorDeclaration(context);
+            }
 
-			public TweedleExpression ParseExpression([NotNull] Tweedle.TweedleParser.ExpressionContext context)
-			{
-				IToken prefix = context.prefix;
-				IToken operation = context.bop;
-				IToken bracket = context.bracket;
+            private TParameter[] RequiredParameters(Tweedle.TweedleParser.FormalParametersContext context)
+            {
+                if (context.formalParameterList() == null || context.formalParameterList().requiredParameter() == null)
+                {
+                    return TParameter.EMPTY_PARAMS;
+                }
 
-				if (prefix != null)
-				{
-					switch (prefix.Text)
-					{
-						case "+":
-							return TypedExpression(context, TweedleTypes.NUMBER)[0];
-						case "-":
+                return context.formalParameterList().requiredParameter().Select(field =>
+                {
+                    TTypeRef type = GetTypeRef(field.typeType(), assembly);
+                    return TParameter.RequiredParameter(
+                        type,
+                        field.variableDeclaratorId().IDENTIFIER().GetText()
+                        );
+                }).ToArray();
+            }
 
-							return NegativeExpression(TypedExpression(context, TweedleTypes.NUMBER)[0]);
-						case "!":
-							return new LogicalNotExpression(TypedExpression(context, TweedleTypes.BOOLEAN)[0]);
-						default:
-							throw new System.Exception("Expression has prefix name but cannot be converted to prefix expression.");
-					}
-				}
-				else if (operation != null)
-				{
-					List<TweedleExpression> expressions;
-					switch (operation.Text)
-					{
-						case ".":
-							return FieldOrMethodRef(context);
-						case "..":
-							return NewBinaryExpression<StringConcatenationExpression>(context, null);
-						case "*":
-							return NewBinaryExpression<MultiplicationExpression>(context, TweedleTypes.NUMBER);
-						case "/":
-							return NewBinaryExpression<DivisionExpression>(context, TweedleTypes.NUMBER);
-						case "%":
-							expressions = TypedExpression(context, TweedleTypes.WHOLE_NUMBER);
-							return new ModuloExpression(expressions[0], expressions[1]);
-						case "+":
-							return NewBinaryExpression<AdditionExpression>(context, TweedleTypes.NUMBER);
-						case "-":
-							return NewBinaryExpression<SubtractionExpression>(context, TweedleTypes.NUMBER);
-						case "<=":
-							return NewBinaryExpression<LessThanOrEqualExpression>(context, TweedleTypes.NUMBER);
-						case ">=":
-							return NewBinaryExpression<GreaterThanOrEqualExpression>(context, TweedleTypes.NUMBER);
-						case ">":
-							return NewBinaryExpression<GreaterThanExpression>(context, TweedleTypes.NUMBER);
-						case "<":
-							return NewBinaryExpression<LessThanExpression>(context, TweedleTypes.NUMBER);
-						case "==":
-							expressions = TypedExpression(context, null);
-							return new EqualToExpression(expressions[0], expressions[1]);
-						case "!=":
-							expressions = TypedExpression(context, null);
-							return new NotEqualToExpression(expressions[0], expressions[1]);
-						case "&&":
-							expressions = TypedExpression(context, TweedleTypes.BOOLEAN);
-							return new LogicalAndExpression(expressions[0], expressions[1]);
-						case "||":
-							expressions = TypedExpression(context, TweedleTypes.BOOLEAN);
-							return new LogicalOrExpression(expressions[0], expressions[1]);
-						case "<-":
-							expressions = TypedExpression(context, null);
-							return new AssignmentExpression(expressions[0], expressions[1]);
-						default:
-							throw new System.Exception("Binary operation not found.");
-					}
-				}
-				else if (bracket != null)
-				{
-					TweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(new TweedleArrayType()));
-					TweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER));
-					return new ArrayIndexExpression(array, index);
-				}
-				else if (context.lambdaCall() != null)
-				{
-					TweedleExpression lambdaSourceExp = TypedExpression(context, null)[0];
-					if (context.lambdaCall().unlabeledExpressionList() == null)
-					{
-						return new LambdaEvaluation(lambdaSourceExp);
-					}
-					else
-					{
-						List<TweedleExpression> elements =
-										VisitUnlabeledArguments(context.lambdaCall().unlabeledExpressionList(), new ExpressionVisitor());
-						return new LambdaEvaluation(lambdaSourceExp, elements);
-					}
-				}
-				return base.VisitChildren(context);
-			}
+            private TParameter[] OptionalParameters(Tweedle.TweedleParser.FormalParametersContext context)
+            {
+                if (context.formalParameterList() == null || context.formalParameterList().optionalParameter() == null)
+                {
+                    return TParameter.EMPTY_PARAMS;
+                }
 
-			public override TweedleExpression VisitPrimary([NotNull] Tweedle.TweedleParser.PrimaryContext context)
-			{
-				if (context.expression() != null)
-				{
-					// Parenthesized child expression
-					return this.VisitExpression(context.expression());
-				}
-				if (context.THIS() != null)
-				{
-					return new ThisExpression();
-				}
-				if (context.IDENTIFIER() != null)
-				{
-					return new IdentifierReference(context.IDENTIFIER().GetText());
-				}
+                return context.formalParameterList().optionalParameter().Select(field =>
+                {
+                    TTypeRef type = GetTypeRef(field.typeType(), assembly);
+                    return TParameter.OptionalParameter(
+                        type,
+                        field.variableDeclaratorId().IDENTIFIER().GetText(),
+                        field.Accept(new ExpressionVisitor(assembly, type))
+                        );
+                }).ToArray();
+            }
+        }
 
-				return base.VisitChildren(context);
-			}
+        private class ExpressionVisitor : TweedleParserBaseVisitor<ITweedleExpression>
+        {
+            private TTypeRef expectedType;
+            private TAssembly assembly;
 
-			public override TweedleExpression VisitLiteral([NotNull] Tweedle.TweedleParser.LiteralContext context)
-			{
-				if (context.DECIMAL_LITERAL() != null)
-				{
-					int value = System.Convert.ToInt32(context.DECIMAL_LITERAL().GetText());
-					return TweedleTypes.WHOLE_NUMBER.Instantiate(value);
-				}
+            public ExpressionVisitor(TAssembly assembly, TTypeRef expectedType)
+            {
+                this.assembly = assembly;
+                this.expectedType = expectedType;
+            }
 
-				if (context.FLOAT_LITERAL() != null)
-				{
-					double value = System.Convert.ToDouble(context.FLOAT_LITERAL().GetText());
-					return TweedleTypes.DECIMAL_NUMBER.Instantiate(value);
-				}
+            public ExpressionVisitor(TAssembly assembly)
+            {
+                this.assembly = assembly;
+                this.expectedType = null;
+            }
 
-				if (context.NULL_LITERAL() != null)
-				{
-					return TweedleNull.NULL;
-				}
+            public override ITweedleExpression VisitExpression([NotNull] Tweedle.TweedleParser.ExpressionContext context)
+            {
+                ITweedleExpression expression = ParseExpression(context);
 
-				if (context.BOOL_LITERAL() != null)
-				{
-					bool value = System.Convert.ToBoolean(context.BOOL_LITERAL().GetText());
-					return TweedleTypes.BOOLEAN.Instantiate(value);
-				}
+                if (expectedType != null && expression != null && expression.Type != null
+                    && expectedType.IsResolved() && expression.Type.IsResolved()
+                    && !expression.Type.Get().CanCast(expectedType.Get()))
+                {
+                    throw new System.Exception("Had been expecting expression of type " + expectedType.Name + ", but it is typed as " + expression.Type.Name);
+                }
+                return expression;
+            }
 
-				if (context.STRING_LITERAL() != null)
-				{
-					string value = context.STRING_LITERAL().GetText();
-					return TweedleTypes.TEXT_STRING.Instantiate(value.Substring(1, value.Length - 2));
-				}
+            public ITweedleExpression ParseExpression([NotNull] Tweedle.TweedleParser.ExpressionContext context)
+            {
+                IToken prefix = context.prefix;
+                IToken operation = context.bop;
+                IToken bracket = context.bracket;
 
-				throw new System.Exception("Literal couldn't be found in grammar.");
-			}
+                if (prefix != null)
+                {
+                    switch (prefix.Text)
+                    {
+                        case "+":
+                            return TypedExpression(context, TBuiltInTypes.NUMBER)[0];
+                        case "-":
 
-			public override TweedleExpression VisitSuperSuffix([NotNull] Tweedle.TweedleParser.SuperSuffixContext context)
-			{
-				if (context.IDENTIFIER() != null)
-				{
-					if (context.arguments() != null)
-					{
-						return MethodCallExpression.Super(context.IDENTIFIER().GetText(), TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
-					}
-					else
-					{
-						return FieldAccess.Super(context.IDENTIFIER().GetText());
-					}
-				}
-				else if (context.arguments() != null)
-				{
-					return new SuperInstantiation(TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList()));
-				}
-				throw new System.Exception("Super suffix could not be constructed."); ;
-			}
+                            return NegativeExpression(TypedExpression(context, TBuiltInTypes.NUMBER)[0]);
+                        case "!":
+                            return new LogicalNotExpression(TypedExpression(context, TBuiltInTypes.BOOLEAN)[0]);
+                        default:
+                            throw new System.Exception("Expression has prefix name but cannot be converted to prefix expression.");
+                    }
+                }
+                else if (operation != null)
+                {
+                    ITweedleExpression[] expressions;
+                    switch (operation.Text)
+                    {
+                        case ".":
+                            return FieldOrMethodRef(context);
+                        case "..":
+                            return NewBinaryExpression<StringConcatenationExpression>(context, null);
+                        case "*":
+                            return NewBinaryExpression<MultiplicationExpression>(context, TBuiltInTypes.NUMBER);
+                        case "/":
+                            return NewBinaryExpression<DivisionExpression>(context, TBuiltInTypes.NUMBER);
+                        case "%":
+                            expressions = TypedExpression(context, TBuiltInTypes.WHOLE_NUMBER);
+                            return new ModuloExpression(expressions[0], expressions[1]);
+                        case "+":
+                            return NewBinaryExpression<AdditionExpression>(context, TBuiltInTypes.NUMBER);
+                        case "-":
+                            return NewBinaryExpression<SubtractionExpression>(context, TBuiltInTypes.NUMBER);
+                        case "<=":
+                            return NewBinaryExpression<LessThanOrEqualExpression>(context, TBuiltInTypes.NUMBER);
+                        case ">=":
+                            return NewBinaryExpression<GreaterThanOrEqualExpression>(context, TBuiltInTypes.NUMBER);
+                        case ">":
+                            return NewBinaryExpression<GreaterThanExpression>(context, TBuiltInTypes.NUMBER);
+                        case "<":
+                            return NewBinaryExpression<LessThanExpression>(context, TBuiltInTypes.NUMBER);
+                        case "==":
+                            expressions = TypedExpression(context, null);
+                            return new EqualToExpression(expressions[0], expressions[1]);
+                        case "!=":
+                            expressions = TypedExpression(context, null);
+                            return new NotEqualToExpression(expressions[0], expressions[1]);
+                        case "&&":
+                            expressions = TypedExpression(context, TBuiltInTypes.BOOLEAN);
+                            return new LogicalAndExpression(expressions[0], expressions[1]);
+                        case "||":
+                            expressions = TypedExpression(context, TBuiltInTypes.BOOLEAN);
+                            return new LogicalOrExpression(expressions[0], expressions[1]);
+                        case "<-":
+                            expressions = TypedExpression(context, null);
+                            return new AssignmentExpression(expressions[0], expressions[1]);
+                        default:
+                            throw new System.Exception("Binary operation not found.");
+                    }
+                }
+                else if (bracket != null)
+                {
+                    ITweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(assembly, TGenerics.GetArrayType(TBuiltInTypes.ANY, assembly)));
+                    ITweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(assembly, TBuiltInTypes.WHOLE_NUMBER));
+                    return new ArrayIndexExpression(array, index);
+                }
+                else if (context.lambdaCall() != null)
+                {
+                    ITweedleExpression lambdaSourceExp = TypedExpression(context, null)[0];
+                    if (context.lambdaCall().unlabeledExpressionList() == null)
+                    {
+                        return new LambdaEvaluation(lambdaSourceExp);
+                    }
+                    else
+                    {
+                        ITweedleExpression[] elements =
+                                        VisitUnlabeledArguments(context.lambdaCall().unlabeledExpressionList(), new ExpressionVisitor(assembly));
+                        return new LambdaEvaluation(lambdaSourceExp, elements);
+                    }
+                }
+                return base.VisitChildren(context);
+            }
 
-			public override TweedleExpression VisitLambdaExpression([NotNull] Tweedle.TweedleParser.LambdaExpressionContext context)
-			{
-				List<TweedleRequiredParameter> parameters = context.lambdaParameters().requiredParameter()
-					.Select(field => new TweedleRequiredParameter(
-						GetTypeType(field.typeType()),
-						field.variableDeclaratorId().IDENTIFIER().GetText()
-					)).ToList();
-				List<TweedleStatement> statements = CollectBlockStatements(context.block().blockStatement());
-				return new LambdaExpression(parameters, statements);
-			}
+            public override ITweedleExpression VisitPrimary([NotNull] Tweedle.TweedleParser.PrimaryContext context)
+            {
+                if (context.expression() != null)
+                {
+                    // Parenthesized child expression
+                    return this.VisitExpression(context.expression());
+                }
+                if (context.THIS() != null)
+                {
+                    return new ThisExpression();
+                }
+                if (context.IDENTIFIER() != null)
+                {
+                    return new IdentifierReference(context.IDENTIFIER().GetText());
+                }
 
-			public override TweedleExpression VisitMethodCall([NotNull] Tweedle.TweedleParser.MethodCallContext context)
-			{
-				return new MethodCallExpression(context.IDENTIFIER().GetText(),
-												TweedleParser.VisitLabeledArguments(context.labeledExpressionList()));
-			}
+                return base.VisitChildren(context);
+            }
 
-			public override TweedleExpression VisitCreator([NotNull] Tweedle.TweedleParser.CreatorContext context)
-			{
-				string typeName = context.createdName().GetText();
-				Tweedle.TweedleParser.ArrayCreatorRestContext arrayCreator = context.arrayCreatorRest();
-				if (arrayCreator != null)
-				{
-					TweedleType memberType = GetPrimitiveType(typeName);
-					memberType = memberType ?? GetTypeReference(typeName);
-					TweedleArrayType arrayMemberType = new TweedleArrayType(memberType);
-					if (arrayCreator.arrayInitializer() != null)
-					{
-						List<TweedleExpression> elements = new List<TweedleExpression>();
-						if (arrayCreator.arrayInitializer().unlabeledExpressionList() != null)
-						{
-							elements = arrayCreator.arrayInitializer().unlabeledExpressionList().expression().Select(a => a.Accept(new ExpressionVisitor(memberType))).ToList();
-						}
-						return new ArrayInitializer(
-										arrayMemberType,
-										elements);
-					}
-					else
-					{
-						return new ArrayInitializer(
-							arrayMemberType,
-							arrayCreator.expression().Accept(new ExpressionVisitor())
-							);
-					}
-				}
-				else
-				{
-					TweedleTypeReference typeRef = GetTypeReference(typeName);
-					Tweedle.TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
-					Dictionary<string, TweedleExpression> arguments = TweedleParser.VisitLabeledArguments(argsContext);
-					return new Instantiation(
-							typeRef,
-							arguments
-						);
-				}
-			}
+            public override ITweedleExpression VisitLiteral([NotNull] Tweedle.TweedleParser.LiteralContext context)
+            {
+                if (context.DECIMAL_LITERAL() != null)
+                {
+                    int value = System.Convert.ToInt32(context.DECIMAL_LITERAL().GetText());
+                    return TBuiltInTypes.WHOLE_NUMBER.Instantiate(value);
+                }
 
-			private TweedleExpression FieldOrMethodRef(Tweedle.TweedleParser.ExpressionContext context)
-			{
-				// Use untyped expression visitor for target
-				TweedleExpression target = context.expression(0).Accept(new ExpressionVisitor());
-				if (context.IDENTIFIER() != null)
-				{
-					return new FieldAccess(target, context.IDENTIFIER().GetText());
-				}
-				if (context.methodCall() != null)
-				{
-					Tweedle.TweedleParser.LabeledExpressionListContext argsContext = context.methodCall().labeledExpressionList();
-					Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-					if (argsContext != null)
-					{
-						arguments = TweedleParser.VisitLabeledArguments(argsContext);
-					}
-					return new MethodCallExpression(target,
-						context.methodCall().IDENTIFIER().GetText(),
-						arguments
-						);
-				}
-				throw new System.Exception("Unexpected details on context " + context);
-			}
+                if (context.FLOAT_LITERAL() != null)
+                {
+                    double value = System.Convert.ToDouble(context.FLOAT_LITERAL().GetText());
+                    return TBuiltInTypes.DECIMAL_NUMBER.Instantiate(value);
+                }
 
-			private List<TweedleExpression> TypedExpression(Tweedle.TweedleParser.ExpressionContext context, TweedleType type)
-			{
-				ExpressionVisitor expVisitor = new ExpressionVisitor(type);
-				return context.expression().Select(exp => exp.Accept(expVisitor)).ToList();
-			}
+                if (context.NULL_LITERAL() != null)
+                {
+                    return TValue.NULL;
+                }
 
-			private TweedleExpression NegativeExpression(TweedleExpression exp)
-			{
-				NegativeExpression negativeExp;
-				if (exp.Type == TweedleTypes.DECIMAL_NUMBER)
-				{
-					negativeExp = new NegativeDecimalExpression(exp);
-				}
-				else if (exp.Type == TweedleTypes.WHOLE_NUMBER)
-				{
-					negativeExp = new NegativeWholeExpression(exp);
-				}
-				else
-				{
-					throw new System.Exception("Expression cannot be converted into a negative expression.");
-				}
-				if (exp.IsLiteral())
-				{
-					return negativeExp.EvaluateNow();
-				}
-				return negativeExp;
-			}
+                if (context.BOOL_LITERAL() != null)
+                {
+                    bool value = System.Convert.ToBoolean(context.BOOL_LITERAL().GetText());
+                    return TBuiltInTypes.BOOLEAN.Instantiate(value);
+                }
 
-			private TweedleExpression NewBinaryExpression<T>(Tweedle.TweedleParser.ExpressionContext context, TweedlePrimitiveType childType) where T : BinaryExpression
-			{
-				List<TweedleExpression> expressions = TypedExpression(context, childType);
-				return (TweedleExpression)System.Activator.CreateInstance(typeof(T), new object[] { expressions[0], expressions[1] });
-			}
-		}
+                if (context.STRING_LITERAL() != null)
+                {
+                    string value = context.STRING_LITERAL().GetText();
+                    return TBuiltInTypes.TEXT_STRING.Instantiate(value.Substring(1, value.Length - 2));
+                }
 
-		private class StatementVisitor : TweedleParserBaseVisitor<TweedleStatement>
-		{
-			public override TweedleStatement VisitLocalVariableDeclaration([NotNull] Tweedle.TweedleParser.LocalVariableDeclarationContext context)
-			{
-				TweedleType type = GetTypeType(context.typeType());
-				string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
-				TweedleLocalVariable decl;
-				if (context.variableDeclarator().variableInitializer() != null)
-				{
-					ExpressionVisitor initVisitor = new ExpressionVisitor(type);
-					TweedleExpression init =
-									context.variableDeclarator().variableInitializer().Accept(initVisitor);
-					decl = new TweedleLocalVariable(type, name, init);
-				}
-				else
-				{
-					decl = new TweedleLocalVariable(type, name);
-				}
-				return new LocalVariableDeclaration(context.CONSTANT() != null, decl);
-			}
+                throw new System.Exception("Literal couldn't be found in grammar.");
+            }
 
-			public override TweedleStatement VisitBlockStatement([NotNull] Tweedle.TweedleParser.BlockStatementContext context)
-			{
-				if (context.NODE_DISABLE() != null)
-				{
-					TweedleStatement stmt = context.blockStatement().Accept(this);
-					stmt.Disable();
-					return stmt;
-				}
-				if (context.localVariableDeclaration() != null)
-				{
-					return context.localVariableDeclaration().Accept(this);
-				}
-				return base.VisitBlockStatement(context);
-			}
+            public override ITweedleExpression VisitSuperSuffix([NotNull] Tweedle.TweedleParser.SuperSuffixContext context)
+            {
+                if (context.IDENTIFIER() != null)
+                {
+                    if (context.arguments() != null)
+                    {
+                        return MethodCallExpression.Super(context.IDENTIFIER().GetText(), TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList(), assembly));
+                    }
+                    else
+                    {
+                        return FieldAccess.Super(context.IDENTIFIER().GetText());
+                    }
+                }
+                else if (context.arguments() != null)
+                {
+                    return new SuperInstantiation(TweedleParser.VisitLabeledArguments(context.arguments().labeledExpressionList(), assembly));
+                }
+                throw new System.Exception("Super suffix could not be constructed."); ;
+            }
 
-			public override TweedleStatement VisitStatement(Tweedle.TweedleParser.StatementContext context)
-			{
-				if (context.COUNT_UP_TO() != null)
-				{
-					return new CountLoop(context.IDENTIFIER().GetText(),
-										   context.expression().Accept(new ExpressionVisitor(TweedleTypes.WHOLE_NUMBER)),
-										   CollectBlockStatements(context.block(0).blockStatement()));
-				}
-				if (context.IF() != null)
-				{
-					TweedleExpression condition = context.parExpression().expression().Accept(new ExpressionVisitor(TweedleTypes.BOOLEAN));
-					List<TweedleStatement> thenBlock = CollectBlockStatements(context.block(0).blockStatement());
-					List<TweedleStatement> elseBlock = context.ELSE() != null
-															  ? CollectBlockStatements(context.block(1).blockStatement())
-															  : new List<TweedleStatement>();
-					return new ConditionalStatement(condition, thenBlock, elseBlock);
-				}
-				if (context.forControl() != null)
-				{
-					TweedleType valueType = GetTypeType(context.forControl().typeType());
-					TweedleArrayType arrayType = new TweedleArrayType(valueType);
-					TweedleLocalVariable loopVar =
-									new TweedleLocalVariable(valueType, context.forControl().variableDeclaratorId().GetText());
-					TweedleExpression loopValues = context.forControl().expression().Accept(new ExpressionVisitor(arrayType));
-					List<TweedleStatement> statements = CollectBlockStatements(context.block(0).blockStatement());
-					if (context.FOR_EACH() != null)
-					{
-						return new ForEachInArrayLoop(loopVar, loopValues, statements);
-					}
-					if (context.EACH_TOGETHER() != null)
-					{
-						return new EachInArrayTogether(loopVar, loopValues, statements);
-					}
-					throw new System.Exception("Found a forControl in a statement where it was not expected: " + context);
-				}
-				if (context.WHILE() != null)
-				{
-					return new WhileLoop(context.parExpression().expression().Accept(new ExpressionVisitor(TweedleTypes.BOOLEAN)),
-												CollectBlockStatements(context.block(0).blockStatement()));
-				}
-				if (context.DO_IN_ORDER() != null)
-				{
-					return new DoInOrder(CollectBlockStatements(context.block(0).blockStatement()));
-				}
-				if (context.DO_TOGETHER() != null)
-				{
-					return new DoTogether(CollectBlockStatements(context.block(0).blockStatement()));
-				}
-				if (context.RETURN() != null)
-				{
-					if (context.expression() != null)
-					{
-						return new ReturnStatement(context.expression().Accept(new ExpressionVisitor()));
-					}
-					else
-					{
-						return new ReturnStatement();
-					}
-				}
-				Tweedle.TweedleParser.ExpressionContext expContext = context.statementExpression;
-				if (expContext != null)
-				{
-					return new ExpressionStatement(context.expression().Accept(new ExpressionVisitor()));
-				}
-				throw new System.Exception("Found a statement that was not expected: " + context);
-			}
-		}
+            public override ITweedleExpression VisitLambdaExpression([NotNull] Tweedle.TweedleParser.LambdaExpressionContext context)
+            {
+                TParameter[] parameters = context.lambdaParameters().requiredParameter()
+                    .Select(field => TParameter.RequiredParameter(
+                        GetTypeRef(field.typeType(), assembly),
+                        field.variableDeclaratorId().IDENTIFIER().GetText()
+                    )).ToArray();
+                TweedleStatement[] statements = CollectBlockStatements(context.block().blockStatement(), assembly);
+                return new LambdaExpression(GetLambdaType(parameters, statements, assembly), parameters, statements);
+            }
 
-		private static List<TweedleStatement> CollectBlockStatements(Tweedle.TweedleParser.BlockStatementContext[] contexts)
-		{
-			StatementVisitor statementVisitor = new StatementVisitor();
-			return contexts.Select(stmt => stmt.Accept(statementVisitor)).ToList();
-		}
+            public override ITweedleExpression VisitMethodCall([NotNull] Tweedle.TweedleParser.MethodCallContext context)
+            {
+                return new MethodCallExpression(context.IDENTIFIER().GetText(),
+                                                TweedleParser.VisitLabeledArguments(context.labeledExpressionList(), assembly));
+            }
 
-		private static Dictionary<string, TweedleExpression> VisitLabeledArguments(Tweedle.TweedleParser.LabeledExpressionListContext context)
-		{
-			Dictionary<string, TweedleExpression> arguments = new Dictionary<string, TweedleExpression>();
-			if (context != null)
-			{
-				context.labeledExpression().ToList().ForEach(arg =>
-				{
-					TweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor());
-					arguments.Add(arg.IDENTIFIER().GetText(), argValue);
-				});
-			}
-			return arguments;
-		}
+            public override ITweedleExpression VisitCreator([NotNull] Tweedle.TweedleParser.CreatorContext context)
+            {
+                string typeName = context.createdName().GetText();
+                Tweedle.TweedleParser.ArrayCreatorRestContext arrayCreator = context.arrayCreatorRest();
+                if (arrayCreator != null)
+                {
+                    TTypeRef memberType = GetPrimitiveType(typeName);
+                    memberType = memberType ?? GetTypeRef(typeName);
 
-		private static List<TweedleExpression> VisitUnlabeledArguments(Tweedle.TweedleParser.UnlabeledExpressionListContext listContext,
-																	   ExpressionVisitor expressionVisitor)
-		{
-			return listContext == null
-					? new List<TweedleExpression>()
-					: listContext.expression().Select(exp => exp.Accept(expressionVisitor)).ToList();
-		}
+                    TArrayType arrayMemberType = TGenerics.GetArrayType(memberType, assembly);
+                    
+                    if (arrayCreator.arrayInitializer() != null)
+                    {
+                        ITweedleExpression[] elements = null;
+                        if (arrayCreator.arrayInitializer().unlabeledExpressionList() != null)
+                        {
+                            elements = arrayCreator.arrayInitializer().unlabeledExpressionList().expression()
+                                .Select(a => a.Accept(new ExpressionVisitor(assembly, memberType))).ToArray();
+                        }
+                        else
+                        {
+                            elements = new ITweedleExpression[0];
+                        }
+                        return new ArrayInitializer(
+                                        arrayMemberType,
+                                        elements);
+                    }
+                    else
+                    {
+                        return new ArrayInitializer(
+                            arrayMemberType,
+                            arrayCreator.expression().Accept(new ExpressionVisitor(assembly))
+                            );
+                    }
+                }
+                else
+                {
+                    TTypeRef typeRef = GetTypeRef(typeName);
+                    Tweedle.TweedleParser.LabeledExpressionListContext argsContext = context.classCreatorRest().arguments().labeledExpressionList();
+                    NamedArgument[] arguments = TweedleParser.VisitLabeledArguments(argsContext, assembly);
+                    return new Instantiation(
+                            typeRef,
+                            arguments
+                        );
+                }
+            }
 
-		private static TweedleType GetTypeOrVoid(Tweedle.TweedleParser.TypeTypeOrVoidContext context)
-		{
-			if (context.VOID() != null)
-			{
-				return TweedleVoidType.VOID;
-			}
-			return GetTypeType(context.typeType());
-		}
+            private ITweedleExpression FieldOrMethodRef(Tweedle.TweedleParser.ExpressionContext context)
+            {
+                // Use untyped expression visitor for target
+                ITweedleExpression target = context.expression(0).Accept(new ExpressionVisitor(assembly));
+                if (context.IDENTIFIER() != null)
+                {
+                    return new FieldAccess(target, context.IDENTIFIER().GetText());
+                }
+                if (context.methodCall() != null)
+                {
+                    Tweedle.TweedleParser.LabeledExpressionListContext argsContext = context.methodCall().labeledExpressionList();
+                    NamedArgument[] arguments = new NamedArgument[0];
+                    if (argsContext != null)
+                    {
+                        arguments = TweedleParser.VisitLabeledArguments(argsContext, assembly);
+                    }
+                    return new MethodCallExpression(target,
+                        context.methodCall().IDENTIFIER().GetText(),
+                        arguments
+                        );
+                }
+                throw new System.Exception("Unexpected details on context " + context);
+            }
 
-		private static TweedleType GetTypeType(Tweedle.TweedleParser.TypeTypeContext context)
-		{
-			if (context.lambdaTypeSignature() != null)
-			{
-				return GetLambdaType(context.lambdaTypeSignature());
-			}
-			else
-			{
-				TweedleType baseType = null;
-				if (context.classType() != null)
-				{
-					baseType = GetTypeReference(context.classType().GetText());
-				}
-				else if (context.primitiveType() != null)
-				{
-					baseType = GetPrimitiveType(context.primitiveType().GetText());
-				}
-				if (context.ChildCount > 1 && baseType != null)
-				{
-					return new TweedleArrayType(baseType);
-				}
-				return baseType;
-			}
-		}
+            private ITweedleExpression[] TypedExpression(Tweedle.TweedleParser.ExpressionContext context, TType type)
+            {
+                ExpressionVisitor expVisitor = new ExpressionVisitor(assembly, type);
+                return context.expression().Select(exp => exp.Accept(expVisitor)).ToArray();
+            }
 
-		private static TweedleTypeReference GetTypeReference(string type)
-		{
-			return new TweedleTypeReference(type);
-		}
+            private ITweedleExpression NegativeExpression(ITweedleExpression exp)
+            {
+                NegativeExpression negativeExp;
+                if (exp.Type == TBuiltInTypes.DECIMAL_NUMBER)
+                {
+                    negativeExp = new NegativeDecimalExpression(exp);
+                }
+                else if (exp.Type == TBuiltInTypes.WHOLE_NUMBER)
+                {
+                    negativeExp = new NegativeWholeExpression(exp);
+                }
+                else
+                {
+                    throw new System.Exception("Expression cannot be converted into a negative expression.");
+                }
+                if (exp is TValue)
+                {
+                    return negativeExp.EvaluateLiteral();
+                }
+                return negativeExp;
+            }
 
-		private static TweedlePrimitiveType GetPrimitiveType(string type)
-		{
-			foreach (TweedlePrimitiveType prim in TweedleTypes.PRIMITIVE_TYPES)
-			{
-				if (prim.Name == type)
-				{
-					return prim;
-				}
-			}
-			return null;
-		}
+            private ITweedleExpression NewBinaryExpression<T>(Tweedle.TweedleParser.ExpressionContext context, TType childType) where T : BinaryExpression
+            {
+                ITweedleExpression[] expressions = TypedExpression(context, childType);
+                BinaryExpression expression = (BinaryExpression)System.Activator.CreateInstance(typeof(T), new object[] { expressions[0], expressions[1] });
+                
+                // TODO(Alex): Optimization - if expressions 0 and 1 are both literal, evaluate now and return result?
+                // ex. 3 + 4 should just return a value of 7 instead of a addition expression
+                // if (expressions[0] is TValue && expressions[1] is TValue)
+                // {
+                //     return expression.EvaluateLiteral();
+                // }
+                return expression;
+            }
+        }
 
-		private static TweedleLambdaType GetLambdaType([NotNull] Tweedle.TweedleParser.LambdaTypeSignatureContext context)
-		{
-			Tweedle.TweedleParser.TypeTypeContext[] typeTypeContext = context.typeList().typeType();
-			List<TweedleType> typeList = typeTypeContext == null ?
-				new List<TweedleType>() :
-				typeTypeContext.Select(type => GetTypeType(type)).ToList();
-			return new TweedleLambdaType(typeList, GetTypeOrVoid(context.typeTypeOrVoid()));
-		}
-	}
+        private class StatementVisitor : TweedleParserBaseVisitor<TweedleStatement>
+        {
+            private readonly TAssembly assembly;
+
+            public StatementVisitor(TAssembly assembly)
+            {
+                this.assembly = assembly;
+            }
+
+            public override TweedleStatement VisitLocalVariableDeclaration([NotNull] Tweedle.TweedleParser.LocalVariableDeclarationContext context)
+            {
+                TTypeRef type = GetTypeRef(context.typeType(), assembly);
+                string name = context.variableDeclarator().variableDeclaratorId().IDENTIFIER().GetText();
+                TLocalVariable decl;
+                if (context.variableDeclarator().variableInitializer() != null)
+                {
+                    ExpressionVisitor initVisitor = new ExpressionVisitor(assembly, type);
+                    ITweedleExpression init =
+                                    context.variableDeclarator().variableInitializer().Accept(initVisitor);
+                    decl = new TLocalVariable(type, name, init);
+                }
+                else
+                {
+                    decl = new TLocalVariable(type, name);
+                }
+                return new LocalVariableDeclaration(context.CONSTANT() != null, decl);
+            }
+
+            public override TweedleStatement VisitBlockStatement([NotNull] Tweedle.TweedleParser.BlockStatementContext context)
+            {
+                if (context.NODE_DISABLE() != null)
+                {
+                    TweedleStatement stmt = context.blockStatement().Accept(this);
+                    stmt.Disable();
+                    return stmt;
+                }
+                if (context.localVariableDeclaration() != null)
+                {
+                    return context.localVariableDeclaration().Accept(this);
+                }
+                return base.VisitBlockStatement(context);
+            }
+
+            public override TweedleStatement VisitStatement(Tweedle.TweedleParser.StatementContext context)
+            {
+                if (context.COUNT_UP_TO() != null)
+                {
+                    return new CountLoop(context.IDENTIFIER().GetText(),
+                                           context.expression().Accept(new ExpressionVisitor(assembly, TBuiltInTypes.WHOLE_NUMBER)),
+                                           CollectBlockStatements(context.block(0).blockStatement(), assembly));
+                }
+                if (context.IF() != null)
+                {
+                    ITweedleExpression condition = context.parExpression().expression().Accept(new ExpressionVisitor(assembly, TBuiltInTypes.BOOLEAN));
+                    TweedleStatement[] thenBlock = CollectBlockStatements(context.block(0).blockStatement(), assembly);
+                    TweedleStatement[] elseBlock = context.ELSE() != null
+                                                              ? CollectBlockStatements(context.block(1).blockStatement(), assembly)
+                                                              : new TweedleStatement[0];
+                    return new ConditionalStatement(condition, thenBlock, elseBlock);
+                }
+                if (context.forControl() != null)
+                {
+                    TTypeRef valueType = GetTypeRef(context.forControl().typeType(), assembly);
+                    TArrayType arrayType = TGenerics.GetArrayType(valueType, assembly);
+                    TLocalVariable loopVar =
+                                    new TLocalVariable(valueType, context.forControl().variableDeclaratorId().GetText());
+                    ITweedleExpression loopValues = context.forControl().expression().Accept(new ExpressionVisitor(assembly, arrayType));
+                    TweedleStatement[] statements = CollectBlockStatements(context.block(0).blockStatement(), assembly);
+                    if (context.FOR_EACH() != null)
+                    {
+                        return new ForEachInArrayLoop(loopVar, loopValues, statements);
+                    }
+                    if (context.EACH_TOGETHER() != null)
+                    {
+                        return new EachInArrayTogether(loopVar, loopValues, statements);
+                    }
+                    throw new System.Exception("Found a forControl in a statement where it was not expected: " + context);
+                }
+                if (context.WHILE() != null)
+                {
+                    return new WhileLoop(context.parExpression().expression().Accept(new ExpressionVisitor(assembly, TBuiltInTypes.BOOLEAN)),
+                                                CollectBlockStatements(context.block(0).blockStatement(), assembly));
+                }
+                if (context.DO_IN_ORDER() != null)
+                {
+                    return new DoInOrder(CollectBlockStatements(context.block(0).blockStatement(), assembly));
+                }
+                if (context.DO_TOGETHER() != null)
+                {
+                    return new DoTogether(CollectBlockStatements(context.block(0).blockStatement(), assembly));
+                }
+                if (context.RETURN() != null)
+                {
+                    if (context.expression() != null)
+                    {
+                        return new ReturnStatement(context.expression().Accept(new ExpressionVisitor(assembly)));
+                    }
+                    else
+                    {
+                        return new ReturnStatement();
+                    }
+                }
+                Tweedle.TweedleParser.ExpressionContext expContext = context.statementExpression;
+                if (expContext != null)
+                {
+                    return new ExpressionStatement(context.expression().Accept(new ExpressionVisitor(assembly)));
+                }
+                throw new System.Exception("Found a statement that was not expected: " + context);
+            }
+        }
+
+        private static TweedleStatement[] CollectBlockStatements(Tweedle.TweedleParser.BlockStatementContext[] contexts, TAssembly assembly)
+        {
+            StatementVisitor statementVisitor = new StatementVisitor(assembly);
+            return contexts.Select(stmt => stmt.Accept(statementVisitor)).ToArray();
+        }
+
+        private static NamedArgument[] VisitLabeledArguments(Tweedle.TweedleParser.LabeledExpressionListContext context, TAssembly assembly)
+        {
+            NamedArgument[] arguments;
+            if (context != null)
+            {
+                var args = context.labeledExpression().ToArray();
+                arguments = new NamedArgument[args.Length];
+                int i = 0;
+                Array.ForEach(args, (arg =>
+                {
+                    ITweedleExpression argValue = arg.expression().Accept(new ExpressionVisitor(assembly));
+                    arguments[i++] = new NamedArgument(arg.IDENTIFIER().GetText(), argValue);
+                }));
+            }
+            else
+            {
+                arguments = NamedArgument.EMPTY_ARGS;
+            }
+            return arguments;
+        }
+
+        private static ITweedleExpression[] VisitUnlabeledArguments(Tweedle.TweedleParser.UnlabeledExpressionListContext listContext,
+                                                                       ExpressionVisitor expressionVisitor)
+        {
+            return listContext == null
+                    ? new ITweedleExpression[0]
+                    : listContext.expression().Select(exp => exp.Accept(expressionVisitor)).ToArray();
+        }
+
+        private static TTypeRef GetTypeOrVoid(Tweedle.TweedleParser.TypeTypeOrVoidContext context, TAssembly assembly)
+        {
+            if (context.VOID() != null)
+            {
+                return TBuiltInTypes.VOID;
+            }
+            return GetTypeRef(context.typeType(), assembly);
+        }
+
+        private static TTypeRef GetTypeRef(Tweedle.TweedleParser.TypeTypeContext context, TAssembly assembly)
+        {
+            if (context.lambdaTypeSignature() != null)
+            {
+                return GetLambdaType(context.lambdaTypeSignature(), assembly);
+            }
+            else
+            {
+                TTypeRef baseType = null;
+                if (context.classType() != null)
+                {
+                    baseType = GetTypeRef(context.classType().GetText());
+                }
+                else if (context.primitiveType() != null)
+                {
+                    baseType = GetPrimitiveType(context.primitiveType().GetText());
+                }
+                if (context.ChildCount > 1 && baseType != null)
+                {
+                    baseType = TGenerics.GetArrayType(baseType, assembly);
+                }
+                return baseType;
+            }
+        }
+
+        private static TTypeRef GetTypeRef(string type)
+        {
+            return new TTypeRef(type);
+        }
+
+        private static TType GetPrimitiveType(string type)
+        {
+            return TBuiltInTypes.Assembly().TypeNamed(type);
+        }
+
+        private static TLambdaType GetLambdaType([NotNull] Tweedle.TweedleParser.LambdaTypeSignatureContext context, TAssembly assembly)
+        {
+            Tweedle.TweedleParser.TypeTypeContext[] typeTypeContext = context.typeList().typeType();
+            TTypeRef[] typeList = typeTypeContext == null ?
+                new TTypeRef[0] :
+                typeTypeContext.Select(type => GetTypeRef(type, assembly)).ToArray();
+
+            TLambdaSignature signature = new TLambdaSignature(typeList, GetTypeOrVoid(context.typeTypeOrVoid(), assembly));
+            return TGenerics.GetLambdaType(signature, assembly);
+        }
+
+        private static TLambdaType GetLambdaType(TParameter[] inParameters, TweedleStatement[] inStatements, TAssembly assembly)
+        {
+            TTypeRef returnType = ExtractReturnType(inStatements);
+            TTypeRef[] paramTypes = new TTypeRef[inParameters.Length];
+            for (int i = 0; i < paramTypes.Length; ++i)
+                paramTypes[i] = inParameters[i].Type;
+            
+            TLambdaSignature signature = new TLambdaSignature(paramTypes, returnType);
+            return TGenerics.GetLambdaType(signature, assembly);
+        }
+
+        // NOTE: This will not generate the correct return type for return statements with unknown return types
+        // For example: If the ReturnStatement contains an IdentifierReference expression (no type known at parse time)
+        // then we'll end up with a null type
+        // Once return types are more solidly defined
+        private static TTypeRef ExtractReturnType(TweedleStatement[] inStatements)
+        {
+            if (inStatements == null || inStatements.Length == 0)
+            {
+                return TBuiltInTypes.VOID;
+            }
+
+            // TODO: If multiple possible return statements, determine common type
+            // and use that instead of just the type of the first return statement.
+            for (int i = inStatements.Length - 1; i >= 0; --i)
+            {
+                TweedleStatement statement = inStatements[i];
+                ReturnStatement returnStatement = statement as ReturnStatement;
+                if (returnStatement != null)
+                {
+                    if (returnStatement.Expression is TValue && (TValue)(returnStatement.Expression) == TValue.UNDEFINED)
+                        return TBuiltInTypes.VOID;
+
+                    // See above comment - some expressions don't have type information
+                    // available at parse time
+                    TTypeRef type = returnStatement.Type;
+                    return type ?? TBuiltInTypes.ANY;
+                }
+            }
+
+            return TBuiltInTypes.VOID;
+        }
+
+        private static MemberFlags GetModifiers(string[] inModifiers)
+        {
+            MemberFlags flags = MemberFlags.None;
+            for (int i = 0; i < inModifiers.Length; ++i)
+            {
+                string modifierStr = inModifiers[i];
+                switch(modifierStr)
+                {
+                    case "readonly":
+                        flags |= MemberFlags.Readonly;
+                        break;
+
+                    case "static":
+                        flags |= MemberFlags.Static;
+                        break;
+                }
+            }
+
+            return flags;
+        }
+    }
 }

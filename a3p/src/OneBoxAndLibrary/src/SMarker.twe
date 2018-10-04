@@ -1,0 +1,18 @@
+class SMarker extends SMovableTurnable {
+  SMarker() {
+  }
+
+  void setVehicle(SThing vehicle) {
+    this.vehicle <- vehicle;
+  }
+
+  Color getColorId() {
+    return this.color.getValue();
+  }
+
+  void setColorId(Color color ) {
+    this.color.setValue( color: color );
+  }
+
+  @CompletelyHidden ColorProperty color;
+}

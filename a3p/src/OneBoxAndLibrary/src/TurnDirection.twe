@@ -1,0 +1,16 @@
+enum TurnDirection {
+	LEFT( axis: Direction.PositiveYAxis ),
+	RIGHT( axis: Direction.NegativeYAxis ),
+	FORWARD( axis: Direction.NegativeXAxis ),
+	BACKWARD( axis: Direction.PositiveXAxis );
+
+	Direction axis;
+
+	TurnDirection( Direction axis ) {
+		this.axis <- axis;
+	}
+
+	Direction getAxis() {
+		return this.axis;
+	}
+}

@@ -1,0 +1,26 @@
+class SJointedModel extends SModel {
+  SJointedModel(TextString resource) {
+    super(resource: resource);
+  }
+
+  SJoint getJoint(JointId jointId) {
+  }
+
+  SJoint[] getJointArray(JointId[] jointIdArray) {
+  }
+
+  SJoint[] getJointArray(JointArrayId jointArrayId) {
+  }
+
+  void straightenOutJoints() {
+  }
+
+  void say(TextString text) {
+  }
+
+  void think(TextString text) {
+  }
+
+  void strikePose(Pose pose) {
+  }
+}

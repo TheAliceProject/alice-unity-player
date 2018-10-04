@@ -2,9 +2,9 @@
 
 namespace Alice.Tweedle.File
 {
-	[System.Serializable]
-	public class ModelReference : ResourceReference
-	{
-		public override ContentType ContentType => ContentType.Model;
-	}
+    [System.Serializable]
+    public class ModelReference : ResourceReference
+    {
+        public override ContentType ContentType => ContentType.Model;
+    }
 }

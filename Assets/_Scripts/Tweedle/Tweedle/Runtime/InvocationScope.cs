@@ -1,39 +1,43 @@
 ﻿using System.Collections.Generic;
-using Alice.VM;
+using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
 {
-	public abstract class InvocationScope : ExecutionScope
-	{
-		internal ExecutionScope callingScope;
-		internal TweedleMethod Method { get; set; }
-		public TweedleValue Result { get; internal set; }
+    public abstract class InvocationScope : ExecutionScope
+    {
+        internal ExecutionScope callingScope;
+        public TValue Result { get; internal set; }
 
-		public InvocationScope(ExecutionScope scope)
-			: base("Invocation", scope.vm)
-		{
-			callingScope = scope;
-		}
+        protected TMethod method;
 
-		internal override string StackWith(string stackTop)
-		{
-			return callingScope.StackWith(stackTop + "\n" + callStackEntry);
-		}
+        public InvocationScope(ExecutionScope scope)
+            : base("Invocation", scope.vm)
+        {
+            // Note: ExecutionScope.parent is not set by the base constructor used above
+            // so permissions aren't inherited from the parent
+            // This prevents Readonly and Enum Instantiation permissions from creeping into invalid scopes
+            callingScope = scope;
+        }
 
-		internal void QueueInvocationStep(StepSequence sequentialSteps, Dictionary<string, TweedleExpression> arguments)
-		{
-			//UnityEngine.Debug.Log("Queueing method invocation " + callStack);
-			Method.AddInvocationSteps(this, sequentialSteps, arguments);
-		}
+        internal override string StackWith(string stackTop)
+        {
+            return callingScope.StackWith(stackTop + "\n" + callStackEntry);
+        }
 
-		internal virtual ExecutionStep InvocationStep(string callStackEntry, Dictionary<string, TweedleExpression> arguments)
-		{
-			return Method.AsStep(callStackEntry, this, arguments);
-		}
+        internal void QueueInvocationStep(StepSequence sequentialSteps, NamedArgument[] arguments)
+        {
+            //UnityEngine.Debug.Log("Queueing method invocation " + callStack);
+            method.AddInvocationSteps(this, sequentialSteps, arguments);
+        }
 
-		internal void Return(TweedleValue result)
-		{
-			Result = result;
-		}
-	}
+        internal virtual ExecutionStep InvocationStep(string callStackEntry, NamedArgument[] arguments)
+        {
+            return method.AsStep(callStackEntry, this, arguments);
+        }
+
+        internal void Return(TValue result)
+        {
+            Result = result;
+        }
+    }
 }

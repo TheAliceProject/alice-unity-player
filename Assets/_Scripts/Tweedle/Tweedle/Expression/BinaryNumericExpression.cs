@@ -1,48 +1,44 @@
 ﻿namespace Alice.Tweedle
 {
-	public abstract class BinaryNumToNumExpression : BinaryExpression
-	{
-		public BinaryNumToNumExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.NUMBER)
-		{
-		}
+    public abstract class BinaryNumToNumExpression : BinaryExpression
+    {
+        public BinaryNumToNumExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+            : base(lhs, rhs, TBuiltInTypes.NUMBER)
+        {
+        }
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
-		{
-			if (left.Type is TweedleWholeNumberType && right.Type is TweedleWholeNumberType)
-			{
-				return TweedleTypes.WHOLE_NUMBER.Instantiate(
-					Evaluate(((TweedlePrimitiveValue<int>)left).Value,
-							 ((TweedlePrimitiveValue<int>)right).Value));
-			}
-			return TweedleTypes.DECIMAL_NUMBER.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
-		}
+        protected override TValue Evaluate(TValue left, TValue right)
+        {
+            if (left.Type == TBuiltInTypes.WHOLE_NUMBER && right.Type == TBuiltInTypes.WHOLE_NUMBER)
+            {
+                return TBuiltInTypes.WHOLE_NUMBER.Instantiate(Evaluate(left.ToInt(), right.ToInt()));
+            }
+            return TBuiltInTypes.DECIMAL_NUMBER.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
+        }
 
-		protected abstract int Evaluate(int left, int right);
+        protected abstract int Evaluate(int left, int right);
 
-		protected abstract double Evaluate(double left, double right);
-	}
+        protected abstract double Evaluate(double left, double right);
+    }
 
-	public abstract class BinaryNumToBoolExpression : BinaryExpression
-	{
-		public BinaryNumToBoolExpression(TweedleExpression lhs, TweedleExpression rhs)
-			: base(lhs, rhs, TweedleTypes.BOOLEAN)
-		{
-		}
+    public abstract class BinaryNumToBoolExpression : BinaryExpression
+    {
+        public BinaryNumToBoolExpression(ITweedleExpression lhs, ITweedleExpression rhs)
+            : base(lhs, rhs, TBuiltInTypes.BOOLEAN)
+        {
+        }
 
-		protected override TweedleValue Evaluate(TweedleValue left, TweedleValue right)
-		{
-			if (left.Type is TweedleWholeNumberType && right.Type is TweedleWholeNumberType)
-			{
-				return TweedleTypes.BOOLEAN.Instantiate(
-					Evaluate(((TweedlePrimitiveValue<int>)left).Value,
-							 ((TweedlePrimitiveValue<int>)right).Value));
-			}
-			return TweedleTypes.BOOLEAN.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
-		}
+        protected override TValue Evaluate(TValue left, TValue right)
+        {
+            if (left.Type == TBuiltInTypes.WHOLE_NUMBER && right.Type == TBuiltInTypes.WHOLE_NUMBER)
+            {
+                return TBuiltInTypes.BOOLEAN.Instantiate(Evaluate(left.ToInt(), right.ToInt()));
+            }
+            return TBuiltInTypes.BOOLEAN.Instantiate(Evaluate(left.ToDouble(), right.ToDouble()));
+        }
 
-		protected abstract bool Evaluate(int left, int right);
+        protected abstract bool Evaluate(int left, int right);
 
-		protected abstract bool Evaluate(double left, double right);
-	}
+        protected abstract bool Evaluate(double left, double right);
+    }
 }

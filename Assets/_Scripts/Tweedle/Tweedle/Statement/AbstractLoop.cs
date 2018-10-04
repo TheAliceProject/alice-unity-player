@@ -2,13 +2,13 @@
 
 namespace Alice.Tweedle
 {
-	abstract public class AbstractLoop : TweedleStatement
-	{
-		public BlockStatement Body { get; }
+    abstract public class AbstractLoop : TweedleStatement
+    {
+        public BlockStatement Body { get; }
 
-		public AbstractLoop(List<TweedleStatement> statements)
-		{
-			Body = new BlockStatement(statements);
-		}
-	}
+        public AbstractLoop(TweedleStatement[] statements)
+        {
+            Body = new BlockStatement(statements);
+        }
+    }
 }
