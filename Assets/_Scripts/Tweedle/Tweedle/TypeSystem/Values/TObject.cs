@@ -74,6 +74,23 @@ namespace Alice.Tweedle
             }
         }
 
+        /// <summary>
+		/// Sets the value for the given field.
+		/// </summary>
+		public void Set(string inFieldName, TType inType, TValue inValue)
+		{
+            ValueHolder holder;
+			if (!m_Attributes.TryGetValue(inFieldName, out holder))
+			{
+                holder = new ValueHolder(inType, inValue);
+                m_Attributes.Add(inFieldName, holder);
+            }
+			else
+			{
+                holder.Value = inValue;
+            }
+        }
+
 		/// <summary>
 		/// Gets/sets the value for the given field.
 		/// </summary>

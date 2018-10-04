@@ -5,22 +5,31 @@ namespace Alice.Tweedle.VM
 {
 	public class ExecutionScope
 	{
-		ExecutionScope parent;
+		protected readonly ExecutionScope parent;
 		public readonly VirtualMachine vm;
 		protected TValue thisValue;
 		protected internal string callStackEntry;
 
 		protected virtual ScopePermissions GetPermissions()
 		{
-            var permissions = ScopePermissions.None;
-			if (parent != null)
-                permissions |= parent.GetPermissions();
-            return permissions;
+            return ScopePermissions.None;
         }
 
 		internal bool HasPermissions(ScopePermissions inPermissions)
 		{
-            return (GetPermissions() & inPermissions) == inPermissions;
+            if ((GetPermissions() & inPermissions) == inPermissions)
+            {
+				// Early exit if permissions are located on this scope
+                return true;
+            }
+            if (parent != null)
+            {
+				// Otherwise we can traverse back up the scope stack
+				// Since InvocationScopes don't use parent for their calling scope,
+				// this doesn't pose the risk of permissions creeping into scopes where it isn't valid
+                return parent.HasPermissions(inPermissions);
+            }
+            return false;
         }
 
 		Dictionary<string, ValueHolder> localValues =
