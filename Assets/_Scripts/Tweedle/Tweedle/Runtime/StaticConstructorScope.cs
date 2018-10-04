@@ -7,7 +7,7 @@ namespace Alice.Tweedle.VM
 		private TType m_Type;
         
         internal StaticConstructorScope(ExecutionScope inCaller, TType inClass)
-			: base(inCaller)
+			: base("Static Instantiation", inCaller.vm)
 		{
 			m_Type = inClass;
 			thisValue = TValue.FromType(inClass);

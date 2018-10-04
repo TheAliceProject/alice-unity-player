@@ -40,7 +40,7 @@ namespace Alice.Tweedle
                         (value) =>
                         {
                             CheckSet(inScope, ref _this, ref value);
-                            obj.Set(Name, value);
+                            obj.Set(Name, Type.Get(), value);
                         })
                     );
             }
@@ -53,7 +53,7 @@ namespace Alice.Tweedle
             CheckSet(inScope, ref inValue, ref inNewValue);
             
             TObject obj = inValue.Object();
-            obj.Set(Name, inNewValue);
+            obj.Set(Name, Type.Get(), inNewValue);
         }
 
         #endregion // TField

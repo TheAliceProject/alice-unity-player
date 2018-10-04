@@ -60,7 +60,7 @@ namespace Alice.Tweedle
                         (value) =>
                         {
                             CheckSet(inScope, ref _this, ref value);
-                            m_StaticStorage.Set(Name, value);
+                            m_StaticStorage.Set(Name, Type.Get(), value);
                         })
                     );
             }
@@ -71,7 +71,7 @@ namespace Alice.Tweedle
         public override void Set(ExecutionScope inScope, ref TValue inValue, TValue inNewValue)
         {
             CheckSet(inScope, ref inValue, ref inNewValue);
-            m_StaticStorage.Set(Name, inNewValue);
+            m_StaticStorage.Set(Name, Type.Get(), inNewValue);
         }
 
         #endregion // TField

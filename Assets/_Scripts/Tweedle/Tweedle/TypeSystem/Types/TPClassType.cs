@@ -8,12 +8,12 @@ namespace Alice.Tweedle
     /// <summary>
     /// Proxy class type.
     /// </summary>
-    public sealed class TPObjectType : TTypeWithMembers
+    public sealed class TPClassType : TTypeWithMembers
     {
         private Type m_Type;
         private bool m_IsModule;
 
-        public TPObjectType(TAssembly inAssembly, Type inType)
+        public TPClassType(TAssembly inAssembly, Type inType)
             : base(inAssembly, TInterop.InteropTypeName(inType), TInterop.TTypeFor(inType.BaseType, inAssembly))
         {
             m_Type = inType;
