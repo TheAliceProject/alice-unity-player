@@ -66,8 +66,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public AxisAlignedBox interpolatePortion(AxisAlignedBox end, double portion) {
-            return new AxisAlignedBox(Vector3.Lerp(MinValue, end.MinValue, portion), Vector3.Lerp(MaxValue, end.MaxValue, portion));
+        public AxisAlignedBox interpolatePortion(AxisAlignedBox end, Portion portion) {
+            return new AxisAlignedBox(Vector3.Lerp(MinValue, end.MinValue, portion), Vector3.Lerp(MaxValue, end.MaxValue, portion.Value));
         }
         #endregion // Interop Interfaces
 

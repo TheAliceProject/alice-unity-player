@@ -1,0 +1,21 @@
+class SizeTween extends PropertyTween {
+  DecimalNumberTween(SizeProperty property, Size start, Size end) {
+    super();
+    this.property <- property;
+    this.start <- start;
+    this.end <- end;
+  }
+
+  void setEndValue() { 
+    this.property.setValue(value: end);
+  }
+
+  void interpolate(Portion portion) {
+    this.property.setValue(value: this.start.interpolatePortion(end: this.end, portion: portion));
+  }
+
+  @CompletelyHidden SizeProperty property;
+  @CompletelyHidden Size start;
+  @CompletelyHidden Size end;
+
+}

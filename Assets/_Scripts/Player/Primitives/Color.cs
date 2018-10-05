@@ -74,10 +74,10 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public override Paint interpolatePortion(Paint end, double portion) 
+        public override Paint interpolatePortion(Paint end, Portion portion) 
         {   
             if (end.PaintType == PaintTypeID.Color) {
-                return new Color(Color4.Lerp(Value, ((Color)end).Value, portion));
+                return new Color(Color4.Lerp(Value, ((Color)end).Value, portion.Value));
             }
 
             if (end.PaintType == PaintTypeID.ImageSource) {

@@ -13,6 +13,9 @@ namespace Alice.Player.Modules
         [PInteropField]
         static public double currentTime { get { return UnityEngine.Time.time; } }
 
+        [PInteropField]
+        static public double deltaTime { get { return UnityEngine.Time.deltaTime; } }
+
         [PInteropMethod]
         static public AsyncReturn delay(double duration)
         {

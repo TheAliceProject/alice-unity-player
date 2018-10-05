@@ -29,7 +29,7 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public override Paint interpolatePortion(Paint end, double portion) 
+        public override Paint interpolatePortion(Paint end, Portion portion) 
         {   
             if (end.PaintType == PaintTypeID.Color) {
                 return portion == 0 ? (Paint)this : end;

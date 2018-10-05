@@ -50,8 +50,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Orientation interpolatePortion(Orientation end, double portion) {
-            return new Orientation(Quaternion.Slerp(Value, end.Value, portion));
+        public Orientation interpolatePortion(Orientation end, Portion portion) {
+            return new Orientation(Quaternion.Slerp(Value, end.Value, portion.Value));
         }
 
         #endregion // Interop Interfaces

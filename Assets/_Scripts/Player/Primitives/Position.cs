@@ -59,8 +59,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Position interpolatePortion(Position end, double portion) {
-            return new Position(Vector3.Lerp(Value, end.Value, portion));
+        public Position interpolatePortion(Position end, Portion portion) {
+            return new Position(Vector3.Lerp(Value, end.Value, portion.Value));
         }
 
         [PInteropMethod]

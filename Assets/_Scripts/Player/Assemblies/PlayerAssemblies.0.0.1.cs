@@ -17,7 +17,6 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DebugModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SceneGraphModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DimensionPolicyEnum)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AnimationStyleEnum)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ClockModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(MathModule)));
 

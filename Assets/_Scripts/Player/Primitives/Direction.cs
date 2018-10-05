@@ -83,8 +83,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Direction interpolatePortion(Direction end, double portion) {
-            return new Direction(Vector3.Lerp(Value, end.Value, portion));      
+        public Direction interpolatePortion(Direction end, Portion portion) {
+            return new Direction(Vector3.Lerp(Value, end.Value, portion.Value));
         }
 
         [PInteropMethod]

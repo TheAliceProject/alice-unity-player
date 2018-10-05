@@ -9,37 +9,15 @@ class SizeProperty extends Property {
   }
 
   void setValue(Size value) {
-    if (!this.value.equals(other: value) {
+    if (!this.value.equals(other: value)) {
       this.value <- value;
       $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
     }
   }
 
   void animateValue(Size endValue, DecimalNumber duration <- Default.duration(), AnimationStyle animationStyle <- Default.animationStyle()) {
-     
-    if (duration >= 0) {
-      DecimalNumber startTime <- $Clock.currentTime;
-      DecimalNumber currentTime <- startTime;
-      DecimalNumber endTime <- startTime + duration;
-
-      Size startValue <- this.value;
-
-      while (currentTime < endTime) {
-        $Clock.delayOneFrame();
-
-        currentTime <- $Clock.currentTime;
-        
-        if (currentTime >= endTime) {
-          setValue(value: endValue);
-        } else {
-          //TODO: use animation style
-          DecimalNumber t <- (currentTime - startTime)/duration;
-          setValue(value: startValue.interpolatePortion(end: endValue, portion: t));
-        }
-      }
-    } else {
-      this.setValue(value: endValue);
-    }
+    SizeTween tween <- new SizeTween(property: this, start: this.value, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
   @CompletelyHidden Size value;
