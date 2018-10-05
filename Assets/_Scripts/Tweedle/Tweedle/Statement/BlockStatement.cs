@@ -20,12 +20,12 @@ namespace Alice.Tweedle
 
         internal SequentialSteps AsSequentialStep(ExecutionScope scope, ExecutionStep next)
         {
-            return new SequentialSteps(scope.ChildScope(), next, this);
+            return new SequentialSteps(scope, next, this);
         }
 
         internal SequentialSteps AsSequentialStep(ExecutionScope scope)
         {
-            return new SequentialSteps(scope.ChildScope(), null, this);
+            return new SequentialSteps(scope, null, this);
         }
 
         internal void AddParallelSteps(ExecutionScope scope, ExecutionStep next)
