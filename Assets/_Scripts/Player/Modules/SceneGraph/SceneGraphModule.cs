@@ -26,10 +26,10 @@ namespace Alice.Player.Modules {
             SGEntity entity = null;
             switch (resource) {
                 case BOX:
-                    entity = SGEntity.Create<SGBox>(model, "BoxEntity");
+                    entity = SGEntity.Create<SGBox>(model.Object(), "BoxEntity");
                     break;
                 case SPHERE:
-                    entity = SGEntity.Create<SGSphere>(model, "SphereEntity");
+                    entity = SGEntity.Create<SGSphere>(model.Object(), "SphereEntity");
                     break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
@@ -60,7 +60,7 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static void updateProperty(TValue owner, TValue property, TValue value) {
-            UnityEngine.Debug.LogFormat("Update {0} to ({1})", property.Type.Name, value);
+            //UnityEngine.Debug.LogFormat("Update {0} to ({1})", property.Type.Name, value);
             UnitySceneGraph.Current.UpdateProperty(owner, property, value);
         }
     }

@@ -51,7 +51,7 @@ namespace Alice.Player.Modules {
             
             var asyncReturn = new AsyncReturn();
             var tween = new PropertyTween<T>(this, m_Value, endValue, duration, animationStyle, asyncReturn);
-            UnitySceneGraph.Current.QueueTween(tween);
+            //UnitySceneGraph.Current.QueueTween(tween);
             return asyncReturn;
         }
         #endregion // Interop Interfaces

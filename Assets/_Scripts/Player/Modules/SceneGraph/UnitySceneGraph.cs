@@ -104,11 +104,7 @@ namespace Alice.Player.Unity {
 
             m_IsUpdating = false;
         }
-
-        internal void QueueTween(IPropertyTween inTween) {
-            
-        }
-
+        
         internal void QueueFrameReturn(AsyncReturn inReturn, int inFrames) {
             QueueWaitReturn(new FrameReturn(inReturn, inFrames));
         }
@@ -129,9 +125,9 @@ namespace Alice.Player.Unity {
             m_Entities.Add(inEntity);
         }
 
-        internal SGEntity FindEntity(TValue inOwner) {
+        internal SGEntity FindEntity(object inOwner) {
             for (int i = 0, count = m_Entities.Count; i < count; ++i) {
-                if (ReferenceEquals(m_Entities[i].owner, inOwner.RawObject<object>())) {
+                if (ReferenceEquals(m_Entities[i].owner, inOwner)) {
                     return m_Entities[i];
                 }
             }
@@ -139,14 +135,14 @@ namespace Alice.Player.Unity {
         }
 
         internal void BindProperty(string inName, TValue inOwner, TValue inProperty, TValue inInitValue) {
-            var entity = FindEntity(inOwner);
+            var entity = FindEntity(inOwner.Object());
             if (entity) {
                 entity.BindProperty(inName, inProperty, inInitValue);
             }
         }
 
         internal void UpdateProperty(TValue inOwner, TValue inProperty, TValue inValue) {
-            var entity = FindEntity(inOwner);
+            var entity = FindEntity(inOwner.Object());
             if (entity) {
                 entity.UpdateProperty(inProperty, inValue);
             }

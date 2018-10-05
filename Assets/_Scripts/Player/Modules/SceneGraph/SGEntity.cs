@@ -53,20 +53,15 @@ namespace Alice.Player.Modules {
         }
 
         public void BindProperty(string inName, TValue inProperty, TValue inInitValue) {
+            UpdatePropertyDelegate @delegate;
+            if (m_PropertyBindings.TryGetValue(inName, out @delegate)) {
 
-            if (m_Properties.ContainsKey(inName)) {
-                throw new SceneGraphException(string.Format("Property \"{0}\" already bound.", inName));
+                @delegate(inInitValue);
+                m_Properties.Add(inProperty.Object(), @delegate);
             } else {
-                
-                UpdatePropertyDelegate @delegate;
-                if (m_PropertyBindings.TryGetValue(inName, out @delegate)) {
-
-                    @delegate(inInitValue);
-                    m_Properties.Add(inProperty.Object(), @delegate);
-                } else {
-                    throw new SceneGraphException(string.Format("Property \"{0}\" cannot be bound because no valid callback has been registered.", inName));
-                }
+                throw new SceneGraphException(string.Format("Property \"{0}\" cannot be bound because no valid callback has been registered.", inName));
             }
+
         }
 
         public void UpdateProperty(TValue inProperty, TValue inValue) {
@@ -74,6 +69,8 @@ namespace Alice.Player.Modules {
             object propertyObj = inProperty.Object();
             if (m_Properties.TryGetValue(propertyObj, out @delegate)) {
                 @delegate(inValue);
+            } else {
+                Debug.Log("no delegate found for property");
             }
         }
 
