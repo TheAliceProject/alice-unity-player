@@ -2,12 +2,12 @@
 
 namespace Alice.Tweedle
 {
-    public abstract class NegativeExpression : UnaryExpression
+    public class NegativeExpression : UnaryExpression
     {
         protected ITweedleExpression expression;
 
-        internal NegativeExpression(TType type, ITweedleExpression expression)
-            : base(type)
+        internal NegativeExpression(ITweedleExpression expression)
+            : base(TBuiltInTypes.NUMBER)
         {
             this.expression = expression;
         }
@@ -24,7 +24,17 @@ namespace Alice.Tweedle
             return Negate((TValue)expression);
         }
 
-        internal abstract TValue Negate(TValue value);
+        private TValue Negate(TValue value)
+        {
+            if (value.Type == TBuiltInTypes.WHOLE_NUMBER)
+            {
+                return TBuiltInTypes.WHOLE_NUMBER.Instantiate(-value.ToInt());
+            }
+            else
+            {
+                return TBuiltInTypes.DECIMAL_NUMBER.Instantiate(-value.ToDouble());
+            }
+        }
 
         public override string ToTweedle()
         {
@@ -32,31 +42,4 @@ namespace Alice.Tweedle
         }
     }
 
-    public class NegativeWholeExpression : NegativeExpression
-    {
-
-        public NegativeWholeExpression(ITweedleExpression expression)
-            : base(TBuiltInTypes.WHOLE_NUMBER, expression)
-        {
-        }
-
-        internal override TValue Negate(TValue value)
-        {
-            return TBuiltInTypes.WHOLE_NUMBER.Instantiate(0 - value.ToInt());
-        }
-    }
-
-    public class NegativeDecimalExpression : NegativeExpression
-    {
-
-        public NegativeDecimalExpression(ITweedleExpression expression)
-            : base(TBuiltInTypes.DECIMAL_NUMBER, expression)
-        {
-        }
-
-        internal override TValue Negate(TValue value)
-        {
-            return TBuiltInTypes.DECIMAL_NUMBER.Instantiate(0 - value.ToDouble());
-        }
-    }
 }

@@ -537,19 +537,7 @@ namespace Alice.Tweedle.Parse
 
             private ITweedleExpression NegativeExpression(ITweedleExpression exp)
             {
-                NegativeExpression negativeExp;
-                if (exp.Type == TBuiltInTypes.DECIMAL_NUMBER)
-                {
-                    negativeExp = new NegativeDecimalExpression(exp);
-                }
-                else if (exp.Type == TBuiltInTypes.WHOLE_NUMBER)
-                {
-                    negativeExp = new NegativeWholeExpression(exp);
-                }
-                else
-                {
-                    throw new System.Exception("Expression cannot be converted into a negative expression.");
-                }
+                NegativeExpression negativeExp = new NegativeExpression(exp);
                 if (exp is TValue)
                 {
                     return negativeExp.EvaluateLiteral();

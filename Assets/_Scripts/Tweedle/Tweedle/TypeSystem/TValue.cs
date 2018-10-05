@@ -127,7 +127,7 @@ namespace Alice.Tweedle
 
         string ITweedleExpression.ToTweedle()
         {
-            return m_Type.ToTweedle(ref this);
+            return m_Type == null ? "undefined" : m_Type.ToTweedle(ref this);
         }
 
         ExecutionStep ITweedleExpression.AsStep(ExecutionScope inScope)
