@@ -4,13 +4,10 @@ using Alice.Tweedle;
 using Alice.Player.Primitives;
 
 namespace Alice.Player.Modules {
-    public sealed class SGSphere : SGModel {
+    public sealed class SGSphere : SGShape {
         public const string RADIUS_PROPERTY_NAME = "Radius";
 
         private Transform m_SphereTransform;
-
-        
-
 
         private void Awake() {
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);

@@ -16,11 +16,10 @@ namespace Alice.Player.Unity {
         private struct TimeReturn : IWaitReturn {
             private float m_StartTime;
             private float m_Duration;
-            private AsyncReturn m_Return;
-            public AsyncReturn Return {get { return m_Return;}}
+            public AsyncReturn Return { get; private set; }
             
             public TimeReturn(AsyncReturn inReturn, float startTime, float duration) {
-                m_Return = inReturn;
+                Return = inReturn;
                 m_StartTime = startTime;
                 m_Duration = duration;
             }
@@ -33,11 +32,10 @@ namespace Alice.Player.Unity {
         private class FrameReturn : IWaitReturn {
             private int m_Duration;
             private int m_Frame;
-            private AsyncReturn m_Return;
-            public AsyncReturn Return {get { return m_Return;}}
+            public AsyncReturn Return { get; private set; }
 
             public FrameReturn(AsyncReturn inReturn, int frames) {
-                m_Return = inReturn;
+                Return = inReturn;
                 m_Duration = frames;
             }
 
@@ -125,9 +123,10 @@ namespace Alice.Player.Unity {
             m_Entities.Add(inEntity);
         }
 
-        internal SGEntity FindEntity(object inOwner) {
+        internal SGEntity FindEntity(TValue inOwner) {
+            var ownerObj = inOwner.Object();
             for (int i = 0, count = m_Entities.Count; i < count; ++i) {
-                if (ReferenceEquals(m_Entities[i].owner, inOwner)) {
+                if (ReferenceEquals(m_Entities[i].owner.RawObject<object>(), ownerObj)) {
                     return m_Entities[i];
                 }
             }
@@ -135,14 +134,14 @@ namespace Alice.Player.Unity {
         }
 
         internal void BindProperty(string inName, TValue inOwner, TValue inProperty, TValue inInitValue) {
-            var entity = FindEntity(inOwner.Object());
+            var entity = FindEntity(inOwner);
             if (entity) {
                 entity.BindProperty(inName, inProperty, inInitValue);
             }
         }
 
         internal void UpdateProperty(TValue inOwner, TValue inProperty, TValue inValue) {
-            var entity = FindEntity(inOwner.Object());
+            var entity = FindEntity(inOwner);
             if (entity) {
                 entity.UpdateProperty(inProperty, inValue);
             }

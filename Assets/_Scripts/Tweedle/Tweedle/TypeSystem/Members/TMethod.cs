@@ -21,6 +21,10 @@ namespace Alice.Tweedle
 
         public virtual void Link(TAssemblyLinkContext inContext, TType inOwnerType)
         {
+            if (Type == null) {
+
+            }
+
             Type.Resolve(inContext);
             ReturnType.Resolve(inContext);
 

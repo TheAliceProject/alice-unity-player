@@ -1,0 +1,58 @@
+class Scene extends SScene models Scene {
+  Scene() {
+    super();
+  }
+  
+/*
+  void initializeEventListeners() {
+    this.addSceneActivationListener(listener: (SceneActivationEvent event)-> {
+      this.myFirstMethod();
+    });
+  }
+*/
+  void myFirstMethod() {
+  }
+  //SGround ground <- new SGround();
+  //SCamera camera <- new SCamera();
+  Box box <- new Box();
+
+  void performCustomSetup() {
+    // Make adjustments to the starting scene, in a way not available in the Scene editor
+  }
+
+  void performGeneratedSetUp() {
+    // DO NOT EDIT
+    // This code is automatically generated.  Any work you perform in this method will be overwritten.
+    // DO NOT EDIT
+    //this.setAtmosphereColor(color: new Color(red: 0.0, green: 0.0941, blue: 0.294));
+    //this.setFromAboveLightColor(color: Color.WHITE);
+    //this.setFromBelowLightColor(color: new Color(red: 0.541, green: 0.0, blue: 0.125));
+    //this.setFogDensity(density: 0.1);
+    this.setName(name: "myScene");
+    //this.ground.setPaint(paint: SurfaceAppearance.DARK_GRASS);
+    //this.ground.setOpacity(opacity: 1.0);
+    //this.ground.setName(name: "ground");
+    //this.ground.setVehicle(vehicle: this);
+    //this.camera.setName(name: "camera");
+    //this.camera.setVehicle(vehicle: this);
+    //this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.995185, z: 0.0980144, w: 6.12323E-17));
+    //this.camera.setPositionRelativeToVehicle(position: new Position(x: 9.61E-16, y: 1.56, z: -7.85));
+    this.box.setPaint(paint: Color.WHITE);
+    //this.box.setOpacity(opacity: 1.0);
+    this.box.setName(name: "box");
+    this.box.setVehicle(vehicle: this);
+    //this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.0, z: 0.0, w: 1.0));
+    //this.box.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: 0.0));
+    this.box.setSize(size: new Size(width: 1.0, height: 1.0, depth: 1.0));
+  }
+
+  /*SGround getGround() {
+    return this.ground;
+  }
+  SCamera getCamera() {
+    return this.camera;
+  }*/
+  Box getBox() {
+    return this.box;
+  }
+}

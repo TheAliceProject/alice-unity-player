@@ -7,29 +7,23 @@ class SThing {
     return this.getTransformation( target: entity );
   }
 
-	@CompletelyHidden VantagePoint getTransformation( SThing asSeenBy ) {
-		return this.getSgComposite().getTransformation( asSeenBy: asSeenBy.getSgReferenceFrame() );
-	}
-
-	@CompletelyHidden Position getTranslation( SThing asSeenBy ) {
-		return this.getTransformation( asSeenBy: asSeenBy ).translation;
-	}
-
-	@CompletelyHidden Position getMinPoint( SThing asSeenBy ) {
-	  return this.getTranslation( asSeenBy: asSeenBy );
-	}
-
-	@CompletelyHidden Position getMaxPoint( SThing asSeenBy ) {
-	  return this.getTranslation( asSeenBy: asSeenBy );
-	}
-  
-  @CompletelyHidden SScene getScene() {
-    if ( this.getVehicle() == null ) {
-      return null;
-    } else {
-      return this.getVehicle().getScene();
-    }
+  @CompletelyHidden VantagePoint getTransformation( SThing asSeenBy ) {
+    return this.getSgComposite().getTransformation( asSeenBy: asSeenBy.getSgReferenceFrame() );
   }
+
+  @CompletelyHidden Position getTranslation( SThing asSeenBy ) {
+    return this.getTransformation( asSeenBy: asSeenBy ).translation;
+  }
+
+  @CompletelyHidden Position getMinPoint( SThing asSeenBy ) {
+    return this.getTranslation( asSeenBy: asSeenBy );
+  }
+
+  @CompletelyHidden Position getMaxPoint( SThing asSeenBy ) {
+    return this.getTranslation( asSeenBy: asSeenBy );
+  }
+  
+  
   */
 
   @TuckedAway TextString getName() {
@@ -50,9 +44,6 @@ class SThing {
   }
   
 
-  SThing getVehicle() {
-    return $SceneGraph.getVehicle( rider: this );
-  }
   
 
   Boolean isCollidingWith( SThing other ) {
@@ -77,6 +68,18 @@ class SThing {
   }
   */
 
+  @CompletelyHidden SScene getScene() {
+    if ( this.vehicle == null ) {
+      return null;
+    } else {
+      return this.vehicle.getScene();
+    }
+  }
+
+  SThing getVehicle() {
+    return this.vehicle;
+  }
+
   TextString toString() {
     if( this.name != null ) {
       return this.name;
@@ -86,4 +89,5 @@ class SThing {
   }
 
   @CompletelyHidden TextString name;
+  @CompletelyHidden SThing vehicle;
 }

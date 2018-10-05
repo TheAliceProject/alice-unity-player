@@ -91,9 +91,9 @@ namespace Alice.Player.Primitives
 
         public override PaintTypeID PaintType { get { return PaintTypeID.Color; } }
 
-        public override void Apply(UnityEngine.Material inMaterial) {
-            inMaterial.color = new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, (float)Value.A);
-            inMaterial.mainTexture = null;
+        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, string inTextureName) {
+            inPropertyBlock.SetColor("_Color", new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, (float)Value.A));
+            inPropertyBlock.SetTexture(inTextureName, UnityEngine.Texture2D.whiteTexture);
         }
 
         public override string ToString() {

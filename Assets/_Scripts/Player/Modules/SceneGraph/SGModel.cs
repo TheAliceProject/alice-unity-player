@@ -11,35 +11,43 @@ namespace Alice.Player.Modules {
     public abstract class SGModel : SGEntity {
 
         private Renderer m_Renderer;
-        private Material m_Material;
-        
-        #region Interop Interfaces
-        [PInteropField]
+        private MaterialPropertyBlock m_PropertyBlock;
+
         public const string PAINT_PROPERTY_NAME = "Paint";
-        [PInteropField]
         public const string SIZE_PROPERTY_NAME = "Size";
+        public const string OPACITY_PROPERTY_NAME = "Opacity";
 
-        #endregion
+        public const string MAIN_TEXTURE_SHADER_NAME = "_MainTexture";
+        public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTexture";
+        public const string COLOR_SHADER_NAME = "_Color";
 
-        
         protected virtual void Init(Renderer inRenderer) {
             m_Renderer = inRenderer;
-            m_Material = new Material(inRenderer.material);
-            inRenderer.sharedMaterial = m_Material;
 
             RegisterPropertyDelegate<Size>(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
             RegisterPropertyDelegate<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
         }
 
-        protected virtual void OnDestroy() {
-            Destroy(m_Material);
-        }
-
         protected abstract void OnSizePropertyChanged(TValue inValue);
 
-        private void OnPaintPropertyChanged(TValue inValue) {
+        protected virtual void OnPaintPropertyChanged(TValue inValue) {
+            SetPaint(inValue, FILTER_TEXTURE_SHADER_NAME);
+        }
+
+        protected void SetPaint(TValue inValue, string inTextureName) {
             var paint = inValue.RawObject<Paint>();
-            paint.Apply(m_Material);
+
+            if (m_PropertyBlock == null) {
+                m_PropertyBlock = new MaterialPropertyBlock();
+            }
+
+            if (m_Renderer.HasPropertyBlock()) {
+                m_Renderer.GetPropertyBlock(m_PropertyBlock);
+            }
+
+            paint.Apply(m_PropertyBlock, inTextureName);
+
+            m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
     }
 }
