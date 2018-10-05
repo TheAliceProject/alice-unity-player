@@ -20,12 +20,12 @@ namespace Alice.Tweedle
 
         internal SequentialSteps AsSequentialStep(ExecutionScope scope, ExecutionStep next)
         {
-            return new SequentialSteps(scope, next, this);
+            return new SequentialSteps(scope.ChildScope(), next, this);
         }
 
         internal SequentialSteps AsSequentialStep(ExecutionScope scope)
         {
-            return new SequentialSteps(scope, null, this);
+            return new SequentialSteps(scope.ChildScope(), null, this);
         }
 
         internal void AddParallelSteps(ExecutionScope scope, ExecutionStep next)
@@ -57,7 +57,7 @@ namespace Alice.Tweedle
 
             internal override void Execute()
             {
-                if (index < block.Statements.Length)
+                if (index < block.Statements.Length && !scope.ShouldExit())
                 {
                     block.Statements[index++].QueueStepToNotify(scope, this);
                 }

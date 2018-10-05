@@ -204,5 +204,15 @@ namespace Alice.Tweedle.VM
         {
             return new LambdaScope(this);
         }
+    
+        internal virtual bool ShouldExit()
+        {
+            return parent != null ? parent.ShouldExit() : false;
+        }
+
+        internal virtual void Return(TValue returnValue)
+        {
+            parent?.Return(returnValue);
+        }
     }
 }
