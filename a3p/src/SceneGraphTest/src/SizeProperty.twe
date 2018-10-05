@@ -17,29 +17,28 @@ class SizeProperty extends Property {
 
   void animateValue(Size endValue, DecimalNumber duration <- Default.duration(), AnimationStyle animationStyle <- Default.animationStyle()) {
      
-    if (duration <= 0) {
-      this.setValue(endValue);
-      return;
-    }
-     
-    DecimalNumber startTime <- $Clock.currentTime;
-    DecimalNumber currentTime <- startTime;
-    DecimalNumber endTime <- startTime + duration;
+    if (duration >= 0) {
+      DecimalNumber startTime <- $Clock.currentTime;
+      DecimalNumber currentTime <- startTime;
+      DecimalNumber endTime <- startTime + duration;
 
-    Size startValue <- this.value;
+      Size startValue <- this.value;
 
-    while (currentTime < endTime) {
-      $Clock.delayOneFrame();
+      while (currentTime < endTime) {
+        $Clock.delayOneFrame();
 
-      currentTime <- $Clock.currentTime;
-      
-      if (currentTime >= duration) {
-        setValue(value: endValue);
-      } else {
-        //TODO: use animation style
-        DecimalNumber t <- (currentTime - startTime)/duration;
-        setValue(value: startValue.interpolatePortion(end: endValue, portion: t));
+        currentTime <- $Clock.currentTime;
+        
+        if (currentTime >= endTime) {
+          setValue(value: endValue);
+        } else {
+          //TODO: use animation style
+          DecimalNumber t <- (currentTime - startTime)/duration;
+          setValue(value: startValue.interpolatePortion(end: endValue, portion: t));
+        }
       }
+    } else {
+      this.setValue(value: endValue);
     }
   }
 
