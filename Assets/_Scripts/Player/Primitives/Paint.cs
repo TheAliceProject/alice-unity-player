@@ -14,7 +14,7 @@ namespace Alice.Player.Primitives
 
         #region Interop Interfaces
         public abstract bool equals(Paint other);
-        public abstract Paint interpolatePortion(Paint end, double portion);
+        public abstract Paint interpolatePortion(Paint end, Portion portion);
         #endregion //Interop Interfaces
         
         public abstract PaintTypeID PaintType { get; }

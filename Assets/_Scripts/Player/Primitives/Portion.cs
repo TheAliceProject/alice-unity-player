@@ -11,6 +11,7 @@ namespace Alice.Player.Primitives
         public readonly double Value;
 
         #region Interop Interface 
+        
         [PInteropConstructor]
         public Portion(double portion)
         {
@@ -18,6 +19,9 @@ namespace Alice.Player.Primitives
                 throw new TweedleRuntimeException("Cannot instantiate Portion with value " + portion + " - must be between 0 and 1");
             Value = portion;
         }
+
+        [PInteropField]
+        public double numberValue { get { return Value; } }
 
         [PInteropMethod]
         public bool equals(Portion other) {
@@ -35,8 +39,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Portion interpolatePortion(Portion end, double portion) {
-            return new Portion((end.Value-Value)*portion + Value);
+        public Portion interpolatePortion(Portion end, Portion portion) {
+            return new Portion((end.Value-Value)*portion.Value + Value);
         }
         #endregion // Interop Interfaces
 

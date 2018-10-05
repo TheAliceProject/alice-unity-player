@@ -74,8 +74,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Angle interpolatePortion(Angle end, double portion) {
-            return new Angle((end.Value - Value)*portion + Value);
+        public Angle interpolatePortion(Angle end, Portion portion) {
+            return new Angle((end.Value - Value)*portion.Value + Value);
         }
         #endregion // Interop Interfaces
 

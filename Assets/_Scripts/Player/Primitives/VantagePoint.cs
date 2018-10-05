@@ -54,8 +54,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public VantagePoint interpolatePortion(VantagePoint end, double portion) {
-            return new VantagePoint(Matrix4x4.Lerp(Value, end.Value, portion));
+        public VantagePoint interpolatePortion(VantagePoint end, Portion portion) {
+            return new VantagePoint(Matrix4x4.Lerp(Value, end.Value, portion.Value));
         }
         #endregion // interop interfaces
 

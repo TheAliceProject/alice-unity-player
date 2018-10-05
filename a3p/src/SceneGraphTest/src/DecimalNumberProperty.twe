@@ -15,32 +15,9 @@ class DecimalNumberProperty extends Property {
     }
   }
 
-  void animateValue(DecimalNumber endValue, DecimalNumber duration <- Default.duration(), AnimationStyle animationStyle <- Default.animationStyle()) {
-     
-    if (duration > 0) {
-      DecimalNumber startTime <- $Clock.currentTime;
-      DecimalNumber currentTime <- startTime;
-      DecimalNumber endTime <- startTime + duration;
-
-      DecimalNumber startValue <- this.value;
-      DecimalNumber delta <- endValue - startValue;
-
-      while (currentTime < endTime) {
-        $Clock.delayOneFrame();
-
-        currentTime <- $Clock.currentTime;
-
-        if (currentTime >= endTime) {
-          setValue(value: endValue);
-        } else {
-          //TODO: use animation style
-          DecimalNumber t <- (currentTime - startTime)/duration;
-          setValue(value: delta*t + startValue);
-        }
-      }
-    } else {
-      this.setValue(value: endValue);
-    }
+  void animateValue(DecimalNumber endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+    DecimalNumberTween tween <- new DecimalNumberTween(property: this, start: this.value, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
   @CompletelyHidden DecimalNumber value;

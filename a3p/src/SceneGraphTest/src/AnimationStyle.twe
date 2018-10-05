@@ -1,0 +1,67 @@
+enum AnimationStyle {
+    BEGIN_AND_END_ABRUPTLY(isSlowInDesired: false, isSlowOutDesired: false ),
+    BEGIN_GENTLY_AND_END_ABRUPTLY(isSlowInDesired: true, isSlowOutDesired: false ),
+    BEGIN_ABRUPTLY_AND_END_GENTLY(isSlowInDesired: false, isSlowOutDesired: true ),
+    BEGIN_AND_END_GENTLY(isSlowInDesired: true, isSlowOutDesired: true );
+
+    AnimationStyle( Boolean isSlowInDesired, Boolean isSlowOutDesired ) {
+        this.isSlowInDesired <- isSlowInDesired;
+        this.isSlowOutDesired <- isSlowOutDesired;
+    }
+
+    Boolean isSlowInDesired() {
+        return this.isSlowInDesired;
+    }
+
+    Boolean isSlowOutDesired() {
+        return this.isSlowOutDesired;
+    }
+
+    @CompletelyHidden Portion gently( DecimalNumber x, DecimalNumber A, DecimalNumber B ) {
+        DecimalNumber y <- 0;
+        DecimalNumber a3 <- 0;
+        DecimalNumber b3 <- 0;
+        DecimalNumber c3 <- 0;
+        DecimalNumber m <- 0;
+        DecimalNumber b2 <- 0;
+        if ( x < A ) {
+            y <- ( ( B - 1 ) / ( A * ( ( ( ( B * B ) - ( A * B ) ) + A ) - 1 ) ) ) * x * x;
+        } else {
+            if ( x > B ) {
+                a3 <- 1 / ( ( ( ( B * B ) - ( A * B ) ) + A ) - 1 );
+                b3 <- a3 * -2;
+                c3 <- 1 + a3;
+                y <- ( a3 * x * x ) + ( b3 * x ) + c3;
+            } else {
+                m <- ( 2 * ( B - 1 ) ) / ( ( ( ( B * B ) - ( A * B ) ) + A ) - 1 );
+                b2 <- ( m * A ) / -2;
+                y <- ( m * x ) + b2;
+            }
+        }
+        return new Portion(portion: y);
+    }
+
+    Portion calculatePortion( DecimalNumber timeElapsed, DecimalNumber timeTotal ) {
+        if( timeTotal != 0 ) {
+            DecimalNumber portion <- timeElapsed / timeTotal;
+            if( this.isSlowInDesired ) {
+                if( this.isSlowOutDesired ) {
+                    return gently(x: portion, A: 0.3, B: 0.8 );
+                } else {
+                    return gently(x: portion, A: 0.99, B: 0.999 );
+                }
+            } else {
+                if( this.isSlowOutDesired ) {
+                    return gently(x: portion, A: 0.001, B: 0.01 );
+                } else {
+                    return new Portion(portion: portion);
+                }
+            }
+        } else {
+            return new Portion(portion: 1);
+        }
+    }
+
+    @CompletelyHidden Boolean isSlowInDesired;
+    @CompletelyHidden Boolean isSlowOutDesired;
+}

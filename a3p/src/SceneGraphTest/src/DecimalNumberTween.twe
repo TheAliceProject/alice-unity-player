@@ -1,0 +1,23 @@
+class DecimalNumberTween extends PropertyTween {
+  DecimalNumberTween(DecimalNumberProperty property, DecimalNumber start, DecimalNumber end) {
+    super();
+    this.property <- property;
+    this.start <- start;
+    this.end <- end;
+    this.delta <- end - start;
+  }
+
+  void setEndValue() { 
+    this.property.setValue(value: end);
+  }
+
+  void interpolate(Portion portion) {
+    this.property.setValue(value: this.delta*portion.numberValue + this.start);
+  }
+
+  @CompletelyHidden DecimalNumberProperty property;
+  @CompletelyHidden DecimalNumber start;
+  @CompletelyHidden DecimalNumber end;
+  @CompletelyHidden DecimalNumber delta;
+
+}

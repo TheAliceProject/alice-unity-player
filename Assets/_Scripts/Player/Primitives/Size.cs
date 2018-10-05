@@ -39,8 +39,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Size interpolatePortion(Size end, double portion) {
-            return new Size(Vector3.Lerp(Value, end.Value, portion));
+        public Size interpolatePortion(Size end, Portion portion) {
+            return new Size(Vector3.Lerp(Value, end.Value, portion.Value));
         }
         #endregion
 
