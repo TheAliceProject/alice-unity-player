@@ -26,10 +26,10 @@ namespace Alice.Player.Modules {
             SGEntity entity = null;
             switch (resource) {
                 case BOX:
-                    entity = SGEntity.Create<SGBox>(model.Object(), "BoxEntity");
+                    entity = SGEntity.Create<SGBox>(model, "BoxEntity");
                     break;
                 case SPHERE:
-                    entity = SGEntity.Create<SGSphere>(model.Object(), "SphereEntity");
+                    entity = SGEntity.Create<SGSphere>(model, "SphereEntity");
                     break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
@@ -55,13 +55,24 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static void bindOpacityProperty(TValue owner, TValue property, TValue value) {
-            UnitySceneGraph.Current.BindProperty("Opacity", owner, property, value);
+            UnitySceneGraph.Current.BindProperty(SGModel.OPACITY_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
         public static void updateProperty(TValue owner, TValue property, TValue value) {
-            //UnityEngine.Debug.LogFormat("Update {0} to ({1})", property.Type.Name, value);
             UnitySceneGraph.Current.UpdateProperty(owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void setVehicle(TValue vehicle, TValue rider) {
+            var entity = UnitySceneGraph.Current.FindEntity(rider);
+            entity.vehicle = UnitySceneGraph.Current.FindEntity(vehicle);
+        }
+
+        [PInteropMethod]
+        public static TValue getVehicle(TValue rider) {
+            var riderEnt = UnitySceneGraph.Current.FindEntity(rider);
+            return riderEnt?.vehicle == null ? TValue.NULL : riderEnt.vehicle.owner;
         }
     }
 }

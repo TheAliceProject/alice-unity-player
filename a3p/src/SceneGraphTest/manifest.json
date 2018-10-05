@@ -73,6 +73,11 @@
       "files": ["src/SThing.twe"],
       "type": "Class"
     }, {
+      "id": "SScene",
+      "format": "tweedle",
+      "files": ["src/SScene.twe"],
+      "type": "Class"
+    }, {
       "id": "SModel",
       "format": "tweedle",
       "files": ["src/SModel.twe"],
@@ -93,9 +98,24 @@
       "files": ["src/SSphere.twe"],
       "type": "Class"
     }, {
+      "id": "SProgram",
+      "format": "tweedle",
+      "files": ["src/SProgram.twe"],
+      "type": "Class"
+    }, {
       "id": "Program",
       "format": "tweedle",
       "files": ["src/Program.twe"],
+      "type": "Class"
+    }, {
+      "id": "Scene",
+      "format": "tweedle",
+      "files": ["src/Scene.twe"],
+      "type": "Class"
+    }, {
+      "id": "Box",
+      "format": "tweedle",
+      "files": ["src/Box.twe"],
       "type": "Class"
     }
   ]

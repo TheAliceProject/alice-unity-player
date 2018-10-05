@@ -13,7 +13,7 @@ namespace Alice.Player.Modules {
         
         public delegate void UpdatePropertyDelegate(TValue inValue);
 
-        public static T Create<T>(object owner, string inName = "SGEntity") where T : SGEntity {
+        public static T Create<T>(TValue owner, string inName = "SGEntity") where T : SGEntity {
             var go = new GameObject(inName);
             var entity = go.AddComponent<T>();
             entity.owner = owner;
@@ -32,7 +32,7 @@ namespace Alice.Player.Modules {
         private Renderer m_Renderer;
         private Material m_Material;
 
-        public object owner { get; private set; }
+        public TValue owner { get; private set; }
 
         public SGEntity vehicle {
             get { return m_Vehicle; }

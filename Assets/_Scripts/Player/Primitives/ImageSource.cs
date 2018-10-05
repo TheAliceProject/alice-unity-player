@@ -46,9 +46,9 @@ namespace Alice.Player.Primitives
 
         public override PaintTypeID PaintType { get { return PaintTypeID.ImageSource; } }
 
-        public override void Apply(UnityEngine.Material inMaterial) {
-            inMaterial.mainTexture = Value;
-            inMaterial.color = UnityEngine.Color.white;
+        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, string inTextureName) {
+            inPropertyBlock.SetTexture(inTextureName, Value);
+            inPropertyBlock.SetColor(Alice.Player.Modules.SGModel.COLOR_SHADER_NAME, UnityEngine.Color.white);
         }
 
         public override string ToString() {

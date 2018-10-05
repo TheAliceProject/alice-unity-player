@@ -4,13 +4,9 @@ using Alice.Tweedle;
 using Alice.Player.Primitives;
 
 namespace Alice.Player.Modules {
-    public sealed class SGBox : SGModel {
+    public sealed class SGBox : SGShape {
 
         private Transform m_BoxTransform;
-
-        #region Interop Interfaces
-        
-        #endregion //Interop Interafaces
 
         private void Awake() {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
