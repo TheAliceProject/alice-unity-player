@@ -22,7 +22,7 @@ namespace Alice.Tweedle
             var bodyStep = new ValueOperationStep(
                     "if " + Condition.ToTweedle(),
                     scope,
-                    value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(scope, next));
+                    value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(scope.ChildScope(), next));
             conditionStep.OnCompletionNotify(bodyStep);
             bodyStep.OnCompletionNotify(next);
             return conditionStep;
