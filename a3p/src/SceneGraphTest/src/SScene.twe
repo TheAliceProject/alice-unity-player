@@ -153,7 +153,7 @@ class SScene extends SThing {
 
   @CompletelyHidden void activate( SProgram program ) {
     this.activeCount <- this.activeCount + 1;
-    /*
+    
     if( this.program != program ) {
       if( program != null ) {
         // TODO Implement the following to remove mouse, key and focus listeners
@@ -169,38 +169,32 @@ class SScene extends SThing {
         // program.connectSystemListeners();
       }
     }
-    
-    this.globalBrightness.setValue( endValue: 0.0 );
-    this.changeActiveStatus( isActive: true );
 
+    //this.globalBrightness.setValue( endValue: 0.0 );
+    this.changeActiveStatus( isActive: true );
+    
     //This forces the scene to initialize itself to make sure we can properly query bounding boxes and other
     // render dependent things. All this info is critical to a scene running
-    AdapterFactory.getAdapterFor( this.sgScene );
+    //AdapterFactory.getAdapterFor( this.sgScene );
 
-    this.addCamerasTo( program: program );
-    this.fireSceneActivationListeners();
+    //this.addCamerasTo( program: program );
+    //this.fireSceneActivationListeners();
 
-    globalBrightness.animateValue( endValue: 1.0, duration: 0.5, animation: TraditionalStyle.BEGIN_AND_END_GENTLY );
-    */
+    //globalBrightness.animateValue( endValue: 1.0, duration: 0.5, animation: TraditionalStyle.BEGIN_AND_END_GENTLY );
   }
 
   @CompletelyHidden void deactivate( SProgram program ) {
-    /*
-    globalBrightness.animateValue( endValue: 0, duration: 0.25, animation: TraditionalStyle.BEGIN_AND_END_GENTLY );
+    //globalBrightness.animateValue( endValue: 0, duration: 0.25, animation: TraditionalStyle.BEGIN_AND_END_GENTLY );
     this.changeActiveStatus( isActive: false );
-    this.removeCamerasFrom( program: program );
-    */
-    // Tweedle does not currently support setting null values.... CHANGE THIS?
-    //this.program <- null;
+    //this.removeCamerasFrom( program: program );
+    this.program <- null;
   }
 
 
   @CompletelyHidden void changeActiveStatus( Boolean isActive) {
-    // TODO Work out appropriate mechanism to cause this happen immediately and not animate the setup
+    // TODO Work out appropriate mechanism to cause this happen immediately and not animate the setup 
     DecimalNumber prevSimulationSpeedFactor <- program.getSimulationSpeedFactor();
-    // TODO replace or change grammar to allow DecimalNumber.POSITIVE_INFINITY to parse
-    // program.setSimulationSpeedFactor( factor: DecimalNumber.POSITIVE_INFINITY );
-    program.setSimulationSpeedFactor( factor: POSITIVE_INFINITY );
+    program.setSimulationSpeedFactor( factor: $Math.POSITIVE_INFINITY );
 
     this.handleActiveChanged( isActive: isActive, activationCount: this.activeCount );
 
@@ -241,8 +235,7 @@ class SScene extends SThing {
 
 
   @CompletelyHidden SProgram getProgram() {
-    return null;
-    //return this.program;
+    return this.program;
   }
 
 /* Unused and completely hidden
@@ -268,8 +261,7 @@ class SScene extends SThing {
   @CompletelyHidden PortionProperty fogDensity;
   @CompletelyHidden PortionProperty globalBrightness;
   */
-  // TODO: initialize as null
-  //@CompletelyHidden SProgram program <- new SProgram();
+  @CompletelyHidden SProgram program <- null;
   @CompletelyHidden WholeNumber activeCount <- 0;
   
 }

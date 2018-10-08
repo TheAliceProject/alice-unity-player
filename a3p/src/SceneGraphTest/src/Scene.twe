@@ -1,4 +1,4 @@
-class Scene extends SScene models Scene {
+class Scene extends SScene {
   Scene() {
     super();
   }
@@ -18,6 +18,9 @@ class Scene extends SScene models Scene {
 
   void performCustomSetup() {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
+    $Debug.log(string: this.getName() .. ": performCustomStetup");
+    this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+    this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
   }
 
   void performGeneratedSetUp() {
@@ -37,13 +40,13 @@ class Scene extends SScene models Scene {
     //this.camera.setVehicle(vehicle: this);
     //this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.995185, z: 0.0980144, w: 6.12323E-17));
     //this.camera.setPositionRelativeToVehicle(position: new Position(x: 9.61E-16, y: 1.56, z: -7.85));
-    this.box.setPaint(paint: Color.WHITE);
-    //this.box.setOpacity(opacity: 1.0);
+    this.box.setPaint(paint: Color.WHITE, duration: 0);
+    //this.box.setOpacity(opacity: 1.0, duration: 0);
     this.box.setName(name: "box");
     this.box.setVehicle(vehicle: this);
     //this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.0, z: 0.0, w: 1.0));
     //this.box.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: 0.0));
-    this.box.setSize(size: new Size(width: 1.0, height: 1.0, depth: 1.0));
+    this.box.setSize(size: new Size(width: 1.0, height: 1.0, depth: 1.0), duration: 0);
   }
 
   /*SGround getGround() {

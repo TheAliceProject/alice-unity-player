@@ -2,7 +2,7 @@ class SProgram {
   SProgram() {}
 
 
-  SScene activeScene <- new SScene();
+  SScene activeScene <- null;
   DecimalNumber simulationSpeedFactor <- 1.0;
 
   SScene getActiveScene() {
@@ -23,7 +23,7 @@ class SProgram {
     return simulationSpeedFactor;
   }
 
-  void setSimulationSpeedFactor( DecimalNumber simulationSpeedFactor ) {
+  void setSimulationSpeedFactor( DecimalNumber factor ) {
     this.simulationSpeedFactor <- simulationSpeedFactor;
   }
 
