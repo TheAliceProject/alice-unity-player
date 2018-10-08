@@ -30,8 +30,8 @@ class SThing {
     return this.name;
   }
 
-  @TuckedAway void setName( TextString newName ) {
-    this.name <- newName;
+  @TuckedAway void setName( TextString name ) {
+    this.name <- name;
   }
 
   void delay( Number duration ) {
@@ -88,6 +88,6 @@ class SThing {
     }
   }
 
-  @CompletelyHidden TextString name;
-  @CompletelyHidden SThing vehicle;
+  @CompletelyHidden TextString name <- null;
+  @CompletelyHidden SThing vehicle <- null;
 }

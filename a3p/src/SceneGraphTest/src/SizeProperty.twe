@@ -20,22 +20,22 @@ class SizeProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateWidth(DecimalNumber newWidth, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
-    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: newWidth / size.width );
-    Size finalSize <- new Size( width: newWidth, height: size.height * factor, depth: size.depth * factor )
-    animateValue( end: finalSize, duration: duration, style: animationStyle );
+  void animateWidth(DecimalNumber width, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: width / value.width );
+    Size finalSize <- new Size( width: width, height: value.height * factor, depth: value.depth * factor )
+    animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
-  void animateHeight(DecimalNumber newHeight, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
-    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: newWidth / size.width );
-    Size finalSize <- new Size( width: size.width * factor, height: newHeight, depth: size.depth * factor )
-    animateValue( end: finalSize, duration: duration, style: animationStyle );
+  void animateHeight(DecimalNumber height, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: height / value.height );
+    Size finalSize <- new Size( width: value.width * factor, height: height, depth: value.depth * factor )
+    animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
-  void animateDepth(DecimalNumber newDepth, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
-    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: newWidth / size.width );
-    Size finalSize <- new Size( width: size.width * factor, height: size.height * factor, depth: newDepth )
-    animateValue( end: finalSize, duration: duration, style: animationStyle );
+  void animateDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: depth / value.depth );
+    Size finalSize <- new Size( width: value.width * factor, height: value.height * factor, depth: depth )
+    animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
   @CompletelyHidden Size value;

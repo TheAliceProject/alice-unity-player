@@ -22,7 +22,7 @@ enum DimensionPolicy {
         }
 
         if ( isVolumePreserved ) {
-            return 1.0 / $Math.Sqrt( factor );
+            return 1.0 / $Math.sqrt(number: primaryFactor);
         }
 
         return 1.0; // preserve nothing
