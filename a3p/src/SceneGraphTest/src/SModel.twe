@@ -15,7 +15,6 @@ class SModel extends SThing
     this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
   }
 
-/*
   void setWidth(DecimalNumber width, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
   {
     this.size.animateWidth(width: width, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
@@ -30,7 +29,6 @@ class SModel extends SThing
   {
     this.size.animateDepth(depth: depth, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
   }
-  */
 
   Paint getPaint() {
     return this.paint.getValue();
@@ -42,10 +40,10 @@ class SModel extends SThing
   }
 
   void setVehicle(SThing vehicle) {
-    this.vehicle = vehicle;
+    this.vehicle <- vehicle;
     $SceneGraph.setVehicle(vehicle: vehicle, rider: rider);
   }
 
   @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
   @CompletelyHidden PaintProperty paint <- new PaintProperty(owner: this, value: Color.WHITE);
-} 
+}

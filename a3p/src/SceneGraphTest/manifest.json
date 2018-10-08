@@ -28,6 +28,11 @@
       "files": ["src/AnimationStyle.twe"],
       "type": "Class"
     }, {
+      "id": "DimensionPolicy",
+      "format": "tweedle",
+      "files": ["src/DimensionPolicy.twe"],
+      "type": "Class"
+    }, {
       "id": "Property",
       "format": "tweedle",
       "files": ["src/Property.twe"],

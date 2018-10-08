@@ -15,9 +15,27 @@ class SizeProperty extends Property {
     }
   }
 
-  void animateValue(Size endValue, DecimalNumber duration <- Default.duration(), AnimationStyle animationStyle <- Default.animationStyle()) {
+  void animateValue(Size endValue, DecimalNumber duration, AnimationStyle animationStyle) {
     SizeTween tween <- new SizeTween(property: this, start: this.value, end: endValue);
     tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  void animateWidth(DecimalNumber newWidth, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: newWidth / size.width );
+    Size finalSize <- new Size( width: newWidth, height: size.height * factor, depth: size.depth * factor )
+    animateValue( end: finalSize, duration: duration, style: animationStyle );
+  }
+
+  void animateHeight(DecimalNumber newHeight, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: newWidth / size.width );
+    Size finalSize <- new Size( width: size.width * factor, height: newHeight, depth: size.depth * factor )
+    animateValue( end: finalSize, duration: duration, style: animationStyle );
+  }
+
+  void animateDepth(DecimalNumber newDepth, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: newWidth / size.width );
+    Size finalSize <- new Size( width: size.width * factor, height: size.height * factor, depth: newDepth )
+    animateValue( end: finalSize, duration: duration, style: animationStyle );
   }
 
   @CompletelyHidden Size value;
