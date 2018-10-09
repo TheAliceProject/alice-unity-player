@@ -180,6 +180,24 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
+        public void ConditionalIfShouldShouldNotLeak()
+        {
+            ExecutionScope scope = GetTestScope();
+            ExecuteStatement("WholeNumber z <- 0;", scope);
+            ExecuteStatement("if(true) { z <- z+1; WholeNumber x <- z; }", scope);
+            Assert.Throws<TweedleRuntimeException>(() => scope.GetValue("x"));
+        }
+
+        [Test]
+        public void ConditionalElseShouldShouldNotLeak()
+        {
+            ExecutionScope scope = GetTestScope();
+            ExecuteStatement("WholeNumber z <- 2;", scope);
+            ExecuteStatement("if( false ) { z <- 5; } else { z <- 17; WholeNumber x <- z;}", scope);
+            Assert.Throws<TweedleRuntimeException>(() => scope.GetValue("x"));
+        }
+
+        [Test]
         public void CountLoopShouldEvaluateNTimes()
         {
             ExecutionScope scope = GetTestScope();
