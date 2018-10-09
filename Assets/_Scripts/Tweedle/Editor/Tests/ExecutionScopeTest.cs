@@ -67,7 +67,7 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        public void ScopeShouldRejectNullForObjectValue()
+        public void ScopeShouldAcceptNullForObjectValue()
         {
             Init();
             TClassType cls = new TClassType(null, "Dummy",
@@ -75,7 +75,7 @@ namespace Alice.Tweedle.Parse
                                                 TMethod.EMPTY_ARRAY,
                                                 TMethod.EMPTY_ARRAY);
             TLocalVariable objDec = new TLocalVariable(cls, "o");
-            Assert.Throws<TweedleRuntimeException>(
+            Assert.DoesNotThrow(
                 () => scope.SetLocalValue(objDec, TValue.NULL));
         }
 
