@@ -2,13 +2,20 @@ class SThing {
   SThing() {
   }
 
-  /*
   @CompletelyHidden VantagePoint getVantagePoint( SThing entity ) {
     return this.getTransformation( target: entity );
   }
 
   @CompletelyHidden VantagePoint getTransformation( SThing asSeenBy ) {
-    return this.getSgComposite().getTransformation( asSeenBy: asSeenBy.getSgReferenceFrame() );
+    return $SceneGraph.getVantagePoint(viewer:asSceneBy, target: this);
+  }
+
+  @CompletelyHidden VantagePoint getCompositeTransformation() {
+    return $SceneGraph.getCompositeTransformation(model: this);
+  }
+
+  @CompletelyHidden VantagePoint getInverseCompositeTransformation() {
+    return $SceneGraph.getInverseCompositeTransformation(model: this);
   }
 
   @CompletelyHidden Position getTranslation( SThing asSeenBy ) {
@@ -22,9 +29,6 @@ class SThing {
   @CompletelyHidden Position getMaxPoint( SThing asSeenBy ) {
     return this.getTranslation( asSeenBy: asSeenBy );
   }
-  
-  
-  */
 
   @TuckedAway TextString getName() {
     return this.name;
@@ -42,9 +46,6 @@ class SThing {
   void playAudio( AudioSource audioSource ) {
     $Resource.playAudio( resource: audioSource );
   }
-  
-
-  
 
   Boolean isCollidingWith( SThing other ) {
     // To be based on AabbCollisionDetector.doTheseCollide(). AABB may stand for AxisAlignedBoundingBox.
@@ -87,7 +88,7 @@ class SThing {
       return "unnamed ";// .. $System.getClassName( instance: this );
     }
   }
-
-  @CompletelyHidden TextString name <- null;
+  
   @CompletelyHidden SThing vehicle <- null;
+  @CompletelyHidden TextString name <- null;
 }

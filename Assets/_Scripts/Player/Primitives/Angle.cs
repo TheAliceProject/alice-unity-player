@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Alice.Tweedle.Interop;
+using Alice.Player.Modules;
 using System;
 
 namespace Alice.Player.Primitives
@@ -22,8 +23,7 @@ namespace Alice.Player.Primitives
         public double degrees 
         { 
             get {
-                const double rad2Deg = 180/System.Math.PI;
-                return rad2Deg*Value; 
+                return MathModule.RAD2DEG*Value; 
             }
         }
 
@@ -31,16 +31,14 @@ namespace Alice.Player.Primitives
         public double revolutions 
         {
             get {
-                const double rad2Rev = 1/(System.Math.PI*2);
-                return Value*rad2Rev;
+                return Value*MathModule.RAD2REV;
             }
         }
 
         [PInteropConstructor]
         public Angle(double revolutions)
         {
-            const double rev2rad = System.Math.PI*2;
-            this.Value = revolutions*rev2rad;
+            this.Value = revolutions*MathModule.REV2RAD;
         }
 
         [PInteropMethod]

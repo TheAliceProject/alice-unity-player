@@ -33,6 +33,21 @@
       "files": ["src/DimensionPolicy.twe"],
       "type": "Class"
     }, {
+      "id": "TurnDirection",
+      "format": "tweedle",
+      "files": ["src/TurnDirection.twe"],
+      "type": "Class"
+    }, {
+      "id": "RollDirection",
+      "format": "tweedle",
+      "files": ["src/RollDirection.twe"],
+      "type": "Class"
+    }, {
+      "id": "PathStyle",
+      "format": "tweedle",
+      "files": ["src/PathStyle.twe"],
+      "type": "Class"
+    }, {
       "id": "Property",
       "format": "tweedle",
       "files": ["src/Property.twe"],
@@ -51,6 +66,26 @@
       "id": "DecimalNumberTween",
       "format": "tweedle",
       "files": ["src/DecimalNumberTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "VantagePointProperty",
+      "format": "tweedle",
+      "files": ["src/VantagePointProperty.twe"],
+      "type": "Class"
+    }, {
+      "id": "OrientationTween",
+      "format": "tweedle",
+      "files": ["src/OrientationTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "RotateTween",
+      "format": "tweedle",
+      "files": ["src/RotateTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "PositionTween",
+      "format": "tweedle",
+      "files": ["src/PositionTween.twe"],
       "type": "Class"
     }, {
       "id": "SizeProperty",
@@ -81,6 +116,16 @@
       "id": "SScene",
       "format": "tweedle",
       "files": ["src/SScene.twe"],
+      "type": "Class"
+    }, {
+      "id": "STurnable",
+      "format": "tweedle",
+      "files": ["src/STurnable.twe"],
+      "type": "Class"
+    }, {
+      "id": "SMovableTurnable",
+      "format": "tweedle",
+      "files": ["src/SMovableTurnable.twe"],
       "type": "Class"
     }, {
       "id": "SModel",

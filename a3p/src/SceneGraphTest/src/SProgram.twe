@@ -24,7 +24,8 @@ class SProgram {
   }
 
   void setSimulationSpeedFactor( DecimalNumber factor ) {
-    this.simulationSpeedFactor <- simulationSpeedFactor;
+    this.simulationSpeedFactor <- factor;
+    $Clock.simulationSpeedFactor <- factor;
   }
 
   void initializeInFrame() {

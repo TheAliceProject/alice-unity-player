@@ -12,11 +12,19 @@ namespace Alice.Player.Primitives
             Value = inMatrix;
         }
 
+        public VantagePoint(Vector3 inPosition, Quaternion inRotation) {
+            Value = Matrix4x4.CreateFromQuaternion(inRotation);
+            Value.Translation = inPosition;
+        }
+
         #region Interop Interfaces
+        [PInteropField]
+        public static readonly VantagePoint IDENTITY = new VantagePoint(Matrix4x4.Identity);
+
         [PInteropField]
         public Orientation orientation { get { return new Orientation(Quaternion.CreateFromRotationMatrix(Value)); } }
         [PInteropField]
-        public Position translation { get { return new Position(Value.Translation); } }
+        public Position position { get { return new Position(Value.Translation); } }
 
         [PInteropConstructor]
         public VantagePoint() {}
@@ -31,9 +39,14 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropConstructor]
-        public VantagePoint(Orientation orientation, Position translation) {
+        public VantagePoint(Position position, Orientation orientation) {
             Value = Matrix4x4.CreateFromQuaternion(orientation.Value);
-            Value.Translation = translation.Value;
+            Value.Translation = position.Value;
+        }
+
+        [PInteropConstructor]
+        public VantagePoint(Orientation orientation) {
+            Value = Matrix4x4.CreateFromQuaternion(orientation.Value);
         }
 
         [PInteropMethod]

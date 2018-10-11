@@ -6,13 +6,14 @@ using Alice.Tweedle;
 using System;
 using System.Collections.Generic;
 
-namespace Alice.Player.Modules {
+namespace Alice.Player.Unity {
     
     public abstract class SGModel : SGEntity {
-
-        private Renderer m_Renderer;
+        protected Renderer m_Renderer;
+        protected Transform m_ModelTransform;
         private MaterialPropertyBlock m_PropertyBlock;
 
+        public const string TRANSFORMATION_PROPERTY_NAME = "Transform";
         public const string PAINT_PROPERTY_NAME = "Paint";
         public const string SIZE_PROPERTY_NAME = "Size";
         public const string OPACITY_PROPERTY_NAME = "Opacity";
@@ -21,11 +22,19 @@ namespace Alice.Player.Modules {
         public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTexture";
         public const string COLOR_SHADER_NAME = "_Color";
 
-        protected virtual void Init(Renderer inRenderer) {
+        protected virtual void Init(Transform inModelTransform, Renderer inRenderer) {
+            m_ModelTransform = inModelTransform;
             m_Renderer = inRenderer;
 
-            RegisterPropertyDelegate<Size>(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
-            RegisterPropertyDelegate<Paint>(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
+            RegisterPropertyDelegate(TRANSFORMATION_PROPERTY_NAME, OnTransformationPropertyChanged);
+            RegisterPropertyDelegate(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
+            RegisterPropertyDelegate(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
+        }
+
+         private void OnTransformationPropertyChanged(TValue inValue) {
+            VantagePoint vp = inValue.RawObject<VantagePoint>();
+            cachedTransform.localPosition = vp.position;
+            cachedTransform.localRotation = vp.orientation;
         }
 
         protected abstract void OnSizePropertyChanged(TValue inValue);
@@ -49,5 +58,6 @@ namespace Alice.Player.Modules {
 
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
+
     }
 }

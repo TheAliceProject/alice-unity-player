@@ -3,11 +3,15 @@ class Default {
     return 1.0;
   }
 
-	static AnimationStyle animationStyle() {
-	  return AnimationStyle.BEGIN_AND_END_GENTLY;
-	}
+  static AnimationStyle animationStyle() {
+    return AnimationStyle.BEGIN_AND_END_GENTLY;
+  }
 
   static DimensionPolicy dimensionPolicy() {
     return DimensionPolicy.PRESERVE_NOTHING;
+  }
+
+  static PathStyle pathStyle() {
+    return PathStyle.BEE_LINE;
   }
 }

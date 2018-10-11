@@ -1,5 +1,5 @@
 class SizeTween extends PropertyTween {
-  DecimalNumberTween(SizeProperty property, Size start, Size end) {
+  SizeTween(SizeProperty property, Size start, Size end) {
     super();
     this.property <- property;
     this.start <- start;

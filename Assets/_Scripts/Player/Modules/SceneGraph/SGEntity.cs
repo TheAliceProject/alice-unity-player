@@ -1,13 +1,12 @@
 using UnityEngine;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
-using Alice.Player.Unity;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using System;
 using System.Collections.Generic;
 
-namespace Alice.Player.Modules {
+namespace Alice.Player.Unity {
     
     public abstract class SGEntity : MonoBehaviour {
         
@@ -20,17 +19,12 @@ namespace Alice.Player.Modules {
             return entity;
         }
 
-        public const string POSITION_PROPERTY_NAME = "Position";
-        public const string ORIENTATION_PROPERTY_NAME = "Rotation";
-
-        
-
         private Dictionary<string, UpdatePropertyDelegate> m_PropertyBindings = new Dictionary<string, UpdatePropertyDelegate>();
         private Dictionary<object, UpdatePropertyDelegate> m_Properties = new Dictionary<object, UpdatePropertyDelegate>();
 
         private SGEntity m_Vehicle;
-        private Renderer m_Renderer;
-        private Material m_Material;
+
+        public Transform cachedTransform { get; private set; }
 
         public TValue owner { get; private set; }
 
@@ -39,12 +33,13 @@ namespace Alice.Player.Modules {
             set {
                 if (value != m_Vehicle) {
                     m_Vehicle = value;
-                    transform.SetParent(m_Vehicle?.transform, true);
+                    cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
+                    
                 }
             }
         }
 
-        protected void RegisterPropertyDelegate<T>(string inName, UpdatePropertyDelegate inDelegate) {
+        protected void RegisterPropertyDelegate(string inName, UpdatePropertyDelegate inDelegate) {
             if (m_PropertyBindings.ContainsKey(inName)) {
                 throw new SceneGraphException(string.Format("Property \"{0}\" binding already registered.", inName));
             } else {
@@ -76,6 +71,10 @@ namespace Alice.Player.Modules {
 
         public void UnbindProperty(TValue inProperty) {
             m_Properties.Remove(inProperty.Object());
-        } 
+        }
+
+        protected virtual void Awake() {
+            cachedTransform = transform;
+        }
     }
 }

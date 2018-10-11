@@ -16,6 +16,16 @@ namespace Alice.Player.Modules
         [PInteropField]
         static public double deltaTime { get { return UnityEngine.Time.deltaTime; } }
 
+        [PInteropField]
+        static public double simulationSpeedFactor { 
+            get { return UnityEngine.Time.timeScale; }
+            set {
+                // max time scale for Unity is 100
+                float scale =   Mathf.Min(100f, (float)value);
+                UnityEngine.Time.timeScale = scale;
+            }
+        }
+
         [PInteropMethod]
         static public AsyncReturn delay(double duration)
         {

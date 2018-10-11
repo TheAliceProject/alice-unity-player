@@ -16,7 +16,7 @@ namespace Alice.Player.Primitives
 
         #region  Interop Interfaces
         [PInteropField]
-        public static readonly Orientation identity = new Orientation(Quaternion.Identity);
+        public static readonly Orientation IDENTITY = new Orientation(Quaternion.Identity);
 
         [PInteropConstructor]
         public Orientation(double x, double y, double z, double w)
@@ -25,8 +25,8 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropConstructor]
-        public Orientation(Direction direction, Angle angle) {
-            Value = Quaternion.CreateFromAxisAngle(direction.Value, angle.radians);
+        public Orientation(Direction axis, Angle angle) {
+            Value = Quaternion.CreateFromAxisAngle(axis.Value, angle.radians);
         }
 
         [PInteropMethod]

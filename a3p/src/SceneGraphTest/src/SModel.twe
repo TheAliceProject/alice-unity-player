@@ -1,9 +1,11 @@
-class SModel extends SThing
+class SModel extends SMovableTurnable
 {
   SModel(TextString resource) {
     $SceneGraph.createEntity(model: this, resource: resource);
-    $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());
+    $SceneGraph.bindTransformationProperty(owner: this, property: this.localTransformation, value: this.localTransformation.getValue());
     $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.size.getValue());
+    $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());
+    
   }
 
   Size getSize() {
@@ -15,28 +17,28 @@ class SModel extends SThing
     this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
   }
 
-  void setWidth(DecimalNumber width, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  void setWidth(DecimalNumber width, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
   {
-    this.size.animateWidth(width: width, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
+    this.size.animateWidth(width: width, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: style);
   }
 
-  void setHeight(DecimalNumber height, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  void setHeight(DecimalNumber height, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
   {
-    this.size.animateHeight(height: height, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
+    this.size.animateHeight(height: height, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: style);
   }
 
-  void setDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  void setDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
   {
-    this.size.animateDepth(depth: depth, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle);
+    this.size.animateDepth(depth: depth, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: style);
   }
 
   Paint getPaint() {
     return this.paint.getValue();
   }
 
-  void setPaint(Paint paint, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  void setPaint(Paint paint, DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
   {
-    this.paint.animateValue(endValue: paint, duration: duration, animationStyle: animationStyle);
+    this.paint.animateValue(endValue: paint, duration: duration, animationStyle: style);
   }
 
   void setVehicle(SThing vehicle) {
