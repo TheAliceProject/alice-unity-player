@@ -124,10 +124,12 @@ namespace Alice.Player.Unity {
         }
 
         internal SGEntity FindEntity(TValue inOwner) {
-            var ownerObj = inOwner.Object();
-            for (int i = 0, count = m_Entities.Count; i < count; ++i) {
-                if (ReferenceEquals(m_Entities[i].owner.RawObject<object>(), ownerObj)) {
-                    return m_Entities[i];
+            var ownerObj = inOwner.RawObject<object>();
+            if (ownerObj != null) {
+                for (int i = 0, count = m_Entities.Count; i < count; ++i) {
+                    if (ReferenceEquals(m_Entities[i].owner.RawObject<object>(), ownerObj)) {
+                        return m_Entities[i];
+                    }
                 }
             }
             return null;

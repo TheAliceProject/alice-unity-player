@@ -1,0 +1,30 @@
+class RotateTween extends PropertyTween {
+  RotateTween(VantagePointProperty property, Direction axis, Angle angle, SThing asSeenBy) {
+    super();
+    this.property <- property;
+    this.axis <- axis;
+    this.angle <- angle;
+    this.asSeenBy <- asSeenBy;
+    this.currentAngle <- 0;
+  }
+
+  void setEndValue() { 
+    this.interpolate(portion: new Portion(portion: 1));
+  }
+
+  void interpolate(Portion portion) {
+    DecimalNumber delta <- portion.numberValue * angle.radians - currentAngle;
+    currentAngle <- currentAngle + delta;
+    Orientation rotation <- new Orientation(axis: axis, angle: new Angle(revolutions: delta * $Math.RAD2REV));
+    VantagePoint m <- new VantagePoint(orientation: rotation);
+
+    this.property.applyTransformation(transformation: m, asSeenBy: asSeenBy);
+  }
+
+  @CompletelyHidden VantagePointProperty property;
+  @CompletelyHidden Direction axis;
+  @CompletelyHidden Angle angle;
+  @CompletelyHidden SThing asSeenBy;
+  @CompletelyHidden DecimalNumber currentAngle;
+
+}

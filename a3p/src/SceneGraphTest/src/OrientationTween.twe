@@ -1,0 +1,27 @@
+class OrientationTween extends PropertyTween {
+  OrientationTween(VantagePointProperty property, Orientation start, Orientation end) {
+    super();
+    this.property <- property;
+    this.start <- start;
+    this.end <- end;
+  }
+
+  void setEndValue() { 
+    setOrientationOnly(orientation: end);
+  }
+
+  void interpolate(Portion portion) {
+    Orientation orientation <- this.start.interpolatePortion(end: this.end, portion: portion);
+    setOrientationOnly(orientation: orientation);
+  }
+
+  @CompletelyHidden void setOrientationOnly(Orientation orientation) {
+    VantagePoint value <- new VantagePoint(position: property.getValue().position, orientation: orientation);
+    this.property.setValue(value: value);
+  }
+
+  @CompletelyHidden VantagePointProperty property;
+  @CompletelyHidden Orientation start;
+  @CompletelyHidden Orientation end;
+
+}

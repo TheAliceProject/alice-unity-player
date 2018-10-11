@@ -1,0 +1,15 @@
+enum RollDirection {
+    LEFT( axis: Direction.POSITIVE_Z_AXIS ),
+    RIGHT( axis: Direction.NEGATIVE_Z_AXIS );
+    
+    Direction axis;
+
+    RollDirection( Direction axis ) {
+        this.axis <- axis;
+    }
+
+    Direction getAxis() {
+        return this.axis;
+    }
+}
+

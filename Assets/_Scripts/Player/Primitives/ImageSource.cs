@@ -48,7 +48,7 @@ namespace Alice.Player.Primitives
 
         public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, string inTextureName) {
             inPropertyBlock.SetTexture(inTextureName, Value);
-            inPropertyBlock.SetColor(Alice.Player.Modules.SGModel.COLOR_SHADER_NAME, UnityEngine.Color.white);
+            inPropertyBlock.SetColor(Alice.Player.Unity.SGModel.COLOR_SHADER_NAME, UnityEngine.Color.white);
         }
 
         public override string ToString() {

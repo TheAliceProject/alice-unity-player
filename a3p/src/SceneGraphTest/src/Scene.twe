@@ -19,10 +19,16 @@ class Scene extends SScene {
   void performCustomSetup() {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(string: this.getName() .. ": performCustomStetup");
+
+    this.box.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 5);
+
     this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
     this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+
+    
   }
 
+  // NOTE: All property settings should use a duration of 0
   void performGeneratedSetUp() {
     // DO NOT EDIT
     // This code is automatically generated.  Any work you perform in this method will be overwritten.
@@ -44,8 +50,8 @@ class Scene extends SScene {
     //this.box.setOpacity(opacity: 1.0, duration: 0);
     this.box.setName(name: "box");
     this.box.setVehicle(vehicle: this);
-    //this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.0, z: 0.0, w: 1.0));
-    //this.box.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: 0.0));
+    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.0, z: 0.0, w: 1.0), duration: 0);
+    this.box.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: 0.0), duration: 0);
     this.box.setSize(size: new Size(width: 1.0, height: 1.0, depth: 1.0), duration: 0);
   }
 

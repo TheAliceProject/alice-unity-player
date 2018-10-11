@@ -1,0 +1,40 @@
+class VantagePointProperty extends Property {
+  VantagePointProperty(SThing owner, VantagePoint value) {
+    super(owner: owner);
+    this.value <- value;
+  }
+
+  Size getValue() {
+    return this.value;
+  }
+
+  void setValue(VantagePoint value) {
+    this.value <- value;
+    $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
+  }
+
+  void applyTransformation(VantagePoint transformation, SThing asSeenBy) {
+    VantagePoint vm <- $SceneGraph.getInverseCompositeTransformation(thing: this.owner.vehicle);
+    VantagePoint sm <- $SceneGraph.getCompositeTransformation(thing: asSeenBy);
+
+    VantagePoint m <- vm.multiply(other: sm).multiply(other: transformation).multiply(other: value);
+    setValue(value: m);
+  }
+
+  void animatePosition(Position endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+    PositionTween tween <- new PositionTween(property: this, start: this.value.position, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  void animateOrientation(Orientation endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  void animateRotation(Direction axis, Angle angle, SThing asSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
+    RotateTween tween <- new RotateTween(property: this, axis: axis, angle: angle, asSeenBy: asSeenBy);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  @CompletelyHidden VantagePoint value;
+}

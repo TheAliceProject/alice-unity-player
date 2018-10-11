@@ -1,6 +1,7 @@
 class SScene extends SThing {
   SScene() {
     super();
+    $SceneGraph.createSceneEntity(scene: this);
   }
 
   @CompletelyHidden SScene getScene() {
@@ -193,12 +194,12 @@ class SScene extends SThing {
 
   @CompletelyHidden void changeActiveStatus( Boolean isActive) {
     // TODO Work out appropriate mechanism to cause this happen immediately and not animate the setup 
-    DecimalNumber prevSimulationSpeedFactor <- program.getSimulationSpeedFactor();
-    program.setSimulationSpeedFactor( factor: $Math.POSITIVE_INFINITY );
+    //DecimalNumber prevSimulationSpeedFactor <- program.getSimulationSpeedFactor();
+    //program.setSimulationSpeedFactor( factor: $Math.POSITIVE_INFINITY );
 
     this.handleActiveChanged( isActive: isActive, activationCount: this.activeCount );
 
-    program.setSimulationSpeedFactor( factor: prevSimulationSpeedFactor );
+    //program.setSimulationSpeedFactor( factor: prevSimulationSpeedFactor );
   }
   
 /*

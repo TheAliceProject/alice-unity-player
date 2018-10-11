@@ -3,23 +3,22 @@ using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using Alice.Player.Primitives;
 
-namespace Alice.Player.Modules {
+namespace Alice.Player.Unity {
     public sealed class SGBox : SGShape {
 
-        private Transform m_BoxTransform;
-
-        private void Awake() {
+        protected override void Awake() {
+            base.Awake();
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            m_BoxTransform = go.transform;
-            m_BoxTransform.SetParent(transform, false);
-            m_BoxTransform.localPosition = UnityEngine.Vector3.zero;
-            m_BoxTransform.localRotation = UnityEngine.Quaternion.identity;
-            Init(go.GetComponent<MeshRenderer>());
+            var t = go.transform;
+            t.SetParent(transform, false);
+            t.localPosition = UnityEngine.Vector3.zero;
+            t.localRotation = UnityEngine.Quaternion.identity;
+            Init(t, go.GetComponent<MeshRenderer>());
         }
 
         protected override void OnSizePropertyChanged(TValue inValue) {
             var size = inValue.RawObject<Size>();
-            m_BoxTransform.localScale = size;
+            m_ModelTransform.localScale = size;
         }  
     }
 }
