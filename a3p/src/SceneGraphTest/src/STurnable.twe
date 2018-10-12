@@ -17,10 +17,9 @@ class STurnable extends SThing {
     void roll( RollDirection direction,
                Number amount,
                DecimalNumber duration <- Default.duration(),
-               AnimationStyle animationStyle <- Default.animationStyle(),
+               AnimationStyle style <- Default.animationStyle(),
                SThing asSeenBy <- this ) {
-    //TODO
-        this.animateApplyRotation( axis: direction.getAxis(), revolutions: (new Angle(revolutions: amount)), viewer: asSeenBy, duration: duration, animation: animationStyle );
+        localTransformation.animateRotation(axis: direction.getAxis(), angle: (new Angle(revolutions: amount)), asSeenBy: asSeenBy, duration: duration, animationStyle: style);
     }
 
     void turnToFace( SThing target,
@@ -31,10 +30,10 @@ class STurnable extends SThing {
     }
 
     void orientToUpright( DecimalNumber duration <- Default.duration(),
-                          AnimationStyle animationStyle <- Default.animationStyle(),
+                          AnimationStyle style <- Default.animationStyle(),
                           SThing upAsSeenBy <- this.getScene() ) {
     //TODO
-        this.animateOrientationToUpright( viewer: asSeenBy, duration: duration, animation: animationStyle );
+        this.animateOrientationToUpright( viewer: asSeenBy, duration: duration, animation: style );
     }
 
     void pointAt( SThing target,
