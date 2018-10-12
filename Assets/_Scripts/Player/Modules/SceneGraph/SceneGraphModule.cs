@@ -27,10 +27,10 @@ namespace Alice.Player.Modules {
             SGEntity entity = null;
             switch (resource) {
                 case BOX:
-                    entity = SGEntity.Create<SGBox>(model, "BoxEntity");
+                    entity = SGEntity.Create<SGBox>(model);
                     break;
                 case SPHERE:
-                    entity = SGEntity.Create<SGSphere>(model, "SphereEntity");
+                    entity = SGEntity.Create<SGSphere>(model);
                     break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
@@ -41,8 +41,14 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static void createSceneEntity(TValue scene) {
-            SGEntity entity = SGEntity.Create<SGScene>(scene, "SceneEntity");
+            var entity = SGEntity.Create<SGScene>(scene);
             UnitySceneGraph.Current.AddEntity(entity);
+        }
+
+        [PInteropMethod]
+        public static void setEntityName(TValue thing, string name) {
+            var entity = UnitySceneGraph.Current.FindEntity(thing);
+            entity?.SetName(name);
         }
 
         [PInteropMethod]
@@ -76,9 +82,13 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static void setVehicle(TValue vehicle, TValue rider) {
+        public static VantagePoint setVehicle(TValue vehicle, TValue rider) {
             var entity = UnitySceneGraph.Current.FindEntity(rider);
             entity.vehicle = UnitySceneGraph.Current.FindEntity(vehicle);
+            
+            var p = entity.cachedTransform.localPosition;
+            var r = entity.cachedTransform.localRotation;
+            return new VantagePoint(new Primitives.Vector3(p.x, p.y, p.z), new Primitives.Quaternion(r.x, r.y, r.z, r.w));
         }
 
         [PInteropMethod]
@@ -100,30 +110,27 @@ namespace Alice.Player.Modules {
                 throw new SceneGraphException("Scene graph entity for found for target.");
             }
 
-            UnityEngine.Matrix4x4 m;
+            var p = sgViewer.cachedTransform.position;
+            var r = sgViewer.cachedTransform.rotation;
+
             if (sgViewer != null) {
-                m = sgTarget.cachedTransform.worldToLocalMatrix;
-            } else {
-                var tm = sgTarget.cachedTransform.worldToLocalMatrix;
-                var vm = sgViewer.cachedTransform.localToWorldMatrix;
-                m = vm * tm;
+                var tp = -sgTarget.cachedTransform.position;
+                var tr = UnityEngine.Quaternion.Inverse(sgTarget.cachedTransform.rotation);
+
+                p = tr * (p + tp);
+                r = tr * r;
             }
 
-            return new VantagePoint(m.m00, m.m01, m.m02, m.m03,
-                                    m.m10, m.m11, m.m12, m.m13,
-                                    m.m20, m.m21, m.m22, m.m23,
-                                    m.m30, m.m31, m.m32, m.m33);
+            return new VantagePoint(new Primitives.Vector3(p.x, p.y, p.z), new Primitives.Quaternion(r.x, r.y, r.z, r.w));
         }
 
         [PInteropMethod]
         public static VantagePoint getCompositeTransformation(TValue thing) {
             var entity = UnitySceneGraph.Current.FindEntity(thing);
             if (entity) {
-                var m = entity.cachedTransform.localToWorldMatrix;
-                return new VantagePoint(m.m00, m.m01, m.m02, m.m03,
-                                        m.m10, m.m11, m.m12, m.m13,
-                                        m.m20, m.m21, m.m22, m.m23,
-                                        m.m30, m.m31, m.m32, m.m33);
+                var p = entity.cachedTransform.position;
+                var r = entity.cachedTransform.rotation;
+                return new VantagePoint(new Primitives.Vector3(p.x, p.y, p.z), new Primitives.Quaternion(r.x, r.y, r.z, r.w));
             }
             return VantagePoint.IDENTITY;
         }
@@ -132,13 +139,12 @@ namespace Alice.Player.Modules {
         public static VantagePoint getInverseCompositeTransformation(TValue thing) {
             var entity = UnitySceneGraph.Current.FindEntity(thing);
             if (entity) {
-                var m = entity.cachedTransform.localToWorldMatrix;
-                return new VantagePoint(m.m00, m.m01, m.m02, m.m03,
-                                        m.m10, m.m11, m.m12, m.m13,
-                                        m.m20, m.m21, m.m22, m.m23,
-                                        m.m30, m.m31, m.m32, m.m33);
+                var p = -entity.cachedTransform.position;
+                var r = UnityEngine.Quaternion.Inverse(entity.cachedTransform.rotation);
+                return new VantagePoint(new Primitives.Vector3(p.x, p.y, p.z), new Primitives.Quaternion(r.x, r.y, r.z, r.w));
             }
             return VantagePoint.IDENTITY;
         }
+
     }
 }

@@ -3,11 +3,11 @@ class SThing {
   }
 
   @CompletelyHidden VantagePoint getVantagePoint( SThing entity ) {
-    return this.getTransformation( target: entity );
+    return this.getTransformation( asSeenBy: entity );
   }
 
   @CompletelyHidden VantagePoint getTransformation( SThing asSeenBy ) {
-    return $SceneGraph.getVantagePoint(viewer:asSceneBy, target: this);
+    return $SceneGraph.getVantagePoint(viewer:asSeenBy, target: this);
   }
 
   @CompletelyHidden VantagePoint getCompositeTransformation() {
@@ -36,6 +36,7 @@ class SThing {
 
   @TuckedAway void setName( TextString name ) {
     this.name <- name;
+    $SceneGraph.setEntityName(thing: this, name: name);
   }
 
   void delay( Number duration ) {

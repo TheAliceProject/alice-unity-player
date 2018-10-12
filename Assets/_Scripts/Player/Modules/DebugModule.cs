@@ -94,5 +94,15 @@ namespace Alice.Player.Modules
             get { return s_TimingLabel; }
             set { s_TimingLabel = value; }
         }
+
+        [PInteropMethod]
+        public static void setCompositeTransformation(TValue thing, Primitives.VantagePoint transformation) {
+            var entity = Unity.UnitySceneGraph.Current.FindEntity(thing);
+            if (entity) {
+                var p = new UnityEngine.Vector3((float)transformation.TranslationValue.X, (float)transformation.TranslationValue.Y, (float)transformation.TranslationValue.Z);
+                var r = new UnityEngine.Quaternion((float)transformation.RotationValue.X, (float)transformation.RotationValue.Y, (float)transformation.RotationValue.Z, (float)transformation.RotationValue.W);
+                entity.cachedTransform.SetPositionAndRotation(p, r);
+            }
+        }
     }
 }

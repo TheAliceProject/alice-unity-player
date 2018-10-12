@@ -43,7 +43,8 @@ class SModel extends SMovableTurnable
 
   void setVehicle(SThing vehicle) {
     this.vehicle <- vehicle;
-    $SceneGraph.setVehicle(vehicle: vehicle, rider: this);
+    // keep local transformation in sync
+    localTransformation.value <- $SceneGraph.setVehicle(vehicle: vehicle, rider: this);
   }
 
   @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
