@@ -37,11 +37,11 @@ class Scene extends SScene {
     box2.setVehicle(vehicle: box3);
 
 
-
-    doTogether {
-      box2.turn(direction: TurnDirection.LEFT, amount: 1, duration: 2, asSeenBy: box2);
-      box2.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 2, asSeenBy: box);
-    }
+    box2.roll(direction: RollDirection.RIGHT, amount: 1, duration: 4, asSeenBy: box2);
+      
+    box2.turn(direction: TurnDirection.LEFT, amount: 1, duration: 4, asSeenBy: box2);
+    box2.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 2, asSeenBy: box);
+    
     box2.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 2, asSeenBy: box3);
 
     this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
