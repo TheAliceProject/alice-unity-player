@@ -29,30 +29,13 @@ namespace Alice.Player.Modules
         [PInteropMethod]
         static public AsyncReturn delay(double duration)
         {
-            AsyncReturn returnVal = new AsyncReturn();
             if (duration <= 0) {
-                returnVal.Return();
-                return returnVal;
+                return null;
             }
 
+            AsyncReturn returnVal = new AsyncReturn();
             SceneGraph.Current.QueueTimeReturn(returnVal, duration);
             return returnVal;
-        }
-
-        [PInteropMethod]
-        static public void callOnDelay(PFunc<double, double, double> lambda, double delay)
-        {
-            if (delay <= 0)
-            {
-                var res = lambda.Call(Time.time, Time.time);
-                res.OnReturn((d) =>
-                {
-                    UnityEngine.Debug.Log("[ClockModule] Got result back of " + d);
-                });
-                return;
-            }
-
-            SceneGraph.Current.StartCoroutine(CallOnDelay(lambda, delay));
         }
 
         [PInteropMethod]
@@ -71,6 +54,22 @@ namespace Alice.Player.Modules
             AsyncReturn returnValue = new AsyncReturn();
             SceneGraph.Current.QueueFrameReturn(returnValue, (int)frames);
             return returnValue;
+        }
+
+        [PInteropMethod]
+        static public void callOnDelay(PFunc<double, double, double> lambda, double delay)
+        {
+            if (delay <= 0)
+            {
+                var res = lambda.Call(Time.time, Time.time);
+                res.OnReturn((d) =>
+                {
+                    UnityEngine.Debug.Log("[ClockModule] Got result back of " + d);
+                });
+                return;
+            }
+
+            SceneGraph.Current.StartCoroutine(CallOnDelay(lambda, delay));
         }
 
         static private IEnumerator CallOnDelay(PFunc<double, double, double> lambda, double inDelay)

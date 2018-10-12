@@ -2,6 +2,8 @@ class SScene extends SThing {
   SScene() {
     super();
     $SceneGraph.createSceneEntity(scene: this);
+    $SceneGraph.bindFogDensityProperty(owner: this, property: fogDensity, value: fogDensity.getValue());
+    $SceneGraph.bindGlobalBrightnessProperty(owner: this, property: globalBrightness, value: globalBrightness.getValue());
   }
 
   @CompletelyHidden SScene getScene() {
@@ -49,14 +51,14 @@ class SScene extends SThing {
     fromBelowLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
   }
 
-  DecimalNumber getFogDensity() {
+  Portion getFogDensity() {
     return fogDensity.getValue();
   }
 
-  void setFogDensity( Number density,
+  void setFogDensity( Portion density,
                       DecimalNumber duration <- Default.duration(),
-                      AnimationStyle animationStyle <- Default.animationStyle() ) {
-    fogDensity.animateValue( endValue: density.floatValue(), duration: duration, animation: animationStyle );
+                      AnimationStyle style <- Default.animationStyle() ) {
+    fogDensity.animateValue( endValue: density, duration: duration, animationStyle: style );
   }
 
   void addSceneActivationListener( <SceneActivationEvent->void> listener ) {
@@ -175,7 +177,7 @@ class SScene extends SThing {
       }
     }
 
-    //this.globalBrightness.setValue( endValue: 0.0 );
+    this.globalBrightness.setValue(value: Portion.ZERO);
     this.changeActiveStatus( isActive: true );
     
     //This forces the scene to initialize itself to make sure we can properly query bounding boxes and other
@@ -185,11 +187,11 @@ class SScene extends SThing {
     //this.addCamerasTo( program: program );
     $SceneGraph.activateScene(scene: this);
 
-    //globalBrightness.animateValue( endValue: 1.0, duration: 0.5, animation: TraditionalStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.ONE, duration: 0.5, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
   }
 
   @CompletelyHidden void deactivate( SProgram program ) {
-    //globalBrightness.animateValue( endValue: 0, duration: 0.25, animation: TraditionalStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.ZERO, duration: 0.25, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
     this.changeActiveStatus( isActive: false );
     //this.removeCamerasFrom( program: program );
     this.program <- null;
@@ -263,9 +265,10 @@ class SScene extends SThing {
   @CompletelyHidden ColorProperty atmosphereColor;
   @CompletelyHidden ColorProperty fromAboveLightColor;
   @CompletelyHidden ColorProperty fromBelowLightColor;
-  @CompletelyHidden PortionProperty fogDensity;
-  @CompletelyHidden PortionProperty globalBrightness;
   */
+  @CompletelyHidden PortionProperty fogDensity <- new PortionProperty(owner: this, value: Portion.ZERO);
+  @CompletelyHidden PortionProperty globalBrightness <- new PortionProperty(owner: this, value: Portion.ZERO);
+  
   @CompletelyHidden SProgram program <- null;
   @CompletelyHidden WholeNumber activeCount <- 0;
   
