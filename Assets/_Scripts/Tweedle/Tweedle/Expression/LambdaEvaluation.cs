@@ -47,7 +47,7 @@ namespace Alice.Tweedle
             var setTargetStep = new ValueOperationStep(
                 "Set Target",
                 lambdaScope,
-                target => lambdaScope.lambda = target.Lambda());
+                target => lambdaScope.SetLambda(target.Lambda()));
             targetStep.OnCompletionNotify(setTargetStep);
 
             StepSequence main = new StepSequence(ToTweedle(), scope);

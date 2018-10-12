@@ -14,6 +14,7 @@ namespace Alice.Player
 
         static private void GenerateVersion_0_0_1(TAssembly inAssembly)
         {
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SystemModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DebugModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SceneGraphModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ClockModule)));

@@ -78,7 +78,7 @@ class SThing {
     if( this.name != null ) {
       return this.name;
     } else {
-      return "unnamed ";// .. $System.getClassName( instance: this );
+      return "unnamed " .. $System.getClassName( instance: this );
     }
   }
   

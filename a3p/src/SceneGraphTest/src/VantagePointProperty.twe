@@ -14,9 +14,9 @@ class VantagePointProperty extends Property {
   }
 
   void applyTransformation(VantagePoint transformation, SThing asSeenBy) {
-    VantagePoint p <- $SceneGraph.getCompositeTransformation(thing: this.owner.vehicle);
-    VantagePoint v <- $SceneGraph.getCompositeTransformation(thing: asSeenBy);
-    VantagePoint t <- $SceneGraph.getCompositeTransformation(thing: this.owner);
+    VantagePoint p <- $SceneGraph.getAbsoluteTransformation(thing: this.owner.vehicle);
+    VantagePoint v <- $SceneGraph.getAbsoluteTransformation(thing: asSeenBy);
+    VantagePoint t <- $SceneGraph.getAbsoluteTransformation(thing: this.owner);
 
     /*
     if (debugBox == null) {
