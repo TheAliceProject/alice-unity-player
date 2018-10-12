@@ -60,7 +60,7 @@ namespace Alice.Player.Primitives
         }
 
             [PInteropMethod]
-            public VantagePoint inverse() {
+        public VantagePoint inverse() {
             Matrix4x4 result;
             Matrix4x4.Invert(Value, out result);
             return new VantagePoint(result);
