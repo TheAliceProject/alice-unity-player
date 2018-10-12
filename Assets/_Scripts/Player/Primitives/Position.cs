@@ -75,7 +75,7 @@ namespace Alice.Player.Primitives
         #endregion // Interop Interfaces
 
         public Position Transform(VantagePoint vantagePoint) {
-            return new Position(Vector3.Transform(Value, vantagePoint.Value));
+            return new Position(Vector3.Transform(Value, vantagePoint.GetMatrix()));
         }
 
         public Position Rotate(Orientation orientation) {

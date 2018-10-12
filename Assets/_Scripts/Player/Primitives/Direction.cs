@@ -120,7 +120,7 @@ namespace Alice.Player.Primitives
         #endregion //Interop Interfaces
 
         public Direction Transform(VantagePoint vantagePoint) {
-            return new Direction(Vector3.TransformNormal(Value, vantagePoint.Value));
+            return new Direction(Vector3.TransformNormal(Value, vantagePoint.GetMatrix()));
         }
 
         public Direction Rotate(Orientation orientation) {

@@ -12,8 +12,8 @@ namespace Alice.Player.Unity {
         
         public delegate void UpdatePropertyDelegate(TValue inValue);
 
-        public static T Create<T>(TValue owner, string inName = "SGEntity") where T : SGEntity {
-            var go = new GameObject(inName);
+        public static T Create<T>(TValue owner) where T : SGEntity {
+            var go = new GameObject(typeof(T).Name);
             var entity = go.AddComponent<T>();
             entity.owner = owner;
             return entity;
@@ -37,6 +37,10 @@ namespace Alice.Player.Unity {
                     
                 }
             }
+        }
+
+        public void SetName(string inName) {
+            gameObject.name = string.Format("{0} ({1})", inName, this.GetType().Name);
         }
 
         protected void RegisterPropertyDelegate(string inName, UpdatePropertyDelegate inDelegate) {

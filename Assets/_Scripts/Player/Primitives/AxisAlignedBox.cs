@@ -36,18 +36,21 @@ namespace Alice.Player.Primitives
 
         [PInteropMethod]
         public AxisAlignedBox transform(VantagePoint vantagePoint) {      
+
+            var m = vantagePoint.GetMatrix();
+
             // transformed all corner points
             Vector3[] verts = {
                 // bottom
-                Vector3.Transform(MinValue, vantagePoint.Value),
-                Vector3.Transform(new Vector3(MinValue.X, MaxValue.Y, MinValue.Z), vantagePoint.Value),
-                Vector3.Transform(new Vector3(MaxValue.X, MinValue.Y, MinValue.Z), vantagePoint.Value),
-                Vector3.Transform(new Vector3(MaxValue.X, MaxValue.Y, MinValue.Z), vantagePoint.Value),
+                Vector3.Transform(MinValue, m),
+                Vector3.Transform(new Vector3(MinValue.X, MaxValue.Y, MinValue.Z), m),
+                Vector3.Transform(new Vector3(MaxValue.X, MinValue.Y, MinValue.Z), m),
+                Vector3.Transform(new Vector3(MaxValue.X, MaxValue.Y, MinValue.Z), m),
                 // top
-                Vector3.Transform(new Vector3(MinValue.X, MinValue.Y, MaxValue.Z), vantagePoint.Value),
-                Vector3.Transform(new Vector3(MinValue.X, MaxValue.Y, MaxValue.Z), vantagePoint.Value),
-                Vector3.Transform(new Vector3(MaxValue.X, MinValue.Y, MaxValue.Z), vantagePoint.Value),
-                Vector3.Transform(MaxValue, vantagePoint.Value)
+                Vector3.Transform(new Vector3(MinValue.X, MinValue.Y, MaxValue.Z), m),
+                Vector3.Transform(new Vector3(MinValue.X, MaxValue.Y, MaxValue.Z), m),
+                Vector3.Transform(new Vector3(MaxValue.X, MinValue.Y, MaxValue.Z), m),
+                Vector3.Transform(MaxValue, m)
             };
 
             Vector3 min = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);

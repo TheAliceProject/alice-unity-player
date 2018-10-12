@@ -14,10 +14,23 @@ class VantagePointProperty extends Property {
   }
 
   void applyTransformation(VantagePoint transformation, SThing asSeenBy) {
-    VantagePoint vm <- $SceneGraph.getInverseCompositeTransformation(thing: this.owner.vehicle);
-    VantagePoint sm <- $SceneGraph.getCompositeTransformation(thing: asSeenBy);
+    VantagePoint vm <- $SceneGraph.getCompositeTransformation(thing: asSeenBy);
+    VantagePoint tvm <- $SceneGraph.getCompositeTransformation(thing: this.owner.vehicle);
 
-    VantagePoint m <- vm.multiply(other: sm).multiply(other: transformation).multiply(other: value);
+    VantagePoint tm <- tvm.multiply(other: value);
+    //VantagePoint tm <- $SceneGraph.getCompositeTransformation(thing: this.owner);
+
+
+
+    // target to viewer
+    VantagePoint targetToViewer <- vm.multiply(other: tm.inverse());
+
+
+    VantagePoint m <- transformation.multiply(other: targetToViewer));
+
+    //$Debug.setCompositeTransformation(thing: owner, transformation: tm);
+    //$Debug.setCompositeTransformation(thing: owner.vehicle, transformation: tvm);
+
     setValue(value: m);
   }
 

@@ -15,12 +15,33 @@ class Scene extends SScene {
   //SGround ground <- new SGround();
   //SCamera camera <- new SCamera();
   Box box <- new Box();
+  
 
   void performCustomSetup() {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(string: this.getName() .. ": performCustomStetup");
 
-    this.box.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 5);
+    this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
+    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: 0.809), duration: 0);
+
+    Box box3 <- new Box();
+    box3.setName(name: "box3");
+    box3.setVehicle(vehicle: this);
+    box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: 0);
+    box3.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: 0.809), duration: 0);
+
+    Box box2 <- new Box();
+    box2.setName(name: "box2");
+    box2.setVehicle(vehicle: this);
+    box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: 0);
+    box2.setVehicle(vehicle: box3);
+
+
+
+    doTogether {
+      box2.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 2, asSeenBy: box);
+      box2.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 2, asSeenBy: box);
+    }
 
     this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
     this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
@@ -50,7 +71,7 @@ class Scene extends SScene {
     //this.box.setOpacity(opacity: 1.0, duration: 0);
     this.box.setName(name: "box");
     this.box.setVehicle(vehicle: this);
-    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.0, z: 0.0, w: 1.0), duration: 0);
+    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.0, z: 0.0, w:1), duration: 0);
     this.box.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: 0.0), duration: 0);
     this.box.setSize(size: new Size(width: 1.0, height: 1.0, depth: 1.0), duration: 0);
   }
