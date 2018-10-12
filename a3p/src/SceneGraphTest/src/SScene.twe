@@ -8,7 +8,7 @@ class SScene extends SThing {
     return this;
   }
 
-/* TODO needs SceneGraph implementation
+
   Color getAtmosphereColor() {
     return atmosphereColor.getValue();
   }
@@ -59,6 +59,14 @@ class SScene extends SThing {
     fogDensity.animateValue( endValue: density.floatValue(), duration: duration, animation: animationStyle );
   }
 
+  void addSceneActivationListener( <SceneActivationEvent->void> listener ) {
+    $SceneGraph.addSceneActivationListener(scene: this, listener: () -> {
+      SceneActivationEvent event <- new SceneActivationEvent();
+      listener(event);
+    });
+  }
+
+/* TODO implement events
   void addMouseClickOnScreenListener( MouseClickOnScreenListener listener,
                                       OverlappingEventPolicy overlappingEventPolicy <- Default.overlappingEventPolicy()) {
     $Mouse.addClickOnScreenListener( listener: listener, overlappingEventPolicy: overlappingEventPolicy );
@@ -78,10 +86,6 @@ class SScene extends SThing {
                         Number frequency,
                         OverlappingEventPolicy overlappingEventPolicy <- Default.overlappingEventPolicy() ) {
     $Clock.addTimerEventListener( listener: listener, frequency: frequency, overlappingEventPolicy: overlappingEventPolicy );
-  }
-
-  void addSceneActivationListener( SceneActivationListener listener ) {
-    $SceneManager.addSceneActivationListener( listener: listener );
   }
 
   void addKeyPressListener( KeyPressListener listener,
@@ -179,7 +183,7 @@ class SScene extends SThing {
     //AdapterFactory.getAdapterFor( this.sgScene );
 
     //this.addCamerasTo( program: program );
-    //this.fireSceneActivationListeners();
+    $SceneGraph.activateScene(scene: this);
 
     //globalBrightness.animateValue( endValue: 1.0, duration: 0.5, animation: TraditionalStyle.BEGIN_AND_END_GENTLY );
   }
@@ -225,7 +229,7 @@ class SScene extends SThing {
       if(activationCount==1) {
         this.performGeneratedSetUp();
         this.performCustomSetup();
-        //this.initializeEventListeners();
+        this.initializeEventListeners();
       } else {
         //this.restoreStateAndEventListeners();
       }

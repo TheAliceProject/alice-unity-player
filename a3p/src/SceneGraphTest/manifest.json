@@ -163,6 +163,21 @@
       "files": ["src/SProgram.twe"],
       "type": "Class"
     }, {
+      "id": "AbstractEvent",
+      "format": "tweedle",
+      "files": ["src/AbstractEvent.twe"],
+      "type": "Class"
+    }, {
+      "id": "SceneActivationEvent",
+      "format": "tweedle",
+      "files": ["src/SceneActivationEvent.twe"],
+      "type": "Class"
+    }, {
+      "id": "OverlappingEventPolicy",
+      "format": "tweedle",
+      "files": ["src/OverlappingEventPolicy.twe"],
+      "type": "Class"
+    }, {
       "id": "Program",
       "format": "tweedle",
       "files": ["src/Program.twe"],

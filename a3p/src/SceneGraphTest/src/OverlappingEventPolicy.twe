@@ -1,0 +1,16 @@
+// Formerly MultipleEventPolicy. Combine is now Overlap
+enum OverlappingEventPolicy {
+	ENQUEUE(value: $EventPolicy.ENQUEUE),
+	IGNORE(value: $EventPolicy.IGNORE),
+	OVERLAP(value: $EventPolicy.OVERLAP);
+
+	OverlappingEventPolicy(WholeNumber value) {
+		this.value <- value;
+	}
+
+	WholeNumber getValue() {
+		return this.value;
+	}
+
+	@CompletelyHidden WholeNumber value;
+}
