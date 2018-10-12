@@ -37,17 +37,41 @@ class Scene extends SScene {
     box2.setVehicle(vehicle: box3);
 
 
-    box2.roll(direction: RollDirection.RIGHT, amount: 1, duration: 4, asSeenBy: box2);
+    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
+    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
+    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box3);
       
-    box2.turn(direction: TurnDirection.LEFT, amount: 1, duration: 4, asSeenBy: box2);
-    box2.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 2, asSeenBy: box);
+    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box2);
+    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box);
+    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box3);
+
+    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box2);
+    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box);
+    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box3);
     
-    box2.turn(direction: TurnDirection.LEFT, amount: 0.125, duration: 2, asSeenBy: box3);
 
     this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
     this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+  }
 
-    
+  void rollBox(Box box, RollDirection dir, Box asSeenBy) {
+    doTogether {
+      doInOrder {
+        asSeenBy.setPaint(paint: Color.RED);
+        asSeenBy.setPaint(paint: Color.WHITE);
+      }
+      box.roll(direction: dir, amount: 1, duration: 2, asSeenBy: asSeenBy);
+    }
+  }
+
+  void turnBox(Box box, TurnDirection dir, Box asSeenBy) {
+    doTogether {
+      doInOrder {
+        asSeenBy.setPaint(paint: Color.RED);
+        asSeenBy.setPaint(paint: Color.WHITE);
+      }
+      box.turn(direction: dir, amount: 1, duration: 2, asSeenBy: asSeenBy);
+    }
   }
 
   // NOTE: All property settings should use a duration of 0
