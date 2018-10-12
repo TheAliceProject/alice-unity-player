@@ -76,9 +76,13 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static void setVehicle(TValue vehicle, TValue rider) {
+        public static VantagePoint setVehicle(TValue vehicle, TValue rider) {
             var entity = UnitySceneGraph.Current.FindEntity(rider);
             entity.vehicle = UnitySceneGraph.Current.FindEntity(vehicle);
+
+            var p = entity.cachedTransform.localPosition;
+            var r = entity.cachedTransform.localRotation;
+            return new VantagePoint(new Primitives.Vector3(p.x, p.y, p.z), new Primitives.Quaternion(r.x,r.y,r.z,r.w));
         }
 
         [PInteropMethod]
