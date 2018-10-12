@@ -14,10 +14,21 @@ class VantagePointProperty extends Property {
   }
 
   void applyTransformation(VantagePoint transformation, SThing asSeenBy) {
-    VantagePoint vm <- $SceneGraph.getInverseCompositeTransformation(thing: this.owner.vehicle);
-    VantagePoint sm <- $SceneGraph.getCompositeTransformation(thing: asSeenBy);
+    VantagePoint p <- $SceneGraph.getCompositeTransformation(thing: this.owner.vehicle);
+    VantagePoint v <- $SceneGraph.getCompositeTransformation(thing: asSeenBy);
+    VantagePoint t <- $SceneGraph.getCompositeTransformation(thing: this.owner);
 
-    VantagePoint m <- vm.multiply(other: sm).multiply(other: transformation).multiply(other: value);
+    /*
+    if (debugBox == null) {
+      debugBox <- new SBox();
+      debugBox.setName(name: "Debug");
+      debugBox.setPaint(paint: Color.RED, duration: 0);
+      debugBox.setVehicle(vehicle: owner.vehicle);
+    }
+    debugBox.localTransformation.setValue(value: transformation.multiply(other: t).multiply(other: v.inverse().multiply(other: v).multiply(other: p.inverse()));
+    */
+
+    VantagePoint m <-  t.multiply(other: v.inverse()).multiply(other: transformation).multiply(other: v).multiply(other: p.inverse());
     setValue(value: m);
   }
 
@@ -37,4 +48,5 @@ class VantagePointProperty extends Property {
   }
 
   @CompletelyHidden VantagePoint value;
+  //SBox debugBox <- null;
 }

@@ -27,10 +27,10 @@ namespace Alice.Player.Modules {
             SGEntity entity = null;
             switch (resource) {
                 case BOX:
-                    entity = SGEntity.Create<SGBox>(model, "BoxEntity");
+                    entity = SGEntity.Create<SGBox>(model);
                     break;
                 case SPHERE:
-                    entity = SGEntity.Create<SGSphere>(model, "SphereEntity");
+                    entity = SGEntity.Create<SGSphere>(model);
                     break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
@@ -41,7 +41,7 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static void createSceneEntity(TValue scene) {
-            SGEntity entity = SGEntity.Create<SGScene>(scene, "SceneEntity");
+            SGEntity entity = SGEntity.Create<SGScene>(scene);
             UnitySceneGraph.Current.AddEntity(entity);
         }
 
@@ -73,6 +73,12 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void updateProperty(TValue owner, TValue property, TValue value) {
             UnitySceneGraph.Current.UpdateProperty(owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void setName(TValue thing, string name) {
+            var entity = UnitySceneGraph.Current.FindEntity(thing);
+            entity.SetName(name);
         }
 
         [PInteropMethod]
@@ -113,10 +119,10 @@ namespace Alice.Player.Modules {
                 m = vm * tm;
             }
 
-            return new VantagePoint(m.m00, m.m01, m.m02, m.m03,
-                                    m.m10, m.m11, m.m12, m.m13,
-                                    m.m20, m.m21, m.m22, m.m23,
-                                    m.m30, m.m31, m.m32, m.m33);
+            return new VantagePoint(m.m00, m.m10, m.m20, m.m30,
+                                    m.m01, m.m11, m.m21, m.m31,
+                                    m.m02, m.m12, m.m22, m.m32,
+                                    m.m03, m.m13, m.m23, m.m33);
         }
 
         [PInteropMethod]
@@ -124,10 +130,11 @@ namespace Alice.Player.Modules {
             var entity = UnitySceneGraph.Current.FindEntity(thing);
             if (entity) {
                 var m = entity.cachedTransform.localToWorldMatrix;
-                return new VantagePoint(m.m00, m.m01, m.m02, m.m03,
-                                        m.m10, m.m11, m.m12, m.m13,
-                                        m.m20, m.m21, m.m22, m.m23,
-                                        m.m30, m.m31, m.m32, m.m33);
+                // transpose unity matrix
+                return new VantagePoint(m.m00, m.m10, m.m20, m.m30,
+                                        m.m01, m.m11, m.m21, m.m31,
+                                        m.m02, m.m12, m.m22, m.m32,
+                                        m.m03, m.m13, m.m23, m.m33);
             }
             return VantagePoint.IDENTITY;
         }
@@ -136,11 +143,11 @@ namespace Alice.Player.Modules {
         public static VantagePoint getInverseCompositeTransformation(TValue thing) {
             var entity = UnitySceneGraph.Current.FindEntity(thing);
             if (entity) {
-                var m = entity.cachedTransform.localToWorldMatrix;
-                return new VantagePoint(m.m00, m.m01, m.m02, m.m03,
-                                        m.m10, m.m11, m.m12, m.m13,
-                                        m.m20, m.m21, m.m22, m.m23,
-                                        m.m30, m.m31, m.m32, m.m33);
+                var m = entity.cachedTransform.worldToLocalMatrix;
+                return new VantagePoint(m.m00, m.m10, m.m20, m.m30,
+                                        m.m01, m.m11, m.m21, m.m31,
+                                        m.m02, m.m12, m.m22, m.m32,
+                                        m.m03, m.m13, m.m23, m.m33);
             }
             return VantagePoint.IDENTITY;
         }

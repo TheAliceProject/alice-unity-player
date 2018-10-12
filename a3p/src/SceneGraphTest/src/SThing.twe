@@ -36,6 +36,7 @@ class SThing {
 
   @TuckedAway void setName( TextString name ) {
     this.name <- name;
+    $SceneGraph.setName(thing: this, name: name);
   }
 
   void delay( Number duration ) {
