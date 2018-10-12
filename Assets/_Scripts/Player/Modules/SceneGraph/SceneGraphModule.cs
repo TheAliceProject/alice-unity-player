@@ -74,6 +74,16 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void bindFogDensityProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGScene.FOG_DENSITY_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindGlobalBrightnessProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGScene.GLOBAL_BRIGHTNESS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
         public static void updateProperty(TValue owner, TValue property, TValue value) {
             SceneGraph.Current.UpdateProperty(owner, property, value);
         }

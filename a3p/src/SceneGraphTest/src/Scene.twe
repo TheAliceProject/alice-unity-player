@@ -36,6 +36,9 @@ class Scene extends SScene {
     box2.setOpacity(opacity: Portion.ZERO, duration: 0);
     box2.setOpacity(opacity: Portion.ONE, duration: 0.5);
 
+    setFogDensity(density: Portion.ONE, duration: 2);
+    setFogDensity(density: Portion.ZERO, duration 1);
+
 
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
