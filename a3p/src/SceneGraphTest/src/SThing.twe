@@ -3,19 +3,11 @@ class SThing {
   }
 
   @CompletelyHidden VantagePoint getVantagePoint( SThing entity ) {
-    return this.getTransformation( target: entity );
+    return this.getTransformation( asSeenBy: entity );
   }
 
   @CompletelyHidden VantagePoint getTransformation( SThing asSeenBy ) {
     return $SceneGraph.getVantagePoint(viewer:asSceneBy, target: this);
-  }
-
-  @CompletelyHidden VantagePoint getCompositeTransformation() {
-    return $SceneGraph.getCompositeTransformation(model: this);
-  }
-
-  @CompletelyHidden VantagePoint getInverseCompositeTransformation() {
-    return $SceneGraph.getInverseCompositeTransformation(model: this);
   }
 
   @CompletelyHidden Position getTranslation( SThing asSeenBy ) {
@@ -91,5 +83,5 @@ class SThing {
   }
   
   @CompletelyHidden SThing vehicle <- null;
-  @CompletelyHidden TextString name <- null;
+  @CompletelyHidden TextString name <- "Unnamed";
 }
