@@ -32,7 +32,7 @@ namespace Alice.Tweedle.VM
             return false;
         }
 
-        Dictionary<string, ValueHolder> localValues =
+        private Dictionary<string, ValueHolder> localValues =
             new Dictionary<string, ValueHolder>();
 
         public ExecutionScope(string stackEntry)
@@ -58,7 +58,7 @@ namespace Alice.Tweedle.VM
             return vm?.Library?.TypeNamed(name);
         }
 
-        private TTypeRef GetTypeNamed(string name)
+        protected TTypeRef GetTypeNamed(string name)
         {
             TType libraryType = TypeNamed(name);
             return libraryType != null ? new TTypeRef(libraryType) : null;
@@ -105,6 +105,13 @@ namespace Alice.Tweedle.VM
 
         public bool UpdateScopeValue(string varName, TValue value)
         {
+            if (UpdateLocalValue(varName, value))
+                return true;
+            return UpdateParentValue(varName, value);
+        }
+
+        protected bool UpdateLocalValue(string varName, TValue value)
+        {
             if (localValues.ContainsKey(varName))
             {
                 //UnityEngine.Debug.Log("Updating " + varName + " to " + value.ToTextString());
@@ -112,14 +119,17 @@ namespace Alice.Tweedle.VM
                 localValues[varName].Value = value;
                 return true;
             }
-            else
+            return false;
+        }
+
+        protected virtual bool UpdateParentValue(string varName, TValue value)
+        {
+            if (parent != null)
             {
-                if (parent != null)
-                {
-                    //UnityEngine.Debug.Log("Asking parent scope to set " + varName + " to " + value.ToTextString());
-                    return parent.UpdateScopeValue(varName, value);
-                }
+                //UnityEngine.Debug.Log("Asking parent scope to set " + varName + " to " + value.ToTextString());
+                return parent.UpdateScopeValue(varName, value);
             }
+
             return false;
         }
 
@@ -130,30 +140,79 @@ namespace Alice.Tweedle.VM
 
         public TValue GetValue(string varName)
         {
+            TValue result;
+            if (TryGetTypeRef(varName, out result))
+            {
+                return result;
+            }
+            if (TryGetLocalVariable(varName, out result))
+            {
+                return result;
+            }
+            if (TryGetParentValue(varName, out result))
+            {
+                return result;
+            }
+            if (TryGetThisValue(varName, out result))
+            {
+                return result;
+            }
+            
+            throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
+        }
+
+        protected bool TryGetTypeRef(string varName, out TValue outValue)
+        {
             TTypeRef type = GetTypeNamed(varName);
             if (type != null)
             {
-                return TBuiltInTypes.TYPE_REF.Instantiate(type);
+                outValue = TBuiltInTypes.TYPE_REF.Instantiate(type);
+                return true;
             }
-            if (localValues.ContainsKey(varName))
+
+            outValue = TValue.UNDEFINED;
+            return false;
+        }
+
+        protected bool TryGetLocalVariable(string varName, out TValue outValue)
+        {
+            ValueHolder holder;
+            if (localValues.TryGetValue(varName, out holder))
             {
-                //UnityEngine.Debug.Log("Reading local " + varName + " as " + localValues[varName].Value.ToTextString());
-                return localValues[varName].Value;
+                outValue = holder.Value;
+                return true;
             }
+
+            outValue = TValue.UNDEFINED;
+            return false;
+        }
+
+        protected virtual bool TryGetParentValue(string varName, out TValue outValue)
+        {
             if (parent != null)
             {
-                //UnityEngine.Debug.Log("Asking parent for " + varName);
-                return parent.GetValue(varName);
+                outValue = parent.GetValue(varName);
+                return true;
             }
+
+            outValue = TValue.UNDEFINED;
+            return false;
+        }
+
+        protected bool TryGetThisValue(string varName, out TValue outValue)
+        {
             if (thisValue != TValue.UNDEFINED)
             {
                 try
                 {
-                    return thisValue.Get(this, varName);
+                    outValue = thisValue.Get(this, varName);
+                    return true;
                 }
                 catch (TweedleNonexistentFieldException) { }
             }
-            throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
+
+            outValue = TValue.UNDEFINED;
+            return false;
         }
 
         public ExecutionScope ChildScope()
@@ -204,7 +263,7 @@ namespace Alice.Tweedle.VM
         {
             return new LambdaScope(this);
         }
-    
+
         internal virtual bool ShouldExit()
         {
             return parent != null ? parent.ShouldExit() : false;
