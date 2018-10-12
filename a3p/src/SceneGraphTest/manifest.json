@@ -68,6 +68,16 @@
       "files": ["src/DecimalNumberTween.twe"],
       "type": "Class"
     }, {
+      "id": "PortionProperty",
+      "format": "tweedle",
+      "files": ["src/PortionProperty.twe"],
+      "type": "Class"
+    }, {
+      "id": "PortionTween",
+      "format": "tweedle",
+      "files": ["src/PortionTween.twe"],
+      "type": "Class"
+    }, {
       "id": "VantagePointProperty",
       "format": "tweedle",
       "files": ["src/VantagePointProperty.twe"],

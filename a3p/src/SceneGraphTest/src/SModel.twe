@@ -5,6 +5,7 @@ class SModel extends SMovableTurnable
     $SceneGraph.bindTransformationProperty(owner: this, property: this.localTransformation, value: this.localTransformation.getValue());
     $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.size.getValue());
     $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());
+    $SceneGraph.bindOpacityProperty(owner: this, property: this.opacity, value: this.opacity.getValue());
     
   }
 
@@ -41,6 +42,16 @@ class SModel extends SMovableTurnable
     this.paint.animateValue(endValue: paint, duration: duration, animationStyle: style);
   }
 
+  Portion getOpacity() {
+    return this.opacity.getValue();
+  }
+
+  void setOpacity(Portion opacity,
+                  DecimalNumber duration <- Default.duration(),
+                  AnimationStyle style <- Default.animationStyle() ) {
+    this.opacity.animateValue(endValue: opacity, duration: duration, animationStyle: style);
+  }
+
   void setVehicle(SThing vehicle) {
     this.vehicle <- vehicle;
     localTransformation.value <- $SceneGraph.setVehicle(vehicle: vehicle, rider: this);
@@ -48,4 +59,5 @@ class SModel extends SMovableTurnable
 
   @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
   @CompletelyHidden PaintProperty paint <- new PaintProperty(owner: this, value: Color.WHITE);
+  @CompletelyHidden PortionProperty opacity <- new PortionProperty(owner: this, value: Portion.ONE);
 }

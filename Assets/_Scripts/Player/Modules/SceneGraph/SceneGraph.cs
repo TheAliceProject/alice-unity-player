@@ -6,7 +6,7 @@ using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 
 namespace Alice.Player.Unity {
-    public sealed class UnitySceneGraph : MonoBehaviour {
+    public sealed class SceneGraph : MonoBehaviour {
 
         private interface IWaitReturn {
             bool Step(float time);
@@ -45,15 +45,15 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private static UnitySceneGraph s_Current;
+        private static SceneGraph s_Current;
 
-        public static UnitySceneGraph Current {
+        public static SceneGraph Current {
             get {
                 if (ReferenceEquals(s_Current, null)) {
-                    s_Current = FindObjectOfType<UnitySceneGraph>();
+                    s_Current = FindObjectOfType<SceneGraph>();
                     if (ReferenceEquals(s_Current, null)) {
                         var go = new GameObject("SceneGraph");
-                        s_Current = go.AddComponent<UnitySceneGraph>();
+                        s_Current = go.AddComponent<SceneGraph>();
                     }
                 }
                 return s_Current;
@@ -62,11 +62,12 @@ namespace Alice.Player.Unity {
 
         private List<SGEntity> m_Entities = new List<SGEntity>();
 
-         private List<IWaitReturn> m_WaitReturnsQueue = new List<IWaitReturn>();
+        private List<IWaitReturn> m_WaitReturnsQueue = new List<IWaitReturn>();
         private List<IWaitReturn> m_WaitReturns = new List<IWaitReturn>();
 
         private bool m_IsUpdating;
 
+        public PlayerResources InternalResources {get; private set;}
 
         private void Awake() {
             if (!ReferenceEquals(s_Current, null) && !ReferenceEquals(s_Current, this)) {
@@ -75,6 +76,8 @@ namespace Alice.Player.Unity {
             } else if (ReferenceEquals(s_Current, null)) {
                 s_Current = this;
             }
+
+            InternalResources = Resources.Load<PlayerResources>("PlayerResources");
         }
 
         private void Destroy() {

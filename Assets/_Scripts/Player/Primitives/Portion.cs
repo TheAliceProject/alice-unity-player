@@ -11,6 +11,11 @@ namespace Alice.Player.Primitives
         public readonly double Value;
 
         #region Interop Interface 
+
+        [PInteropField]
+        public static readonly Portion ZERO = new Portion(0);
+        [PInteropField]
+        public static readonly Portion ONE = new Portion(1);
         
         [PInteropConstructor]
         public Portion(double portion)
@@ -25,7 +30,7 @@ namespace Alice.Player.Primitives
 
         [PInteropMethod]
         public bool equals(Portion other) {
-            return Value == other;
+            return Equals(other);
         }
 
         [PInteropMethod]
@@ -51,14 +56,14 @@ namespace Alice.Player.Primitives
             return inPortion != null ? inPortion.Value : double.NaN;
         }
 
-       
+
         public override string ToString() {
             return string.Format("Portion({0:0.####})", Value);
         }
         
         public override bool Equals(object obj) {
             if (obj is Portion) {
-                return equals((Portion)obj);
+                return ((Portion)obj).Value == Value;
             }
             return false;
         }
