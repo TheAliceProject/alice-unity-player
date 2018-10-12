@@ -18,6 +18,7 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SceneGraphModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ClockModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(MathModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(EventPolicyModule)));
 
             // interop primitives
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Portion)));

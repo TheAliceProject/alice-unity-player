@@ -21,6 +21,7 @@ namespace Alice.Player.Modules {
         [PInteropField]
         public const string TORUS = "Internal/Torus";
 
+        #region Entity Instantiation
         [PInteropMethod]
         public static void createEntity(TValue model, string resource) {
 
@@ -44,7 +45,9 @@ namespace Alice.Player.Modules {
             SGEntity entity = SGEntity.Create<SGScene>(scene);
             SceneGraph.Current.AddEntity(entity);
         }
+        #endregion // Entity Instantiation
 
+        #region Property Binding
         [PInteropMethod]
         public static void bindTransformationProperty(TValue owner, TValue property, TValue value) {
             SceneGraph.Current.BindProperty(SGModel.TRANSFORMATION_PROPERTY_NAME, owner, property, value);
@@ -74,9 +77,12 @@ namespace Alice.Player.Modules {
         public static void updateProperty(TValue owner, TValue property, TValue value) {
             SceneGraph.Current.UpdateProperty(owner, property, value);
         }
+        #endregion // Property Binding
+
+        #region Other
 
         [PInteropMethod]
-        public static void setName(TValue thing, string name) {
+        public static void setEntityName(TValue thing, string name) {
             var entity = SceneGraph.Current.FindEntity(thing);
             entity.SetName(name);
         }
@@ -98,6 +104,20 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void addSceneActivationListener(TValue scene, PAction listener) {
+            var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
+            entity.AddActivationListener(listener);
+        }
+
+        [PInteropMethod]
+        public static void activateScene(TValue scene) {
+            var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
+            entity.Activate();
+        }
+        #endregion // Other
+
+        #region Transformations
+        [PInteropMethod]
         public static VantagePoint getVantagePoint(TValue viewer, TValue target) {
             if (ReferenceEquals(viewer.RawObject<object>(), target.RawObject<object>())) {
                 return VantagePoint.IDENTITY;
@@ -112,13 +132,14 @@ namespace Alice.Player.Modules {
 
             UnityEngine.Matrix4x4 m;
             if (sgViewer != null) {
-                m = sgTarget.cachedTransform.worldToLocalMatrix;
+                m = sgTarget.cachedTransform.localToWorldMatrix;
             } else {
-                var tm = sgTarget.cachedTransform.worldToLocalMatrix;
-                var vm = sgViewer.cachedTransform.localToWorldMatrix;
-                m = vm * tm;
+                var tm = sgTarget.cachedTransform.localToWorldMatrix;
+                var vm = sgViewer.cachedTransform.worldToLocalMatrix;
+                m = tm * vm;
             }
 
+            // transpose unity matrix
             return new VantagePoint(m.m00, m.m10, m.m20, m.m30,
                                     m.m01, m.m11, m.m21, m.m31,
                                     m.m02, m.m12, m.m22, m.m32,
@@ -126,7 +147,7 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static VantagePoint getCompositeTransformation(TValue thing) {
+        public static VantagePoint getAbsoluteTransformation(TValue thing) {
             var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
                 var m = entity.cachedTransform.localToWorldMatrix;
@@ -140,7 +161,7 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static VantagePoint getInverseCompositeTransformation(TValue thing) {
+        public static VantagePoint getInverseAbsoluteTransformation(TValue thing) {
             var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
                 var m = entity.cachedTransform.worldToLocalMatrix;
@@ -150,6 +171,8 @@ namespace Alice.Player.Modules {
                                         m.m03, m.m13, m.m23, m.m33);
             }
             return VantagePoint.IDENTITY;
+        
         }
+        #endregion // Transformations
     }
 }

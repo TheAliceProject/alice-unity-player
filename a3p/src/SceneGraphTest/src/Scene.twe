@@ -3,23 +3,16 @@ class Scene extends SScene {
     super();
   }
   
-/*
+
   void initializeEventListeners() {
     this.addSceneActivationListener(listener: (SceneActivationEvent event)-> {
       this.myFirstMethod();
     });
   }
-*/
-  void myFirstMethod() {
-  }
-  //SGround ground <- new SGround();
-  //SCamera camera <- new SCamera();
-  Box box <- new Box();
-  
 
-  void performCustomSetup() {
+  void myFirstMethod() {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
-    $Debug.log(string: this.getName() .. ": performCustomStetup");
+    $Debug.log(string: this.getName() .. ": myFirstMethod()");
 
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
     this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: -0.809), duration: 0);
@@ -59,8 +52,14 @@ class Scene extends SScene {
 
     this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
     this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+  }
 
-    
+  //SGround ground <- new SGround();
+  //SCamera camera <- new SCamera();
+  Box box <- new Box();
+  
+
+  void performCustomSetup() {
   }
 
   void rollBox(Box box, RollDirection dir, Box asSeenBy) {
