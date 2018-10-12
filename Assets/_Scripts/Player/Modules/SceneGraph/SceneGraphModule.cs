@@ -36,55 +36,55 @@ namespace Alice.Player.Modules {
                     throw new SceneGraphException("No model resource found for " + resource);
             }
 
-            UnitySceneGraph.Current.AddEntity(entity);
+            SceneGraph.Current.AddEntity(entity);
         }
 
         [PInteropMethod]
         public static void createSceneEntity(TValue scene) {
             SGEntity entity = SGEntity.Create<SGScene>(scene);
-            UnitySceneGraph.Current.AddEntity(entity);
+            SceneGraph.Current.AddEntity(entity);
         }
 
         [PInteropMethod]
         public static void bindTransformationProperty(TValue owner, TValue property, TValue value) {
-            UnitySceneGraph.Current.BindProperty(SGModel.TRANSFORMATION_PROPERTY_NAME, owner, property, value);
+            SceneGraph.Current.BindProperty(SGModel.TRANSFORMATION_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
         public static void bindSizeProperty(TValue owner, TValue property, TValue value) {
-            UnitySceneGraph.Current.BindProperty(SGModel.SIZE_PROPERTY_NAME, owner, property, value);
+            SceneGraph.Current.BindProperty(SGModel.SIZE_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
         public static void bindPaintProperty(TValue owner, TValue property, TValue value) {
-            UnitySceneGraph.Current.BindProperty(SGModel.PAINT_PROPERTY_NAME, owner, property, value);
+            SceneGraph.Current.BindProperty(SGModel.PAINT_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
         public static void bindRadiusProperty(TValue owner, TValue property, TValue value) {
-            UnitySceneGraph.Current.BindProperty(SGSphere.RADIUS_PROPERTY_NAME, owner, property, value);
+            SceneGraph.Current.BindProperty(SGSphere.RADIUS_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
         public static void bindOpacityProperty(TValue owner, TValue property, TValue value) {
-            UnitySceneGraph.Current.BindProperty(SGModel.OPACITY_PROPERTY_NAME, owner, property, value);
+            SceneGraph.Current.BindProperty(SGModel.OPACITY_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
         public static void updateProperty(TValue owner, TValue property, TValue value) {
-            UnitySceneGraph.Current.UpdateProperty(owner, property, value);
+            SceneGraph.Current.UpdateProperty(owner, property, value);
         }
 
         [PInteropMethod]
         public static void setName(TValue thing, string name) {
-            var entity = UnitySceneGraph.Current.FindEntity(thing);
+            var entity = SceneGraph.Current.FindEntity(thing);
             entity.SetName(name);
         }
 
         [PInteropMethod]
         public static VantagePoint setVehicle(TValue vehicle, TValue rider) {
-            var entity = UnitySceneGraph.Current.FindEntity(rider);
-            entity.vehicle = UnitySceneGraph.Current.FindEntity(vehicle);
+            var entity = SceneGraph.Current.FindEntity(rider);
+            entity.vehicle = SceneGraph.Current.FindEntity(vehicle);
 
             var p = entity.cachedTransform.localPosition;
             var r = entity.cachedTransform.localRotation;
@@ -93,7 +93,7 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static TValue getVehicle(TValue rider) {
-            var riderEnt = UnitySceneGraph.Current.FindEntity(rider);
+            var riderEnt = SceneGraph.Current.FindEntity(rider);
             return riderEnt?.vehicle == null ? TValue.NULL : riderEnt.vehicle.owner;
         }
 
@@ -103,8 +103,8 @@ namespace Alice.Player.Modules {
                 return VantagePoint.IDENTITY;
             }
 
-            var sgViewer = UnitySceneGraph.Current.FindEntity(viewer);
-            var sgTarget = UnitySceneGraph.Current.FindEntity(target);
+            var sgViewer = SceneGraph.Current.FindEntity(viewer);
+            var sgTarget = SceneGraph.Current.FindEntity(target);
 
             if (sgTarget == null) {
                 throw new SceneGraphException("Scene graph entity for found for target.");
@@ -127,7 +127,7 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static VantagePoint getCompositeTransformation(TValue thing) {
-            var entity = UnitySceneGraph.Current.FindEntity(thing);
+            var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
                 var m = entity.cachedTransform.localToWorldMatrix;
                 // transpose unity matrix
@@ -141,7 +141,7 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static VantagePoint getInverseCompositeTransformation(TValue thing) {
-            var entity = UnitySceneGraph.Current.FindEntity(thing);
+            var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
                 var m = entity.cachedTransform.worldToLocalMatrix;
                 return new VantagePoint(m.m00, m.m10, m.m20, m.m30,

@@ -35,7 +35,7 @@ namespace Alice.Player.Modules
                 return returnVal;
             }
 
-            UnitySceneGraph.Current.QueueTimeReturn(returnVal, duration);
+            SceneGraph.Current.QueueTimeReturn(returnVal, duration);
             return returnVal;
         }
 
@@ -52,13 +52,13 @@ namespace Alice.Player.Modules
                 return;
             }
 
-            UnitySceneGraph.Current.StartCoroutine(CallOnDelay(lambda, delay));
+            SceneGraph.Current.StartCoroutine(CallOnDelay(lambda, delay));
         }
 
         [PInteropMethod]
         public static AsyncReturn delayOneFrame() {
             AsyncReturn returnValue = new AsyncReturn();
-            UnitySceneGraph.Current.QueueFrameReturn(returnValue, 1);
+            SceneGraph.Current.QueueFrameReturn(returnValue, 1);
             return returnValue;
         }
 
@@ -69,7 +69,7 @@ namespace Alice.Player.Modules
             }
 
             AsyncReturn returnValue = new AsyncReturn();
-            UnitySceneGraph.Current.QueueFrameReturn(returnValue, (int)frames);
+            SceneGraph.Current.QueueFrameReturn(returnValue, (int)frames);
             return returnValue;
         }
 

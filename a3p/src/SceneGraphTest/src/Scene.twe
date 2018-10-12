@@ -22,19 +22,26 @@ class Scene extends SScene {
     $Debug.log(string: this.getName() .. ": performCustomStetup");
 
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
-    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: 0.809), duration: 0);
+    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: -0.809), duration: 0);
+
+    this.box.setOpacity(opacity: Portion.ZERO, duration: 1);
+    this.box.setOpacity(opacity: Portion.ONE, duration: 1);
 
     Box box3 <- new Box();
     box3.setName(name: "box3");
     box3.setVehicle(vehicle: this);
     box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: 0);
     box3.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: 0.809), duration: 0);
+    box3.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box3.setOpacity(opacity: Portion.ONE, duration: 0.5);
 
     Box box2 <- new Box();
     box2.setName(name: "box2");
     box2.setVehicle(vehicle: this);
     box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: 0);
     box2.setVehicle(vehicle: box3);
+    box2.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box2.setOpacity(opacity: Portion.ONE, duration: 0.5);
 
 
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
@@ -52,6 +59,8 @@ class Scene extends SScene {
 
     this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
     this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+
+    
   }
 
   void rollBox(Box box, RollDirection dir, Box asSeenBy) {
@@ -93,7 +102,7 @@ class Scene extends SScene {
     //this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.995185, z: 0.0980144, w: 6.12323E-17));
     //this.camera.setPositionRelativeToVehicle(position: new Position(x: 9.61E-16, y: 1.56, z: -7.85));
     this.box.setPaint(paint: Color.WHITE, duration: 0);
-    //this.box.setOpacity(opacity: 1.0, duration: 0);
+    this.box.setOpacity(opacity: new Portion(portion: 1.0), duration: 0);
     this.box.setName(name: "box");
     this.box.setVehicle(vehicle: this);
     this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.0, z: 0.0, w:1), duration: 0);
