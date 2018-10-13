@@ -4,16 +4,19 @@ using Alice.Player.Modules;
 using Alice.Player.Primitives;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
+using System;
 
 namespace Alice.Player.Unity {
     public sealed class SceneGraph : MonoBehaviour {
 
-        private interface IWaitReturn {
+        private interface IWaitReturn : IDisposable {
             bool Step(float time);
             AsyncReturn Return {get;}
         }
 
         private struct TimeReturn : IWaitReturn {
+            
+
             private float m_StartTime;
             private float m_Duration;
             public AsyncReturn Return { get; private set; }
@@ -27,21 +30,60 @@ namespace Alice.Player.Unity {
             public bool Step(float time) {
                 return time - m_StartTime >= m_Duration;
             }
+
+            public void Dispose() {
+
+            }
         }
 
         private class FrameReturn : IWaitReturn {
+            private static Stack<FrameReturn> s_Pool = new Stack<FrameReturn>(64);
+
+            static public FrameReturn Create(AsyncReturn inReturn, int inFrames)
+            {
+                FrameReturn obj = null;
+                if (s_Pool.Count > 0) {
+                    obj = s_Pool.Pop();
+                    obj.m_Duration = inFrames;
+                    obj.Return = inReturn;
+                } else {
+                    obj = new FrameReturn(inReturn, inFrames);
+                }
+                obj.OnCreate();
+
+                return obj;
+            }
+
+            private bool m_InUse = false;
             private int m_Duration;
             private int m_Frame;
             public AsyncReturn Return { get; private set; }
 
-            public FrameReturn(AsyncReturn inReturn, int frames) {
+            public FrameReturn(AsyncReturn inReturn, int inFrames) {
                 Return = inReturn;
-                m_Duration = frames;
+                m_Duration = inFrames;
             }
 
             public bool Step(float time) {
                 m_Frame++;
                 return m_Frame >= m_Duration;
+            }
+
+            private void OnCreate()
+            {
+                Debug.Assert(!m_InUse);
+
+                m_InUse = true;
+            }
+
+            void IDisposable.Dispose()
+            {
+                Debug.Assert(m_InUse);
+                Return = null;
+                m_Duration = 0;
+                m_Frame = 0;
+                s_Pool.Push(this);
+                m_InUse = false;
             }
         }
 
@@ -98,6 +140,7 @@ namespace Alice.Player.Unity {
                 bool done = m_WaitReturns[i].Step(Time.time);
                 if (done) {
                     m_WaitReturns[i].Return.Return();
+                    m_WaitReturns[i].Dispose();
                     m_WaitReturns.RemoveAt(i);
                     --i;
                 }
@@ -107,7 +150,7 @@ namespace Alice.Player.Unity {
         }
         
         internal void QueueFrameReturn(AsyncReturn inReturn, int inFrames) {
-            QueueWaitReturn(new FrameReturn(inReturn, inFrames));
+            QueueWaitReturn(FrameReturn.Create(inReturn, inFrames));
         }
 
         internal void QueueTimeReturn(AsyncReturn inReturn, double inSeconds) {
