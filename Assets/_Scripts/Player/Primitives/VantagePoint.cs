@@ -9,12 +9,13 @@ namespace Alice.Player.Primitives
         public readonly Quaternion RotationValue;
         public readonly Vector3 TranslationValue;
 
+        /// <summary>
+        /// Returns a matrix with basis vectors stored in rows
+        /// </summary>
         public Matrix4x4 GetMatrix() {
-            
                 var m = Matrix4x4.CreateFromQuaternion(RotationValue);
                 m.Translation = TranslationValue;
                 return m;
-            
         }
 
 

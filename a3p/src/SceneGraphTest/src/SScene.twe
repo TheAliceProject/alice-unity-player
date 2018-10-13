@@ -4,12 +4,15 @@ class SScene extends SThing {
     $SceneGraph.createSceneEntity(scene: this);
     $SceneGraph.bindFogDensityProperty(owner: this, property: fogDensity, value: fogDensity.getValue());
     $SceneGraph.bindGlobalBrightnessProperty(owner: this, property: globalBrightness, value: globalBrightness.getValue());
+    $SceneGraph.bindAtmosphereColorProperty(owner: this, property: atmosphereColor, value: atmosphereColor.getValue());
+    $SceneGraph.bindAmbientLightColorProperty(owner: this, property: ambientLightColor, value: ambientLightColor.getValue());
+    $SceneGraph.bindFromAboveLightColorProperty(owner: this, property: fromAboveLightColor, value: fromAboveLightColor.getValue());
+    $SceneGraph.bindFromBelowLightColorProperty(owner: this, property: fromBelowLightColor, value: fromBelowLightColor.getValue());
   }
 
   @CompletelyHidden SScene getScene() {
     return this;
   }
-
 
   Color getAtmosphereColor() {
     return atmosphereColor.getValue();
@@ -17,18 +20,18 @@ class SScene extends SThing {
 
   void setAtmosphereColor( Color color,
                            DecimalNumber duration <- Default.duration(),
-                           AnimationStyle animationStyle <- Default.animationStyle() ) {
-    atmosphereColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+                           AnimationStyle style <- Default.animationStyle() ) {
+    atmosphereColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
 
   @CompletelyHidden Color getAmbientLightColor() {
-    return fromAboveLightColor.getValue();
+    return ambientLightColor.getValue();
   }
 
   @CompletelyHidden void setAmbientLightColor( Color color,
                                      DecimalNumber duration <- Default.duration(),
-                                     AnimationStyle animationStyle <- Default.animationStyle() ) {
-    fromAboveLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+                                     AnimationStyle style <- Default.animationStyle() ) {
+    ambientLightColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
 
   Color getFromAboveLightColor() {
@@ -37,8 +40,8 @@ class SScene extends SThing {
 
   void setFromAboveLightColor( Color color,
                                DecimalNumber duration <- Default.duration(),
-                               AnimationStyle animationStyle <- Default.animationStyle() ) {
-    fromAboveLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+                               AnimationStyle style <- Default.animationStyle() ) {
+    fromAboveLightColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
 
   Color getFromBelowLightColor() {
@@ -47,8 +50,8 @@ class SScene extends SThing {
 
   void setFromBelowLightColor( Color color,
                                DecimalNumber duration <- Default.duration(),
-                               AnimationStyle animationStyle <- Default.animationStyle() ) {
-    fromBelowLightColor.animateValue( endValue: color, duration: duration, animation: animationStyle );
+                               AnimationStyle style <- Default.animationStyle() ) {
+    fromBelowLightColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
 
   Portion getFogDensity() {
@@ -187,7 +190,7 @@ class SScene extends SThing {
     //this.addCamerasTo( program: program );
     $SceneGraph.activateScene(scene: this);
 
-    globalBrightness.animateValue( endValue: Portion.ONE, duration: 0.5, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.ONE, duration: 5, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
   }
 
   @CompletelyHidden void deactivate( SProgram program ) {
@@ -261,11 +264,13 @@ class SScene extends SThing {
   @CompletelyHidden void restoreStateAndEventListeners() {
     $EventManager.restoreAllListeners();
   }
-
-  @CompletelyHidden ColorProperty atmosphereColor;
-  @CompletelyHidden ColorProperty fromAboveLightColor;
-  @CompletelyHidden ColorProperty fromBelowLightColor;
   */
+
+  @CompletelyHidden ColorProperty atmosphereColor <- new ColorProperty(owner: this, value: Color.LIGHT_BLUE);
+  @CompletelyHidden ColorProperty ambientLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
+  @CompletelyHidden ColorProperty fromAboveLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
+  @CompletelyHidden ColorProperty fromBelowLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
+  
   @CompletelyHidden PortionProperty fogDensity <- new PortionProperty(owner: this, value: Portion.ZERO);
   @CompletelyHidden PortionProperty globalBrightness <- new PortionProperty(owner: this, value: Portion.ZERO);
   
