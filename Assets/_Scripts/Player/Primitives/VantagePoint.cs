@@ -59,10 +59,10 @@ namespace Alice.Player.Primitives
         [PInteropMethod]
         public VantagePoint multiply(VantagePoint other) {
             
-            //var result = Matrix4x4.Multiply(GetMatrix(), other.GetMatrix());
+            //var result = Matrix4x4.Multiply(other.GetMatrix(), GetMatrix());
             //return new VantagePoint(result);
-            var rot = Quaternion.Multiply(other.RotationValue, RotationValue);
-            var pos = Vector3.Transform(TranslationValue, other.RotationValue) + other.TranslationValue;
+            var rot = Quaternion.Multiply(RotationValue, other.RotationValue);
+            var pos = Vector3.Transform(other.TranslationValue, RotationValue) + TranslationValue;
             return new VantagePoint(pos, rot);
         }
 

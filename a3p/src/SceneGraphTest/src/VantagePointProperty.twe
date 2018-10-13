@@ -28,7 +28,8 @@ class VantagePointProperty extends Property {
     debugBox.localTransformation.setValue(value: transformation.multiply(other: t).multiply(other: v.inverse().multiply(other: v).multiply(other: p.inverse()));
     */
 
-    VantagePoint m <-  t.multiply(other: v.inverse()).multiply(other: transformation).multiply(other: v).multiply(other: p.inverse());
+    //VantagePoint m <- t.multiply(other: v.inverse()).multiply(other: transformation).multiply(other: v).multiply(other: p.inverse());
+    VantagePoint m <- p.inverse().multiply(other: v).multiply(other: transformation).multiply(other: v.inverse()).multiply(other: t);
     setValue(value: m);
   }
 
