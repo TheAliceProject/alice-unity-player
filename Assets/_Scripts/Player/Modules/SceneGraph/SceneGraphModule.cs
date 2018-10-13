@@ -79,8 +79,28 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void bindAtmosphereColorProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGScene.ATMOSPHERE_COLOR_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
         public static void bindGlobalBrightnessProperty(TValue owner, TValue property, TValue value) {
             SceneGraph.Current.BindProperty(SGScene.GLOBAL_BRIGHTNESS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindAmbientLightColorProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGScene.AMBIENT_LIGHT_COLOR_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindFromAboveLightColorProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGScene.ABOVE_LIGHT_COLOR_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindFromBelowLightColorProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGScene.BELOW_LIGHT_COLOR_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]

@@ -118,6 +118,16 @@
       "files": ["src/PaintTween.twe"],
       "type": "Class"
     }, {
+      "id": "ColorProperty",
+      "format": "tweedle",
+      "files": ["src/ColorProperty.twe"],
+      "type": "Class"
+    }, {
+      "id": "ColorTween",
+      "format": "tweedle",
+      "files": ["src/ColorTween.twe"],
+      "type": "Class"
+    }, {
       "id": "SThing",
       "format": "tweedle",
       "files": ["src/SThing.twe"],

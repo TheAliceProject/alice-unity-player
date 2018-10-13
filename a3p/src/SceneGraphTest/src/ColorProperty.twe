@@ -1,0 +1,24 @@
+class ColorProperty extends Property {
+  ColorProperty(SThing owner, Color value) {
+    super(owner: owner);
+    this.value <- value;
+  }
+
+  Color getValue() {
+    return this.value;
+  }
+
+  void setValue(Color value) {
+    if (!this.value.equals(other: value)) {
+      this.value <- value;
+      $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
+    }
+  }
+
+  void animateValue(Color endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+    ColorTween tween <- new ColorTween(property: this, start: this.value, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  @CompletelyHidden Color value;
+}

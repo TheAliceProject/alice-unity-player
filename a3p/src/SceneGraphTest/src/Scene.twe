@@ -36,9 +36,30 @@ class Scene extends SScene {
     box2.setOpacity(opacity: Portion.ZERO, duration: 0);
     box2.setOpacity(opacity: Portion.ONE, duration: 0.5);
 
-    setFogDensity(density: Portion.ONE, duration: 2);
-    setFogDensity(density: Portion.ZERO, duration 1);
+    Box box4 <- new Box();
+    box4.setName(name: "box4");
+    box4.setVehicle(vehicle: this);
+    box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.0, z: -5.0), duration: 0);
+    box4.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box4.setOpacity(opacity: Portion.ONE, duration: 0.5);
 
+    Box box5 <- new Box();
+    box5.setName(name: "box5");
+    box5.setVehicle(vehicle: this);
+    box5.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: 5.0), duration: 0);
+    box5.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box5.setOpacity(opacity: Portion.ONE, duration: 0.5);
+
+    Portion fogDensity <- getFogDensity();
+    Color atmosphereColor <- getAtmosphereColor();
+    doTogether {
+      setFogDensity(density: new Portion(portion: 0.2), duration: 2);
+      setAtmosphereColor(color: new Color(red: 160.0/255.0, green: 150.0/255.0, blue: 170.0/255.0 ), duration: 2);
+    }
+    doTogether {
+      setAtmosphereColor(color: atmosphereColor, duration: 2);
+      setFogDensity(density: fogDensity, duration 2);
+    }
 
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
@@ -90,10 +111,10 @@ class Scene extends SScene {
     // DO NOT EDIT
     // This code is automatically generated.  Any work you perform in this method will be overwritten.
     // DO NOT EDIT
-    //this.setAtmosphereColor(color: new Color(red: 0.0, green: 0.0941, blue: 0.294));
-    //this.setFromAboveLightColor(color: Color.WHITE);
-    //this.setFromBelowLightColor(color: new Color(red: 0.541, green: 0.0, blue: 0.125));
-    //this.setFogDensity(density: 0.1);
+    this.setAtmosphereColor(color: new Color(red: 0.0, green: 0.0941, blue: 0.294), duration: 0);
+    this.setFromAboveLightColor(color: Color.WHITE, duration: 0);
+    this.setFromBelowLightColor(color: new Color(red: 0.541, green: 0.0, blue: 0.125), duration: 0);
+    this.setFogDensity(density: new Portion(portion: 0.1), duration: 0);
     this.setName(name: "myScene");
     //this.ground.setPaint(paint: SurfaceAppearance.DARK_GRASS);
     //this.ground.setOpacity(opacity: 1.0);

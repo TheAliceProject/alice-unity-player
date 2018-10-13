@@ -1,8 +1,6 @@
 using UnityEngine;
-using Alice.Player.Modules;
-using Alice.Player.Primitives;
-using Alice.Tweedle.Interop;
 using Alice.Tweedle;
+using Alice.Tweedle.Interop;
 using System;
 using System.Collections.Generic;
 
@@ -10,18 +8,46 @@ namespace Alice.Player.Unity {
     
     public sealed class SGScene : SGEntity {
 
-        public const string FOG_DENSITY_PROPERTY_NAME = "Fog";
+        public const string FOG_DENSITY_PROPERTY_NAME = "FogDensity";
+        public const string ATMOSPHERE_COLOR_PROPERTY_NAME = "AtmosphereColor";
         public const string GLOBAL_BRIGHTNESS_PROPERTY_NAME = "Brightness";
+        public const string AMBIENT_LIGHT_COLOR_PROPERTY_NAME = "AmbientLightColor";
+        public const string ABOVE_LIGHT_COLOR_PROPERTY_NAME = "AboveLightColor";
+        public const string BELOW_LIGHT_COLOR_PROPERTY_NAME = "BelowLightColor";
 
         private List<PAction> m_ActivationListeners = new List<PAction>();
 
-        private bool m_BackgroundColorCached = false;
-        private UnityEngine.Color m_BackgroundColor;
+        private Color m_AtmosphereColor = Color.white;
+
+        private Light m_AboveLight;
+        private const float k_AboveLightIntensity = 1f;
+        private Light m_BelowLight;
+        private const float k_BelowLightIntensity = 0.25f;
 
         protected override void Awake() {
             base.Awake();
+
+            m_AboveLight = new GameObject("TopLight").AddComponent<Light>();
+            m_AboveLight.transform.parent = cachedTransform;
+            m_AboveLight.type = LightType.Directional;
+            m_AboveLight.transform.localPosition = new Vector3(5f, 10f, -5f);
+            m_AboveLight.transform.LookAt(Vector3.zero);
+            m_AboveLight.intensity = k_AboveLightIntensity;
+
+            m_BelowLight = new GameObject("BottomLight").AddComponent<Light>();
+            m_BelowLight.transform.parent = cachedTransform;
+            m_BelowLight.type = LightType.Directional;
+            m_BelowLight.transform.localPosition = new Vector3(-5f, -10f, 5f);
+            m_BelowLight.transform.LookAt(Vector3.zero);
+            m_BelowLight.intensity = k_BelowLightIntensity;
+
             RegisterPropertyDelegate(FOG_DENSITY_PROPERTY_NAME, OnUpdateFogDensity);
+            RegisterPropertyDelegate(ATMOSPHERE_COLOR_PROPERTY_NAME, OnUpdateAtmosphereColor);
             RegisterPropertyDelegate(GLOBAL_BRIGHTNESS_PROPERTY_NAME, OnUpdateGlobalBrightness);
+            RegisterPropertyDelegate(AMBIENT_LIGHT_COLOR_PROPERTY_NAME, OnUpdateAmbientLightColor);
+            RegisterPropertyDelegate(ABOVE_LIGHT_COLOR_PROPERTY_NAME, OnUpdateAboveLightColor);
+            RegisterPropertyDelegate(BELOW_LIGHT_COLOR_PROPERTY_NAME, OnUpdateBelowLightColor);
+
         }
 
         public void AddActivationListener(PAction inListener) {
@@ -35,31 +61,48 @@ namespace Alice.Player.Unity {
         }
 
         private void OnUpdateFogDensity(TValue inValue) {
-            var density = (float)inValue.RawObject<Portion>().Value;
+            var density = (float)inValue.RawObject<Primitives.Portion>().Value;
             RenderSettings.fogDensity = density;
             RenderSettings.fog = density > float.Epsilon;
-            UpdateBackgroundColor();
+        }
+
+        private void OnUpdateAtmosphereColor(TValue inValue) {
+            var color = inValue.RawObject<Primitives.Color>().Value;
+            m_AtmosphereColor = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            
+            UpdateAtmosphereColor();
         }
 
         private void OnUpdateGlobalBrightness(TValue inValue) {
-            var brightness = (float)inValue.RawObject<Portion>().Value;
+            var brightness = (float)inValue.RawObject<Primitives.Portion>().Value;
             RenderSettings.ambientIntensity = brightness;
             RenderSettings.reflectionIntensity = brightness;
+            m_AboveLight.intensity = k_AboveLightIntensity * brightness;
+            m_BelowLight.intensity = k_BelowLightIntensity * brightness;
 
-           UpdateBackgroundColor();
+            UpdateAtmosphereColor();
         }
 
-        private void UpdateBackgroundColor() {
-             if (!m_BackgroundColorCached) {
-                m_BackgroundColorCached = true;
-                m_BackgroundColor = Camera.main.backgroundColor;
-            }
+        private void OnUpdateAmbientLightColor(TValue inValue) {
+            var color = inValue.RawObject<Primitives.Color>().Value;
+            RenderSettings.ambientLight = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+        }
 
-            Camera.main.backgroundColor = UnityEngine.Color.Lerp(UnityEngine.Color.clear, 
-                                                                 UnityEngine.Color.Lerp(m_BackgroundColor,
-                                                                                        RenderSettings.fogColor,
-                                                                                        RenderSettings.fogDensity), 
-                                                                 RenderSettings.ambientIntensity);
+        private void OnUpdateAboveLightColor(TValue inValue) {
+            var color = inValue.RawObject<Primitives.Color>().Value;
+            m_AboveLight.color = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+        }
+
+        private void OnUpdateBelowLightColor(TValue inValue) {
+            var color = inValue.RawObject<Primitives.Color>().Value;
+            m_BelowLight.color = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+        }
+
+        private void UpdateAtmosphereColor() {
+            Camera.main.backgroundColor = RenderSettings.fogColor = Color.Lerp(Color.clear, 
+                                                                               m_AtmosphereColor, 
+                                                                               RenderSettings.ambientIntensity);
+            
         }
 
     }
