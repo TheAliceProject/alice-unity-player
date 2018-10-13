@@ -17,7 +17,9 @@ namespace Alice.Player.Unity {
 
         private List<PAction> m_ActivationListeners = new List<PAction>();
 
+        private Color m_AmbientLightColor = new Color(0.25f, 0.25f, 0.25f, 1f);
         private Color m_AtmosphereColor = Color.white;
+        private float m_GlobalBrightness = 1f;
 
         private Light m_AboveLight;
         private const float k_AboveLightIntensity = 1f;
@@ -75,17 +77,20 @@ namespace Alice.Player.Unity {
 
         private void OnUpdateGlobalBrightness(TValue inValue) {
             var brightness = (float)inValue.RawStruct<Primitives.Portion>().Value;
-            RenderSettings.ambientIntensity = brightness;
+            m_GlobalBrightness = brightness;
+            //RenderSettings.ambientIntensity = brightness;
             RenderSettings.reflectionIntensity = brightness;
             m_AboveLight.intensity = k_AboveLightIntensity * brightness;
             m_BelowLight.intensity = k_BelowLightIntensity * brightness;
 
             UpdateAtmosphereColor();
+            UpdateAmbientLightColor();
         }
 
         private void OnUpdateAmbientLightColor(TValue inValue) {
             var color = inValue.RawObject<Primitives.Color>().Value;
-            RenderSettings.ambientLight = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            m_AmbientLightColor = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            UpdateAmbientLightColor();
         }
 
         private void OnUpdateAboveLightColor(TValue inValue) {
@@ -101,8 +106,13 @@ namespace Alice.Player.Unity {
         private void UpdateAtmosphereColor() {
             Camera.main.backgroundColor = RenderSettings.fogColor = Color.Lerp(Color.clear, 
                                                                                m_AtmosphereColor, 
-                                                                               RenderSettings.ambientIntensity);
-            
+                                                                               m_GlobalBrightness);
+        }   
+
+        private void UpdateAmbientLightColor() {
+            RenderSettings.ambientLight = Color.Lerp(new Color(0,0,0,1), 
+                                                     m_AmbientLightColor, 
+                                                     m_GlobalBrightness);
         }
 
     }
