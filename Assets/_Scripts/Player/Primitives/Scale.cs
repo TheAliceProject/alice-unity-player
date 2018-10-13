@@ -4,9 +4,9 @@ using Alice.Tweedle.Interop;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Scale
+    public struct Scale
     {
-        public readonly Vector3 Value = new Vector3(1,1,1);
+        public readonly Vector3 Value;
 
         public Scale(Vector3 inVector)
         {
@@ -48,7 +48,7 @@ namespace Alice.Player.Primitives
 
         static public implicit operator UnityEngine.Vector3(Scale inPosition)
         {
-            return inPosition != null ? new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+            return new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z);
         }
 
         public override string ToString() {

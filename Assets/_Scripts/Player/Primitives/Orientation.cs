@@ -5,9 +5,9 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Orientation
+    public struct Orientation
     {
-        public readonly Quaternion Value = Quaternion.Identity;
+        public readonly Quaternion Value;
 
         public Orientation(Quaternion inRotation)
         {
@@ -58,7 +58,7 @@ namespace Alice.Player.Primitives
         
         static public implicit operator UnityEngine.Quaternion(Orientation inOrientation)
         {
-            return inOrientation != null ? new UnityEngine.Quaternion((float)inOrientation.Value.X, (float)inOrientation.Value.Y, (float)inOrientation.Value.Z, (float)inOrientation.Value.W) : new UnityEngine.Quaternion(float.NaN, float.NaN, float.NaN, float.NaN);
+            return new UnityEngine.Quaternion((float)inOrientation.Value.X, (float)inOrientation.Value.Y, (float)inOrientation.Value.Z, (float)inOrientation.Value.W);
         }
 
         public override string ToString() {

@@ -14,9 +14,6 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(string: this.getName() .. ": myFirstMethod()");
 
-    this.box.setOpacity(opacity: Portion.ZERO, duration: 1);
-    this.box.setOpacity(opacity: Portion.ONE, duration: 1);
-
     Box box3 <- new Box();
     box3.setName(name: "box3");
     box3.setVehicle(vehicle: this);

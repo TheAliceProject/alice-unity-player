@@ -303,7 +303,7 @@ namespace Alice.Tweedle.Interop
 
         static public TType GenerateType(TAssembly inAssembly, Type inType)
         {
-            if (inType.IsClass)
+            if (inType.IsClass || inType.IsValueType)
                 return new TPClassType(inAssembly, inType);
             else if (inType.IsEnum)
                 return new TPEnumType(inAssembly, inType);

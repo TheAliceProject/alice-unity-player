@@ -4,10 +4,10 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class AxisAlignedBox
+    public struct AxisAlignedBox
     {
-        public readonly Vector3 MinValue = Vector3.Zero;
-        public readonly Vector3 MaxValue = Vector3.Zero;
+        public readonly Vector3 MinValue;
+        public readonly Vector3 MaxValue;
 
         public AxisAlignedBox(Vector3 inMin, Vector3 inMax)
         {
