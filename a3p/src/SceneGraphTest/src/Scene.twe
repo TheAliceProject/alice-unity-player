@@ -55,6 +55,18 @@ class Scene extends SScene {
       setFogDensity(density: fogDensity, duration 2);
     }
 
+    Color ambient <- getAmbientLightColor();
+    setAmbientLightColor(color: Color.RED);
+    setAmbientLightColor(color: ambient);
+
+    Color above <- getFromAboveLightColor();
+    setFromAboveLightColor(color: Color.RED);
+    setFromAboveLightColor(color: above);
+
+    Color below <- getFromBelowLightColor();
+    setFromBelowLightColor(color: Color.RED);
+    setFromBelowLightColor(color: below);
+
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box3);

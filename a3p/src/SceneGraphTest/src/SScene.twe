@@ -267,7 +267,7 @@ class SScene extends SThing {
   */
 
   @CompletelyHidden ColorProperty atmosphereColor <- new ColorProperty(owner: this, value: Color.LIGHT_BLUE);
-  @CompletelyHidden ColorProperty ambientLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
+  @CompletelyHidden ColorProperty ambientLightColor <- new ColorProperty(owner: this, value: Color.DARK_GRAY);
   @CompletelyHidden ColorProperty fromAboveLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
   @CompletelyHidden ColorProperty fromBelowLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
   
