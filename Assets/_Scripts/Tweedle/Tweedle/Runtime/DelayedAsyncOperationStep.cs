@@ -1,6 +1,7 @@
 ﻿using System;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
+using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
@@ -12,7 +13,10 @@ namespace Alice.Tweedle.VM
         public DelayedAsyncOperationStep(string callStackEntry, ExecutionScope scope, Func<IAsyncReturn> body)
             : base(scope)
         {
-            this.callStack = scope.StackWith(callStackEntry);
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc()) {
+                scope.StackWith(stackBuilder.Builder);
+                this.callStack = stackBuilder.ToString();
+            }
             this.body = body;
         }
 

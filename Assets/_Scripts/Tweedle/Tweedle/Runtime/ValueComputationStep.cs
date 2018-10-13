@@ -1,5 +1,6 @@
 ﻿using System;
 using Alice.Tweedle;
+using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
@@ -12,7 +13,10 @@ namespace Alice.Tweedle.VM
             : base(scope)
         {
             this.body = body;
-            this.callStack = scope.StackWith(callStackEntry);
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc()) {
+                scope.StackWith(stackBuilder.Builder);
+                this.callStack = stackBuilder.ToString();
+            }
         }
 
         internal override void BlockerFinished(ExecutionStep blockingStep)

@@ -25,9 +25,11 @@ namespace Alice.Tweedle
             callingScope = scope;
         }
 
-        internal override string StackWith(string stackTop)
-        {
-            return callingScope.StackWith(stackTop + "\n" + callStackEntry);
+        internal override void StackWith(System.Text.StringBuilder stackBuilder)
+        {   
+            stackBuilder.Append("\n");
+            stackBuilder.Append(callStackEntry);
+            callingScope.StackWith(stackBuilder);
         }
 
         internal void QueueInvocationStep(StepSequence sequentialSteps, NamedArgument[] arguments)
