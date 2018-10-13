@@ -188,9 +188,9 @@ class SScene extends SThing {
     //AdapterFactory.getAdapterFor( this.sgScene );
 
     //this.addCamerasTo( program: program );
-    $SceneGraph.activateScene(scene: this);
 
-    globalBrightness.animateValue( endValue: Portion.ONE, duration: 5, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.ONE, duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    $SceneGraph.activateScene(scene: this);
   }
 
   @CompletelyHidden void deactivate( SProgram program ) {

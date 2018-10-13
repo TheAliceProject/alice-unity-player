@@ -14,9 +14,6 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(string: this.getName() .. ": myFirstMethod()");
 
-    this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
-    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: -0.809), duration: 0);
-
     this.box.setOpacity(opacity: Portion.ZERO, duration: 1);
     this.box.setOpacity(opacity: Portion.ONE, duration: 1);
 
@@ -24,7 +21,7 @@ class Scene extends SScene {
     box3.setName(name: "box3");
     box3.setVehicle(vehicle: this);
     box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: 0);
-    box3.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.588, z: 0.0, w: 0.809), duration: 0);
+    box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.1)), duration: 0);
     box3.setOpacity(opacity: Portion.ZERO, duration: 0);
     box3.setOpacity(opacity: Portion.ONE, duration: 0.5);
 
@@ -84,6 +81,8 @@ class Scene extends SScene {
   
 
   void performCustomSetup() {
+    this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
+    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: -0.1)), duration: 0);
   }
 
   void rollBox(Box box, RollDirection dir, Box asSeenBy) {
