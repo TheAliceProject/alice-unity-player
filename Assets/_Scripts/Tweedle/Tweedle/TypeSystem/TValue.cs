@@ -1,5 +1,6 @@
 ﻿using System;
 using Alice.Tweedle.VM;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
@@ -282,7 +283,10 @@ namespace Alice.Tweedle
             : base(scope)
         {
             result = inTValue;
-            this.callStack = scope.StackWith(callStackEntry);
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc()) {
+                scope.StackWith(stackBuilder.Builder);
+                this.callStack = stackBuilder.ToString();
+            }
         }
     }
 }

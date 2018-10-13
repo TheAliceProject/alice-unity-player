@@ -64,16 +64,17 @@ namespace Alice.Tweedle.VM
             return libraryType != null ? new TTypeRef(libraryType) : null;
         }
 
-        internal virtual string StackWith(string stackTop)
+        internal virtual void StackWith(System.Text.StringBuilder stackBuilder)
         {
-            string stack = stackTop + "\n" + callStackEntry;
+            stackBuilder.Append("\n");
+            stackBuilder.Append(callStackEntry);
             if (parent == null)
             {
-                return stack;
+                return;
             }
             else
             {
-                return parent.StackWith(stack);
+                parent.StackWith(stackBuilder);
             }
         }
 
