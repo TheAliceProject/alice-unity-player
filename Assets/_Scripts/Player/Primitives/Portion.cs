@@ -5,7 +5,7 @@ using Alice.Tweedle;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Portion
+    public struct Portion
     {
        
         public readonly double Value;
@@ -53,9 +53,13 @@ namespace Alice.Player.Primitives
 
         static public implicit operator double(Portion inPortion)
         {
-            return inPortion != null ? inPortion.Value : double.NaN;
+            return inPortion.Value;
         }
-
+        
+        static public implicit operator float(Portion inPortion)
+        {
+            return (float)inPortion.Value;
+        }
 
         public override string ToString() {
             return string.Format("Portion({0:0.####})", Value);

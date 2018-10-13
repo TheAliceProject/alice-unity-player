@@ -4,7 +4,7 @@ using Alice.Tweedle.Interop;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class VantagePoint {
+    public struct VantagePoint {
         
         public readonly Quaternion RotationValue;
         public readonly Vector3 TranslationValue;
@@ -13,9 +13,9 @@ namespace Alice.Player.Primitives
         /// Returns a matrix with basis vectors stored in rows
         /// </summary>
         public Matrix4x4 GetMatrix() {
-                var m = Matrix4x4.CreateFromQuaternion(RotationValue);
-                m.Translation = TranslationValue;
-                return m;
+            var m = Matrix4x4.CreateFromQuaternion(RotationValue);
+            m.Translation = TranslationValue;
+            return m;
         }
 
 
@@ -39,9 +39,6 @@ namespace Alice.Player.Primitives
         public Position position { get { return new Position(TranslationValue); } }
 
         [PInteropConstructor]
-        public VantagePoint() {}
-
-        [PInteropConstructor]
         public VantagePoint(Position position, Orientation orientation) {
             TranslationValue = position.Value;
             RotationValue = orientation.Value;
@@ -50,6 +47,7 @@ namespace Alice.Player.Primitives
         [PInteropConstructor]
         public VantagePoint(Orientation orientation) {
             RotationValue = orientation.Value;
+            TranslationValue = Vector3.Zero;
         }
 
         [PInteropMethod]

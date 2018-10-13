@@ -40,7 +40,7 @@ namespace Alice.Player.Unity {
         }
 
          private void OnTransformationPropertyChanged(TValue inValue) {
-            VantagePoint vp = inValue.RawObject<VantagePoint>();
+            VantagePoint vp = inValue.RawStruct<VantagePoint>();
             cachedTransform.localPosition = vp.position;
             cachedTransform.localRotation = vp.orientation;
         }
@@ -60,7 +60,7 @@ namespace Alice.Player.Unity {
         }
 
         private void OnOpacityPropertyChanged(TValue inValue) {
-            m_CachedOpacity = (float)inValue.RawObject<Portion>().Value;
+            m_CachedOpacity = (float)inValue.RawStruct<Portion>().Value;
             
             if (m_CachedOpacity < 0.004f) {
                 if (m_Renderer.enabled) {

@@ -6,9 +6,9 @@ namespace Alice.Player.Primitives
 
 
     [PInteropType]
-    public sealed class Direction
+    public struct Direction
     {
-        public readonly Vector3 Value = Vector3.Zero;
+        public readonly Vector3 Value;
 
         public Direction(Vector3 inVector)
         {
@@ -129,7 +129,7 @@ namespace Alice.Player.Primitives
 
         static public implicit operator UnityEngine.Vector3(Direction inDirection)
         {
-            return inDirection != null ? new UnityEngine.Vector3((float)inDirection.Value.X, (float)inDirection.Value.Y, (float)inDirection.Value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+            return new UnityEngine.Vector3((float)inDirection.Value.X, (float)inDirection.Value.Y, (float)inDirection.Value.Z);
         }
 
 

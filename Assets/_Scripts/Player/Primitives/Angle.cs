@@ -6,7 +6,7 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Angle
+    public struct Angle
     {
         public readonly double Value;
 
@@ -79,7 +79,12 @@ namespace Alice.Player.Primitives
 
         static public implicit operator double(Angle inAngle)
         {
-            return inAngle != null ? inAngle.Value : double.NaN;
+            return inAngle.Value;
+        }
+
+        static public implicit operator float(Angle inAngle)
+        {
+            return (float)inAngle.Value;
         }
 
         public override string ToString() {

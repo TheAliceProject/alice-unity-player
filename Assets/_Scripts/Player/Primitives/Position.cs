@@ -4,7 +4,7 @@ using Alice.Tweedle.Interop;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Position
+    public struct Position
     {
         public readonly Vector3 Value;
 
@@ -84,7 +84,7 @@ namespace Alice.Player.Primitives
        
         static public implicit operator UnityEngine.Vector3(Position inPosition)
         {
-            return inPosition != null ? new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+            return new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z);
         }
 
         public override string ToString() {

@@ -13,7 +13,7 @@ namespace Alice.Player.Unity {
         }
 
         protected override void OnSizePropertyChanged(TValue inValue) {
-            var size = inValue.RawObject<Size>();
+            var size = inValue.RawStruct<Size>();
             m_ModelTransform.localScale = size;
         }  
     }

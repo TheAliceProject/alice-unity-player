@@ -149,6 +149,11 @@ namespace Alice.Tweedle
             return (T)m_ReferenceValue;
         }
 
+        internal T RawStruct<T>() where T : struct
+        {
+            return (T)m_ReferenceValue;
+        }
+
         public override int GetHashCode()
         {
             return 17 * m_Type.GetHashCode(ref this) + m_Type.GetHashCode();
