@@ -20,6 +20,7 @@ namespace Alice.Tweedle.Parse
             if (System.IO.File.Exists(zipPath) == false)
                 return;
 
+            Camera.main.backgroundColor = Color.clear;
             canvas.SetActive(false);
 
             m_System?.Unload();
