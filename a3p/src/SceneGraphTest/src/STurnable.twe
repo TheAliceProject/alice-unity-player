@@ -5,21 +5,21 @@ class STurnable extends SThing {
     }
 
     void turn( TurnDirection direction,
-               Number amount,
+               Angle amount,
                DecimalNumber duration <- Default.duration(),
                AnimationStyle style <- Default.animationStyle(),
                SThing asSeenBy <- this ) {
-        localTransformation.animateRotation(axis: direction.getAxis(), angle: (new Angle(revolutions: amount)), asSeenBy: asSeenBy, duration: duration, animationStyle: style);
+        localTransformation.animateRotation(axis: direction.getAxis(), angle: amount, asSeenBy: asSeenBy, duration: duration, animationStyle: style);
     }
 
 
 
     void roll( RollDirection direction,
-               Number amount,
+               Angle amount,
                DecimalNumber duration <- Default.duration(),
                AnimationStyle style <- Default.animationStyle(),
                SThing asSeenBy <- this ) {
-        localTransformation.animateRotation(axis: direction.getAxis(), angle: (new Angle(revolutions: amount)), asSeenBy: asSeenBy, duration: duration, animationStyle: style);
+        localTransformation.animateRotation(axis: direction.getAxis(), angle: amount, asSeenBy: asSeenBy, duration: duration, animationStyle: style);
     }
 
     void turnToFace( SThing target,
