@@ -24,7 +24,6 @@ class Scene extends SScene {
 
     Box box2 <- new Box();
     box2.setName(name: "box2");
-    box2.setVehicle(vehicle: this);
     box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: 0);
     box2.setVehicle(vehicle: box3);
     box2.setOpacity(opacity: Portion.ZERO, duration: 0);
@@ -66,6 +65,16 @@ class Scene extends SScene {
     Color below <- getFromBelowLightColor();
     setFromBelowLightColor(color: Color.RED);
     setFromBelowLightColor(color: below);
+    
+    doTogether {
+      box3.setPositionRelativeToVehicle(position: new Position(x: 4, y: 2, z: 0));
+      box3.setPaint(paint: Color.RED);
+    }
+    box3.turn(direction: TurnDirection.RIGHT, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: box3);
+    doTogether {
+      box3.setPositionRelativeToVehicle(position: new Position(x: 3, y: 2, z: 0));
+      box3.setPaint(paint: Color.WHITE);
+    }
 
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
@@ -100,7 +109,7 @@ class Scene extends SScene {
         asSeenBy.setPaint(paint: Color.RED);
         asSeenBy.setPaint(paint: Color.WHITE);
       }
-      box.roll(direction: dir, amount: 1, duration: 2, asSeenBy: asSeenBy);
+      box.roll(direction: dir, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: asSeenBy);
     }
   }
 
@@ -110,7 +119,7 @@ class Scene extends SScene {
         asSeenBy.setPaint(paint: Color.RED);
         asSeenBy.setPaint(paint: Color.WHITE);
       }
-      box.turn(direction: dir, amount: 1, duration: 2, asSeenBy: asSeenBy);
+      box.turn(direction: dir, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: asSeenBy);
     }
   }
 
