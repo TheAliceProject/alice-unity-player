@@ -13,7 +13,7 @@ namespace Alice.Tweedle.VM
             : base(scope)
         {
             this.body = body;
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc()) {
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
                 scope.StackWith(stackBuilder.Builder);
                 this.callStack = stackBuilder.ToString();
             }

@@ -12,7 +12,7 @@ namespace Alice.Tweedle
         public StepSequence(string callStackEntry, ExecutionScope scope)
             : base(scope)
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc()) {
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
                 scope.StackWith(stackBuilder.Builder);
                 this.callStack = stackBuilder.ToString();
             }

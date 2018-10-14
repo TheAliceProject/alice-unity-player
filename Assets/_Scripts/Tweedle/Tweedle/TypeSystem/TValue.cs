@@ -283,7 +283,7 @@ namespace Alice.Tweedle
             : base(scope)
         {
             result = inTValue;
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc()) {
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
                 scope.StackWith(stackBuilder.Builder);
                 this.callStack = stackBuilder.ToString();
             }
