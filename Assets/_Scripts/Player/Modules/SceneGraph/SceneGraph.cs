@@ -132,7 +132,9 @@ namespace Alice.Player.Unity {
             m_IsUpdating = true;
 
             if (m_WaitReturnsQueue.Count != 0) {
-                m_WaitReturns.AddRange(m_WaitReturnsQueue);
+                for (int i = 0, count = m_WaitReturnsQueue.Count; i < count; ++i) {
+                    m_WaitReturns.Add(m_WaitReturnsQueue[i]);
+                }
                 m_WaitReturnsQueue.Clear();
             }
 
