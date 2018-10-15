@@ -24,7 +24,7 @@ namespace Alice.Player.Unity {
         private Light m_AboveLight;
         private const float k_AboveLightIntensity = 1f;
         private Light m_BelowLight;
-        private const float k_BelowLightIntensity = 0.25f;
+        private const float k_BelowLightIntensity = 0.5f;
 
         protected override void Awake() {
             base.Awake();

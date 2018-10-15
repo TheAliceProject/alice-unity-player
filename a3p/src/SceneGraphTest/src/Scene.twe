@@ -63,7 +63,7 @@ class Scene extends SScene {
     setFromAboveLightColor(color: above);
 
     Color below <- getFromBelowLightColor();
-    setFromBelowLightColor(color: Color.RED);
+    setFromBelowLightColor(color: Color.BLUE);
     setFromBelowLightColor(color: below);
     
     doTogether {
