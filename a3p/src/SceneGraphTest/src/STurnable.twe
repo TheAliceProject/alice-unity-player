@@ -31,8 +31,7 @@ class STurnable extends SThing {
     void orientToUpright( DecimalNumber duration <- Default.duration(),
                           AnimationStyle style <- Default.animationStyle(),
                           SThing upAsSeenBy <- this.getScene() ) {
-    //TODO
-        this.animateOrientationToUpright( viewer: asSeenBy, duration: duration, animation: style );
+        localTransformation.animateOrientToUpright(upAsSeenBy: upAsSeenBy, duration: duration, animationStyle: style);
     }
 
     void pointAt( SThing target,
