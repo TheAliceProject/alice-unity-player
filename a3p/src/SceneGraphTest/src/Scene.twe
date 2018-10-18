@@ -31,6 +31,12 @@ class Scene extends SScene {
     box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.POSITIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
     box2.orientToUpright(upAsSeenBy: this);
 
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.NEGATIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
+    box2.orientToUpright(upAsSeenBy: this);
+
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: 0.25)));
+    box2.orientToUpright(upAsSeenBy: this);
+   
     // point at
     pointAtBox(box: box2, target: box, upAsSeenBy: this);
     pointAtBox(box: box2, target: box3, upAsSeenBy: box4);
