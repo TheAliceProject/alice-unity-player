@@ -12,7 +12,7 @@ enum Epsilon {
     }
 
     Boolean isWithin( DecimalNumber number1, DecimalNumber number2) {
-        return $Math.abs( number1 - number2 ) < value;
+        return $Math.abs(number: number1 - number2 ) < value;
     }
 
     Boolean isWithin1InSquaredSpace( DecimalNumber number ) {

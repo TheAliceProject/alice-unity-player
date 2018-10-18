@@ -18,6 +18,7 @@ class Scene extends SScene {
     doTogether {
       box2.setOpacity(opacity: Portion.ONE, duration: 0.1);
       nose2.setOpacity(opacity: Portion.ONE, duration: 0.1);
+      hat2.setOpacity(opacity: Portion.ONE, duration: 0.1);
     }
     doTogether {
       box3.setOpacity(opacity: Portion.ONE, duration: 0.1);
@@ -25,6 +26,10 @@ class Scene extends SScene {
     }
     box4.setOpacity(opacity: Portion.ONE, duration: 0.1);
     box5.setOpacity(opacity: Portion.ONE, duration: 0.1);
+
+    // orient to upright
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.POSITIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
+    box2.orientToUpright(upAsSeenBy: this);
 
     // point at
     pointAtBox(box: box2, target: box, upAsSeenBy: this);
@@ -35,6 +40,8 @@ class Scene extends SScene {
     turnToFaceBox(box: box2, target: box);
     turnToFaceBox(box: box2, target: box3);
     turnToFaceBox(box: box2, target: box4);
+
+    
 
     // vehicle
     doTogether {
@@ -95,6 +102,7 @@ class Scene extends SScene {
   Box nose <- new Box();
   Box box2 <- new Box();
   Box nose2 <- new Box();
+  Box hat2 <- new Box();
   Box box3 <- new Box();
   Box nose3 <- new Box();
   Box box4 <- new Box();
@@ -184,6 +192,14 @@ class Scene extends SScene {
     nose2.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: 0);
     nose2.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: 0.5), duration: 0);
     nose2.setOpacity(opacity: Portion.ZERO, duration: 0);
+
+    // show up on box 2
+    hat2.setName(name: "Hat");
+    hat2.setVehicle(vehicle: box2);
+    hat2.setSize(size: new Size(width: 0.25, height: 0.25, depth: 0.25), duration: 0);
+    hat2.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: 0);
+    hat2.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0.5, z: 0), duration: 0);
+    hat2.setOpacity(opacity: Portion.ZERO, duration: 0);
 
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);

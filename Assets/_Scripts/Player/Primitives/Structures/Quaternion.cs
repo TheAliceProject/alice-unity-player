@@ -179,26 +179,6 @@ namespace Alice.Player.Primitives
  
             return ans;
         }
-
-        public static Quaternion CreateFromLookVectors(Vector3 forwardVector, Vector3 upVector)
-        {
-
-            double dot = Vector3.Dot(Vector3.UnitZ, forwardVector);
-
-            if (Math.Abs(dot - (-1.0)) < double.Epsilon)
-            {
-                return new Quaternion(Vector3.UnitY, Math.PI);
-            }
-            if (Math.Abs(dot - (1.0)) < double.Epsilon)
-            {
-                return Quaternion.Identity;
-            }
-
-            double rotAngle = (float)Math.Acos(dot);
-            Vector3 rotAxis = Vector3.Cross(Vector3.UnitZ, forwardVector);
-            rotAxis = Vector3.Normalize(rotAxis);
-            return CreateFromAxisAngle(rotAxis, rotAngle);
-        }
  
         /// <summary>
         /// Creates a new Quaternion from the given yaw, pitch, and roll, in radians.

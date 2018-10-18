@@ -31,7 +31,9 @@ namespace Alice.Player.Primitives
 
         [PInteropConstructor]
         public Orientation(Direction forward, Direction up) {
-            Value = Quaternion.CreateFromLookVectors(forward.Value, up.Value);
+
+            var m = Matrix4x4.CreateWorld(Vector3.Zero, -forward.Value, up.Value);
+            Value = Quaternion.CreateFromRotationMatrix(m);
         }
 
         [PInteropConstructor]
@@ -42,7 +44,9 @@ namespace Alice.Player.Primitives
             } else {
                 up = Vector3.UnitY;
             }
-            Value = Quaternion.CreateFromLookVectors(forward.Value, up);
+
+            var m = Matrix4x4.CreateWorld(Vector3.Zero, -forward.Value, up);
+            Value = Quaternion.CreateFromRotationMatrix(m);
         }
 
         [PInteropMethod]
