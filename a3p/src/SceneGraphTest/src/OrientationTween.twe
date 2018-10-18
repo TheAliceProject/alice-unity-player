@@ -1,9 +1,10 @@
 class OrientationTween extends PropertyTween {
-  OrientationTween(VantagePointProperty property, Orientation start, Orientation end) {
+  OrientationTween(VantagePointProperty property, Orientation start, Orientation end, SThing asSeenBy) {
     super();
     this.property <- property;
     this.start <- start;
     this.end <- end;
+    this.asSeenBy <- asSeenBy;
   }
 
   void setEndValue() { 
@@ -16,12 +17,21 @@ class OrientationTween extends PropertyTween {
   }
 
   @CompletelyHidden void setOrientationOnly(Orientation orientation) {
-    VantagePoint value <- new VantagePoint(position: property.getValue().position, orientation: orientation);
+    Orientation newOrientation <- orientation;
+    
+    if (asSeenBy != property.owner) {
+      VantagePoint inVehicle <- asSeenBy.getVantagePoint(asSeenBy: property.owner.vehicle).multiply(other: new VantagePoint(orientation: orientation));
+      newOrientation <- inVehicle.orientation;
+    }
+
+    VantagePoint value <- new VantagePoint(position: property.getValue().position, orientation: newOrientation);
+
     this.property.setValue(value: value);
   }
 
   @CompletelyHidden VantagePointProperty property;
   @CompletelyHidden Orientation start;
   @CompletelyHidden Orientation end;
+  @CompletelyHidden SThing asSeenBy;
 
 }

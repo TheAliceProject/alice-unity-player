@@ -34,6 +34,17 @@ namespace Alice.Player.Primitives
             Value = Quaternion.CreateFromLookVectors(forward.Value, up.Value);
         }
 
+        [PInteropConstructor]
+        public Orientation(Direction forward) {
+            Vector3 up;
+            if( ( forward.Value.X == 0 ) && ( forward.Value.Z == 0 ) ) {
+                up = Vector3.UnitX;
+            } else {
+                up = Vector3.UnitY;
+            }
+            Value = Quaternion.CreateFromLookVectors(forward.Value, up);
+        }
+
         [PInteropMethod]
         public bool equals(Orientation other) {
             return Value.Equals(other.Value);

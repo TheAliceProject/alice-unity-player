@@ -14,14 +14,10 @@ class VantagePointProperty extends Property {
   }
 
   void applyTransformation(VantagePoint transformation, SThing asSeenBy) {
-    // parent
-    VantagePoint pi <- $SceneGraph.getInverseAbsoluteTransformation(thing: this.owner.vehicle);
-    // viewer
-    VantagePoint v <- $SceneGraph.getAbsoluteTransformation(thing: asSeenBy);
-    // subject
-    VantagePoint s <- $SceneGraph.getAbsoluteTransformation(thing: this.owner);
-
-    VantagePoint m <- pi.multiply(other: v).multiply(other: transformation).multiply(other: v.inverse()).multiply(other: s);
+    VantagePoint viewerInVehicle <- asSeenBy.getVantagePoint(asSeenBy: owner.vehicle);
+    VantagePoint subjectInViewer <- owner.getVantagePoint(asSeenBy: asSeenBy);
+    VantagePoint m <- viewerInVehicle.multiply(other: transformation).multiply(other: subjectInViewer);
+    
     setValue(value: m);
   }
 
@@ -31,7 +27,7 @@ class VantagePointProperty extends Property {
   }
 
   void animateOrientation(Orientation endValue, DecimalNumber duration, AnimationStyle animationStyle) {
-    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: endValue);
+    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: endValue, asSeenBy: owner);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
@@ -42,11 +38,6 @@ class VantagePointProperty extends Property {
 
   void animateTurnToFace(SThing target, DecimalNumber duration, AnimationStyle animationStyle) {
     // target position in owner space
-    // subject
-    //VantagePoint si <- $SceneGraph.getInverseAbsoluteTransformation(thing: owner);
-    // target
-    //VantagePoint t <- $SceneGraph.getAbsoluteTransformation(thing: target);
-    //Position tp <- si.multiply(other: t).position;
     Position tp <- target.getVantagePoint(asSeenBy: owner).position;
     Direction toTarget <- new Direction(x: tp.x, y: 0, z: tp.z);
 
@@ -58,7 +49,23 @@ class VantagePointProperty extends Property {
       end <- new Orientation(forward: newForward, up: up);
     }
 
-    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: end);
+    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: end, asSeenBy: owner);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  void animatePointAt(SThing target, SThing upAsSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
+    
+    VantagePoint subjectInViewer <- owner.getVantagePoint(asSeenBy: upAsSeenBy);
+    VantagePoint targetInViewer <- target.getVantagePoint(asSeenBy: upAsSeenBy);
+
+    Direction toTarget <- targetInViewer.position.directionFrom(other: subjectInViewer.position);
+
+    Orientation end <- subjectInViewer.orientation;
+    if (!Epsilon.REASONABLE.isWithin0InSquaredSpace(number: toTarget.lengthSquared)) {
+        end <- new Orientation(forward: toTarget.normalize());
+    }
+
+    OrientationTween tween <- new OrientationTween(property: this, start: subjectInViewer.orientation, end: end, asSeenBy: upAsSeenBy);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
