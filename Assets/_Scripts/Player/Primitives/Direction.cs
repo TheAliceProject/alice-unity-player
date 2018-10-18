@@ -38,6 +38,12 @@ namespace Alice.Player.Primitives
         [PInteropField]
         public double z { get { return Value.Z; } }
 
+        [PInteropField]
+        public double length { get { return Value.Length(); } }
+
+        [PInteropField]
+        public double lengthSquared { get { return Value.LengthSquared(); } }
+
         [PInteropConstructor]
         public Direction(double x, double y, double z)
         {
@@ -57,7 +63,7 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Direction negated() 
+        public Direction negate() 
         {
             return new Direction(-Value);
         }
@@ -69,17 +75,35 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Direction normalized() 
+        public Direction normalize() 
         {
             return new Direction(Vector3.Normalize(Value));
         }
 
+        [PInteropMethod]
         public double dotProduct(Direction other) {
             return Vector3.Dot(Value, other.Value);
         }
 
+        [PInteropMethod]
         public Direction crossProduct(Direction other) {
             return new Direction(Vector3.Cross(Value, other.Value));
+        }
+
+        [PInteropMethod]
+        public Direction project(Direction other) {
+            var proj = (Vector3.Dot(Value, other.Value)/Vector3.Dot(other.Value, other.Value))*other.Value;
+            return new Direction(proj);
+        }
+
+        [PInteropMethod]
+        public Direction transform(VantagePoint vantagePoint) {
+            return new Direction(Vector3.TransformNormal(Value, vantagePoint.GetMatrix()));
+        }
+
+        [PInteropMethod]
+        public Direction rotate(Orientation orientation) {
+            return new Direction(Vector3.Transform(Value, orientation.Value));
         }
 
         [PInteropMethod]
@@ -119,13 +143,7 @@ namespace Alice.Player.Primitives
 
         #endregion //Interop Interfaces
 
-        public Direction Transform(VantagePoint vantagePoint) {
-            return new Direction(Vector3.TransformNormal(Value, vantagePoint.GetMatrix()));
-        }
-
-        public Direction Rotate(Orientation orientation) {
-            return new Direction(Vector3.Transform(Value, orientation.Value));
-        }
+        
 
         static public implicit operator UnityEngine.Vector3(Direction inDirection)
         {

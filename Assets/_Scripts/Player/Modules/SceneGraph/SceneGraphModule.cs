@@ -157,18 +157,19 @@ namespace Alice.Player.Modules {
             var sgTarget = SceneGraph.Current.FindEntity(target);
 
             if (sgTarget == null) {
-                throw new SceneGraphException("Scene graph entity for found for target.");
+                throw new SceneGraphException("Scene graph entity not found for target.");
             }
 
-            var p = sgViewer.cachedTransform.position;
-            var r = sgViewer.cachedTransform.rotation;
+            var p = sgTarget.cachedTransform.position;
+            var r = sgTarget.cachedTransform.rotation;
 
             if (sgViewer != null) {
-                var tr = UnityEngine.Quaternion.Inverse(sgTarget.cachedTransform.rotation);
-                var tp = tr*-sgTarget.cachedTransform.position;
+                // inverse viewer transform
+                var vr = UnityEngine.Quaternion.Inverse(sgViewer.cachedTransform.rotation);
+                var vp = vr*-sgViewer.cachedTransform.position;
 
-                p = (tr * p) + tp;
-                r = r * tr;
+                p = (vr * p) + vp;
+                r = r * vr;
             }
 
             return new VantagePoint(new Primitives.Vector3(p.x, p.y, p.z), new Primitives.Quaternion(r.x, r.y, r.z, r.w));

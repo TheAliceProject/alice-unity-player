@@ -14,22 +14,14 @@ class VantagePointProperty extends Property {
   }
 
   void applyTransformation(VantagePoint transformation, SThing asSeenBy) {
-    VantagePoint p <- $SceneGraph.getAbsoluteTransformation(thing: this.owner.vehicle);
+    // parent
+    VantagePoint pi <- $SceneGraph.getInverseAbsoluteTransformation(thing: this.owner.vehicle);
+    // viewer
     VantagePoint v <- $SceneGraph.getAbsoluteTransformation(thing: asSeenBy);
-    VantagePoint t <- $SceneGraph.getAbsoluteTransformation(thing: this.owner);
+    // subject
+    VantagePoint s <- $SceneGraph.getAbsoluteTransformation(thing: this.owner);
 
-    /*
-    if (debugBox == null) {
-      debugBox <- new SBox();
-      debugBox.setName(name: "Debug");
-      debugBox.setPaint(paint: Color.RED, duration: 0);
-      debugBox.setVehicle(vehicle: owner.vehicle);
-    }
-    debugBox.localTransformation.setValue(value: transformation.multiply(other: t).multiply(other: v.inverse().multiply(other: v).multiply(other: p.inverse()));
-    */
-
-    //VantagePoint m <- t.multiply(other: v.inverse()).multiply(other: transformation).multiply(other: v).multiply(other: p.inverse());
-    VantagePoint m <- p.inverse().multiply(other: v).multiply(other: transformation).multiply(other: v.inverse()).multiply(other: t);
+    VantagePoint m <- pi.multiply(other: v).multiply(other: transformation).multiply(other: v.inverse()).multiply(other: s);
     setValue(value: m);
   }
 
@@ -44,10 +36,31 @@ class VantagePointProperty extends Property {
   }
 
   void animateRotation(Direction axis, Angle angle, SThing asSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
-    RotateTween tween <- new RotateTween(property: this, axis: axis, angle: angle, asSeenBy: asSeenBy);
+    ApplyRotationTween tween <- new ApplyRotationTween(property: this, axis: axis, angle: angle, asSeenBy: asSeenBy);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  void animateTurnToFace(SThing target, DecimalNumber duration, AnimationStyle animationStyle) {
+    // target position in owner space
+    // subject
+    //VantagePoint si <- $SceneGraph.getInverseAbsoluteTransformation(thing: owner);
+    // target
+    //VantagePoint t <- $SceneGraph.getAbsoluteTransformation(thing: target);
+    //Position tp <- si.multiply(other: t).position;
+    Position tp <- target.getVantagePoint(asSeenBy: owner).position;
+    Direction toTarget <- new Direction(x: tp.x, y: 0, z: tp.z);
+
+    Orientation end <- value.orientation;
+    if (!Epsilon.REASONABLE.isWithin0InSquaredSpace(number: toTarget.lengthSquared)) {
+      // in vehicle space
+      Direction up <- Direction.POSITIVE_Y_AXIS.rotate(orientation: value.orientation);
+      Direction newForward <- toTarget.rotate(orientation: value.orientation).normalize();
+      end <- new Orientation(forward: newForward, up: up);
+    }
+
+    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: end);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
   @CompletelyHidden VantagePoint value;
-  //SBox debugBox <- null;
 }

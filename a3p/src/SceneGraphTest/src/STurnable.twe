@@ -24,9 +24,8 @@ class STurnable extends SThing {
 
     void turnToFace( SThing target,
                      DecimalNumber duration <- Default.duration(),
-                     AnimationStyle animationStyle <- Default.animationStyle() ) {
-    //TODO
-        this.animateOrientationOnlyToFace( target: target, offset: null, duration: duration, animation: animationStyle );
+                     AnimationStyle style <- Default.animationStyle() ) {
+        localTransformation.animateTurnToFace(target: target, duration: duration, animationStyle: style);
     }
 
     void orientToUpright( DecimalNumber duration <- Default.duration(),
