@@ -1,5 +1,5 @@
-class RotateTween extends PropertyTween {
-  RotateTween(VantagePointProperty property, Direction axis, Angle angle, SThing asSeenBy) {
+class ApplyRotationTween extends PropertyTween {
+  ApplyRotationTween(VantagePointProperty property, Direction axis, Angle angle, SThing asSeenBy) {
     super();
     this.property <- property;
     this.axis <- axis;

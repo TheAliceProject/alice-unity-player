@@ -48,6 +48,11 @@
       "files": ["src/PathStyle.twe"],
       "type": "Class"
     }, {
+      "id": "Epsilon",
+      "format": "tweedle",
+      "files": ["src/Epsilon.twe"],
+      "type": "Class"
+    }, {
       "id": "Property",
       "format": "tweedle",
       "files": ["src/Property.twe"],
@@ -88,9 +93,9 @@
       "files": ["src/OrientationTween.twe"],
       "type": "Class"
     }, {
-      "id": "RotateTween",
+      "id": "ApplyRotationTween",
       "format": "tweedle",
-      "files": ["src/RotateTween.twe"],
+      "files": ["src/ApplyRotationTween.twe"],
       "type": "Class"
     }, {
       "id": "PositionTween",

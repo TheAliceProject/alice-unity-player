@@ -14,34 +14,45 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(string: this.getName() .. ": myFirstMethod()");
 
-    Box box3 <- new Box();
-    box3.setName(name: "box3");
-    box3.setVehicle(vehicle: this);
-    box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: 0);
-    box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.1)), duration: 0);
-    box3.setOpacity(opacity: Portion.ZERO, duration: 0);
-    box3.setOpacity(opacity: Portion.ONE, duration: 0.5);
+    box3.setOpacity(opacity: Portion.ONE, duration: 0.1);
+    doTogether {
+      box2.setOpacity(opacity: Portion.ONE, duration: 0.1);
+      nose.setOpacity(opacity: Portion.ONE, duration: 0.1);
+    }
+    box4.setOpacity(opacity: Portion.ONE, duration: 0.1);
+    box5.setOpacity(opacity: Portion.ONE, duration: 0.1);
 
-    Box box2 <- new Box();
-    box2.setName(name: "box2");
-    box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: 0);
-    box2.setVehicle(vehicle: box3);
-    box2.setOpacity(opacity: Portion.ZERO, duration: 0);
-    box2.setOpacity(opacity: Portion.ONE, duration: 0.5);
+    // turn to face
+    turnToFaceBox(box: box2, target: box);
+    turnToFaceBox(box: box2, target: box3);
+    turnToFaceBox(box: box2, target: box4);
 
-    Box box4 <- new Box();
-    box4.setName(name: "box4");
-    box4.setVehicle(vehicle: this);
-    box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.0, z: -5.0), duration: 0);
-    box4.setOpacity(opacity: Portion.ZERO, duration: 0);
-    box4.setOpacity(opacity: Portion.ONE, duration: 0.5);
+    // vehicle demo
+    doTogether {
+      box3.setPositionRelativeToVehicle(position: new Position(x: 4, y: 2, z: 0));
+      box3.setPaint(paint: Color.RED);
+    }
+    box3.turn(direction: TurnDirection.RIGHT, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: box3);
+    doTogether {
+      box3.setPositionRelativeToVehicle(position: new Position(x: 3, y: 2, z: 0));
+      box3.setPaint(paint: Color.WHITE);
+    }
+    
+    // turn and roll demos
+    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box2);
+    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box);
+    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box3);
 
-    Box box5 <- new Box();
-    box5.setName(name: "box5");
-    box5.setVehicle(vehicle: this);
-    box5.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: 5.0), duration: 0);
-    box5.setOpacity(opacity: Portion.ZERO, duration: 0);
-    box5.setOpacity(opacity: Portion.ONE, duration: 0.5);
+    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box2);
+    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box);
+    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box3);
+
+    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
+    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
+    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box3);
+
+    this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+    this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
 
     Portion fogDensity <- getFogDensity();
     Color atmosphereColor <- getAtmosphereColor();
@@ -66,41 +77,24 @@ class Scene extends SScene {
     setFromBelowLightColor(color: Color.BLUE);
     setFromBelowLightColor(color: below);
     
-    doTogether {
-      box3.setPositionRelativeToVehicle(position: new Position(x: 4, y: 2, z: 0));
-      box3.setPaint(paint: Color.RED);
-    }
-    box3.turn(direction: TurnDirection.RIGHT, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: box3);
-    doTogether {
-      box3.setPositionRelativeToVehicle(position: new Position(x: 3, y: 2, z: 0));
-      box3.setPaint(paint: Color.WHITE);
-    }
-
-    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
-    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
-    rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box3);
-      
-    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box2);
-    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box);
-    turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box3);
-
-    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box2);
-    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box);
-    turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box3);
     
-
-    this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
-    this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
   }
 
   //SGround ground <- new SGround();
   //SCamera camera <- new SCamera();
   Box box <- new Box();
-  
+  Box box2 <- new Box();
+  Box box3 <- new Box();
+  Box box4 <- new Box();
+  Box box5 <- new Box();
+  Box nose <- new Box();
 
-  void performCustomSetup() {
-    this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
-    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: -0.1)), duration: 0);
+  void turnToFaceBox(Box box, Box target) {
+    doTogether {
+      target.setPaint(paint: Color.RED);
+      box.turnToFace(target: target, duration: 2);
+    }
+    target.setPaint(paint: Color.WHITE);
   }
 
   void rollBox(Box box, RollDirection dir, Box asSeenBy) {
@@ -121,6 +115,43 @@ class Scene extends SScene {
       }
       box.turn(direction: dir, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: asSeenBy);
     }
+  }
+
+  void performCustomSetup() {
+    this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
+    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: -0.1)), duration: 0);
+
+    
+    box3.setName(name: "box3");
+    box3.setVehicle(vehicle: this);
+    box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: 0);
+    box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.1)), duration: 0);
+    box3.setOpacity(opacity: Portion.ZERO, duration: 0);
+
+    box2.setName(name: "box2");
+    box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: 0);
+    box2.setVehicle(vehicle: box3);
+    box2.setOpacity(opacity: Portion.ZERO, duration: 0);
+
+    // show forward on box 2
+    nose.setName(name: "Nose");
+    nose.setVehicle(vehicle: box2);
+    nose.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: 0);
+    nose.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: 0);
+    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: 0.5), duration: 0);
+    nose.setOpacity(opacity: Portion.ZERO, duration: 0);
+
+    box4.setName(name: "box4");
+    box4.setVehicle(vehicle: this);
+    box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.0, z: -5.0), duration: 0);
+    box4.setOpacity(opacity: Portion.ZERO, duration: 0);
+
+    box5.setName(name: "box5");
+    box5.setVehicle(vehicle: this);
+    box5.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: 5.0), duration: 0);
+    box5.setOpacity(opacity: Portion.ZERO, duration: 0);
+
+    
   }
 
   // NOTE: All property settings should use a duration of 0

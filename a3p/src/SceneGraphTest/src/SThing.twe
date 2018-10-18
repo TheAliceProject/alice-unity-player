@@ -2,16 +2,16 @@ class SThing {
   SThing() {
   }
 
-  @CompletelyHidden VantagePoint getVantagePoint( SThing entity ) {
-    return this.getTransformation( asSeenBy: entity );
+  @CompletelyHidden VantagePoint getVantagePoint( SThing asSeenBy ) {
+    return $SceneGraph.getVantagePoint(viewer:asSeenBy, target: this);
   }
 
   @CompletelyHidden VantagePoint getTransformation( SThing asSeenBy ) {
-    return $SceneGraph.getVantagePoint(viewer:asSceneBy, target: this);
+    return $SceneGraph.getVantagePoint(viewer:asSeenBy, target: this);
   }
 
   @CompletelyHidden Position getTranslation( SThing asSeenBy ) {
-    return this.getTransformation( asSeenBy: asSeenBy ).translation;
+    return this.getTransformation( asSeenBy: asSeenBy ).position;
   }
 
   @CompletelyHidden Position getMinPoint( SThing asSeenBy ) {

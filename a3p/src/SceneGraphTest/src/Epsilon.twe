@@ -1,0 +1,27 @@
+enum Epsilon {
+    REASONABLE(value: 0.001);
+
+    @CompletelyHidden DecimalNumber value;
+
+    Epsilon(DecimalNumber value) {
+        this.value <- value;
+    }
+
+    DecimalNumber getValue() {
+        return value;
+    }
+
+    Boolean isWithin( DecimalNumber number1, DecimalNumber number2) {
+        return $Math.abs( number1 - number2 ) < value;
+    }
+
+    Boolean isWithin1InSquaredSpace( DecimalNumber number ) {
+        DecimalNumber min <- 1.0 - value;
+        DecimalNumber max <- 1.0 + value;
+        return ( ( min * min ) < number ) && ( number < ( max * max ) );
+    }
+
+    Boolean isWithin0InSquaredSpace( DecimalNumber number ) {
+        return number < ( value * value );
+    }
+}

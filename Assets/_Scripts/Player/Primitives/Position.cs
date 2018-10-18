@@ -49,7 +49,7 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public Direction subtract(Position other) {
+        public Direction directionFrom(Position other) {
             return new Direction(Value - other.Value);
         }
 
