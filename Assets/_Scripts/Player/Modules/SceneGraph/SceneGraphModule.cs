@@ -153,6 +153,7 @@ namespace Alice.Player.Modules {
                 return VantagePoint.IDENTITY;
             }
 
+            /*
             var sgViewer = SceneGraph.Current.FindEntity(viewer);
             var sgTarget = SceneGraph.Current.FindEntity(target);
 
@@ -173,6 +174,9 @@ namespace Alice.Player.Modules {
             }
 
             return new VantagePoint(new Primitives.Vector3(p.x, p.y, p.z), new Primitives.Quaternion(r.x, r.y, r.z, r.w));
+            */
+
+            return getInverseAbsoluteTransformation(viewer).multiply(getAbsoluteTransformation(target));
         }
 
         [PInteropMethod]
