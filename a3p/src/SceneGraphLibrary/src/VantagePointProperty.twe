@@ -26,6 +26,11 @@ class VantagePointProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
+  void animateMove(Direction direction, DecimalNumber distance, SThing asSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
+    ApplyTranslationTween tween <- new ApplyTranslationTween(property: this, direction: direction, distance: distance, asSeenBy: asSeenBy);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
   void animateOrientation(Orientation endValue, DecimalNumber duration, AnimationStyle animationStyle) {
     OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: endValue, asSeenBy: owner);
     tween.animate(duration: duration, animationStyle: animationStyle);
