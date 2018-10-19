@@ -15,55 +15,43 @@ class Scene extends SScene {
     $Debug.log(string: this.getName() .. ": myFirstMethod()");
 
     // fade in new boxes
-    doTogether {
-      box2.setOpacity(opacity: Portion.ONE, duration: 0.1);
-      nose2.setOpacity(opacity: Portion.ONE, duration: 0.1);
-      hat2.setOpacity(opacity: Portion.ONE, duration: 0.1);
-    }
-    doTogether {
-      box3.setOpacity(opacity: Portion.ONE, duration: 0.1);
-      nose3.setOpacity(opacity: Portion.ONE, duration: 0.1);
-    }
+    box2.setOpacity(opacity: Portion.ONE, duration: 0.1);
+    box3.setOpacity(opacity: Portion.ONE, duration: 0.1);
     box4.setOpacity(opacity: Portion.ONE, duration: 0.1);
     box5.setOpacity(opacity: Portion.ONE, duration: 0.1);
 
-    // orientTo
-    orientToBox(box: box2, target: box4);
-    orientToBox(box: box2, target: box5);
-    orientToBox(box: box2, target: box);
-
-    // orient to upright
-    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.POSITIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
-    box2.orientToUpright(upAsSeenBy: this);
-
-    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.NEGATIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
-    box2.orientToUpright(upAsSeenBy: this);
-
-    box2.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: 0.25)));
-    box2.orientToUpright(upAsSeenBy: this);
-   
-    // point at
-    pointAtBox(box: box2, target: box, upAsSeenBy: this);
-    pointAtBox(box: box2, target: box3, upAsSeenBy: box4);
-    pointAtBox(box: box2, target: box4, upAsSeenBy: box3);
-
-    // turn to face
-    turnToFaceBox(box: box2, target: box);
-    turnToFaceBox(box: box2, target: box3);
-    turnToFaceBox(box: box2, target: box4);
-
-    
-
-    // vehicle
+    // vehicle 
     doTogether {
-      box3.setPositionRelativeToVehicle(position: new Position(x: 4, y: 2, z: 0));
+      box3.move(direction: MoveDirection.LEFT, amount: 1);
       box3.setPaint(paint: Color.RED);
     }
     box3.turn(direction: TurnDirection.RIGHT, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: box3);
     doTogether {
-      box3.setPositionRelativeToVehicle(position: new Position(x: 3, y: 2, z: 0));
+      box3.move(direction: MoveDirection.RIGHT, amount: 1);
       box3.setPaint(paint: Color.WHITE);
     }
+
+    // move
+    moveBox(box: box2, dir: MoveDirection.FORWARD, asSeenBy:box2, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.BACKWARD, asSeenBy:box2, showAsSeenBy: false);
+    moveBox(box: box2, dir: MoveDirection.FORWARD, asSeenBy:box, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.BACKWARD, asSeenBy:box, showAsSeenBy: false);
+    moveBox(box: box2, dir: MoveDirection.FORWARD, asSeenBy:box3, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.BACKWARD, asSeenBy:box3, showAsSeenBy: false);
+
+    moveBox(box: box2, dir: MoveDirection.RIGHT, asSeenBy:box2, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.LEFT, asSeenBy:box2, showAsSeenBy: false);
+    moveBox(box: box2, dir: MoveDirection.RIGHT, asSeenBy:box, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.LEFT, asSeenBy:box, showAsSeenBy: false);
+    moveBox(box: box2, dir: MoveDirection.RIGHT, asSeenBy:box3, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.LEFT, asSeenBy:box3, showAsSeenBy: false);
+
+    moveBox(box: box2, dir: MoveDirection.UP, asSeenBy:box2, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.DOWN, asSeenBy:box2, showAsSeenBy: false);
+    moveBox(box: box2, dir: MoveDirection.UP, asSeenBy:box, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.DOWN, asSeenBy:box, showAsSeenBy: false);
+    moveBox(box: box2, dir: MoveDirection.UP, asSeenBy:box3, showAsSeenBy: true);
+    moveBox(box: box2, dir: MoveDirection.DOWN, asSeenBy:box3, showAsSeenBy: false);
     
     // turn and roll
     turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box2);
@@ -81,6 +69,31 @@ class Scene extends SScene {
     this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
     this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
 
+    // turn to face
+    turnToFaceBox(box: box2, target: box);
+    turnToFaceBox(box: box2, target: box3);
+    turnToFaceBox(box: box2, target: box4);
+
+    // orient to upright
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.POSITIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
+    box2.orientToUpright(upAsSeenBy: this);
+
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.NEGATIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
+    box2.orientToUpright(upAsSeenBy: this);
+
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: 0.25)));
+    box2.orientToUpright(upAsSeenBy: this);
+
+    // point at
+    pointAtBox(box: box2, target: box, upAsSeenBy: this);
+    pointAtBox(box: box2, target: box3, upAsSeenBy: box4);
+    pointAtBox(box: box2, target: box4, upAsSeenBy: box3);
+
+    // orientTo
+    orientToBox(box: box2, target: box4);
+    orientToBox(box: box2, target: box5);
+    orientToBox(box: box2, target: box);
+
     Portion fogDensity <- getFogDensity();
     Color atmosphereColor <- getAtmosphereColor();
     doTogether {
@@ -89,7 +102,7 @@ class Scene extends SScene {
     }
     doTogether {
       setAtmosphereColor(color: atmosphereColor, duration: 2);
-      setFogDensity(density: fogDensity, duration 2);
+      setFogDensity(density: fogDensity, duration: 2);
     }
 
     Color ambient <- getAmbientLightColor();
@@ -107,27 +120,46 @@ class Scene extends SScene {
     
   }
 
-  //SGround ground <- new SGround();
-  //SCamera camera <- new SCamera();
-  Box box <- new Box();
-  Box nose <- new Box();
-  Box box2 <- new Box();
-  Box nose2 <- new Box();
-  Box hat2 <- new Box();
-  Box box3 <- new Box();
-  Box nose3 <- new Box();
-  Box box4 <- new Box();
-  Box box5 <- new Box();
-  
-  void orientToBox(Box box, Box target) {
+  void moveBox(SBox box, MoveDirection dir, SBox asSeenBy, Boolean showAsSeenBy) {
+    doTogether {
+      if (showAsSeenBy) {
+        asSeenBy.setPaint(paint: Color.BLUE);
+      } else {
+         asSeenBy.setPaint(paint: Color.WHITE);
+      }
+      box.move(direction: dir, amount: 1, duration: 1, asSeenBy: asSeenBy);
+    }
+  }
+
+  void turnBox(SBox box, TurnDirection dir, SBox asSeenBy) {
+    doTogether {
+      doInOrder {
+        asSeenBy.setPaint(paint: Color.BLUE);
+        asSeenBy.setPaint(paint: Color.WHITE);
+      }
+      box.turn(direction: dir, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: asSeenBy);
+    }
+  }
+
+  void rollBox(SBox box, RollDirection dir, SBox asSeenBy) {
+    doTogether {
+      doInOrder {
+        asSeenBy.setPaint(paint: Color.BLUE);
+        asSeenBy.setPaint(paint: Color.WHITE);
+      }
+      box.roll(direction: dir, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: asSeenBy);
+    }
+  }
+
+  void turnToFaceBox(SBox box, SBox target) {
     doTogether {
       target.setPaint(paint: Color.RED);
-      box.orientTo(target: target, duration: 1);
+      box.turnToFace(target: target, duration: 1);
     }
     target.setPaint(paint: Color.WHITE, duration: 0.5);
   }
 
-  void pointAtBox(Box box, Box target, SThing upAsSeenBy) {
+  void pointAtBox(SBox box, SBox target, SThing upAsSeenBy) {
     doTogether {
       target.setPaint(paint: Color.RED);
       if ($System.isInstanceOf(instance: upAsSeenBy, type: SModel)) {
@@ -145,39 +177,28 @@ class Scene extends SScene {
     }
   }
 
-  void turnToFaceBox(Box box, Box target) {
+  void orientToBox(SBox box, SBox target) {
     doTogether {
       target.setPaint(paint: Color.RED);
-      box.turnToFace(target: target, duration: 1);
+      box.orientTo(target: target, duration: 1);
     }
     target.setPaint(paint: Color.WHITE, duration: 0.5);
   }
 
-  void rollBox(Box box, RollDirection dir, Box asSeenBy) {
-    doTogether {
-      doInOrder {
-        asSeenBy.setPaint(paint: Color.RED);
-        asSeenBy.setPaint(paint: Color.WHITE);
-      }
-      box.roll(direction: dir, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: asSeenBy);
-    }
-  }
-
-  void turnBox(Box box, TurnDirection dir, Box asSeenBy) {
-    doTogether {
-      doInOrder {
-        asSeenBy.setPaint(paint: Color.RED);
-        asSeenBy.setPaint(paint: Color.WHITE);
-      }
-      box.turn(direction: dir, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: asSeenBy);
-    }
-  }
+  //SGround ground <- new SGround();
+  //SCamera camera <- new SCamera();
+  Box box <- new Box();
+  DirectionalBox box2 <- new DirectionalBox();
+  DirectionalBox box3 <- new DirectionalBox();
+  DirectionalBox box4 <- new DirectionalBox();
+  DirectionalBox box5 <- new DirectionalBox();
 
   void performCustomSetup() {
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: 0);
     this.box.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: -0.6)), duration: 0);
 
     // show forward on box 
+    SBox nose <- new SBox();
     nose.setName(name: "Nose");
     nose.setVehicle(vehicle: box);
     nose.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: 0);
@@ -190,34 +211,11 @@ class Scene extends SScene {
     box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.6)), duration: 0);
     box3.setOpacity(opacity: Portion.ZERO, duration: 0);
 
-    // show forward on box 3
-    nose3.setName(name: "Nose");
-    nose3.setVehicle(vehicle: box3);
-    nose3.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: 0);
-    nose3.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: 0);
-    nose3.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: 0.5), duration: 0);
-    nose3.setOpacity(opacity: Portion.ZERO, duration: 0);
-
     box2.setName(name: "box2");
     box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: 0);
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.5)), duration: 0);
     box2.setVehicle(vehicle: box3);
     box2.setOpacity(opacity: Portion.ZERO, duration: 0);
-
-    // show forward on box 2
-    nose2.setName(name: "Nose");
-    nose2.setVehicle(vehicle: box2);
-    nose2.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: 0);
-    nose2.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: 0);
-    nose2.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: 0.5), duration: 0);
-    nose2.setOpacity(opacity: Portion.ZERO, duration: 0);
-
-    // show up on box 2
-    hat2.setName(name: "Hat");
-    hat2.setVehicle(vehicle: box2);
-    hat2.setSize(size: new Size(width: 0.25, height: 0.25, depth: 0.25), duration: 0);
-    hat2.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: 0);
-    hat2.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0.5, z: 0), duration: 0);
-    hat2.setOpacity(opacity: Portion.ZERO, duration: 0);
 
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);
@@ -231,9 +229,9 @@ class Scene extends SScene {
     box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.7)), duration: 0);
     box5.setOpacity(opacity: Portion.ZERO, duration: 0);
 
-
-    
   }
+
+
 
   // NOTE: All property settings should use a duration of 0
   void performGeneratedSetUp() {
