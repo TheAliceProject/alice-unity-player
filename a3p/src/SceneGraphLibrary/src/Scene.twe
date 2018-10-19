@@ -20,16 +20,11 @@ class Scene extends SScene {
     box4.setOpacity(opacity: Portion.ONE, duration: 0.1);
     box5.setOpacity(opacity: Portion.ONE, duration: 0.1);
 
-    // vehicle 
-    doTogether {
-      box3.move(direction: MoveDirection.LEFT, amount: 1);
-      box3.setPaint(paint: Color.RED);
-    }
+    // vehicle
+    box3.move(direction: MoveDirection.RIGHT, amount: 1);
     box3.turn(direction: TurnDirection.RIGHT, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: box3);
-    doTogether {
-      box3.move(direction: MoveDirection.RIGHT, amount: 1);
-      box3.setPaint(paint: Color.WHITE);
-    }
+    box3.move(direction: MoveDirection.LEFT, amount: 1);
+
 
     // move
     moveBox(box: box2, dir: MoveDirection.FORWARD, asSeenBy:box2, showAsSeenBy: true);
@@ -52,6 +47,14 @@ class Scene extends SScene {
     moveBox(box: box2, dir: MoveDirection.DOWN, asSeenBy:box, showAsSeenBy: false);
     moveBox(box: box2, dir: MoveDirection.UP, asSeenBy:box3, showAsSeenBy: true);
     moveBox(box: box2, dir: MoveDirection.DOWN, asSeenBy:box3, showAsSeenBy: false);
+
+    // move toward and away
+    moveBoxToward(box: box2, target: box4);
+    moveBoxAway(box: box2, target: box4);
+    moveBoxToward(box: box2, target: box3);
+    moveBoxAway(box: box2, target: box3);
+    moveBoxToward(box: box2, target: box5);
+    moveBoxAway(box: box2, target: box5);
     
     // turn and roll
     turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box2);
@@ -66,8 +69,7 @@ class Scene extends SScene {
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box3);
 
-    this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
-    this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+    
 
     // turn to face
     turnToFaceBox(box: box2, target: box);
@@ -86,13 +88,16 @@ class Scene extends SScene {
 
     // point at
     pointAtBox(box: box2, target: box, upAsSeenBy: this);
-    pointAtBox(box: box2, target: box3, upAsSeenBy: box4);
+    pointAtBox(box: box2, target: box3, upAsSeenBy: box);
     pointAtBox(box: box2, target: box4, upAsSeenBy: box3);
 
     // orientTo
     orientToBox(box: box2, target: box4);
     orientToBox(box: box2, target: box5);
     orientToBox(box: box2, target: box);
+
+    this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+    this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
 
     Portion fogDensity <- getFogDensity();
     Color atmosphereColor <- getAtmosphereColor();
@@ -128,6 +133,26 @@ class Scene extends SScene {
          asSeenBy.setPaint(paint: Color.WHITE);
       }
       box.move(direction: dir, amount: 1, duration: 1, asSeenBy: asSeenBy);
+    }
+  }
+
+  void moveBoxToward(SBox box, SBox target) {
+    doTogether {
+      doInOrder {
+        target.setPaint(paint: Color.RED, duration: 0.5);
+        target.setPaint(paint: Color.WHITE, duration: 0.5);
+      }
+      box.moveToward(target: target, amount: 1, duration: 1);
+    }
+  }
+
+  void moveBoxAway(SBox box, SBox target) {
+    doTogether {
+      doInOrder {
+        target.setPaint(paint: Color.PURPLE, duration: 0.5);
+        target.setPaint(paint: Color.WHITE, duration: 0.5);
+      }
+      box.moveAwayFrom(target: target, amount: 1, duration: 1);
     }
   }
 
@@ -220,7 +245,7 @@ class Scene extends SScene {
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);
     box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.0, z: -5.0), duration: 0);
-    box4.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: 0.25)), duration: 0);
+    box4.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: -0.25)), duration: 0);
     box4.setOpacity(opacity: Portion.ZERO, duration: 0);
 
     box5.setName(name: "box5");

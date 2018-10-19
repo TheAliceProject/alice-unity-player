@@ -14,27 +14,23 @@ class SMovableTurnable extends STurnable {
     this.localTransformation.animateMove(direction: direction.getAxis(), distance: amount, asSeenBy: asSeenBy, duration: duration, animationStyle: style);
   }
 
-  /*
+  
   void moveToward(SThing target, Number amount,
                   SThing asSeenBy <- this, // Unused, but kept so existing senders won't break
                   DecimalNumber duration <- Default.duration(),
                   AnimationStyle style <- Default.animationStyle()) {
-    // checkArgumentIsNotNull( target );
-    // checkArgumentIsNumber( amount );
-    // TODO
-    this.internalMoveToward( target: target, distance: amount, duration: duration, animationStyle: style );
+    this.localTransformation.animateMoveToward(target: target, distance: amount, duration: duration, animationStyle: style);
   }
+
 
   void moveAwayFrom(SThing target, Number amount,
                     SThing asSeenBy <- this, // Unused, but kept so existing senders won't break
                     DecimalNumber duration <- Default.duration(),
                     AnimationStyle style <- Default.animationStyle()) {
-    // checkArgumentIsNotNull( target );
-    // checkArgumentIsNumber( amount );
-    // TODO
-    this.internalMoveToward( target: target, distance: 0 - amount, duration: duration, animationStyle: style );
+    this.localTransformation.animateMoveToward(target: target, distance: -amount, duration: duration, animationStyle: style);
   }
-
+  
+  /*
   void moveTo(SThing target,
               DecimalNumber duration <- Default.duration(),
               AnimationStyle style <- Default.animationStyle(),
