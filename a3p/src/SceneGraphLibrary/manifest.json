@@ -1,6 +1,6 @@
 {
   "description": {
-    "name": "SceneGraphTest",
+    "name": "SceneGraphLibrary",
     "icon": "thumbnail.png",
     "tags": [],
     "groupTags": [],
@@ -41,6 +41,11 @@
       "id": "RollDirection",
       "format": "tweedle",
       "files": ["src/RollDirection.twe"],
+      "type": "Class"
+    }, {
+      "id": "MoveDirection",
+      "format": "tweedle",
+      "files": ["src/MoveDirection.twe"],
       "type": "Class"
     }, {
       "id": "PathStyle",
@@ -88,6 +93,16 @@
       "files": ["src/VantagePointProperty.twe"],
       "type": "Class"
     }, {
+      "id": "PositionTween",
+      "format": "tweedle",
+      "files": ["src/PositionTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "ApplyTranslationTween",
+      "format": "tweedle",
+      "files": ["src/ApplyTranslationTween.twe"],
+      "type": "Class"
+    }, {
       "id": "OrientationTween",
       "format": "tweedle",
       "files": ["src/OrientationTween.twe"],
@@ -96,11 +111,6 @@
       "id": "ApplyRotationTween",
       "format": "tweedle",
       "files": ["src/ApplyRotationTween.twe"],
-      "type": "Class"
-    }, {
-      "id": "PositionTween",
-      "format": "tweedle",
-      "files": ["src/PositionTween.twe"],
       "type": "Class"
     }, {
       "id": "SizeProperty",
@@ -206,6 +216,11 @@
       "id": "Box",
       "format": "tweedle",
       "files": ["src/Box.twe"],
+      "type": "Class"
+    }, {
+      "id": "DirectionalBox",
+      "format": "tweedle",
+      "files": ["src/DirectionalBox.twe"],
       "type": "Class"
     }
   ]

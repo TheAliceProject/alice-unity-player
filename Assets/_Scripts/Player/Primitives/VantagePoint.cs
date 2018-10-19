@@ -45,6 +45,12 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropConstructor]
+        public VantagePoint(Position position) {
+            RotationValue = Quaternion.Identity;
+            TranslationValue = position.Value;
+        }
+
+        [PInteropConstructor]
         public VantagePoint(Orientation orientation) {
             RotationValue = orientation.Value;
             TranslationValue = Vector3.Zero;
