@@ -12,8 +12,6 @@ class STurnable extends SThing {
         localTransformation.animateRotation(axis: direction.getAxis(), angle: amount, asSeenBy: asSeenBy, duration: duration, animationStyle: style);
     }
 
-
-
     void roll( RollDirection direction,
                Angle amount,
                DecimalNumber duration <- Default.duration(),
@@ -88,7 +86,6 @@ class STurnable extends SThing {
                                         b: lower.getMaxPoint( asSeenBy: asSeenBy ).y );
     }
 
-
     DecimalNumber getDistanceToTheRightOf( SThing other, SThing asSeenBy <- other ) {
         return this.getLeftRightGap( left: other, right: this, viewer: asSeenBy );
     }
@@ -109,7 +106,6 @@ class STurnable extends SThing {
     return this.differenceToEpsilon(a: right.getMinPoint( asSeenBy: asSeenBy ).x,
                                     b: left.getMaxPoint( asSeenBy: asSeenBy ).x );
     }
-
 
     DecimalNumber getDistanceInFrontOf( SThing other, SThing asSeenBy <- other ) {
         return this.getFrontBackGap( back: other, front: this, viewer: asSeenBy );

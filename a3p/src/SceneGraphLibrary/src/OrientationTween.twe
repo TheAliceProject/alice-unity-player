@@ -19,7 +19,7 @@ class OrientationTween extends PropertyTween {
   @CompletelyHidden void setOrientationOnly(Orientation orientation) {
     Orientation newOrientation <- orientation;
     
-    if (asSeenBy != property.owner) {
+    if (asSeenBy != property.owner.vehicle) {
       VantagePoint inVehicle <- asSeenBy.getVantagePoint(asSeenBy: property.owner.vehicle).multiply(other: new VantagePoint(orientation: orientation));
       newOrientation <- inVehicle.orientation;
     }

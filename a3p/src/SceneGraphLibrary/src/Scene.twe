@@ -25,6 +25,8 @@ class Scene extends SScene {
     box3.turn(direction: TurnDirection.RIGHT, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: box3);
     box3.move(direction: MoveDirection.LEFT, amount: 1);
 
+    // move to
+    moveToBox(box: box2, target: box4, pathStyle: PathStyle.BEE_LINE);
 
     // move
     moveBox(box: box2, dir: MoveDirection.FORWARD, asSeenBy:box2, showAsSeenBy: true);
@@ -153,6 +155,16 @@ class Scene extends SScene {
         target.setPaint(paint: Color.WHITE, duration: 0.5);
       }
       box.moveAwayFrom(target: target, amount: 1, duration: 1);
+    }
+  }
+
+  void moveToBox(SBox box, SBox target, PathStyle pathStyle) {
+    doTogether {
+      doInOrder {
+        target.setPaint(paint: Color.RED, duration: 0.5);
+        target.setPaint(paint: Color.WHITE, duration: 0.5);
+      }
+      box.moveTo(target: target, pathStyle: pathStyle, duration: 1);
     }
   }
 
