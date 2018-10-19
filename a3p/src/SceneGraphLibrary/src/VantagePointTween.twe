@@ -1,0 +1,30 @@
+class VantagePointTween extends PropertyTween {
+  SmoothVantagePointTween(VantagePointProperty property, VantagePoint start, VantagePoint end, SThing asSeenBy) {
+    super();
+    this.property <- property;
+    this.start <- start;
+    this.end <- end;
+    this.asSeenBy <- asSeenBy;
+  }
+
+  void setEndValue() { 
+    setValue(vantagePoint: end);
+  }
+
+  void interpolate(Portion portion) {
+    setValue(vantagePoint: start.interpolatePortion(end: end, portion: portion));
+  }
+
+  void setValue(VantagePoint vantagePoint) {
+    VantagePoint newVP <- vantagePoint;
+    if (asSeenBy != property.owner.vehicle) {
+      newVP <- asSeenBy.getVantagePoint(asSeenBy: property.owner.vehicle).multiply(other: vantagePoint);
+    }
+    property.setValue(value: newVP);
+  }
+
+  @CompletelyHidden VantagePointProperty property;
+  @CompletelyHidden VantagePoint start;
+  @CompletelyHidden VantagePoint end;
+  @CompletelyHidden SThing asSeenBy;
+}

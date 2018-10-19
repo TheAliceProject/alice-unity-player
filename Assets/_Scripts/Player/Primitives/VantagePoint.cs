@@ -5,6 +5,28 @@ namespace Alice.Player.Primitives
 {
     [PInteropType]
     public struct VantagePoint {
+        #region Cubic Polynomial Evaluation
+        // NOTE: hermite cubic matrix is transposed from Alice because of microsoft's matrix is row-ordered
+        static private readonly Matrix4x4 s_HermiteCubic = Matrix4x4.Transpose(new Matrix4x4(2, -2, 1, 1, -3, 3, -2, -1, 0, 0, 1, 0, 1, 0, 0, 0));
+
+        private static double EvaluateCubic(Matrix4x4 m_h, double m_gx, double m_gy, double m_gz, double m_gw, double t) {
+            double ttt = t * t * t;
+            double tt = t * t;
+            return ( ( ( ttt * m_h.M11 ) + ( tt * m_h.M12 ) + ( t * m_h.M13 ) + m_h.M14) * m_gx ) +
+                    ( ( ( ttt * m_h.M21 ) + ( tt * m_h.M22 ) + ( t * m_h.M23 ) + m_h.M24 ) * m_gy ) +
+                    ( ( ( ttt * m_h.M31 ) + ( tt * m_h.M32 ) + ( t * m_h.M33 ) + m_h.M34 ) * m_gz ) +
+                    ( ( ( ttt * m_h.M41 ) + ( tt * m_h.M42) + ( t * m_h.M43) + m_h.M44 ) * m_gw );
+        }
+
+        private static double EvaluateCubicDerivative(Matrix4x4 m_h, double m_gx, double m_gy, double m_gz, double m_gw, double t ) {
+            double tt3 = t * t * 3;
+            double t2 = t * 2;
+            return ( ( ( tt3 * m_h.M11 ) + ( t2 * m_h.M12 ) + m_h.M13 ) * m_gx ) +
+                    ( ( ( tt3 * m_h.M21 ) + ( t2 * m_h.M22 ) + m_h.M23 ) * m_gy ) +
+                    ( ( ( tt3 * m_h.M31 ) + ( t2 * m_h.M32 ) + m_h.M33 ) * m_gz ) +
+                    ( ( ( tt3 * m_h.M41 ) + ( t2 * m_h.M42 ) + m_h.M43) * m_gw );
+        }
+        #endregion // Cubic Polynomial Evaluation
         
         public readonly Quaternion RotationValue;
         public readonly Vector3 TranslationValue;
@@ -31,7 +53,17 @@ namespace Alice.Player.Primitives
 
         #region Interop Interfaces
         [PInteropField]
-        public static readonly VantagePoint IDENTITY = new VantagePoint(Vector3.Zero, Quaternion.Identity);
+        static public readonly VantagePoint IDENTITY = new VantagePoint(Vector3.Zero, Quaternion.Identity);
+
+        [PInteropMethod]
+        static public double evaluateHermiteCubic(double x, double y, double z, double w, Portion t) {
+            return EvaluateCubic(s_HermiteCubic, x, y, z, w, t.Value);
+        }
+
+        [PInteropMethod]
+        static public double evaluateHermiteCubicDeritive(double x, double y, double z, double w, Portion t) {
+            return EvaluateCubicDerivative(s_HermiteCubic, x, y, z, w, t.Value);
+        }
 
         [PInteropField]
         public Orientation orientation { get { return new Orientation(RotationValue); } }

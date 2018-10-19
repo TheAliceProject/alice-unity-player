@@ -1,11 +1,6 @@
 class SMovableTurnable extends STurnable {
   SMovableTurnable() {
   }
-
-  Position getPositionRelativeToVehicle() {
-    return this.getLocalTransformation().translation;
-  }
-
   
   void move(MoveDirection direction, Number amount,
             SThing asSeenBy <- this,
@@ -35,21 +30,17 @@ class SMovableTurnable extends STurnable {
               DecimalNumber duration <- Default.duration(),
               AnimationStyle style <- Default.animationStyle(),
               PathStyle pathStyle <- Default.pathStyle()) {
-    // checkArgumentIsNotNull( target );
-    // TODO
     this.localTransformation.animateMoveTo( target: target, pathStyle: pathStyle, duration: duration, animationStyle: style );
   }
 
-  /*
   void moveAndOrientTo(SThing target,
                        DecimalNumber duration <- Default.duration(),
                        AnimationStyle style <- Default.animationStyle(),
                        PathStyle pathStyle <- Default.pathStyle()) {
-    // checkArgumentIsNotNull( target );
-    // TODO
-    this.animateTransformation( target: target, offset: null, pathStyle: pathStyle, duration: duration, animationStyle: style );
+    this.localTransformation.animateMoveAndOrientTo( target: target, pathStyle: pathStyle, duration: duration, animationStyle: style );
   }
 
+  /*
   void place(SpatialRelation spatialRelation, SThing target,
              SThing asSeenBy <- target,
              DecimalNumber duration <- Default.duration(),

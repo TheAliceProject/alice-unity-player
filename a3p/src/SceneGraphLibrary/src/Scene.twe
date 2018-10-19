@@ -20,14 +20,28 @@ class Scene extends SScene {
     box4.setOpacity(opacity: Portion.ONE, duration: 0.1);
     box5.setOpacity(opacity: Portion.ONE, duration: 0.1);
 
+    Position pos <- box2.getPositionRelativeToVehicle();
+
+    // move to and orient
+    moveAndOrientToBox(box: box2, target: box5, pathStyle: PathStyle.BEE_LINE, duration: 2);
+    moveAndOrientToBox(box: box2, target: box4, pathStyle: PathStyle.SMOOTH, duration: 2);
+    doTogether {
+      box.move(direction: MoveDirection.RIGHT, amount: 1, asSeenBy: box);
+      moveAndOrientToBox(box: box2, target: box, pathStyle: PathStyle.SMOOTH, duration: 2);
+    }
+    delay(duration: 0.1);
+    doTogether {
+      box.move(direction: MoveDirection.LEFT, amount: 1, asSeenBy: box);
+      box2.setPositionRelativeToVehicle(position: pos);
+    }
+
     // vehicle
-    box3.move(direction: MoveDirection.RIGHT, amount: 1);
+    box3.move(direction: MoveDirection.LEFT, amount: 1, asSeenBy: box3);
     box3.turn(direction: TurnDirection.RIGHT, amount: new Angle(revolutions: 1), duration: 2, asSeenBy: box3);
-    box3.move(direction: MoveDirection.LEFT, amount: 1);
+    box3.move(direction: MoveDirection.RIGHT, amount: 1, asSeenBy: box3);
+    
 
-    // move to
-    moveToBox(box: box2, target: box4, pathStyle: PathStyle.BEE_LINE);
-
+   
     // move
     moveBox(box: box2, dir: MoveDirection.FORWARD, asSeenBy:box2, showAsSeenBy: true);
     moveBox(box: box2, dir: MoveDirection.BACKWARD, asSeenBy:box2, showAsSeenBy: false);
@@ -57,6 +71,18 @@ class Scene extends SScene {
     moveBoxAway(box: box2, target: box3);
     moveBoxToward(box: box2, target: box5);
     moveBoxAway(box: box2, target: box5);
+
+    // move to
+    moveToBox(box: box2, target: box4, pathStyle: PathStyle.BEE_LINE, duration: 2);
+    doTogether {
+      box.move(direction: MoveDirection.RIGHT, amount: 1, asSeenBy: box);
+      moveToBox(box: box2, target: box, pathStyle: PathStyle.SMOOTH, duration: 2);
+    }
+    delay(duration: 0.1);
+    doTogether {
+      box.move(direction: MoveDirection.LEFT, amount: 1, asSeenBy: box);
+      box2.setPositionRelativeToVehicle(position: pos);
+    }
     
     // turn and roll
     turnBox(box: box2, dir: TurnDirection.FORWARD, asSeenBy: box2);
@@ -158,13 +184,23 @@ class Scene extends SScene {
     }
   }
 
-  void moveToBox(SBox box, SBox target, PathStyle pathStyle) {
+  void moveToBox(SBox box, SBox target, PathStyle pathStyle, DecimalNumber duration <- Default.duration()) {
     doTogether {
       doInOrder {
-        target.setPaint(paint: Color.RED, duration: 0.5);
-        target.setPaint(paint: Color.WHITE, duration: 0.5);
+        target.setPaint(paint: Color.RED, duration: duration*0.5);
+        target.setPaint(paint: Color.WHITE, duration: duration*0.5);
       }
-      box.moveTo(target: target, pathStyle: pathStyle, duration: 1);
+      box.moveTo(target: target, pathStyle: pathStyle, duration: duration);
+    }
+  }
+
+  void moveAndOrientToBox(SBox box, SBox target, PathStyle pathStyle, DecimalNumber duration <- Default.duration()) {
+    doTogether {
+      doInOrder {
+        target.setPaint(paint: Color.RED, duration: duration*0.5);
+        target.setPaint(paint: Color.WHITE, duration: duration*0.5);
+      }
+      box.moveAndOrientTo(target: target, pathStyle: pathStyle, duration: duration);
     }
   }
 

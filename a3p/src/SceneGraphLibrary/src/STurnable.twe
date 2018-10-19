@@ -47,7 +47,11 @@ class STurnable extends SThing {
     }
 
     @TuckedAway Orientation getOrientationRelativeToVehicle() {
-        return this.getLocalTransformation().orientation;
+        return this.localTransformation.getValue().orientation;
+    }
+
+    @TuckedAway Orientation getPositionRelativeToVehicle() {
+        return this.localTransformation.getValue().position;
     }
 
     @CompletelyHidden VantagePoint getLocalTransformation() {
