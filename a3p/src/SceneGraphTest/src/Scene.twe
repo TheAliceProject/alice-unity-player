@@ -27,6 +27,11 @@ class Scene extends SScene {
     box4.setOpacity(opacity: Portion.ONE, duration: 0.1);
     box5.setOpacity(opacity: Portion.ONE, duration: 0.1);
 
+    // orientTo
+    orientToBox(box: box2, target: box4);
+    orientToBox(box: box2, target: box5);
+    orientToBox(box: box2, target: box);
+
     // orient to upright
     box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.POSITIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
     box2.orientToUpright(upAsSeenBy: this);
@@ -114,6 +119,13 @@ class Scene extends SScene {
   Box box4 <- new Box();
   Box box5 <- new Box();
   
+  void orientToBox(Box box, Box target) {
+    doTogether {
+      target.setPaint(paint: Color.RED);
+      box.orientTo(target: target, duration: 1);
+    }
+    target.setPaint(paint: Color.WHITE, duration: 0.5);
+  }
 
   void pointAtBox(Box box, Box target, SThing upAsSeenBy) {
     doTogether {
@@ -210,12 +222,15 @@ class Scene extends SScene {
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);
     box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.0, z: -5.0), duration: 0);
+    box4.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: 0.25)), duration: 0);
     box4.setOpacity(opacity: Portion.ZERO, duration: 0);
 
     box5.setName(name: "box5");
     box5.setVehicle(vehicle: this);
     box5.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: 5.0), duration: 0);
+    box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.7)), duration: 0);
     box5.setOpacity(opacity: Portion.ZERO, duration: 0);
+
 
     
   }

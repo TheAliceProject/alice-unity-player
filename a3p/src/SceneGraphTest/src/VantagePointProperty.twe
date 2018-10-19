@@ -100,5 +100,11 @@ class VantagePointProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
+  void animateOrientTo(SThing target, DecimalNumber duration, AnimationStyle animationStyle) {
+    Orientation end <- target.getVantagePoint(asSeenBy: owner.vehicle).orientation;
+    OrientationTween tween <- new OrientationTween(property: this, start: value.orientation, end: end, asSeenBy: owner);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
   @CompletelyHidden VantagePoint value;
 }

@@ -44,8 +44,8 @@ class STurnable extends SThing {
     void orientTo( SThing target,
                    DecimalNumber duration <- Default.duration(),
                    AnimationStyle style <- Default.animationStyle() ) {
-    //TODO
-        this.animateOrientationOnly( target: target, offset: null, duration: duration, animation: style );
+
+        localTransformation.animateOrientTo( target: target, duration: duration, animationStyle: style );
     }
 
     @TuckedAway Orientation getOrientationRelativeToVehicle() {
