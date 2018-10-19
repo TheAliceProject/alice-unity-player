@@ -30,16 +30,17 @@ class SMovableTurnable extends STurnable {
     this.localTransformation.animateMoveToward(target: target, distance: -amount, duration: duration, animationStyle: style);
   }
   
-  /*
+  
   void moveTo(SThing target,
               DecimalNumber duration <- Default.duration(),
               AnimationStyle style <- Default.animationStyle(),
               PathStyle pathStyle <- Default.pathStyle()) {
     // checkArgumentIsNotNull( target );
     // TODO
-    this.animatePositionOnly( target: target, offset: null, pathStyle: pathStyle, duration: duration, animationStyle: style );
+    this.localTransformation.animateMoveTo( target: target, pathStyle: pathStyle, duration: duration, animationStyle: style );
   }
 
+  /*
   void moveAndOrientTo(SThing target,
                        DecimalNumber duration <- Default.duration(),
                        AnimationStyle style <- Default.animationStyle(),

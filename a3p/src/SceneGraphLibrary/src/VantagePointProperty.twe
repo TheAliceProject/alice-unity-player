@@ -22,7 +22,7 @@ class VantagePointProperty extends Property {
   }
 
   void animatePosition(Position endValue, DecimalNumber duration, AnimationStyle animationStyle) {
-    PositionTween tween <- new PositionTween(property: this, start: this.value.position, end: endValue);
+    PositionTween tween <- new PositionTween(property: this, start: this.value.position, end: endValue, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
@@ -40,8 +40,19 @@ class VantagePointProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
+  void animateMoveTo(SThing target, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
+    if (pathStyle.isSmooth()) {
+
+    } else {
+      Position start <- owner.getVantagePoint(asSeenBy: target).position;
+
+      PositionTween tween <- new PositionTween(property: this, start: start, end: Position.ZERO, asSeenBy: target);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    }
+  }
+
   void animateOrientation(Orientation endValue, DecimalNumber duration, AnimationStyle animationStyle) {
-    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: endValue, asSeenBy: owner);
+    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: endValue, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
@@ -63,7 +74,7 @@ class VantagePointProperty extends Property {
       end <- new Orientation(forward: newForward, up: up);
     }
 
-    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: end, asSeenBy: owner);
+    OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: end, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
@@ -116,7 +127,7 @@ class VantagePointProperty extends Property {
 
   void animateOrientTo(SThing target, DecimalNumber duration, AnimationStyle animationStyle) {
     Orientation end <- target.getVantagePoint(asSeenBy: owner.vehicle).orientation;
-    OrientationTween tween <- new OrientationTween(property: this, start: value.orientation, end: end, asSeenBy: owner);
+    OrientationTween tween <- new OrientationTween(property: this, start: value.orientation, end: end, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
