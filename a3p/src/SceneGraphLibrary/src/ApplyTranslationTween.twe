@@ -1,0 +1,31 @@
+class ApplyTranslationTween extends PropertyTween {
+  ApplyTranslationTween(VantagePointProperty property, Direction direction, DecimalNumber distance, SThing asSeenBy) {
+    super();
+    this.property <- property;
+    this.direction <- direction.normalize();
+    this.distance <- distance;
+    this.currentDistance <- 0;
+    this.asSeenBy <- asSeenBy;
+  }
+
+  void setEndValue() { 
+    this.interpolate(portion: new Portion(portion: 1));
+  }
+
+  void interpolate(Portion portion) {
+    DecimalNumber delta <- portion.numberValue * distance - currentDistance;
+    currentDistance <- currentDistance + delta;
+
+    Position translation <- new Position(x: direction.x*delta, y: direction.y*delta, z: direction.z*delta);
+    VantagePoint m <- new VantagePoint(position: translation);
+
+    this.property.applyTransformation(transformation: m, asSeenBy: asSeenBy);
+  }
+
+  @CompletelyHidden VantagePointProperty property;
+  @CompletelyHidden Direction direction;
+  @CompletelyHidden DecimalNumber distance;
+  @CompletelyHidden DecimalNumber currentDistance;
+  @CompletelyHidden SThing asSeenBy;
+
+}
