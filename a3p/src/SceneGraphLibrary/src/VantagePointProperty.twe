@@ -42,11 +42,26 @@ class VantagePointProperty extends Property {
 
   void animateMoveTo(SThing target, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
     if (pathStyle.isSmooth()) {
+      VantagePoint start <- owner.getVantagePoint(asSeenBy: target);
 
+      SmoothPositionTween tween <- new SmoothPositionTween(property: this, start: start, end: VantagePoint.IDENTITY, asSeenBy: target);
+      tween.animate(duration: duration, animationStyle: animationStyle);
     } else {
       Position start <- owner.getVantagePoint(asSeenBy: target).position;
 
       PositionTween tween <- new PositionTween(property: this, start: start, end: Position.ZERO, asSeenBy: target);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    }
+  }
+
+  void animateMoveAndOrientTo(SThing target, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
+
+    VantagePoint start <- owner.getVantagePoint(asSeenBy: target);
+    if (pathStyle.isSmooth()) {
+      SmoothVantagePointTween tween <- new SmoothVantagePointTween(property: this, start: start, end: VantagePoint.IDENTITY, asSeenBy: target);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    } else {
+      VantagePointTween tween <- new VantagePointTween(property: this, start: start, end: VantagePoint.IDENTITY, asSeenBy: target);
       tween.animate(duration: duration, animationStyle: animationStyle);
     }
   }
@@ -103,7 +118,6 @@ class VantagePointProperty extends Property {
         end <- new Orientation(forward: forward, up: Direction.POSITIVE_Y_AXIS);
       }
     }
-
 
     OrientationTween tween <- new OrientationTween(property: this, start: subjectInViewer.orientation, end: end, asSeenBy: upAsSeenBy);
     tween.animate(duration: duration, animationStyle: animationStyle);

@@ -98,6 +98,11 @@
       "files": ["src/PositionTween.twe"],
       "type": "Class"
     }, {
+      "id": "SmoothPositionTween",
+      "format": "tweedle",
+      "files": ["src/SmoothPositionTween.twe"],
+      "type": "Class"
+    }, {
       "id": "ApplyTranslationTween",
       "format": "tweedle",
       "files": ["src/ApplyTranslationTween.twe"],
@@ -111,6 +116,16 @@
       "id": "ApplyRotationTween",
       "format": "tweedle",
       "files": ["src/ApplyRotationTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "VantagePointTween",
+      "format": "tweedle",
+      "files": ["src/VantagePointTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "SmoothVantagePointTween",
+      "format": "tweedle",
+      "files": ["src/SmoothVantagePointTween.twe"],
       "type": "Class"
     }, {
       "id": "SizeProperty",
