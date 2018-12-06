@@ -16,11 +16,12 @@ class PropertyTween {
       return;
     }
 
+    DecimalNumber startTime <- $Clock.currentTime;
     DecimalNumber currentTime <- 0;
-
+    
     while (currentTime < duration) {
       $Clock.delayOneFrame();
-      currentTime <- currentTime + $Clock.deltaTime;
+      currentTime <- $Clock.currentTime - startTime;
 
       if (currentTime >= duration) {
         this.setEndValue();
@@ -29,9 +30,5 @@ class PropertyTween {
         this.interpolate(portion: t);
       }
     }
-    
   }
-
-  
-
 }
