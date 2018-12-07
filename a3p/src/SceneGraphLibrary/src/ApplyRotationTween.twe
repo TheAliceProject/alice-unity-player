@@ -9,7 +9,7 @@ class ApplyRotationTween extends PropertyTween {
   }
 
   void setEndValue() { 
-    this.interpolate(portion: new Portion(portion: 1));
+    this.interpolate(portion: Portion.WHOLE);
   }
 
   void interpolate(Portion portion) {

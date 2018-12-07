@@ -13,9 +13,9 @@ namespace Alice.Player.Primitives
         #region Interop Interface 
 
         [PInteropField]
-        public static readonly Portion ZERO = new Portion(0);
+        public static readonly Portion NONE = new Portion(0);
         [PInteropField]
-        public static readonly Portion ONE = new Portion(1);
+        public static readonly Portion WHOLE = new Portion(1);
         
         [PInteropConstructor]
         public Portion(double portion)
