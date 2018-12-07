@@ -24,16 +24,23 @@ namespace Alice.Tweedle.Parse
         }
 
         private static ExecutionScope GetTestScopeWithReturnTestClass() {
-            const string early =
+
+            const string attrClassSrc ="class AttrClass {\n" +
+            "  AttrClass()\n{}\n" +
+            "  WholeNumber attr1 <- 0;\n" + 
+            "  WholeNumber attr2 <- 0;\n" + 
+            "}";
+
+            const string returnTestSrc =
             "class ReturnTest {\n" +
             "  ReturnTest()\n{}\n" +
-            "  WholeNumber together(WholeNumber earlyValue, WholeNumber lateValue) {\n" +
-            "    WholeNumber x <- earlyValue;\n" + 
+            "  WholeNumber together(AttrClass instance, WholeNumber count1, WholeNumber count2) {\n" +
             "    doTogether {\n" +
-            "       if (true) { return x; }\n" +
-            "       x <- lateValue;\n" +
+            "       return 0;\n" +
+            "       countUpTo(c < count1) { instance.attr1 <- instance.attr1 + 1; }\n" +
+            "       countUpTo(c < count2) { instance.attr2 <- instance.attr2 + 1; }\n" +
             "    }\n" +
-            "    return x\n" +
+            "    return -1;\n" +
             "  }\n" +
             "  WholeNumber sequential(WholeNumber earlyValue, WholeNumber lateValue){\n" +
             "    WholeNumber x <- earlyValue;\n" +
@@ -49,8 +56,10 @@ namespace Alice.Tweedle.Parse
             "}";
 
             TweedleSystem system = new TweedleSystem();
-            TClassType earlyClass = (TClassType)new TweedleParser().ParseType(early);
-            system.GetRuntimeAssembly().Add(earlyClass);
+            TClassType attrClass = (TClassType)new TweedleParser().ParseType(attrClassSrc);
+            system.GetRuntimeAssembly().Add(attrClass);
+            TClassType returnTestClass = (TClassType)new TweedleParser().ParseType(returnTestSrc);
+            system.GetRuntimeAssembly().Add(returnTestClass);
             system.Link();
 
             return new ExecutionScope("Test", new TestVirtualMachine(system));
@@ -154,9 +163,14 @@ namespace Alice.Tweedle.Parse
         {
             ExecutionScope scope = GetTestScopeWithReturnTestClass();
             ExecuteStatement("ReturnTest early <- new ReturnTest();", scope);
-            ExecuteStatement("WholeNumber x <- early.together(earlyValue: 3, lateValue: 7);", scope);
+            ExecuteStatement("AttrClass instance <- new AttrClass();", scope);
+            ExecuteStatement("WholeNumber x <- early.together(instance: instance, count1: 3, count2: 7);", scope);
+            ExecuteStatement("WholeNumber attr1 <- instance.attr1;", scope);
+            ExecuteStatement("WholeNumber attr2 <- instance.attr2;", scope);
 
-            Assert.AreEqual(7, scope.GetValue("x").ToInt(), "Should be 7");
+            Assert.AreEqual(0, scope.GetValue("x").ToInt(), "Should be 0");
+            Assert.AreEqual(3, scope.GetValue("attr1").ToInt(), "Should be 3");
+            Assert.AreEqual(7, scope.GetValue("attr2").ToInt(), "Should be 7");
         }
 
         [Test]
