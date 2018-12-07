@@ -34,13 +34,12 @@ namespace Alice.Tweedle.Parse
             const string returnTestSrc =
             "class ReturnTest {\n" +
             "  ReturnTest()\n{}\n" +
-            "  WholeNumber together(AttrClass instance, WholeNumber count1, WholeNumber count2) {\n" +
+            "  void together(AttrClass instance, WholeNumber count1, WholeNumber count2) {\n" +
             "    doTogether {\n" +
-            "       return 0;\n" +
-            "       countUpTo(c < count1) { instance.attr1 <- instance.attr1 + 1; }\n" +
+            "       return;\n" +
+            "       instance.attr1 <- count1;\n" +
             "       countUpTo(c < count2) { instance.attr2 <- instance.attr2 + 1; }\n" +
             "    }\n" +
-            "    return -1;\n" +
             "  }\n" +
             "  WholeNumber sequential(WholeNumber earlyValue, WholeNumber lateValue){\n" +
             "    WholeNumber x <- earlyValue;\n" +
@@ -164,11 +163,10 @@ namespace Alice.Tweedle.Parse
             ExecutionScope scope = GetTestScopeWithReturnTestClass();
             ExecuteStatement("ReturnTest early <- new ReturnTest();", scope);
             ExecuteStatement("AttrClass instance <- new AttrClass();", scope);
-            ExecuteStatement("WholeNumber x <- early.together(instance: instance, count1: 3, count2: 7);", scope);
+            ExecuteStatement("early.together(instance: instance, count1: 3, count2: 7);", scope);
             ExecuteStatement("WholeNumber attr1 <- instance.attr1;", scope);
             ExecuteStatement("WholeNumber attr2 <- instance.attr2;", scope);
-
-            Assert.AreEqual(0, scope.GetValue("x").ToInt(), "Should be 0");
+            
             Assert.AreEqual(3, scope.GetValue("attr1").ToInt(), "Should be 3");
             Assert.AreEqual(7, scope.GetValue("attr2").ToInt(), "Should be 7");
         }
