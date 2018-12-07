@@ -21,19 +21,4 @@ class SmoothVantagePointTween extends SmoothPositionTween {
     }
     property.setValue(value: newVP);
   }
-
-
-  @CompletelyHidden DecimalNumber xHermiteX;
-  @CompletelyHidden DecimalNumber xHermiteY;
-  @CompletelyHidden DecimalNumber xHermiteZ;
-  @CompletelyHidden DecimalNumber xHermiteW;
-  @CompletelyHidden DecimalNumber yHermiteX;
-  @CompletelyHidden DecimalNumber yHermiteY;
-  @CompletelyHidden DecimalNumber yHermiteZ;
-  @CompletelyHidden DecimalNumber yHermiteW;
-  @CompletelyHidden DecimalNumber zHermiteX;
-  @CompletelyHidden DecimalNumber zHermiteY;
-  @CompletelyHidden DecimalNumber zHermiteZ;
-  @CompletelyHidden DecimalNumber zHermiteW;
-
 }
