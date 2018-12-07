@@ -54,6 +54,14 @@ class VantagePointProperty extends Property {
     }
   }
 
+  void animatePlace(SpatialRelation spatialRelation, SThing target, DecimalNumber alongAxisOffset, SThing: asSeenBy, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
+    if (pathStyle.isSmooth()) {
+      
+    } else {
+
+    }
+  }
+
   void animateMoveAndOrientTo(SThing target, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
 
     VantagePoint start <- owner.getVantagePoint(asSeenBy: target);
