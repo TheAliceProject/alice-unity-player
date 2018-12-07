@@ -7,6 +7,12 @@ namespace Alice.Tweedle
     {
         internal ExecutionScope callingScope;
         public TValue Result { get; internal set; }
+        
+        private bool m_Returned = false;
+        internal override bool ShouldExit()
+        {
+            return m_Returned;
+        }
 
         protected TMethod method;
 
@@ -19,9 +25,11 @@ namespace Alice.Tweedle
             callingScope = scope;
         }
 
-        internal override string StackWith(string stackTop)
-        {
-            return callingScope.StackWith(stackTop + "\n" + callStackEntry);
+        internal override void StackWith(System.Text.StringBuilder stackBuilder)
+        {   
+            stackBuilder.Append("\n");
+            stackBuilder.Append(callStackEntry);
+            callingScope.StackWith(stackBuilder);
         }
 
         internal void QueueInvocationStep(StepSequence sequentialSteps, NamedArgument[] arguments)
@@ -35,9 +43,12 @@ namespace Alice.Tweedle
             return method.AsStep(callStackEntry, this, arguments);
         }
 
-        internal void Return(TValue result)
+        internal override void Return(TValue result)
         {
+            if (m_Returned)
+                throw new TweedleRuntimeException("Multiple returns fired for a single InvocationScope");
             Result = result;
+            m_Returned = true;
         }
     }
 }

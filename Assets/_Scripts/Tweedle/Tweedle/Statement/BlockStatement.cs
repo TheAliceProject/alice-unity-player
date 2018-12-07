@@ -57,7 +57,7 @@ namespace Alice.Tweedle
 
             internal override void Execute()
             {
-                if (index < block.Statements.Length)
+                if (index < block.Statements.Length && !scope.ShouldExit())
                 {
                     block.Statements[index++].QueueStepToNotify(scope, this);
                 }

@@ -5,78 +5,84 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Orientation
+    public struct Orientation
     {
-        public readonly Quaternion value = Quaternion.Identity;
+        public readonly Quaternion Value;
 
         public Orientation(Quaternion inRotation)
         {
-            value = inRotation;
+            Value = inRotation;
         }
 
         #region  Interop Interfaces
         [PInteropField]
-        public static readonly Orientation identity = new Orientation(Quaternion.Identity);
+        public static readonly Orientation IDENTITY = new Orientation(Quaternion.Identity);
 
         [PInteropConstructor]
         public Orientation(double x, double y, double z, double w)
         {
-            value = new Quaternion(x, y, z, w);
+            Value = new Quaternion(x, y, z, w);
         }
 
         [PInteropConstructor]
-        public Orientation(Direction direction, Angle angle) {
-            value = Quaternion.CreateFromAxisAngle(direction.value, angle.radians);
+        public Orientation(Direction axis, Angle angle) {
+            Value = Quaternion.CreateFromAxisAngle(axis.Value, angle.radians);
         }
 
         [PInteropConstructor]
-        public Orientation(Orientation clone)
-        {
-            value = clone.value;
+        public Orientation(Direction forward, Direction up) {
+
+            var m = Matrix4x4.CreateWorld(Vector3.Zero, -forward.Value, up.Value);
+            Value = Quaternion.CreateFromRotationMatrix(m);
+        }
+
+        [PInteropConstructor]
+        public Orientation(Direction forward) {
+            Vector3 up;
+            if( ( forward.Value.X == 0 ) && ( forward.Value.Z == 0 ) ) {
+                up = Vector3.UnitX;
+            } else {
+                up = Vector3.UnitY;
+            }
+
+            var m = Matrix4x4.CreateWorld(Vector3.Zero, -forward.Value, up);
+            Value = Quaternion.CreateFromRotationMatrix(m);
         }
 
         [PInteropMethod]
         public bool equals(Orientation other) {
-            return value.Equals(other.value);
+            return Value.Equals(other.Value);
         }
 
         [PInteropMethod]
         public bool isIdentity() {
-            return value.IsIdentity;
+            return Value.IsIdentity;
         }
 
         [PInteropMethod]
         public Orientation multiply(Orientation other) {
-            return new Orientation(value * other.value);
+            return new Orientation(Value * other.Value);
         }
 
         [PInteropMethod]
         public Orientation inverse() {
-            return new Orientation(Quaternion.Inverse(value));
+            return new Orientation(Quaternion.Inverse(Value));
         }
 
         [PInteropMethod]
-        public Orientation interpolatePortion(Orientation end, double portion) {
-            return new Orientation(Quaternion.Slerp(value, end.value, portion));
+        public Orientation interpolatePortion(Orientation end, Portion portion) {
+            return new Orientation(Quaternion.Slerp(Value, end.Value, portion.Value));
         }
 
         #endregion // Interop Interfaces
-
-        public static Orientation slerp(Orientation a, Orientation b, Portion t) {
-            return new Orientation(Quaternion.Slerp(a.value, b.value, t.value));
-        }
-
-        public static Orientation lerp(Orientation a, Orientation b, Portion t) {
-            return new Orientation(Quaternion.Lerp(a.value, b.value, t.value));
-        }
-
+        
         static public implicit operator UnityEngine.Quaternion(Orientation inOrientation)
         {
-            return inOrientation != null ? new UnityEngine.Quaternion((float)inOrientation.value.X, (float)inOrientation.value.Y, (float)inOrientation.value.Z, (float)inOrientation.value.W) : new UnityEngine.Quaternion(float.NaN, float.NaN, float.NaN, float.NaN);
+            return new UnityEngine.Quaternion((float)inOrientation.Value.X, (float)inOrientation.Value.Y, (float)inOrientation.Value.Z, (float)inOrientation.Value.W);
         }
 
         public override string ToString() {
-            return string.Format("Orientation({0:0.##},{1:0.##},{2:0.##},{3:0.##})", value.X, value.Y, value.Z, value.W);
+            return string.Format("Orientation({0:0.##},{1:0.##},{2:0.##},{3:0.##})", Value.X, Value.Y, Value.Z, Value.W);
         }
 
         public override bool Equals(object obj) {
@@ -87,7 +93,7 @@ namespace Alice.Player.Primitives
         }
 
         public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
     }
 }

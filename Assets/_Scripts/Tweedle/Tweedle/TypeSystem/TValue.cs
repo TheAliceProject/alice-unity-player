@@ -1,5 +1,6 @@
 ﻿using System;
 using Alice.Tweedle.VM;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
@@ -127,7 +128,7 @@ namespace Alice.Tweedle
 
         string ITweedleExpression.ToTweedle()
         {
-            return m_Type.ToTweedle(ref this);
+            return m_Type == null ? "undefined" : m_Type.ToTweedle(ref this);
         }
 
         ExecutionStep ITweedleExpression.AsStep(ExecutionScope inScope)
@@ -145,6 +146,11 @@ namespace Alice.Tweedle
         }
 
         internal T RawObject<T>() where T : class
+        {
+            return (T)m_ReferenceValue;
+        }
+
+        internal T RawStruct<T>() where T : struct
         {
             return (T)m_ReferenceValue;
         }
@@ -277,7 +283,10 @@ namespace Alice.Tweedle
             : base(scope)
         {
             result = inTValue;
-            this.callStack = scope.StackWith(callStackEntry);
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
+                scope.StackWith(stackBuilder.Builder);
+                this.callStack = stackBuilder.ToString();
+            }
         }
     }
 }

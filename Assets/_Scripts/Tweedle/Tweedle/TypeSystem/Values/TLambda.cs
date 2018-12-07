@@ -53,6 +53,11 @@ namespace Alice.Tweedle
             QueueEvaluation(argsAsExpressions);
         }
 
+        public ExecutionScope CapturedScope
+        {
+            get { return creationScope; }
+        }
+
         public AsyncReturn<TValue> QueueEvaluation(ITweedleExpression[] inArguments)
         {
             TValue thisVal = ((TLambdaType)this.source.Type.Get()).Instantiate(this);

@@ -77,7 +77,7 @@ namespace Alice.Tweedle.VM
                 ProcessStep(stepsForThisFrame.Dequeue());
             }
             PrepForNextFrame();
-            if (loopCount > 10)
+            if (loopCount > 1000)
             {
                 UnityEngine.Debug.Log("Loop count " + loopCount);
             }

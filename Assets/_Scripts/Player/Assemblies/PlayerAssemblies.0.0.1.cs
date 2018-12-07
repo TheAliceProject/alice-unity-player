@@ -14,10 +14,12 @@ namespace Alice.Player
 
         static private void GenerateVersion_0_0_1(TAssembly inAssembly)
         {
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SystemModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DebugModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SceneGraphModule)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AnimationStyleEnum)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ClockModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(MathModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(EventPolicyModule)));
 
             // interop primitives
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Portion)));
@@ -29,19 +31,10 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AxisAlignedBox)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Size)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Scale)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Paint)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Color)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ImageSource)));
 
-            // properties
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DecimalNumberProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(WholeNumberProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AngleProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(PortionProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(PositionProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DirectionProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SizeProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ScaleProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(OrientationProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AxisAlignedBoxProperty)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(VantagePointProperty)));
         }
     }
 }

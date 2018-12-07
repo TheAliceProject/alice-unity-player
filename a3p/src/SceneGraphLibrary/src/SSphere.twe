@@ -1,0 +1,19 @@
+class SSphere extends SShape
+{
+  SSphere() 
+  {
+    super(resource: $SceneGraph.SPHERE);
+    $SceneGraph.bindRadiusProperty(owner: this, property: this.radius, value: this.radius.getValue());
+  }
+
+  DecimalNumber getRadius() {
+    return this.radius.getValue();
+  }
+
+  void setRadius(DecimalNumber radius, DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    this.radius.animateValue(endValue: radius, duration: duration, animationStyle: style);
+  }
+
+  @CompletelyHidden DecimalNumberProperty radius <- new DecimalNumberProperty(owner: this, value: 0.5);
+} 

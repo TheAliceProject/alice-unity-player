@@ -4,61 +4,55 @@ using Alice.Tweedle.Interop;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Scale
+    public struct Scale
     {
-        public readonly Vector3 value = new Vector3(1,1,1);
+        public readonly Vector3 Value;
 
         public Scale(Vector3 inVector)
         {
-            value = inVector;
+            Value = inVector;
         }
 
         #region Interop Interfaces
         public static readonly Scale ONE = new Scale(1,1,1);
 
         [PInteropField]
-        public double x { get {return value.X; } }
+        public double x { get {return Value.X; } }
         [PInteropField]
-        public double y { get {return value.Y; } }
+        public double y { get {return Value.Y; } }
         [PInteropField]
-        public double z { get {return value.Z; } }
+        public double z { get {return Value.Z; } }
 
        
         [PInteropConstructor]
         public Scale(double x, double y, double z)
         {
-            value = new Vector3(x, y, z);
-        }
-
-        [PInteropConstructor]
-        public Scale(Size clone)
-        {
-            value = clone.value;
+            Value = new Vector3(x, y, z);
         }
 
         [PInteropMethod]
         public bool equals(Scale other) {
-            return value == other.value;
+            return Value == other.Value;
         }
 
         [PInteropMethod]
         public Scale scaledBy(double factor) {
-            return new Scale(value*factor);
+            return new Scale(Value*factor);
         }
 
         [PInteropMethod]
-        public Scale interpolatePortion(Scale end, double portion) {
-            return new Scale(Vector3.Lerp(value, end.value, portion));
+        public Scale interpolatePortion(Scale end, Portion portion) {
+            return new Scale(Vector3.Lerp(Value, end.Value, portion.Value));
         }
         #endregion
 
         static public implicit operator UnityEngine.Vector3(Scale inPosition)
         {
-            return inPosition != null ? new UnityEngine.Vector3((float)inPosition.value.X, (float)inPosition.value.Y, (float)inPosition.value.Z) : new UnityEngine.Vector3(float.NaN, float.NaN, float.NaN);
+            return new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z);
         }
 
         public override string ToString() {
-            return string.Format("Scale({0:0.##},{1:0.##},{2:0.##})", value.X, value.Y, value.Z);
+            return string.Format("Scale({0:0.##},{1:0.##},{2:0.##})", Value.X, Value.Y, Value.Z);
         }
 
         public override bool Equals(object obj) {
@@ -69,7 +63,7 @@ namespace Alice.Player.Primitives
         }
 
         public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 
     }

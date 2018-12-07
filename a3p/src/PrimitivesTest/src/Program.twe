@@ -65,14 +65,26 @@ class Program {
     AxisAlignedBox transformedAABB <- aabb.transform(vantagePoint: vp);
     $Debug.log(string: "transformedAABB <- " .. transformedAABB);
 
-    DecimalNumberProperty deciProp <- new DecimalNumberProperty(owner: this, value: 2.5);
+    // Color
+    $Debug.log(string: "Color");
+    Color redColor <- new Color(red: 1, green: 0, blue: 0);
+    Color blueColor <- new Color(red: 0, green: 0, blue: 1);
+    Color purpleColor <- redColor.interpolatePortion(end: blueColor, portion: 0.5);
+    $Debug.log(string: "Red " .. redColor .. " lerping by 0.5 to blue " .. blueColor .. " is a dark purple " .. purpleColor);
+
+
+    $Debug.log(string: "Properties");
+    DecimalNumberProperty deciProp <- new DecimalNumberProperty(value: 2.5);
     deciProp.animateValue(endValue: 10, duration: 3, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
 
-    WholeNumberProperty wholeProp <- new WholeNumberProperty(owner: this, value: 0);
-    wholeProp.animateValue(endValue: 10, duration: 2, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+    WholeNumberProperty wholeProp <- new WholeNumberProperty(value: 0);
+    wholeProp.animateValue(endValue: 20, duration: 2, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
 
-    PositionProperty posProp <- new PositionProperty(owner: this, value: Position.ZERO);
+    PositionProperty posProp <- new PositionProperty(value: Position.ZERO);
     posProp.animateValue(endValue: new Position(x: 1, y: 2, z: 3), duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY);
+
+    ColorProperty colorProp <- new ColorProperty(value: Color.RED);
+    colorProp.animateValue(endValue: Color.BLUE, duration: 1.6, animationStyle: AnimationStyle.BEGIN_GENTLY_AND_END_ABRUPTLY);
   
   }
   

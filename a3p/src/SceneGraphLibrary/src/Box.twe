@@ -1,0 +1,5 @@
+class Box extends SBox models Box {
+  Box() {
+    super();
+  }
+}

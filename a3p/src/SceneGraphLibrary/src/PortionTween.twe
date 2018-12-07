@@ -1,0 +1,23 @@
+class PortionTween extends PropertyTween {
+  PortionTween(PortionProperty property, Portion start, Portion end) {
+    super();
+    this.property <- property;
+    this.start <- start;
+    this.end <- end;
+    this.delta <- end.numberValue - start.numberValue;
+  }
+
+  void setEndValue() { 
+    this.property.setValue(value: end);
+  }
+
+  void interpolate(Portion portion) {
+    this.property.setValue(value: new Portion(portion: this.delta*portion.numberValue + this.start.numberValue));
+  }
+
+  @CompletelyHidden PortionProperty property;
+  @CompletelyHidden Portion start;
+  @CompletelyHidden Portion end;
+  @CompletelyHidden DecimalNumber delta;
+
+}

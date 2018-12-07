@@ -1,0 +1,63 @@
+class SModel extends SMovableTurnable
+{
+  SModel(TextString resource) {
+    $SceneGraph.createEntity(model: this, resource: resource);
+    $SceneGraph.bindTransformationProperty(owner: this, property: this.localTransformation, value: this.localTransformation.getValue());
+    $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.size.getValue());
+    $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());
+    $SceneGraph.bindOpacityProperty(owner: this, property: this.opacity, value: this.opacity.getValue());
+    
+  }
+
+  Size getSize() {
+    return this.size.getValue();
+  }
+
+  void setSize(Size size, DecimalNumber duration <- Default.duration(),  AnimationStyle animationStyle <- Default.animationStyle()) 
+  {
+    this.size.animateValue(endValue: size, duration: duration, animationStyle: animationStyle);
+  }
+
+  void setWidth(DecimalNumber width, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    this.size.animateWidth(width: width, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: style);
+  }
+
+  void setHeight(DecimalNumber height, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    this.size.animateHeight(height: height, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: style);
+  }
+
+  void setDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy <- Default.dimensionPolicy(), DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    this.size.animateDepth(depth: depth, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: style);
+  }
+
+  Paint getPaint() {
+    return this.paint.getValue();
+  }
+
+  void setPaint(Paint paint, DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    this.paint.animateValue(endValue: paint, duration: duration, animationStyle: style);
+  }
+
+  Portion getOpacity() {
+    return this.opacity.getValue();
+  }
+
+  void setOpacity(Portion opacity,
+                  DecimalNumber duration <- Default.duration(),
+                  AnimationStyle style <- Default.animationStyle() ) {
+    this.opacity.animateValue(endValue: opacity, duration: duration, animationStyle: style);
+  }
+
+  void setVehicle(SThing vehicle) {
+    this.vehicle <- vehicle;
+    localTransformation.value <- $SceneGraph.setVehicle(vehicle: vehicle, rider: this);
+  }
+
+  @CompletelyHidden SizeProperty size <- new SizeProperty(owner: this, value: new Size(width: 1, height: 1, depth: 1));
+  @CompletelyHidden PaintProperty paint <- new PaintProperty(owner: this, value: Color.WHITE);
+  @CompletelyHidden PortionProperty opacity <- new PortionProperty(owner: this, value: Portion.WHOLE);
+}

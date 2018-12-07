@@ -1,0 +1,37 @@
+class PositionTween extends PropertyTween {
+  PositionTween(VantagePointProperty property, Position start, Position end, SThing asSeenBy) {
+    super();
+    this.property <- property;
+    this.start <- start;
+    this.end <- end;
+    this.asSeenBy <- asSeenBy;
+  }
+
+  void setEndValue() { 
+    setPositionOnly(position: end);
+  }
+
+  void interpolate(Portion portion) {
+    Position pos <- this.start.interpolatePortion(end: this.end, portion: portion);
+    setPositionOnly(position: pos);
+  }
+
+  @CompletelyHidden void setPositionOnly(Position position) {
+
+    Position newPosition <- position;
+    
+    if (asSeenBy != property.owner.vehicle) {
+      VantagePoint inVehicle <- asSeenBy.getVantagePoint(asSeenBy: property.owner.vehicle).multiply(other: new VantagePoint(position: position));
+      newPosition <- inVehicle.position;
+    }
+
+    VantagePoint value <- new VantagePoint(position: newPosition, orientation: property.getValue().orientation);
+    this.property.setValue(value: value);
+  }
+
+  @CompletelyHidden VantagePointProperty property;
+  @CompletelyHidden Position start;
+  @CompletelyHidden Position end;
+  @CompletelyHidden SThing asSeenBy;
+
+}

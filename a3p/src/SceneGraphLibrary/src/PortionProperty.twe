@@ -1,0 +1,24 @@
+class PortionProperty extends Property {
+  PortionProperty(SThing owner, Portion value) {
+    super(owner: owner);
+    this.value <- value;
+  }
+
+  Portion getValue() {
+    return this.value;
+  }
+
+  void setValue(Portion value) {
+    if (!this.value.equals(other: value)) {
+      this.value <- value;
+      $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
+    }
+  }
+
+  void animateValue(Portion endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+    PortionTween tween <- new PortionTween(property: this, start: this.value, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  @CompletelyHidden Portion value;
+}
