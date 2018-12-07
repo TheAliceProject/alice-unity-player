@@ -180,7 +180,7 @@ class SScene extends SThing {
       }
     }
 
-    this.globalBrightness.setValue(value: Portion.ZERO);
+    this.globalBrightness.setValue(value: Portion.NONE);
     this.changeActiveStatus( isActive: true );
     
     //This forces the scene to initialize itself to make sure we can properly query bounding boxes and other
@@ -189,12 +189,12 @@ class SScene extends SThing {
 
     //this.addCamerasTo( program: program );
 
-    globalBrightness.animateValue( endValue: Portion.ONE, duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.WHOLE, duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
     $SceneGraph.activateScene(scene: this);
   }
 
   @CompletelyHidden void deactivate( SProgram program ) {
-    globalBrightness.animateValue( endValue: Portion.ZERO, duration: 0.25, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.NONE, duration: 0.25, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
     this.changeActiveStatus( isActive: false );
     //this.removeCamerasFrom( program: program );
     this.program <- null;
@@ -271,8 +271,8 @@ class SScene extends SThing {
   @CompletelyHidden ColorProperty fromAboveLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
   @CompletelyHidden ColorProperty fromBelowLightColor <- new ColorProperty(owner: this, value: Color.WHITE);
   
-  @CompletelyHidden PortionProperty fogDensity <- new PortionProperty(owner: this, value: Portion.ZERO);
-  @CompletelyHidden PortionProperty globalBrightness <- new PortionProperty(owner: this, value: Portion.ZERO);
+  @CompletelyHidden PortionProperty fogDensity <- new PortionProperty(owner: this, value: Portion.NONE);
+  @CompletelyHidden PortionProperty globalBrightness <- new PortionProperty(owner: this, value: Portion.NONE);
   
   @CompletelyHidden SProgram program <- null;
   @CompletelyHidden WholeNumber activeCount <- 0;

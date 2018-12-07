@@ -15,10 +15,10 @@ class Scene extends SScene {
     $Debug.log(string: this.getName() .. ": myFirstMethod()");
 
     // fade in new boxes
-    box2.setOpacity(opacity: Portion.ONE, duration: 0.1);
-    box3.setOpacity(opacity: Portion.ONE, duration: 0.1);
-    box4.setOpacity(opacity: Portion.ONE, duration: 0.1);
-    box5.setOpacity(opacity: Portion.ONE, duration: 0.1);
+    box2.setOpacity(opacity: Portion.WHOLE, duration: 0.1);
+    box3.setOpacity(opacity: Portion.WHOLE, duration: 0.1);
+    box4.setOpacity(opacity: Portion.WHOLE, duration: 0.1);
+    box5.setOpacity(opacity: Portion.WHOLE, duration: 0.1);
 
     Position pos <- box2.getPositionRelativeToVehicle();
     Orientation rot <- box2.getOrientationRelativeToVehicle();
@@ -285,25 +285,25 @@ class Scene extends SScene {
     box3.setVehicle(vehicle: this);
     box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: 0);
     box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.6)), duration: 0);
-    box3.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box3.setOpacity(opacity: Portion.NONE, duration: 0);
 
     box2.setName(name: "box2");
     box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: 0);
     box2.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.5)), duration: 0);
     box2.setVehicle(vehicle: box3);
-    box2.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box2.setOpacity(opacity: Portion.NONE, duration: 0);
 
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);
     box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.0, z: -5.0), duration: 0);
     box4.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: -0.25)), duration: 0);
-    box4.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box4.setOpacity(opacity: Portion.NONE, duration: 0);
 
     box5.setName(name: "box5");
     box5.setVehicle(vehicle: this);
     box5.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: 5.0), duration: 0);
     box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.7)), duration: 0);
-    box5.setOpacity(opacity: Portion.ZERO, duration: 0);
+    box5.setOpacity(opacity: Portion.NONE, duration: 0);
 
   }
 

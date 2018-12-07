@@ -58,7 +58,7 @@ enum AnimationStyle {
                 }
             }
         } else {
-            return new Portion(portion: 1);
+            return Portion.WHOLE;
         }
     }
 

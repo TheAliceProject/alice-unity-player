@@ -15,7 +15,7 @@ class DirectionalBox extends SBox models Box {
     hat.setSize(size: new Size(width: 0.25, height: 0.25, depth: 0.25), duration: 0);
     hat.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: 0);
     hat.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0.5, z: 0), duration: 0);
-    hat.setOpacity(opacity: Portion.ZERO, duration: 0);
+    hat.setOpacity(opacity: Portion.NONE, duration: 0);
   }
 
   void setOpacity(Portion opacity,
