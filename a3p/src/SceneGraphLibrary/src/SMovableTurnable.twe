@@ -1,7 +1,7 @@
 class SMovableTurnable extends STurnable {
   SMovableTurnable() {
   }
-  
+
   void move(MoveDirection direction, Number amount,
             SThing asSeenBy <- this,
             DecimalNumber duration <- Default.duration(),
@@ -9,7 +9,6 @@ class SMovableTurnable extends STurnable {
     this.localTransformation.animateMove(direction: direction.getAxis(), distance: amount, asSeenBy: asSeenBy, duration: duration, animationStyle: style);
   }
 
-  
   void moveToward(SThing target, Number amount,
                   SThing asSeenBy <- this, // Unused, but kept so existing senders won't break
                   DecimalNumber duration <- Default.duration(),
@@ -17,15 +16,13 @@ class SMovableTurnable extends STurnable {
     this.localTransformation.animateMoveToward(target: target, distance: amount, duration: duration, animationStyle: style);
   }
 
-
   void moveAwayFrom(SThing target, Number amount,
                     SThing asSeenBy <- this, // Unused, but kept so existing senders won't break
                     DecimalNumber duration <- Default.duration(),
                     AnimationStyle style <- Default.animationStyle()) {
     this.localTransformation.animateMoveToward(target: target, distance: -amount, duration: duration, animationStyle: style);
   }
-  
-  
+
   void moveTo(SThing target,
               DecimalNumber duration <- Default.duration(),
               AnimationStyle style <- Default.animationStyle(),
@@ -40,19 +37,14 @@ class SMovableTurnable extends STurnable {
     this.localTransformation.animateMoveAndOrientTo( target: target, pathStyle: pathStyle, duration: duration, animationStyle: style );
   }
 
-  /*
   void place(SpatialRelation spatialRelation, SThing target,
              SThing asSeenBy <- target,
              DecimalNumber duration <- Default.duration(),
              AnimationStyle style <- Default.animationStyle(),
              PathStyle pathStyle <- Default.pathStyle(),
              DecimalNumber alongAxisOffset <- 0.0 ) {
-    // checkArgumentIsNotNull( spatialRelation );
-    // checkArgumentIsNotNull( target );
-    // TODO
-    this.animatePlace( spatialRelation: spatialRelation, target: target, alongAxisOffset: alongAxisOffset, asSeenBy: asSeenBy, pathStyle: pathStyle, duration: duration, animationStyle: style );
+    this.localTransformation.animatePlace( spatialRelation: spatialRelation, target: target, alongAxisOffset: alongAxisOffset, asSeenBy: asSeenBy, pathStyle: pathStyle, duration: duration, animationStyle: style );
   }
-  */
 
   void setPositionRelativeToVehicle(Position position,
                                     DecimalNumber duration <- Default.duration(),
