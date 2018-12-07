@@ -3,7 +3,7 @@ class ApplyTranslationTween extends PropertyTween {
     super();
     this.property <- property;
     this.direction <- direction.normalize();
-    this.distance <- distance;
+    this.endDistance <- distance;
     this.currentDistance <- 0;
     this.asSeenBy <- asSeenBy;
   }
@@ -13,7 +13,7 @@ class ApplyTranslationTween extends PropertyTween {
   }
 
   void interpolate(Portion portion) {
-    DecimalNumber delta <- portion.numberValue * distance - currentDistance;
+    DecimalNumber delta <- portion.numberValue * endDistance - currentDistance;
     currentDistance <- currentDistance + delta;
 
     Position translation <- new Position(x: direction.x*delta, y: direction.y*delta, z: direction.z*delta);
@@ -24,7 +24,7 @@ class ApplyTranslationTween extends PropertyTween {
 
   @CompletelyHidden VantagePointProperty property;
   @CompletelyHidden Direction direction;
-  @CompletelyHidden DecimalNumber distance;
+  @CompletelyHidden DecimalNumber endDistance;
   @CompletelyHidden DecimalNumber currentDistance;
   @CompletelyHidden SThing asSeenBy;
 
