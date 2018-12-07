@@ -10,15 +10,50 @@ namespace Alice.Player.Modules
     [PInteropType("Clock")]
     static public class ClockModule
     {
+        [PInteropField]
+        static public double currentTime { get { return UnityEngine.Time.time; } }
+
+        [PInteropField]
+        static public double deltaTime { get { return UnityEngine.Time.deltaTime; } }
+
+        [PInteropField]
+        static public double simulationSpeedFactor { 
+            get { return UnityEngine.Time.timeScale; }
+            set {
+                // max time scale for Unity is 100
+                float scale =   Mathf.Min(100f, (float)value);
+                UnityEngine.Time.timeScale = scale;
+            }
+        }
+
         [PInteropMethod]
         static public AsyncReturn delay(double duration)
         {
-            if (duration <= 0)
+            if (duration <= 0) {
                 return null;
+            }
 
             AsyncReturn returnVal = new AsyncReturn();
-            UnitySceneGraph.Instance.StartCoroutine(DelayImpl(returnVal, duration));
+            SceneGraph.Current.QueueTimeReturn(returnVal, duration);
             return returnVal;
+        }
+
+        [PInteropMethod]
+        public static AsyncReturn delayOneFrame() {
+            AsyncReturn returnValue = new AsyncReturn();
+            SceneGraph.Current.QueueFrameReturn(returnValue, 1);
+            return returnValue;
+        }
+
+        [PInteropMethod]
+        public static AsyncReturn delayFrames(double frames) {
+            if (frames <= 0) {
+                return null;
+            }
+
+            AsyncReturn returnValue = new AsyncReturn();
+            SceneGraph.Current.QueueFrameReturn(returnValue, (int)frames);
+            return returnValue;
         }
 
         [PInteropMethod]
@@ -34,27 +69,7 @@ namespace Alice.Player.Modules
                 return;
             }
 
-            UnitySceneGraph.Instance.StartCoroutine(CallOnDelay(lambda, delay));
-        }
-
-        [PInteropMethod]
-        static public AsyncReturn<bool> returnRandomBool(double duration)
-        {
-            AsyncReturn<bool> returnVal = new AsyncReturn<bool>();
-            UnitySceneGraph.Instance.StartCoroutine(ReturnWithDelay(returnVal, duration, Random.value < 0.5));
-            return returnVal;
-        }
-
-        static private IEnumerator DelayImpl(AsyncReturn inReturn, double inDuration)
-        {
-            yield return new WaitForSeconds((float)inDuration);
-            inReturn.Return();
-        }
-
-        static private IEnumerator ReturnWithDelay<T>(AsyncReturn<T> inReturn, double inDuration, T inValue)
-        {
-            yield return new WaitForSeconds((float)inDuration);
-            inReturn.Return(inValue);
+            SceneGraph.Current.StartCoroutine(CallOnDelay(lambda, delay));
         }
 
         static private IEnumerator CallOnDelay(PFunc<double, double, double> lambda, double inDelay)

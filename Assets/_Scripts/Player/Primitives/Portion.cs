@@ -5,44 +5,47 @@ using Alice.Tweedle;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class Portion
+    public struct Portion
     {
        
-        public readonly double value;
+        public readonly double Value;
 
         #region Interop Interface 
+
+        [PInteropField]
+        public static readonly Portion NONE = new Portion(0);
+        [PInteropField]
+        public static readonly Portion WHOLE = new Portion(1);
+        
         [PInteropConstructor]
         public Portion(double portion)
         {
             if (portion < 0 || portion > 1)
                 throw new TweedleRuntimeException("Cannot instantiate Portion with value " + portion + " - must be between 0 and 1");
-            value = portion;
+            Value = portion;
         }
 
-        [PInteropConstructor]
-        public Portion(Portion clone)
-        {
-            value = clone.value;
-        }
+        [PInteropField]
+        public double numberValue { get { return Value; } }
 
         [PInteropMethod]
         public bool equals(Portion other) {
-            return value == other;
+            return Equals(other);
         }
 
         [PInteropMethod]
         public Portion add(Portion other) {
-            return new Portion(System.Math.Min(value + other, 1));
+            return new Portion(System.Math.Min(Value + other, 1));
         }
 
         [PInteropMethod]
         public Portion subtract(Portion other) {
-            return new Portion(System.Math.Max(value - other, 0));
+            return new Portion(System.Math.Max(Value - other, 0));
         }
 
         [PInteropMethod]
-        public Portion interpolatePortion(Portion end, double portion) {
-            return new Portion((end.value-value)*portion + value);
+        public Portion interpolatePortion(Portion end, Portion portion) {
+            return new Portion((end.Value-Value)*portion.Value + Value);
         }
         #endregion // Interop Interfaces
 
@@ -50,23 +53,27 @@ namespace Alice.Player.Primitives
 
         static public implicit operator double(Portion inPortion)
         {
-            return inPortion != null ? inPortion.value : double.NaN;
+            return inPortion.Value;
+        }
+        
+        static public implicit operator float(Portion inPortion)
+        {
+            return (float)inPortion.Value;
         }
 
-       
         public override string ToString() {
-            return string.Format("Portion({0:0.####})", value);
+            return string.Format("Portion({0:0.####})", Value);
         }
         
         public override bool Equals(object obj) {
             if (obj is Portion) {
-                return equals((Portion)obj);
+                return ((Portion)obj).Value == Value;
             }
             return false;
         }
 
         public override int GetHashCode() {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
     }
 }

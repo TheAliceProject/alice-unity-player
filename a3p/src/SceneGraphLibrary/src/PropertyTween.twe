@@ -1,0 +1,34 @@
+// Abstract class for property animations and tweens
+class PropertyTween {
+  PropertyTween() {}
+
+  void interpolate(Portion portion) {
+
+  }
+
+  void setEndValue() {
+
+  }
+
+  void animate(DecimalNumber duration, AnimationStyle animationStyle) {
+    if (duration <= 0) {
+      this.setEndValue();
+      return;
+    }
+
+    DecimalNumber startTime <- $Clock.currentTime;
+    DecimalNumber currentTime <- 0;
+    
+    while (currentTime < duration) {
+      $Clock.delayOneFrame();
+      currentTime <- $Clock.currentTime - startTime;
+
+      if (currentTime >= duration) {
+        this.setEndValue();
+      } else {
+        Portion t <- animationStyle.calculatePortion(timeElapsed: currentTime, timeTotal: duration);
+        this.interpolate(portion: t);
+      }
+    }
+  }
+}

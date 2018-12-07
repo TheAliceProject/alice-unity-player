@@ -23,6 +23,47 @@ namespace Alice.Tweedle.Parse
             return new ExecutionScope("Test", new TestVirtualMachine(new TweedleSystem()));
         }
 
+        private static ExecutionScope GetTestScopeWithReturnTestClass() {
+
+            const string attrClassSrc ="class AttrClass {\n" +
+            "  AttrClass()\n{}\n" +
+            "  WholeNumber attr1 <- 0;\n" + 
+            "  WholeNumber attr2 <- 0;\n" + 
+            "}";
+
+            const string returnTestSrc =
+            "class ReturnTest {\n" +
+            "  ReturnTest()\n{}\n" +
+            "  void together(AttrClass instance, WholeNumber count1, WholeNumber count2) {\n" +
+            "    doTogether {\n" +
+            "       return;\n" +
+            "       instance.attr1 <- count1;\n" +
+            "       countUpTo(c < count2) { instance.attr2 <- instance.attr2 + 1; }\n" +
+            "    }\n" +
+            "  }\n" +
+            "  WholeNumber sequential(WholeNumber earlyValue, WholeNumber lateValue){\n" +
+            "    WholeNumber x <- earlyValue;\n" +
+            "    if (true) {return x;}\n"+
+            "    x <- lateValue;\n" +
+            "    return x;\n" +
+            "  }\n" +
+            "  void voidReturn(WholeNumber earlyValue, WholeNumber lateValue){\n" +
+            "    WholeNumber x <- earlyValue;\n" +
+            "    if (true) {return;}\n"+
+            "    x <- lateValue;\n" +
+            "  }\n" +
+            "}";
+
+            TweedleSystem system = new TweedleSystem();
+            TClassType attrClass = (TClassType)new TweedleParser().ParseType(attrClassSrc);
+            system.GetRuntimeAssembly().Add(attrClass);
+            TClassType returnTestClass = (TClassType)new TweedleParser().ParseType(returnTestSrc);
+            system.GetRuntimeAssembly().Add(returnTestClass);
+            system.Link();
+
+            return new ExecutionScope("Test", new TestVirtualMachine(system));
+        }
+
         [Test]
         public void LocalDeclarationShouldUpdateTheScope()
         {
@@ -39,6 +80,26 @@ namespace Alice.Tweedle.Parse
             ExecuteStatement("WholeNumber x <- 3;", scope);
 
             Assert.AreEqual(3, scope.GetValue("x").ToInt(), "Should be 3");
+        }
+
+        [Test]
+        public void StatementsAfterAnEarlyReturnShouldNotExecute()
+        {
+            ExecutionScope scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest early <- new ReturnTest();", scope);
+            ExecuteStatement("WholeNumber x <- early.sequential(earlyValue: 3, lateValue: 7);", scope);
+
+            Assert.AreEqual(3, scope.GetValue("x").ToInt(), "Should be 3");
+        }
+
+        [Test]
+        public void VoidReturnStatementsCanExecute()
+        {
+            ExecutionScope scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest test <- new ReturnTest();", scope);
+            Assert.DoesNotThrow(()=>{
+                ExecuteStatement("test.voidReturn(earlyValue: 3, lateValue: 7);", scope);
+            });
         }
 
         [Test]
@@ -97,6 +158,20 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
+        public void DoTogetherSequenceShouldReturnAfterAllStatementsHaveExecuted()
+        {
+            ExecutionScope scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest early <- new ReturnTest();", scope);
+            ExecuteStatement("AttrClass instance <- new AttrClass();", scope);
+            ExecuteStatement("early.together(instance: instance, count1: 3, count2: 7);", scope);
+            ExecuteStatement("WholeNumber attr1 <- instance.attr1;", scope);
+            ExecuteStatement("WholeNumber attr2 <- instance.attr2;", scope);
+            
+            Assert.AreEqual(3, scope.GetValue("attr1").ToInt(), "Should be 3");
+            Assert.AreEqual(7, scope.GetValue("attr2").ToInt(), "Should be 7");
+        }
+
+        [Test]
         public void ConditionalTrueShouldEvaluateThen()
         {
             ExecutionScope scope = GetTestScope();
@@ -114,6 +189,24 @@ namespace Alice.Tweedle.Parse
             ExecuteStatement("if( false ) { x <- 5; } else { x <- 17; }", scope);
 
             Assert.AreEqual(17, scope.GetValue("x").ToInt(), "Should be 17");
+        }
+
+        [Test]
+        public void ConditionalIfShouldShouldNotLeak()
+        {
+            ExecutionScope scope = GetTestScope();
+            ExecuteStatement("WholeNumber z <- 0;", scope);
+            ExecuteStatement("if(true) { z <- z+1; WholeNumber x <- z; }", scope);
+            Assert.Throws<TweedleRuntimeException>(() => scope.GetValue("x"));
+        }
+
+        [Test]
+        public void ConditionalElseShouldShouldNotLeak()
+        {
+            ExecutionScope scope = GetTestScope();
+            ExecuteStatement("WholeNumber z <- 2;", scope);
+            ExecuteStatement("if( false ) { z <- 5; } else { z <- 17; WholeNumber x <- z;}", scope);
+            Assert.Throws<TweedleRuntimeException>(() => scope.GetValue("x"));
         }
 
         [Test]

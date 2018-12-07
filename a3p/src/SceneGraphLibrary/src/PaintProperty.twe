@@ -1,0 +1,24 @@
+class PaintProperty extends Property {
+  PaintProperty(SThing owner, Paint value) {
+    super(owner: owner);
+    this.value <- value;
+  }
+
+  Paint getValue() {
+    return this.value;
+  }
+
+  void setValue(Paint value) {
+    if (!this.value.equals(other: value)) {
+      this.value <- value;
+      $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
+    }
+  }
+
+  void animateValue(Paint endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+    PaintTween tween <- new PaintTween(property: this, start: this.value, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  @CompletelyHidden Paint value;
+}

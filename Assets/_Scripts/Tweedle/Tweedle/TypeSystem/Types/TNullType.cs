@@ -61,10 +61,7 @@ namespace Alice.Tweedle
         {
             // Null can be used to represent reference-type values
             // but not value-type values (int, double, bool)
-            // return inType.IsReferenceType();
-            
-            // Just kidding, null is not a valid value for a reference type
-            return false;
+            return inType.IsReferenceType();
         }
 
         #endregion // Tweedle Casting

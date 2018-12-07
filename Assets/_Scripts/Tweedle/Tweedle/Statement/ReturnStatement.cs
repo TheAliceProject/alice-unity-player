@@ -32,7 +32,7 @@ namespace Alice.Tweedle
             var returnStep = new ValueOperationStep(
                 "return " + expression.ToTweedle(),
                 scope,
-                result => ((InvocationScope)scope).Return(result));
+                result => scope.Return(result));
             valStep.OnCompletionNotify(returnStep);
             returnStep.OnCompletionNotify(next);
             return valStep;

@@ -4,57 +4,53 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public sealed class AxisAlignedBox
+    public struct AxisAlignedBox
     {
-        public readonly Vector3 minValue = Vector3.Zero;
-        public readonly Vector3 maxValue = Vector3.Zero;
+        public readonly Vector3 MinValue;
+        public readonly Vector3 MaxValue;
 
         public AxisAlignedBox(Vector3 inMin, Vector3 inMax)
         {
-            this.minValue = inMin;
-            this.maxValue = inMax;
+            this.MinValue = inMin;
+            this.MaxValue = inMax;
         }
 
         #region Interop Interfaces
         [PInteropField]
-        public Position minimum { get { return new Position(minValue);} }
+        public Position minimum { get { return new Position(MinValue);} }
         [PInteropField]
-        public Position maximum { get { return new Position(minValue);} }
+        public Position maximum { get { return new Position(MinValue);} }
 
         [PInteropConstructor]
         public AxisAlignedBox(Position minimum, Position maximum)
         {
-            minValue = minimum.value;
-            maxValue = maximum.value;
-        }
-
-        [PInteropConstructor]
-        public AxisAlignedBox(AxisAlignedBox clone)
-        {
-            minValue = clone.minValue;
-            maxValue = clone.maxValue;
+            MinValue = minimum.Value;
+            MaxValue = maximum.Value;
         }
 
         [PInteropMethod]
         public bool equals(AxisAlignedBox other) 
         {
-            return maxValue == other.maxValue && minValue == other.minValue;
+            return MaxValue == other.MaxValue && MinValue == other.MinValue;
         }
 
         [PInteropMethod]
         public AxisAlignedBox transform(VantagePoint vantagePoint) {      
+
+            var m = vantagePoint.GetMatrix();
+
             // transformed all corner points
             Vector3[] verts = {
                 // bottom
-                Vector3.Transform(minValue, vantagePoint.value),
-                Vector3.Transform(new Vector3(minValue.X, maxValue.Y, minValue.Z), vantagePoint.value),
-                Vector3.Transform(new Vector3(maxValue.X, minValue.Y, minValue.Z), vantagePoint.value),
-                Vector3.Transform(new Vector3(maxValue.X, maxValue.Y, minValue.Z), vantagePoint.value),
+                Vector3.Transform(MinValue, m),
+                Vector3.Transform(new Vector3(MinValue.X, MaxValue.Y, MinValue.Z), m),
+                Vector3.Transform(new Vector3(MaxValue.X, MinValue.Y, MinValue.Z), m),
+                Vector3.Transform(new Vector3(MaxValue.X, MaxValue.Y, MinValue.Z), m),
                 // top
-                Vector3.Transform(new Vector3(minValue.X, minValue.Y, maxValue.Z), vantagePoint.value),
-                Vector3.Transform(new Vector3(minValue.X, maxValue.Y, maxValue.Z), vantagePoint.value),
-                Vector3.Transform(new Vector3(maxValue.X, minValue.Y, maxValue.Z), vantagePoint.value),
-                Vector3.Transform(maxValue, vantagePoint.value)
+                Vector3.Transform(new Vector3(MinValue.X, MinValue.Y, MaxValue.Z), m),
+                Vector3.Transform(new Vector3(MinValue.X, MaxValue.Y, MaxValue.Z), m),
+                Vector3.Transform(new Vector3(MaxValue.X, MinValue.Y, MaxValue.Z), m),
+                Vector3.Transform(MaxValue, m)
             };
 
             Vector3 min = new Vector3(double.MaxValue, double.MaxValue, double.MaxValue);
@@ -73,13 +69,13 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public AxisAlignedBox interpolatePortion(AxisAlignedBox end, double portion) {
-            return new AxisAlignedBox(Vector3.Lerp(minValue, end.minValue, portion), Vector3.Lerp(maxValue, end.maxValue, portion));
+        public AxisAlignedBox interpolatePortion(AxisAlignedBox end, Portion portion) {
+            return new AxisAlignedBox(Vector3.Lerp(MinValue, end.MinValue, portion), Vector3.Lerp(MaxValue, end.MaxValue, portion.Value));
         }
         #endregion // Interop Interfaces
 
         public override string ToString() {
-            return string.Format("AABB[min({0:0.##},{1:0.##},{2:0.##}),max({3:0.##},{4:0.##},{5:0.##})]", minValue.X, minValue.Y, minValue.Z, maxValue.X, maxValue.Y, maxValue.Z);
+            return string.Format("AABB[min({0:0.##},{1:0.##},{2:0.##}),max({3:0.##},{4:0.##},{5:0.##})]", MinValue.X, MinValue.Y, MinValue.Z, MaxValue.X, MaxValue.Y, MaxValue.Z);
         }
 
         public override bool Equals(object obj) {
@@ -90,7 +86,7 @@ namespace Alice.Player.Primitives
         }
 
         public override int GetHashCode() {
-            return minValue.GetHashCode() + maxValue.GetHashCode();
+            return MinValue.GetHashCode() + MaxValue.GetHashCode();
         }
     }
 }

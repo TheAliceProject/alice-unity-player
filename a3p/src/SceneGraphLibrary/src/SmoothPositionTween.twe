@@ -1,0 +1,55 @@
+class SmoothPositionTween extends PositionTween {
+  SmoothVantagePointTween(VantagePointProperty property, VantagePoint start, VantagePoint end, SThing asSeenBy) {
+    super(property: property, start: start.position, end: end.position, asSeenBy: asSeenBy);
+
+    startOrientation <- start.orientation;
+    endOrientation <- end.orientation;
+
+    Direction startForward <- Direction.POSITIVE_Z_AXIS.rotate(orientation: startOrientation);
+    Direction endForward <- Direction.POSITIVE_Z_AXIS.rotate(orientation: endOrientation);
+    DecimalNumber s <- -8.0;
+
+    xHermiteX <- start.position.x;
+    xHermiteY <- end.position.x;
+    xHermiteZ <- s * startForward.x;
+    xHermiteW <- s * endForward.x;
+
+    yHermiteX <- start.position.y;
+    yHermiteY <- end.position.y;
+    yHermiteZ <- s * startForward.y;
+    yHermiteW <- s * endForward.y;
+
+    zHermiteX <- start.position.z;
+    zHermiteY <- end.position.z;
+    zHermiteZ <- s * startForward.z;
+    zHermiteW <- s * endForward.z;
+  }
+
+  Position calcuateSmoothedPosition(Portion portion) {
+    DecimalNumber x <- VantagePoint.evaluateHermiteCubic(x:xHermiteX, y: xHermiteY, z: xHermiteZ, w: xHermiteW, t: portion);
+    DecimalNumber y <- VantagePoint.evaluateHermiteCubic(x:yHermiteX, y: yHermiteY, z: yHermiteZ, w: yHermiteW, t: portion);
+    DecimalNumber z <- VantagePoint.evaluateHermiteCubic(x:zHermiteX, y: xHermiteY, z: zHermiteZ, w: zHermiteW, t: portion);
+    return new Position(x: x, y: y, z: z);
+  }
+
+  void interpolate(Portion portion) {
+    Position pos <- calcuateSmoothedPosition(portion: portion);
+    setPositionOnly(position: pos);
+  }
+
+  @CompletelyHidden Orientation startOrientation;
+  @CompletelyHidden Orientation endOrientation;
+  @CompletelyHidden DecimalNumber xHermiteX;
+  @CompletelyHidden DecimalNumber xHermiteY;
+  @CompletelyHidden DecimalNumber xHermiteZ;
+  @CompletelyHidden DecimalNumber xHermiteW;
+  @CompletelyHidden DecimalNumber yHermiteX;
+  @CompletelyHidden DecimalNumber yHermiteY;
+  @CompletelyHidden DecimalNumber yHermiteZ;
+  @CompletelyHidden DecimalNumber yHermiteW;
+  @CompletelyHidden DecimalNumber zHermiteX;
+  @CompletelyHidden DecimalNumber zHermiteY;
+  @CompletelyHidden DecimalNumber zHermiteZ;
+  @CompletelyHidden DecimalNumber zHermiteW;
+
+}

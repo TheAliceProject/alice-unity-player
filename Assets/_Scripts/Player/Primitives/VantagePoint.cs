@@ -1,93 +1,139 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Alice.Tweedle.Interop;
 
 namespace Alice.Player.Primitives
 {
-	[PInteropType]
-	public sealed class VantagePoint {
+    [PInteropType]
+    public struct VantagePoint {
+        #region Cubic Polynomial Evaluation
+        // NOTE: hermite cubic matrix is transposed from Alice because of microsoft's matrix is row-ordered
+        static private readonly Matrix4x4 s_HermiteCubic = Matrix4x4.Transpose(new Matrix4x4(2, -2, 1, 1, -3, 3, -2, -1, 0, 0, 1, 0, 1, 0, 0, 0));
 
-		public Matrix4x4 value = Matrix4x4.Identity;
-
-		public VantagePoint(Matrix4x4 inMatrix) {
-			value = inMatrix;
-		}
-
-		#region Interop Interfaces
-		[PInteropField]
-		public Orientation orientation { get { return new Orientation(Quaternion.CreateFromRotationMatrix(value)); } }
-		[PInteropField]
-		public Position translation { get { return new Position(value.Translation); } }
-
-		[PInteropConstructor]
-		public VantagePoint() {}
-
-		[PInteropConstructor]
-		public VantagePoint(double m11, double m12, double m13, double m14,
-							double m21, double m22, double m23, double m24,
-                         	double m31, double m32, double m33, double m34,
-                         	double m41, double m42, double m43, double m44) 
-		{
-			value = new Matrix4x4(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
-		}
-
-		[PInteropConstructor]
-		public VantagePoint(Orientation orientation, Position translation) {
-			value = Matrix4x4.CreateFromQuaternion(orientation.value);
-			value.Translation = translation.value;
-		}
-
-		[PInteropConstructor]
-		public VantagePoint(VantagePoint clone) 
-		{
-			value = clone.value;
-		}
-
-		[PInteropMethod]
-		public bool equals(VantagePoint other) {
-			return value == other.value;
-		}
-
-		[PInteropMethod]
-		public VantagePoint multiply(VantagePoint other) {
-			return new VantagePoint(Matrix4x4.Multiply(value, other.value));
-		}
-
-		[PInteropMethod]
-		public VantagePoint inverse() {
-			VantagePoint result = new VantagePoint();
-			Matrix4x4.Invert(value, out result.value);
-			return result;
-		}
-
-		[PInteropMethod]
-        public VantagePoint interpolatePortion(VantagePoint end, double portion) {
-            return new VantagePoint(Matrix4x4.Lerp(value, end.value, portion));
+        private static double EvaluateCubic(Matrix4x4 m_h, double m_gx, double m_gy, double m_gz, double m_gw, double t) {
+            double ttt = t * t * t;
+            double tt = t * t;
+            return ( ( ( ttt * m_h.M11 ) + ( tt * m_h.M12 ) + ( t * m_h.M13 ) + m_h.M14) * m_gx ) +
+                    ( ( ( ttt * m_h.M21 ) + ( tt * m_h.M22 ) + ( t * m_h.M23 ) + m_h.M24 ) * m_gy ) +
+                    ( ( ( ttt * m_h.M31 ) + ( tt * m_h.M32 ) + ( t * m_h.M33 ) + m_h.M34 ) * m_gz ) +
+                    ( ( ( ttt * m_h.M41 ) + ( tt * m_h.M42) + ( t * m_h.M43) + m_h.M44 ) * m_gw );
         }
-		#endregion // interop interfaces
 
-		public override string ToString() {
-			return string.Format("VantagePoint(\n"+
-			"\t{0:0.##},{1:0.##},{2:0.##},{3:0.##}\n" +
-			"\t{4:0.##},{5:0.##},{6:0.##},{7:0.##}\n" +
-			"\t{8:0.##},{9:0.##},{10:0.##},{11:0.##}\n" + 
-			"\t{12:0.##},{13:0.##},{14:0.##},{15:0.##})",
-			value.M11, value.M21, value.M31, value.M41,
-			value.M12, value.M22, value.M32, value.M42,
-			value.M13, value.M23, value.M33, value.M43,
-			value.M14, value.M24, value.M34, value.M44
-			);
-		}
+        private static double EvaluateCubicDerivative(Matrix4x4 m_h, double m_gx, double m_gy, double m_gz, double m_gw, double t ) {
+            double tt3 = t * t * 3;
+            double t2 = t * 2;
+            return ( ( ( tt3 * m_h.M11 ) + ( t2 * m_h.M12 ) + m_h.M13 ) * m_gx ) +
+                    ( ( ( tt3 * m_h.M21 ) + ( t2 * m_h.M22 ) + m_h.M23 ) * m_gy ) +
+                    ( ( ( tt3 * m_h.M31 ) + ( t2 * m_h.M32 ) + m_h.M33 ) * m_gz ) +
+                    ( ( ( tt3 * m_h.M41 ) + ( t2 * m_h.M42 ) + m_h.M43) * m_gw );
+        }
+        #endregion // Cubic Polynomial Evaluation
+        
+        public readonly Quaternion RotationValue;
+        public readonly Vector3 TranslationValue;
 
-		public override bool Equals(object obj) {
+        /// <summary>
+        /// Returns a matrix with basis vectors stored in rows
+        /// </summary>
+        public Matrix4x4 GetMatrix() {
+            var m = Matrix4x4.CreateFromQuaternion(RotationValue);
+            m.Translation = TranslationValue;
+            return m;
+        }
+
+
+        public VantagePoint(Matrix4x4 inMatrix) {
+            RotationValue = Quaternion.CreateFromRotationMatrix(inMatrix);
+            TranslationValue = inMatrix.Translation;
+        }
+
+        public VantagePoint(Vector3 inTranslation, Quaternion inRotation) {
+            RotationValue = inRotation;
+            TranslationValue = inTranslation;
+        }
+
+        #region Interop Interfaces
+        [PInteropField]
+        static public readonly VantagePoint IDENTITY = new VantagePoint(Vector3.Zero, Quaternion.Identity);
+
+        [PInteropMethod]
+        static public double evaluateHermiteCubic(double x, double y, double z, double w, Portion t) {
+            return EvaluateCubic(s_HermiteCubic, x, y, z, w, t.Value);
+        }
+
+        [PInteropMethod]
+        static public double evaluateHermiteCubicDeritive(double x, double y, double z, double w, Portion t) {
+            return EvaluateCubicDerivative(s_HermiteCubic, x, y, z, w, t.Value);
+        }
+
+        [PInteropField]
+        public Orientation orientation { get { return new Orientation(RotationValue); } }
+        [PInteropField]
+        public Position position { get { return new Position(TranslationValue); } }
+
+        [PInteropConstructor]
+        public VantagePoint(Position position, Orientation orientation) {
+            TranslationValue = position.Value;
+            RotationValue = orientation.Value;
+        }
+
+        [PInteropConstructor]
+        public VantagePoint(Position position) {
+            RotationValue = Quaternion.Identity;
+            TranslationValue = position.Value;
+        }
+
+        [PInteropConstructor]
+        public VantagePoint(Orientation orientation) {
+            RotationValue = orientation.Value;
+            TranslationValue = Vector3.Zero;
+        }
+
+        [PInteropMethod]
+        public bool equals(VantagePoint other) {
+            return TranslationValue == other.TranslationValue && RotationValue == other.RotationValue;
+        }
+
+        [PInteropMethod]
+        public VantagePoint multiply(VantagePoint other) {
+            
+            //var result = Matrix4x4.Multiply(other.GetMatrix(), GetMatrix());
+            //return new VantagePoint(result);
+            var rot = Quaternion.Multiply(RotationValue, other.RotationValue);
+            var pos = Vector3.Transform(other.TranslationValue, RotationValue) + TranslationValue;
+            return new VantagePoint(pos, rot);
+        }
+
+        [PInteropMethod]
+        public VantagePoint inverse() {
+            //Matrix4x4 result;
+            //Matrix4x4.Invert(GetMatrix(), out result);
+            //return new VantagePoint(result);
+            var rot = Quaternion.Inverse(RotationValue);
+            var pos = Vector3.Transform(Vector3.Negate(TranslationValue), rot);
+            return new VantagePoint(pos, rot);
+        }
+
+        [PInteropMethod]
+        public VantagePoint interpolatePortion(VantagePoint end, Portion portion) {
+            return new VantagePoint(Vector3.Lerp(TranslationValue, end.TranslationValue, portion.Value),
+                                    Quaternion.Slerp(RotationValue, end.RotationValue, portion.Value));
+        }
+        #endregion // interop interfaces
+
+        public override string ToString() {
+            return string.Format("VantagePoint({0},{1})", TranslationValue.ToString(), RotationValue.ToString());
+        }
+
+        public override bool Equals(object obj) {
             if (obj is VantagePoint) {
                 return equals((VantagePoint)obj);
             }
             return false;
         }
-		
-		public override int GetHashCode() {
-            return value.GetHashCode();
+
+        public override int GetHashCode() {
+            return TranslationValue.GetHashCode() + RotationValue.GetHashCode();
         }
-	}
-	
+    }
+    
 }

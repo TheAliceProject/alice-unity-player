@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Alice.Tweedle.VM;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
@@ -11,7 +12,10 @@ namespace Alice.Tweedle
         public StepSequence(string callStackEntry, ExecutionScope scope)
             : base(scope)
         {
-            this.callStack = scope.StackWith(callStackEntry);
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
+                scope.StackWith(stackBuilder.Builder);
+                this.callStack = stackBuilder.ToString();
+            }
         }
 
         internal void AddStep(ExecutionStep step)

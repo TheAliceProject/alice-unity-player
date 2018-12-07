@@ -14,11 +14,14 @@ namespace Alice.Tweedle.Parse
         private VirtualMachine m_VM;
         private Coroutine m_QueueProcessor;
 
-        public void Select()
+        public void Select(GameObject canvas)
         {
             string zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
             if (System.IO.File.Exists(zipPath) == false)
                 return;
+
+            Camera.main.backgroundColor = Color.clear;
+            canvas.SetActive(false);
 
             m_System?.Unload();
             if (m_QueueProcessor != null)
@@ -46,12 +49,6 @@ namespace Alice.Tweedle.Parse
         void Start()
         {
             m_VM = new VirtualMachine();
-        }
-
-        // MonoBehaviour Update is called once per frame
-        void Update()
-        {
-
         }
 
         private void StartQueueProcessing()

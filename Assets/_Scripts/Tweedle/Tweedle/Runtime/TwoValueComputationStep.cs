@@ -1,5 +1,6 @@
 ﻿using System;
 using Alice.Tweedle;
+using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
@@ -18,7 +19,11 @@ namespace Alice.Tweedle.VM
                                                              Func<TValue, TValue, TValue> body)
             : base(scope)
         {
-            this.callStack = scope.StackWith(callStackEntry);
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
+                
+                scope.StackWith(stackBuilder.Builder);
+                this.callStack = stackBuilder.ToString();
+            }
             this.exp1 = exp1;
             this.exp2 = exp2;
             this.body = body;

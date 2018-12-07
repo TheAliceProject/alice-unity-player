@@ -1,0 +1,20 @@
+class ColorTween extends PropertyTween {
+  ColorTween(ColorProperty property, Color start, Color end) {
+    super();
+    this.property <- property;
+    this.start <- start;
+    this.end <- end;
+  }
+
+  void setEndValue() {
+    this.property.setValue(value: end);
+  }
+
+  void interpolate(Portion portion) {
+    this.property.setValue(value: this.start.interpolatePortion(end: this.end, portion: portion));
+  }
+
+  @CompletelyHidden ColorProperty property;
+  @CompletelyHidden Color start;
+  @CompletelyHidden Color end;
+}

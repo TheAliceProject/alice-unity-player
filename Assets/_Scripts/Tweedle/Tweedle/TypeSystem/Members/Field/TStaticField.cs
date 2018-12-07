@@ -63,6 +63,8 @@ namespace Alice.Tweedle
                             m_StaticStorage.Set(Name, Type.Get(), value);
                         })
                     );
+            } else {
+                m_StaticStorage.Set(Name, Type.Get(), Type.Get().DefaultValue());
             }
 
             return null;
