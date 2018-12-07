@@ -3,7 +3,7 @@ class ApplyRotationTween extends PropertyTween {
     super();
     this.property <- property;
     this.axis <- axis;
-    this.angle <- angle;
+    this.endAngle <- angle;
     this.asSeenBy <- asSeenBy;
     this.currentAngle <- 0;
   }
@@ -13,7 +13,7 @@ class ApplyRotationTween extends PropertyTween {
   }
 
   void interpolate(Portion portion) {
-    DecimalNumber delta <- portion.numberValue * angle.radians - currentAngle;
+    DecimalNumber delta <- portion.numberValue * endAngle.radians - currentAngle;
     currentAngle <- currentAngle + delta;
     Orientation rotation <- new Orientation(axis: axis, angle: new Angle(revolutions: delta * $Math.RAD2REV));
     VantagePoint m <- new VantagePoint(orientation: rotation);
@@ -23,7 +23,7 @@ class ApplyRotationTween extends PropertyTween {
 
   @CompletelyHidden VantagePointProperty property;
   @CompletelyHidden Direction axis;
-  @CompletelyHidden Angle angle;
+  @CompletelyHidden Angle endAngle;
   @CompletelyHidden SThing asSeenBy;
   @CompletelyHidden DecimalNumber currentAngle;
 
