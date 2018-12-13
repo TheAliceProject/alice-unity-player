@@ -52,6 +52,27 @@ class SModel extends SMovableTurnable
     this.opacity.animateValue(endValue: opacity, duration: duration, animationStyle: style);
   }
 
+  @CompletelyHidden Position getMinPoint( SThing asSeenBy ) {
+    return this.getDynamicAxisAlignedMinimumBoundingBox( asSeenBy: asSeenBy ).minimum;
+  }
+
+  @CompletelyHidden Position getMaxPoint( SThing asSeenBy ) {
+    return this.getDynamicAxisAlignedMinimumBoundingBox( asSeenBy: asSeenBy ).maximum;
+  }
+
+  //Returns a bounding box that reflects any changes to the given entity. Namely any changes to the skeleton of jointed models
+  @CompletelyHidden AxisAlignedBox getDynamicAxisAlignedMinimumBoundingBox( SThing asSeenBy ) {
+    AxisAlignedBox aabb = $SceneGraph.getLocalBoundingBox(model: this, dynamic: true);
+    VantagePoint trans <- this.getTransformation( asSeenBy: asSeenBy );
+    return aabb.transform(vantagePoint: trans);
+  }
+
+  @CompletelyHidden AxisAlignedBox getAxisAlignedMinimumBoundingBox( SThing asSeenBy ) {
+    AxisAlignedBox aabb = $SceneGraph.getLocalBoundingBox(model: this, dynamic: true);
+    VantagePoint trans <- this.getTransformation( asSeenBy: asSeenBy );
+    return aabb.transform(vantagePoint: trans);
+  }
+
   void setVehicle(SThing vehicle) {
     this.vehicle <- vehicle;
     localTransformation.value <- $SceneGraph.setVehicle(vehicle: vehicle, rider: this);
