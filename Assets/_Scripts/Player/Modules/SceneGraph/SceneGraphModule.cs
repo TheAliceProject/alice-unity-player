@@ -188,6 +188,16 @@ namespace Alice.Player.Modules {
             }
             return VantagePoint.IDENTITY;
         }
+
+        [PInteropMethod]
+        public static AxisAlignedBox getLocalBoundingBox(TValue model, bool dynamic = false) {
+            var entity = SceneGraph.Current.FindEntity(model);
+            if (entity && entity is SGModel) {
+                var sgModel = (SGModel)entity;
+                return sgModel.GetBounds(dynamic);
+            }
+            return AxisAlignedBox.EMPTY;
+        }
         #endregion // Transformations
     }
 }
