@@ -22,7 +22,7 @@ namespace Alice.Player.Primitives
         [PInteropField]
         public Position minimum { get { return new Position(MinValue);} }
         [PInteropField]
-        public Position maximum { get { return new Position(MinValue);} }
+        public Position maximum { get { return new Position(MaxValue);} }
 
         [PInteropConstructor]
         public AxisAlignedBox(Position minimum, Position maximum)
