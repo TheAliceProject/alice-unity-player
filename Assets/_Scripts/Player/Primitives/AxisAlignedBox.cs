@@ -6,6 +6,9 @@ namespace Alice.Player.Primitives
     [PInteropType]
     public struct AxisAlignedBox
     {
+        [PInteropField]
+        public static readonly AxisAlignedBox EMPTY  = new AxisAlignedBox(Position.ZERO, Position.ZERO);
+
         public readonly Vector3 MinValue;
         public readonly Vector3 MaxValue;
 
@@ -73,6 +76,23 @@ namespace Alice.Player.Primitives
             return new AxisAlignedBox(Vector3.Lerp(MinValue, end.MinValue, portion), Vector3.Lerp(MaxValue, end.MaxValue, portion.Value));
         }
         #endregion // Interop Interfaces
+
+        static public implicit operator UnityEngine.Bounds(AxisAlignedBox inBox)
+        {
+            var size = inBox.MaxValue - inBox.MinValue;
+            var center = inBox.MinValue + size * 0.5;
+            return new UnityEngine.Bounds(
+                new UnityEngine.Vector3((float)center.X, (float)center.Y, (float)center.Z),
+                new UnityEngine.Vector3((float)size.X, (float)size.Y, (float)size.Z)
+            );
+        }
+
+        static public implicit operator AxisAlignedBox(UnityEngine.Bounds inBounds)
+        {
+            var min = inBounds.min;
+            var max = inBounds.max;
+            return new AxisAlignedBox(new Vector3(min.x, min.y, min.z), new Vector3(max.x, max.y, max.z));
+        }
 
         public override string ToString() {
             return string.Format("AABB[min({0:0.##},{1:0.##},{2:0.##}),max({3:0.##},{4:0.##},{5:0.##})]", MinValue.X, MinValue.Y, MinValue.Z, MaxValue.X, MaxValue.Y, MaxValue.Z);
