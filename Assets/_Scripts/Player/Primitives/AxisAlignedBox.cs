@@ -21,8 +21,12 @@ namespace Alice.Player.Primitives
         #region Interop Interfaces
         [PInteropField]
         public Position minimum { get { return new Position(MinValue);} }
+
         [PInteropField]
         public Position maximum { get { return new Position(MaxValue);} }
+
+        [PInteropField]
+        public Size size { get { return new Size(MaxValue-MinValue);} }
 
         [PInteropConstructor]
         public AxisAlignedBox(Position minimum, Position maximum)
