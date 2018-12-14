@@ -23,24 +23,7 @@ class Scene extends SScene {
     Position pos <- box2.getPositionRelativeToVehicle();
     Orientation rot <- box2.getOrientationRelativeToVehicle();
 
-    $Debug.log(string: "place right of");
-    placeBox(box:box2, target: box3, asSeenBy:box3, spatialRelation: SpatialRelation.RIGHT_OF, pathStyle: PathStyle.SMOOTH, offset: 0.1);
-    $Debug.log(string: "place left of");
-    placeBox(box:box2, target: box, asSeenBy:box, spatialRelation: SpatialRelation.LEFT_OF, pathStyle: PathStyle.SMOOTH, offset: 0.1);
-    $Debug.log(string: "place behind");
-    placeBox(box:box2, target: box4, asSeenBy:box4, spatialRelation: SpatialRelation.BEHIND, pathStyle: PathStyle.SMOOTH, offset: 0.1);
-    $Debug.log(string: "place in front of");
-    placeBox(box:box2, target: box3, asSeenBy:box3, spatialRelation: SpatialRelation.IN_FRONT_OF, pathStyle: PathStyle.SMOOTH, offset: 0.1);
-    $Debug.log(string: "place below");
-    placeBox(box:box2, target: box5, asSeenBy:box5, spatialRelation: SpatialRelation.BELOW, pathStyle: PathStyle.SMOOTH, offset: 0.1);
-    $Debug.log(string: "place above");
-    placeBox(box:box2, target: box3, asSeenBy:box3, spatialRelation: SpatialRelation.ABOVE, pathStyle: PathStyle.SMOOTH, offset: 0.1);
-
-    // reset box2
-    doTogether {
-      box2.setPositionRelativeToVehicle(position: pos);
-      box2.setOrientationRelativeToVehicle(orientation: rot);
-    }
+    
 
     // vehicle
     $Debug.log(string: "vehicle");
@@ -94,6 +77,26 @@ class Scene extends SScene {
     delay(duration: 0.1);
     doTogether {
       box.move(direction: MoveDirection.LEFT, amount: 1, asSeenBy: box);
+      box2.setPositionRelativeToVehicle(position: pos);
+      box2.setOrientationRelativeToVehicle(orientation: rot);
+    }
+
+    //place
+    $Debug.log(string: "place right of");
+    placeBox(box:box2, target: box3, asSeenBy:box3, spatialRelation: SpatialRelation.RIGHT_OF, pathStyle: PathStyle.SMOOTH, offset: 0.1);
+    $Debug.log(string: "place left of");
+    placeBox(box:box2, target: box, asSeenBy:box, spatialRelation: SpatialRelation.LEFT_OF, pathStyle: PathStyle.SMOOTH, offset: 0.1);
+    $Debug.log(string: "place behind");
+    placeBox(box:box2, target: box4, asSeenBy:box4, spatialRelation: SpatialRelation.BEHIND, pathStyle: PathStyle.BEE_LINE, offset: 0.2);
+    $Debug.log(string: "place in front of");
+    placeBox(box:box2, target: box3, asSeenBy:box3, spatialRelation: SpatialRelation.IN_FRONT_OF, pathStyle: PathStyle.BEE_LINE, offset: 0.2);
+    $Debug.log(string: "place below");
+    placeBox(box:box2, target: box5, asSeenBy:box5, spatialRelation: SpatialRelation.BELOW, pathStyle: PathStyle.SMOOTH, offset: 0.5);
+    $Debug.log(string: "place above");
+    placeBox(box:box2, target: box3, asSeenBy:box3, spatialRelation: SpatialRelation.ABOVE, pathStyle: PathStyle.SMOOTH, offset: 0.5);
+
+    // reset box2
+    doTogether {
       box2.setPositionRelativeToVehicle(position: pos);
       box2.setOrientationRelativeToVehicle(orientation: rot);
     }

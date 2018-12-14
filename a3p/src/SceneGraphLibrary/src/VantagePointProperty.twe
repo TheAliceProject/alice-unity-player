@@ -61,13 +61,7 @@ class VantagePointProperty extends Property {
     AxisAlignedBox subjectBox <- $SceneGraph.getLocalBoundingBox(model: owner, dynamic: true);
     AxisAlignedBox targetBox <- $SceneGraph.getLocalBoundingBox(model: target, dynamic: true).transform(vantagePoint: targetVP);
 
-    $Debug.log(string: "subjectBox: " .. subjectBox);
-    $Debug.log(string: "targetBox: " .. targetBox);
-
     Position endPos <- spatialRelation.getPlacePosition(alongAxisOffset: alongAxisOffset, subjectBoundingBox: subjectBox, targetBoundingBox: targetBox);
-
-    $Debug.log(string: "endPos: " .. endPos);
-
     VantagePoint end <- new VantagePoint(position: endPos, orientation: Orientation.IDENTITY);
 
     if (pathStyle.isSmooth()) {
