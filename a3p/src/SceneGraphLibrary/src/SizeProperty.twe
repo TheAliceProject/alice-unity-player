@@ -38,5 +38,21 @@ class SizeProperty extends Property {
     animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
+  void animateResize(DecimalNumber factor, Duration duration, AnimationStyle animationStyle ) {
+
+  }
+
+  void animateResizeWidth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle: animationStyle ) {
+
+  }
+
+  void animateResizeHeight( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle: animationStyle ) {
+
+  }
+
+  void animateResizeDepth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle: animationStyle ) {
+
+  }
+
   @CompletelyHidden Size value;
 }
