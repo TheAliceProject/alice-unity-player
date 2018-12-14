@@ -7,7 +7,6 @@ class SModel extends SMovableTurnable
     // get default size 
     AxisAlignedBox aabb <- $SceneGraph.getLocalBoundingBox(model:this, dynamic: false);
     this.size.setValue(value: aabb.size);
-    
     $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.size.getValue());
 
     $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());
@@ -43,32 +42,28 @@ class SModel extends SMovableTurnable
               Duration duration <- Default.duration(),
               AnimationStyle animationStyle <- Default.animationStyle(),
               Boolean isVolumePreserved <- Default.isVolumePreserved()) {
-    //checkArgumentIsPositive( factor );
-    this.size.animateResize( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+    this.size.animateResize( factor: factor, duration: duration, animationStyle: animationStyle );
   }
 
   void resizeWidth(Number factor,
                    Duration duration <- Default.duration(),
                    AnimationStyle animationStyle <- Default.animationStyle(),
                    Boolean isVolumePreserved <- Default.isVolumePreserved()) {
-    //checkArgumentIsPositive( factor );
-    this.size.animateResizeWidth( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+    this.size.animateResizeWidth( factor: factor, isVolumePReserved: isVolumePreserved, duration: duration, animationStyle: animationStyle );
   }
 
   void resizeHeight(Number factor,
                     Duration duration <- Default.duration(),
                     AnimationStyle animationStyle <- Default.animationStyle(),
                     Boolean isVolumePreserved <- Default.isVolumePreserved()) {
-    //checkArgumentIsPositive( factor );
-    this.size.animateResizeHeight( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle, isVolumePReserved: isVolumePreserved );
+    this.size.animateResizeHeight( factor: factor, isVolumePReserved: isVolumePreserved, duration: duration, animationStyle: animationStyle );
   }
 
   void resizeDepth(Number factor,
                    Duration duration <- Default.duration(),
                    AnimationStyle animationStyle <- Default.animationStyle(),
                    Boolean isVolumePreserved <- Default.isVolumePreserved()) {
-    //checkArgumentIsPositive( factor );
-    this.size.animateResizeDepth( factor: factor, dimensionPolicy: dimensionPolicy, duration: duration, animationStyle: animationStyle );
+    this.size.animateResizeDepth( factor: factor, isVolumePReserved: isVolumePreserved, duration: duration, animationStyle: animationStyle );
   }
 
   Paint getPaint() {
@@ -100,13 +95,13 @@ class SModel extends SMovableTurnable
 
   //Returns a bounding box that reflects any changes to the given entity. Namely any changes to the skeleton of jointed models
   @CompletelyHidden AxisAlignedBox getDynamicAxisAlignedMinimumBoundingBox( SThing asSeenBy ) {
-    AxisAlignedBox aabb = $SceneGraph.getLocalBoundingBox(model: this, dynamic: true);
+    AxisAlignedBox aabb <- $SceneGraph.getLocalBoundingBox(model: this, dynamic: true);
     VantagePoint trans <- this.getTransformation( asSeenBy: asSeenBy );
     return aabb.transform(vantagePoint: trans);
   }
 
   @CompletelyHidden AxisAlignedBox getAxisAlignedMinimumBoundingBox( SThing asSeenBy ) {
-    AxisAlignedBox aabb = $SceneGraph.getLocalBoundingBox(model: this, dynamic: true);
+    AxisAlignedBox aabb <- $SceneGraph.getLocalBoundingBox(model: this, dynamic: true);
     VantagePoint trans <- this.getTransformation( asSeenBy: asSeenBy );
     return aabb.transform(vantagePoint: trans);
   }

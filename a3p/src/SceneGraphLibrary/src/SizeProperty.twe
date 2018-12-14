@@ -22,19 +22,19 @@ class SizeProperty extends Property {
 
   void animateWidth(DecimalNumber width, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
     DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: width / value.width );
-    Size finalSize <- new Size( width: width, height: value.height * factor, depth: value.depth * factor )
+    Size finalSize <- new Size( width: width, height: value.height * factor, depth: value.depth * factor );
     animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
   void animateHeight(DecimalNumber height, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
     DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: height / value.height );
-    Size finalSize <- new Size( width: value.width * factor, height: height, depth: value.depth * factor )
+    Size finalSize <- new Size( width: value.width * factor, height: height, depth: value.depth * factor );
     animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
   void animateDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
     DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: depth / value.depth );
-    Size finalSize <- new Size( width: value.width * factor, height: value.height * factor, depth: depth )
+    Size finalSize <- new Size( width: value.width * factor, height: value.height * factor, depth: depth );
     animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
@@ -42,15 +42,15 @@ class SizeProperty extends Property {
 
   }
 
-  void animateResizeWidth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle: animationStyle ) {
+  void animateResizeWidth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle animationStyle ) {
 
   }
 
-  void animateResizeHeight( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle: animationStyle ) {
+  void animateResizeHeight( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle animationStyle ) {
 
   }
 
-  void animateResizeDepth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle: animationStyle ) {
+  void animateResizeDepth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle animationStyle ) {
 
   }
 
