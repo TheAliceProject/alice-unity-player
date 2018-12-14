@@ -1,6 +1,6 @@
 class Default {
-  static DecimalNumber duration() {
-    return 1.0;
+  static Duration duration() {
+    return Duration.ONE_SECOND;
   }
 
   static AnimationStyle animationStyle() {

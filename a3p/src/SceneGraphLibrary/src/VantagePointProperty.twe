@@ -21,17 +21,17 @@ class VantagePointProperty extends Property {
     setValue(value: m);
   }
 
-  void animatePosition(Position endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animatePosition(Position endValue, Duration duration, AnimationStyle animationStyle) {
     PositionTween tween <- new PositionTween(property: this, start: this.value.position, end: endValue, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateMove(Direction direction, DecimalNumber distance, SThing asSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateMove(Direction direction, DecimalNumber distance, SThing asSeenBy, Duration duration, AnimationStyle animationStyle) {
     ApplyTranslationTween tween <- new ApplyTranslationTween(property: this, direction: direction, distance: distance, asSeenBy: asSeenBy);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateMoveToward(SThing target, DecimalNumber distance, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateMoveToward(SThing target, DecimalNumber distance, Duration duration, AnimationStyle animationStyle) {
     Position sp <- $SceneGraph.getAbsolutePosition(thing: owner);
     Position tp <- $SceneGraph.getAbsolutePosition(thing: target);
 
@@ -40,7 +40,7 @@ class VantagePointProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateMoveTo(SThing target, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateMoveTo(SThing target, PathStyle pathStyle, Duration duration, AnimationStyle animationStyle) {
     if (pathStyle.isSmooth()) {
       VantagePoint start <- owner.getVantagePoint(asSeenBy: target);
 
@@ -54,7 +54,7 @@ class VantagePointProperty extends Property {
     }
   }
 
-  void animatePlace(SpatialRelation spatialRelation, SThing target, DecimalNumber alongAxisOffset, SThing asSeenBy, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animatePlace(SpatialRelation spatialRelation, SThing target, DecimalNumber alongAxisOffset, SThing asSeenBy, PathStyle pathStyle, Duration duration, AnimationStyle animationStyle) {
     
     VantagePoint start <- owner.getVantagePoint(asSeenBy: asSeenBy);
     VantagePoint targetVP <- target.getVantagePoint(asSeenBy: asSeenBy);
@@ -73,7 +73,7 @@ class VantagePointProperty extends Property {
     }
   }
 
-  void animateMoveAndOrientTo(SThing target, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateMoveAndOrientTo(SThing target, PathStyle pathStyle, Duration duration, AnimationStyle animationStyle) {
 
     VantagePoint start <- owner.getVantagePoint(asSeenBy: target);
     if (pathStyle.isSmooth()) {
@@ -85,17 +85,17 @@ class VantagePointProperty extends Property {
     }
   }
 
-  void animateOrientation(Orientation endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateOrientation(Orientation endValue, Duration duration, AnimationStyle animationStyle) {
     OrientationTween tween <- new OrientationTween(property: this, start: this.value.orientation, end: endValue, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateRotation(Direction axis, Angle angle, SThing asSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateRotation(Direction axis, Angle angle, SThing asSeenBy, Duration duration, AnimationStyle animationStyle) {
     ApplyRotationTween tween <- new ApplyRotationTween(property: this, axis: axis, angle: angle, asSeenBy: asSeenBy);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateTurnToFace(SThing target, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateTurnToFace(SThing target, Duration duration, AnimationStyle animationStyle) {
     // target position in owner space
     Position tp <- target.getVantagePoint(asSeenBy: owner).position;
     Direction toTarget <- new Direction(x: tp.x, y: 0, z: tp.z);
@@ -112,7 +112,7 @@ class VantagePointProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateOrientToUpright(SThing upAsSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateOrientToUpright(SThing upAsSeenBy, Duration duration, AnimationStyle animationStyle) {
     VantagePoint subjectInViewer <- owner.getVantagePoint(asSeenBy: upAsSeenBy);
     Orientation end <- subjectInViewer.orientation;
 
@@ -142,7 +142,7 @@ class VantagePointProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animatePointAt(SThing target, SThing upAsSeenBy, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animatePointAt(SThing target, SThing upAsSeenBy, Duration duration, AnimationStyle animationStyle) {
 
     VantagePoint subjectInViewer <- owner.getVantagePoint(asSeenBy: upAsSeenBy);
     VantagePoint targetInViewer <- target.getVantagePoint(asSeenBy: upAsSeenBy);
@@ -158,7 +158,7 @@ class VantagePointProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateOrientTo(SThing target, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateOrientTo(SThing target, Duration duration, AnimationStyle animationStyle) {
     Orientation end <- target.getVantagePoint(asSeenBy: owner.vehicle).orientation;
     OrientationTween tween <- new OrientationTween(property: this, start: value.orientation, end: end, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);

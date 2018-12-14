@@ -41,9 +41,9 @@ enum AnimationStyle {
         return new Portion(portion: y);
     }
 
-    Portion calculatePortion( DecimalNumber timeElapsed, DecimalNumber timeTotal ) {
-        if( timeTotal != 0 ) {
-            DecimalNumber portion <- timeElapsed / timeTotal;
+    Portion calculatePortion( Duration timeElapsed, Duration timeTotal ) {
+        if( timeTotal.seconds != 0 ) {
+            DecimalNumber portion <- timeElapsed.seconds / timeTotal.seconds;
             if( this.isSlowInDesired ) {
                 if( this.isSlowOutDesired ) {
                     return gently(x: portion, A: 0.3, B: 0.8 );

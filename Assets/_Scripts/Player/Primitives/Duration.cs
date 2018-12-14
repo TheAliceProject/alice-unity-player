@@ -12,6 +12,21 @@ namespace Alice.Player.Primitives
         public readonly double Value;
 
         #region Interop Interfaces
+    [PInteropField]
+        public static readonly Duration ZERO = new Duration(0);
+
+        [PInteropField]
+        public static readonly Duration QUARTER_SECOND = new Duration(0.25);
+
+        [PInteropField]
+        public static readonly Duration HALF_SECOND = new Duration(0.5);
+
+        [PInteropField]
+        public static readonly Duration ONE_SECOND = new Duration(1);
+
+        [PInteropField]
+        public static readonly Duration TWO_SECONDS = new Duration(2);
+
         [PInteropField]
         public double seconds 
         { 
