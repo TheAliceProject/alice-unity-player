@@ -23,6 +23,7 @@ namespace Alice.Player
 
             // interop primitives
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Portion)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Duration)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Position)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Direction)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Orientation)));
@@ -34,6 +35,7 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Paint)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Color)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ImageSource)));
+            
 
         }
     }
