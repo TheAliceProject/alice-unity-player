@@ -3,6 +3,7 @@ using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using UnityEngine;
 using Alice.Player.Unity;
+using Alice.Player.Primitives;
 using System.Collections;
 
 namespace Alice.Player.Modules
@@ -11,10 +12,10 @@ namespace Alice.Player.Modules
     static public class ClockModule
     {
         [PInteropField]
-        static public double currentTime { get { return UnityEngine.Time.time; } }
+        static public Duration currentTime { get { return new Duration(UnityEngine.Time.time); } }
 
         [PInteropField]
-        static public double deltaTime { get { return UnityEngine.Time.deltaTime; } }
+        static public Duration deltaTime { get { return new Duration(UnityEngine.Time.deltaTime); } }
 
         [PInteropField]
         static public double simulationSpeedFactor { 
@@ -27,9 +28,9 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        static public AsyncReturn delay(double duration)
+        static public AsyncReturn delay(Duration duration)
         {
-            if (duration <= 0) {
+            if (duration.seconds <= 0) {
                 return null;
             }
 
@@ -46,41 +47,14 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        public static AsyncReturn delayFrames(double frames) {
+        public static AsyncReturn delayFrames(int frames) {
             if (frames <= 0) {
                 return null;
             }
 
             AsyncReturn returnValue = new AsyncReturn();
-            SceneGraph.Current.QueueFrameReturn(returnValue, (int)frames);
+            SceneGraph.Current.QueueFrameReturn(returnValue, frames);
             return returnValue;
-        }
-
-        [PInteropMethod]
-        static public void callOnDelay(PFunc<double, double, double> lambda, double delay)
-        {
-            if (delay <= 0)
-            {
-                var res = lambda.Call(Time.time, Time.time);
-                res.OnReturn((d) =>
-                {
-                    UnityEngine.Debug.Log("[ClockModule] Got result back of " + d);
-                });
-                return;
-            }
-
-            SceneGraph.Current.StartCoroutine(CallOnDelay(lambda, delay));
-        }
-
-        static private IEnumerator CallOnDelay(PFunc<double, double, double> lambda, double inDelay)
-        {
-            double initialTime = Time.time;
-            yield return new WaitForSeconds((float)inDelay);
-            var res = lambda.Call(initialTime, Time.time);
-            res.OnReturn((d) =>
-            {
-                UnityEngine.Debug.Log("[ClockModule] Got result back of " + d);
-            });
         }
     }
 }

@@ -31,7 +31,7 @@ class SThing {
     $SceneGraph.setEntityName(thing: this, name: name);
   }
 
-  void delay( Number duration ) {
+  void delay(Duration duration ) {
     $Clock.delay( duration: duration );
   }
 
