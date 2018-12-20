@@ -4,7 +4,7 @@ class SmoothVantagePointTween extends SmoothPositionTween {
   }
 
   void setEndValue() { 
-    setValue(vantagePoint: new VantagePoint(position: end, orientation: endOrientation));
+    setValue(vantagePoint: new VantagePoint(position: endPosition, orientation: endOrientation));
   }
 
   void interpolate(Portion portion) {

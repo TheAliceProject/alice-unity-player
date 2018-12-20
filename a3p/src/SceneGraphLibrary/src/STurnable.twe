@@ -64,7 +64,6 @@ class STurnable extends SThing {
         this.localTransformation.animateOrientation(endValue: orientation, duration: duration, animationStyle: style);
     }
 
-    /*
     DecimalNumber getDistanceTo( STurnable other ) {
         return this.getTranslation( asSeenBy: other ).calculateMagnitude();
     }
@@ -85,7 +84,7 @@ class STurnable extends SThing {
         return this.getDistanceBelow( target: other, asSeenBy: asSeenBy ) > 0;
     }
 
-    @CompletelyHidden DecimalNumber getVerticalGap( SThing lower, EntityImp upper, ReferenceFrame asSeenBy ) {
+    @CompletelyHidden DecimalNumber getVerticalGap( SThing lower, SThing upper, SThing asSeenBy ) {
         return this.differenceToEpsilon(a: upper.getMinPoint( asSeenBy: asSeenBy ).y,
                                         b: lower.getMaxPoint( asSeenBy: asSeenBy ).y );
     }
@@ -133,7 +132,6 @@ class STurnable extends SThing {
                                     b: front.getMaxPoint( asSeenBy: asSeenBy ).z );
     }
 
-
     @CompletelyHidden DecimalNumber differenceToEpsilon( DecimalNumber a, DecimalNumber b ) {
         DecimalNumber diff <- a - b;
         if($Math.abs( value: diff ) < .01) {
@@ -141,7 +139,6 @@ class STurnable extends SThing {
         }
         return diff;
     }
-    */
 
     @CompletelyHidden VantagePointProperty localTransformation <- new VantagePointProperty(owner: this, value: VantagePoint.IDENTITY);
 }
