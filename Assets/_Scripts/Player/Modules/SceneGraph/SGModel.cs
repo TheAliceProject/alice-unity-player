@@ -8,9 +8,9 @@ using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     
-    public abstract class SGModel : SGEntity {
+    public abstract class SGModel : SGTransformableEntity {
 
-        public const string TRANSFORMATION_PROPERTY_NAME = "Transform";
+        
         public const string PAINT_PROPERTY_NAME = "Paint";
         public const string SIZE_PROPERTY_NAME = "Size";
         public const string OPACITY_PROPERTY_NAME = "Opacity";
@@ -36,7 +36,6 @@ namespace Alice.Player.Unity {
 
             CacheMeshBounds();
 
-            RegisterPropertyDelegate(TRANSFORMATION_PROPERTY_NAME, OnTransformationPropertyChanged);
             RegisterPropertyDelegate(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
             RegisterPropertyDelegate(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
             RegisterPropertyDelegate(OPACITY_PROPERTY_NAME, OnOpacityPropertyChanged);
@@ -77,12 +76,7 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private void OnTransformationPropertyChanged(TValue inValue) {
-            VantagePoint vp = inValue.RawStruct<VantagePoint>();
-            cachedTransform.localPosition = vp.position;
-            cachedTransform.localRotation = vp.orientation;
-        }
-
+        
         protected abstract void OnSizePropertyChanged(TValue inValue);
 
         protected virtual string shaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
@@ -138,6 +132,9 @@ namespace Alice.Player.Unity {
                 m_Renderer.GetPropertyBlock(m_PropertyBlock);
             }
         }
+
+
+        public override void CleanUp() {}
 
     }
 }

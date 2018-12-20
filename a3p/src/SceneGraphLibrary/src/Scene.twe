@@ -124,7 +124,7 @@ class Scene extends SScene {
     turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box);
     turnBox(box: box2, dir: TurnDirection.LEFT, asSeenBy: box3);
 
-    $Debug.log(message: "turn right");
+    $Debug.log(message: "roll right");
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box2);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box);
     rollBox(box: box2, dir: RollDirection.RIGHT, asSeenBy: box3);
@@ -137,10 +137,10 @@ class Scene extends SScene {
 
     // orient to upright
     $Debug.log(message: "orient to upright");
-    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.POSITIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.UP, up: Direction.RIGHT));
     box2.orientToUpright(upAsSeenBy: this);
 
-    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.NEGATIVE_Y_AXIS, up: Direction.POSITIVE_X_AXIS));
+    box2.setOrientationRelativeToVehicle(orientation: new Orientation(forward: Direction.DOWN, up: Direction.RIGHT));
     box2.orientToUpright(upAsSeenBy: this);
 
     box2.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: 0.25)));
@@ -328,7 +328,7 @@ class Scene extends SScene {
   }
 
   //SGround ground <- new SGround();
-  //SCamera camera <- new SCamera();
+  SCamera camera <- new SCamera();
   Box box <- new Box();
   DirectionalBox box2 <- new DirectionalBox();
   DirectionalBox box3 <- new DirectionalBox();
@@ -337,7 +337,7 @@ class Scene extends SScene {
 
   void performCustomSetup() {
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: Duration.ZERO);
-    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: -0.6)), duration: Duration.ZERO);
+    this.box.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.UP, angle: new Angle(revolutions: -0.1)), duration: Duration.ZERO);
 
     // show forward on box 
     SBox nose <- new SBox();
@@ -345,17 +345,16 @@ class Scene extends SScene {
     nose.setVehicle(vehicle: box);
     nose.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: Duration.ZERO);
     nose.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: Duration.ZERO);
-    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: 0.5), duration: Duration.ZERO);
+    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: -0.5), duration: Duration.ZERO);
     
     box3.setName(name: "box3");
     box3.setVehicle(vehicle: this);
     box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: Duration.ZERO);
-    box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.6)), duration: Duration.ZERO);
+    box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.UP, angle: new Angle(revolutions: 0.1)), duration: Duration.ZERO);
     box3.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
     box2.setName(name: "box2");
     box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: Duration.ZERO);
-    box2.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.POSITIVE_Y_AXIS, angle: new Angle(revolutions: 0.5)), duration: Duration.ZERO);
     box2.setVehicle(vehicle: box3);
     box2.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
@@ -368,7 +367,7 @@ class Scene extends SScene {
     box5.setName(name: "box5");
     box5.setVehicle(vehicle: this);
     box5.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: 5.0), duration: Duration.ZERO);
-    box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.7)), duration: Duration.ZERO);
+    box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.2)), duration: Duration.ZERO);
     box5.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
   }
@@ -389,10 +388,10 @@ class Scene extends SScene {
     //this.ground.setOpacity(opacity: 1.0);
     //this.ground.setName(name: "ground");
     //this.ground.setVehicle(vehicle: this);
-    //this.camera.setName(name: "camera");
-    //this.camera.setVehicle(vehicle: this);
-    //this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.995185, z: 0.0980144, w: 6.12323E-17));
-    //this.camera.setPositionRelativeToVehicle(position: new Position(x: 9.61E-16, y: 1.56, z: -7.85));
+    this.camera.setName(name: "camera");
+    this.camera.setVehicle(vehicle: this);
+    this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.995185, z: 0.0980144, w: 6.12323E-17), duration: Duration.ZERO);
+    this.camera.setPositionRelativeToVehicle(position: new Position(x: 9.61E-16, y: 1.56, z: -7.85), duration: Duration.ZERO);
     this.box.setPaint(paint: Color.WHITE, duration: Duration.ZERO);
     this.box.setOpacity(opacity: new Portion(portion: 1.0), duration: Duration.ZERO);
     this.box.setName(name: "box");
@@ -404,10 +403,10 @@ class Scene extends SScene {
 
   /*SGround getGround() {
     return this.ground;
-  }
+  }*/
   SCamera getCamera() {
     return this.camera;
-  }*/
+  }
   Box getBox() {
     return this.box;
   }

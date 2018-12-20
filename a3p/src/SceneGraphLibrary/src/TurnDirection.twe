@@ -1,8 +1,8 @@
 enum TurnDirection {
-    LEFT( axis: Direction.POSITIVE_Y_AXIS ),
-    RIGHT( axis: Direction.NEGATIVE_Y_AXIS ),
-    FORWARD( axis: Direction.NEGATIVE_X_AXIS ),
-    BACKWARD( axis: Direction.POSITIVE_X_AXIS );
+    LEFT( axis: Direction.UP ),
+    RIGHT( axis: Direction.DOWN ),
+    FORWARD( axis: Direction.LEFT ),
+    BACKWARD( axis: Direction.RIGHT );
 
     Direction axis;
 

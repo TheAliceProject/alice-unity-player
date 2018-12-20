@@ -32,7 +32,7 @@ namespace Alice.Player.Primitives
         [PInteropConstructor]
         public Orientation(Direction forward, Direction up) {
 
-            var m = Matrix4x4.CreateWorld(Vector3.Zero, -forward.Value, up.Value);
+            var m = Matrix4x4.CreateWorld(Vector3.Zero, forward.Value, up.Value);
             Value = Quaternion.CreateFromRotationMatrix(m);
         }
 
@@ -45,7 +45,7 @@ namespace Alice.Player.Primitives
                 up = Vector3.UnitY;
             }
 
-            var m = Matrix4x4.CreateWorld(Vector3.Zero, -forward.Value, up);
+            var m = Matrix4x4.CreateWorld(Vector3.Zero, forward.Value, up);
             Value = Quaternion.CreateFromRotationMatrix(m);
         }
 
@@ -75,11 +75,6 @@ namespace Alice.Player.Primitives
         }
 
         #endregion // Interop Interfaces
-        
-        static public implicit operator UnityEngine.Quaternion(Orientation inOrientation)
-        {
-            return new UnityEngine.Quaternion((float)inOrientation.Value.X, (float)inOrientation.Value.Y, (float)inOrientation.Value.Z, (float)inOrientation.Value.W);
-        }
 
         public override string ToString() {
             return string.Format("Orientation({0:0.##},{1:0.##},{2:0.##},{3:0.##})", Value.X, Value.Y, Value.Z, Value.W);

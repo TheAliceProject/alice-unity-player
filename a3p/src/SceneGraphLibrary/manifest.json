@@ -183,6 +183,11 @@
       "files": ["src/SMovableTurnable.twe"],
       "type": "Class"
     }, {
+      "id": "SCamera",
+      "format": "tweedle",
+      "files": ["src/SCamera.twe"],
+      "type": "Class"
+    }, {
       "id": "SModel",
       "format": "tweedle",
       "files": ["src/SModel.twe"],
