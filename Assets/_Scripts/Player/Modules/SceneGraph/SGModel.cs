@@ -24,6 +24,7 @@ namespace Alice.Player.Unity {
         private MaterialPropertyBlock m_PropertyBlock;
         private Paint m_CachedPaint;
         private float m_CachedOpacity = 1;
+        private AxisAlignedBox m_MeshBounds;
 
         protected virtual void Init(Transform inModelTransform, Renderer inRenderer) {
             m_ModelTransform = inModelTransform;
@@ -33,13 +34,50 @@ namespace Alice.Player.Unity {
             m_Renderer = inRenderer;
             m_Renderer.sharedMaterial = SceneGraph.Current.InternalResources.OpaqueMaterial;
 
+            CacheMeshBounds();
+
             RegisterPropertyDelegate(TRANSFORMATION_PROPERTY_NAME, OnTransformationPropertyChanged);
             RegisterPropertyDelegate(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
             RegisterPropertyDelegate(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
             RegisterPropertyDelegate(OPACITY_PROPERTY_NAME, OnOpacityPropertyChanged);
         }
 
-         private void OnTransformationPropertyChanged(TValue inValue) {
+        public AxisAlignedBox GetBounds(bool inDynamic) {
+            var scale = m_ModelTransform.localScale;
+
+            if (inDynamic && m_Renderer is SkinnedMeshRenderer) {
+                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
+                skinnedRenderer.updateWhenOffscreen = true;
+                var bounds = skinnedRenderer.localBounds;
+                var center = bounds.center;
+                center.Scale(scale);
+                var size = bounds.size;
+                size.Scale(scale);
+
+                bounds.center = center;
+                bounds.size = size;
+                return bounds;
+            }
+
+            return new AxisAlignedBox(
+                new Primitives.Vector3(m_MeshBounds.MinValue.X*scale.x, m_MeshBounds.MinValue.Y*scale.y, m_MeshBounds.MinValue.Z*scale.z),
+                new Primitives.Vector3(m_MeshBounds.MaxValue.X*scale.x, m_MeshBounds.MaxValue.Y*scale.y, m_MeshBounds.MaxValue.Z*scale.z)
+            );
+        }
+
+        public void CacheMeshBounds() {
+            if (m_Renderer is SkinnedMeshRenderer) {
+                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
+                // make sure the skinned mesh renderers local bounds get updated
+                skinnedRenderer.updateWhenOffscreen = true;
+                m_MeshBounds = skinnedRenderer.localBounds;
+            } else  {
+                var filter = m_Renderer.GetComponent<MeshFilter>();
+                m_MeshBounds = filter.mesh.bounds;
+            }
+        }
+
+        private void OnTransformationPropertyChanged(TValue inValue) {
             VantagePoint vp = inValue.RawStruct<VantagePoint>();
             cachedTransform.localPosition = vp.position;
             cachedTransform.localRotation = vp.orientation;

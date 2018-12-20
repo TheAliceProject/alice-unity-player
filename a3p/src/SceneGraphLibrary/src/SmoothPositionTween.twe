@@ -28,7 +28,7 @@ class SmoothPositionTween extends PositionTween {
   Position calcuateSmoothedPosition(Portion portion) {
     DecimalNumber x <- VantagePoint.evaluateHermiteCubic(x:xHermiteX, y: xHermiteY, z: xHermiteZ, w: xHermiteW, t: portion);
     DecimalNumber y <- VantagePoint.evaluateHermiteCubic(x:yHermiteX, y: yHermiteY, z: yHermiteZ, w: yHermiteW, t: portion);
-    DecimalNumber z <- VantagePoint.evaluateHermiteCubic(x:zHermiteX, y: xHermiteY, z: zHermiteZ, w: zHermiteW, t: portion);
+    DecimalNumber z <- VantagePoint.evaluateHermiteCubic(x:zHermiteX, y: zHermiteY, z: zHermiteZ, w: zHermiteW, t: portion);
     return new Position(x: x, y: y, z: z);
   }
 

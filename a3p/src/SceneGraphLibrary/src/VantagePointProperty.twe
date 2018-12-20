@@ -54,6 +54,25 @@ class VantagePointProperty extends Property {
     }
   }
 
+  void animatePlace(SpatialRelation spatialRelation, SThing target, DecimalNumber alongAxisOffset, SThing asSeenBy, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
+    
+    VantagePoint start <- owner.getVantagePoint(asSeenBy: asSeenBy);
+    VantagePoint targetVP <- target.getVantagePoint(asSeenBy: asSeenBy);
+    AxisAlignedBox subjectBox <- $SceneGraph.getLocalBoundingBox(model: owner, dynamic: true);
+    AxisAlignedBox targetBox <- $SceneGraph.getLocalBoundingBox(model: target, dynamic: true).transform(vantagePoint: targetVP);
+
+    Position endPos <- spatialRelation.getPlacePosition(alongAxisOffset: alongAxisOffset, subjectBoundingBox: subjectBox, targetBoundingBox: targetBox);
+    VantagePoint end <- new VantagePoint(position: endPos, orientation: Orientation.IDENTITY);
+
+    if (pathStyle.isSmooth()) {
+      SmoothVantagePointTween tween <- new SmoothVantagePointTween(property: this, start: start, end: end, asSeenBy: asSeenBy);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    } else {
+      VantagePointTween tween <- new VantagePointTween(property: this, start: start, end: end, asSeenBy: asSeenBy);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    }
+  }
+
   void animateMoveAndOrientTo(SThing target, PathStyle pathStyle, DecimalNumber duration, AnimationStyle animationStyle) {
 
     VantagePoint start <- owner.getVantagePoint(asSeenBy: target);

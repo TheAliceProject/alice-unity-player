@@ -53,6 +53,11 @@
       "files": ["src/PathStyle.twe"],
       "type": "Class"
     }, {
+      "id": "SpatialRelation",
+      "format": "tweedle",
+      "files": ["src/SpatialRelation.twe"],
+      "type": "Class"
+    }, {
       "id": "Epsilon",
       "format": "tweedle",
       "files": ["src/Epsilon.twe"],
