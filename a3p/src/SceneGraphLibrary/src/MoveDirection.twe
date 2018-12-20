@@ -1,10 +1,10 @@
 enum MoveDirection {
-	LEFT( axis: Direction.NEGATIVE_X_AXIS ),
-	RIGHT( axis: Direction.POSITIVE_X_AXIS ),
-	UP( axis: Direction.POSITIVE_Y_AXIS ),
-	DOWN( axis: Direction.NEGATIVE_Y_AXIS ),
-	FORWARD( axis: Direction.POSITIVE_Z_AXIS ),
-	BACKWARD( axis: Direction.NEGATIVE_Z_AXIS );
+	LEFT( axis: Direction.LEFT ),
+	RIGHT( axis: Direction.RIGHT ),
+	UP( axis: Direction.UP ),
+	DOWN( axis: Direction.DOWN ),
+	FORWARD( axis: Direction.FORWARD ),
+	BACKWARD( axis: Direction.BACKWARD );
 
 	Direction axis;
 

@@ -81,11 +81,6 @@ namespace Alice.Player.Primitives
         public Position Rotate(Orientation orientation) {
             return new Position(Vector3.Transform(Value, orientation.Value));
         }
-       
-        static public implicit operator UnityEngine.Vector3(Position inPosition)
-        {
-            return new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z);
-        }
 
         public override string ToString() {
             return string.Format("Position({0:0.##},{1:0.##},{2:0.##})", Value.X, Value.Y, Value.Z);
