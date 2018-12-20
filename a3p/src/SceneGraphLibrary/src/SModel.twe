@@ -68,7 +68,7 @@ class SModel extends SMovableTurnable
   }
 
   @CompletelyHidden AxisAlignedBox getAxisAlignedMinimumBoundingBox( SThing asSeenBy ) {
-    AxisAlignedBox aabb = $SceneGraph.getLocalBoundingBox(model: this, dynamic: true);
+    AxisAlignedBox aabb = $SceneGraph.getLocalBoundingBox(model: this, dynamic: false);
     VantagePoint trans <- this.getTransformation( asSeenBy: asSeenBy );
     return aabb.transform(vantagePoint: trans);
   }
