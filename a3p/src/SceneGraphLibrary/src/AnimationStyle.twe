@@ -1,67 +1,52 @@
 enum AnimationStyle {
-    BEGIN_AND_END_ABRUPTLY(isSlowInDesired: false, isSlowOutDesired: false ),
-    BEGIN_GENTLY_AND_END_ABRUPTLY(isSlowInDesired: true, isSlowOutDesired: false ),
-    BEGIN_ABRUPTLY_AND_END_GENTLY(isSlowInDesired: false, isSlowOutDesired: true ),
-    BEGIN_AND_END_GENTLY(isSlowInDesired: true, isSlowOutDesired: true );
+    BEGIN_AND_END_ABRUPTLY(inflectA: 0.001, inflectB: 0.999),
+    BEGIN_GENTLY_AND_END_ABRUPTLY(inflectA: 0.99, inflectB: 0.999),
+    BEGIN_ABRUPTLY_AND_END_GENTLY(inflectA:  0.001, inflectB: 0.01),
+    BEGIN_AND_END_GENTLY(inflectA: 0.3, inflectB: 0.8);
 
-    AnimationStyle( Boolean isSlowInDesired, Boolean isSlowOutDesired ) {
-        this.isSlowInDesired <- isSlowInDesired;
-        this.isSlowOutDesired <- isSlowOutDesired;
-    }
+    AnimationStyle( DecimalNumber inflectA, DecimalNumber inflectB ) {
+        startLinear <- inflectA;
+        endLinear <- inflectB;
 
-    Boolean isSlowInDesired() {
-        return this.isSlowInDesired;
-    }
+        DecimalNumber factor <- endLinear * endLinear - startLinear * endLinear + startLinear - 1;
 
-    Boolean isSlowOutDesired() {
-        return this.isSlowOutDesired;
-    }
+        // Calculate the constants once
+        startA <- ( endLinear - 1 ) / ( startLinear * factor );
 
-    @CompletelyHidden Portion gently( DecimalNumber x, DecimalNumber A, DecimalNumber B ) {
-        DecimalNumber y <- 0;
-        DecimalNumber a3 <- 0;
-        DecimalNumber b3 <- 0;
-        DecimalNumber c3 <- 0;
-        DecimalNumber m <- 0;
-        DecimalNumber b2 <- 0;
-        if ( x < A ) {
-            y <- ( ( B - 1 ) / ( A * ( ( ( ( B * B ) - ( A * B ) ) + A ) - 1 ) ) ) * x * x;
-        } else {
-            if ( x > B ) {
-                a3 <- 1 / ( ( ( ( B * B ) - ( A * B ) ) + A ) - 1 );
-                b3 <- a3 * -2;
-                c3 <- 1 + a3;
-                y <- ( a3 * x * x ) + ( b3 * x ) + c3;
-            } else {
-                m <- ( 2 * ( B - 1 ) ) / ( ( ( ( B * B ) - ( A * B ) ) + A ) - 1 );
-                b2 <- ( m * A ) / -2;
-                y <- ( m * x ) + b2;
-            }
-        }
-        return new Portion(portion: y);
+        slope <- 2 * ( endLinear - 1 ) / factor;
+        intercept <- ( -slope * startLinear) / 2;
+
+        endA <- 1 / factor;
+        endB <- -2 * endA;
+        endC <- 1 + endA;
     }
 
     Portion calculatePortion( Duration timeElapsed, Duration timeTotal ) {
-        if( timeTotal.seconds != 0 ) {
-            DecimalNumber portion <- timeElapsed.seconds / timeTotal.seconds;
-            if( this.isSlowInDesired ) {
-                if( this.isSlowOutDesired ) {
-                    return gently(x: portion, A: 0.3, B: 0.8 );
-                } else {
-                    return gently(x: portion, A: 0.99, B: 0.999 );
-                }
-            } else {
-                if( this.isSlowOutDesired ) {
-                    return gently(x: portion, A: 0.001, B: 0.01 );
-                } else {
-                    return new Portion(portion: portion);
-                }
-            }
-        } else {
+        if ( timeTotal.seconds == 0 ) {
             return Portion.WHOLE;
+        }
+        DecimalNumber portion <- timeElapsed.seconds / timeTotal.seconds;
+        if( portion < startLinear ) {
+            return new Portion(portion: startA * portion * portion);
+        } else {
+            if( portion < endLinear ) {
+                return new Portion(portion: slope * portion + intercept);
+            } else {
+                return new Portion(portion: endA * portion * portion + endB * portion + endC);
+            }
         }
     }
 
-    @CompletelyHidden Boolean isSlowInDesired;
-    @CompletelyHidden Boolean isSlowOutDesired;
+    @CompletelyHidden DecimalNumber startLinear;
+    @CompletelyHidden DecimalNumber endLinear;
+    //Quadratic from 0 to startLinear
+    @CompletelyHidden DecimalNumber startA;
+    // Linear equation in the middle
+    @CompletelyHidden DecimalNumber slope;
+    @CompletelyHidden DecimalNumber intercept;
+    // Quadratic from linear to 1
+    @CompletelyHidden DecimalNumber endA;
+    @CompletelyHidden DecimalNumber endB;
+    @CompletelyHidden DecimalNumber endC;
+
 }

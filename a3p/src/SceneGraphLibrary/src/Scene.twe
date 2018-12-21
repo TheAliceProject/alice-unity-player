@@ -229,7 +229,7 @@ class Scene extends SScene {
       } else {
          asSeenBy.setPaint(paint: Color.WHITE);
       }
-      box.move(direction: dir, amount: 1, duration: Duration.ONE_SECOND, asSeenBy: asSeenBy);
+      box.move(direction: dir, amount: 1, duration: Duration.HALF_SECOND, asSeenBy: asSeenBy, style: AnimationStyle.BEGIN_GENTLY_AND_END_ABRUPTLY);
     }
   }
 
@@ -239,7 +239,7 @@ class Scene extends SScene {
         target.setPaint(paint: Color.RED, duration: Duration.HALF_SECOND);
         target.setPaint(paint: Color.WHITE, duration: Duration.HALF_SECOND);
       }
-      box.moveToward(target: target, amount: 1, duration: Duration.ONE_SECOND);
+      box.moveToward(target: target, amount: 1, duration: Duration.ONE_SECOND, style: AnimationStyle.BEGIN_GENTLY_AND_END_ABRUPTLY);
     }
   }
 
@@ -249,7 +249,7 @@ class Scene extends SScene {
         target.setPaint(paint: Color.PURPLE, duration: Duration.HALF_SECOND);
         target.setPaint(paint: Color.WHITE, duration: Duration.HALF_SECOND);
       }
-      box.moveAwayFrom(target: target, amount: 1, duration: Duration.ONE_SECOND);
+      box.moveAwayFrom(target: target, amount: 1, duration: Duration.ONE_SECOND, style: AnimationStyle.BEGIN_ABRUPTLY_AND_END_GENTLY);
     }
   }
 
