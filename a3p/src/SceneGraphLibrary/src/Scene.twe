@@ -379,24 +379,24 @@ class Scene extends SScene {
     
     box3.setName(name: "box3");
     box3.setVehicle(vehicle: this);
-    box3.setPositionRelativeToVehicle(position: new Position(x: 3.0, y: 2.0, z: 0.0), duration: Duration.ZERO);
+    box3.setPositionRelativeToVehicle(position: new Position(x: 3.5, y: 2.0, z: 0.0), duration: Duration.ZERO);
     box3.setOrientationRelativeToVehicle(orientation: new Orientation(axis: Direction.UP, angle: new Angle(revolutions: 0.1)), duration: Duration.ZERO);
     box3.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
     box2.setName(name: "box2");
-    box2.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 0.0), duration: Duration.ZERO);
+    box2.setPositionRelativeToVehicle(position: new Position(x: 2.5, y: 0.0, z: 0.0), duration: Duration.ZERO);
     box2.setVehicle(vehicle: box3);
     box2.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);
-    box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.0, z: -5.0), duration: Duration.ZERO);
+    box4.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: -4.0), duration: Duration.ZERO);
     box4.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: -0.25)), duration: Duration.ZERO);
     box4.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
     box5.setName(name: "box5");
     box5.setVehicle(vehicle: this);
-    box5.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: 5.0), duration: Duration.ZERO);
+    box5.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 5.0), duration: Duration.ZERO);
     box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.2)), duration: Duration.ZERO);
     box5.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
