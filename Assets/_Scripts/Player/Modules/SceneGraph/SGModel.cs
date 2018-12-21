@@ -77,14 +77,15 @@ namespace Alice.Player.Unity {
         }
 
         protected virtual void OnSizePropertyChanged(TValue inValue) {
-            SetSize(inValue.RawStruct<Size>());   
+            SetSize(inValue.RawStruct<Size>());
         }
 
         protected virtual void SetSize(Size size) {
+            Size meshSize = m_MeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
-                (float)(size.width/m_MeshBounds.size.width), 
-                (float)(size.height/m_MeshBounds.size.height),
-                (float)(size.depth/m_MeshBounds.size.depth)
+                (float)(size.width/meshSize.width),
+                (float)(size.height/meshSize.height),
+                (float)(size.depth/meshSize.depth)
             );
         }
 
