@@ -21,6 +21,12 @@ class VantagePointProperty extends Property {
     setValue(value: m);
   }
 
+  void animateValue(VantagePoint endValue, SThing asSeenBy, Duration duration, AnimationStyle animationStyle) {
+    VantagePoint start <- owner.getVantagePoint(asSeenBy: asSeenBy);
+    VantagePointTween tween <- new VantagePointTween(property: this, start: start, end: endValue, asSeenBy: asSeenBy);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
   void animatePosition(Position endValue, Duration duration, AnimationStyle animationStyle) {
     PositionTween tween <- new PositionTween(property: this, start: this.value.position, end: endValue, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);

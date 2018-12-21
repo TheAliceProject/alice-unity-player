@@ -21,39 +21,17 @@ class Scene extends SScene {
     box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
     box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
 
-    $Debug.log(message: "resize");
-    this.box.resize(factor: 2);
-    this.box.resize(factor: 0.5);
+    Position camPos <- camera.getPositionRelativeToVehicle();
+    Orientation camRot <- camera.getOrientationRelativeToVehicle();
 
-    $Debug.log(message: "resize width then height and depth together PRESERVE_NOTHING");
-    this.box.resizeWidth(factor: 2, isVolumePreserved: false);
-    $Debug.log(message: "resize height and depth together PRESERVE_NOTHING");
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box3);
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box2);
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box4);
+
     doTogether {
-      this.box.resizeHeight(factor: 2, isVolumePreserved: false);
-      this.box.resizeDepth(factor: 2, isVolumePreserved: false);
+      camera.setPositionRelativeToVehicle(position: camPos);
+      camera.setOrientationRelativeToVehicle(orientation: camRot);
     }
-
-    this.box.resizeHeight(factor: 0.5, isVolumePreserved: false);
-    doTogether {
-      this.box.resizeWidth(factor: 0.5, isVolumePreserved: false);
-      this.box.resizeDepth(factor: 0.5, isVolumePreserved: false);
-    }
-
-    $Debug.log(message: "resize height PRESERVE_VOLUME");
-    this.box.resizeHeight(factor: 4, isVolumePreserved: true);
-    this.box.resizeHeight(factor: 0.25, isVolumePreserved: true);
-
-    $Debug.log(message: "set width PRESERVE_VOLUME");
-    this.box.setWidth(width: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
-    this.box.setWidth(width: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
-
-    $Debug.log(message: "set height PRESERVE_ASPECT_RATIO");
-    this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_ASPECT_RATIO);
-    this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_ASPECT_RATIO);
-
-    $Debug.log(message: "set depth PRESERVE_NOTHING");
-    this.box.setDepth(depth: 3, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
-    this.box.setDepth(depth: 1, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
 
     Position pos <- box2.getPositionRelativeToVehicle();
     Orientation rot <- box2.getOrientationRelativeToVehicle();
@@ -192,7 +170,39 @@ class Scene extends SScene {
     orientToBox(box: box2, target: box5);
     orientToBox(box: box2, target: box);
 
-    
+    $Debug.log(message: "resize");
+    this.box.resize(factor: 2);
+    this.box.resize(factor: 0.5);
+
+    $Debug.log(message: "resize width then height and depth together PRESERVE_NOTHING");
+    this.box.resizeWidth(factor: 2, isVolumePreserved: false);
+    $Debug.log(message: "resize height and depth together PRESERVE_NOTHING");
+    doTogether {
+      this.box.resizeHeight(factor: 2, isVolumePreserved: false);
+      this.box.resizeDepth(factor: 2, isVolumePreserved: false);
+    }
+
+    this.box.resizeHeight(factor: 0.5, isVolumePreserved: false);
+    doTogether {
+      this.box.resizeWidth(factor: 0.5, isVolumePreserved: false);
+      this.box.resizeDepth(factor: 0.5, isVolumePreserved: false);
+    }
+
+    $Debug.log(message: "resize height PRESERVE_VOLUME");
+    this.box.resizeHeight(factor: 4, isVolumePreserved: true);
+    this.box.resizeHeight(factor: 0.25, isVolumePreserved: true);
+
+    $Debug.log(message: "set width PRESERVE_VOLUME");
+    this.box.setWidth(width: 3, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+    this.box.setWidth(width: 1, dimensionPolicy: DimensionPolicy.PRESERVE_VOLUME);
+
+    $Debug.log(message: "set height PRESERVE_ASPECT_RATIO");
+    this.box.setHeight(height: 3, dimensionPolicy: DimensionPolicy.PRESERVE_ASPECT_RATIO);
+    this.box.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_ASPECT_RATIO);
+
+    $Debug.log(message: "set depth PRESERVE_NOTHING");
+    this.box.setDepth(depth: 3, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    this.box.setDepth(depth: 1, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
 
     $Debug.log(message: "fog density and atmosphere color");
     Portion fogDensity <- getFogDensity();
