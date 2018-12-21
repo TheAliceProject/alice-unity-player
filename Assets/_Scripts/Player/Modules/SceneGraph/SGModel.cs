@@ -24,7 +24,7 @@ namespace Alice.Player.Unity {
         private MaterialPropertyBlock m_PropertyBlock;
         private Paint m_CachedPaint;
         private float m_CachedOpacity = 1;
-        private AxisAlignedBox m_MeshBounds;
+        protected AxisAlignedBox m_MeshBounds;
 
         protected virtual void Init(Transform inModelTransform, Renderer inRenderer) {
             m_ModelTransform = inModelTransform;
@@ -64,7 +64,7 @@ namespace Alice.Player.Unity {
             );
         }
 
-        public void CacheMeshBounds() {
+        public virtual void CacheMeshBounds() {
             if (m_Renderer is SkinnedMeshRenderer) {
                 var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
                 // make sure the skinned mesh renderers local bounds get updated
@@ -76,8 +76,17 @@ namespace Alice.Player.Unity {
             }
         }
 
-        
-        protected abstract void OnSizePropertyChanged(TValue inValue);
+        protected virtual void OnSizePropertyChanged(TValue inValue) {
+            SetSize(inValue.RawStruct<Size>());   
+        }
+
+        protected virtual void SetSize(Size size) {
+            m_ModelTransform.localScale = new UnityEngine.Vector3(
+                (float)(size.width/m_MeshBounds.size.width), 
+                (float)(size.height/m_MeshBounds.size.height),
+                (float)(size.depth/m_MeshBounds.size.depth)
+            );
+        }
 
         protected virtual string shaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
 
