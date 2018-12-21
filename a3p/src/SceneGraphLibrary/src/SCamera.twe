@@ -6,28 +6,17 @@ class SCamera extends SMovableTurnable {
 
   void setVehicle(SThing vehicle) {
     this.vehicle <- vehicle;
-    localTransformation.value <- $SceneGraph.setVehicle(vehicle: vehicle, rider: this);
+    this.localTransformation.value <- $SceneGraph.setVehicle(vehicle: vehicle, rider: this);
   }
 
-//  void moveAndOrientToAGoodVantagePointOf(SThing entity,
-//          DecimalNumber duration <- Default.duration(),
-//          AnimationStyle animationStyle <- Default.animationStyle() ) {
-//    // checkArgumentIsNotNull( entity );
-//    GoodVantagePointData data <- new GoodVantagePointData( subject: this, viewer: other );
-//		this.animateVantagePoint( vantage: data, duration: duration, animationStyle: style );
-//  }
+  void moveAndOrientToAGoodVantagePointOf(SThing entity,
+          Duration duration <- Default.duration(),
+          AnimationStyle style <- Default.animationStyle() ) {
 
-//	static class GoodVantagePointData extends PreSetVantagePointData {
-//		public GoodVantagePointData( SymmetricPerspectiveCameraImp subject, EntityImp other ) {
-//			super( subject: subject, vantage: subject.createGoodVantagePointStandIn( other: other ) );
-//		}
-//	}
+    Position pos <- new Position(x: 2, y: 4, z: -8);
+    Orientation rot <- new Orientation(forward: new Direction(x: -pos.x, y: -pos.y, z: -pos.z), up: Direction.UP);
+    VantagePoint end <- new VantagePoint(position: pos, orientation: rot);
 
-//	StandInImp createGoodVantagePointStandIn( EntityImp other ) {
-//	  // From SymmetricPerspectiveCameraImp
-//		StandInImp standIn <- other.createStandIn();
-//		standIn.getSgComposite().setTranslationOnly( x: 2, y: 4, z: -8, seenBy: other.getSgReferenceFrame() );
-//		standIn.setOrientationOnlyToPointAt( target: other );
-//		return standIn;
-//	}
+    this.localTransformation.animateValue(endValue: end, asSeenBy: entity, duration: duration, animationStyle: style);
+  }
 }
