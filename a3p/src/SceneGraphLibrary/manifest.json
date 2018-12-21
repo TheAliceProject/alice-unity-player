@@ -143,6 +143,11 @@
       "files": ["src/SizeTween.twe"],
       "type": "Class"
     }, {
+      "id": "ApplyResizeTween",
+      "format": "tweedle",
+      "files": ["src/ApplyResizeTween.twe"],
+      "type": "Class"
+    }, {
       "id": "PaintProperty",
       "format": "tweedle",
       "files": ["src/PaintProperty.twe"],

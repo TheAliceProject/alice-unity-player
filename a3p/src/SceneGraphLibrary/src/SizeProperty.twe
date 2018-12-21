@@ -39,19 +39,29 @@ class SizeProperty extends Property {
   }
 
   void animateResize(DecimalNumber factor, Duration duration, AnimationStyle animationStyle ) {
-
+    ApplyResizeTween tween <- new ApplyResizeTween(property: this, scale: new Scale(scale: factor));
+    tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateResizeWidth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle animationStyle ) {
-
+  void animateResizeWidth( DecimalNumber factor, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle ) {
+    DecimalNumber secondaryFactor <- dimensionPolicy.secondaryFactor(primaryFactor: factor);
+    Scale scale <- new Scale(x: factor, y: secondaryFactor, z: secondaryFactor);
+    ApplyResizeTween tween <- new ApplyResizeTween(property: this, scale: scale);
+    tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateResizeHeight( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle animationStyle ) {
-
+  void animateResizeHeight( DecimalNumber factor, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle ) {
+    DecimalNumber secondaryFactor <- dimensionPolicy.secondaryFactor(primaryFactor: factor);
+    Scale scale <- new Scale(x: secondaryFactor, y: factor, z: secondaryFactor);
+    ApplyResizeTween tween <- new ApplyResizeTween(property: this, scale: scale);
+    tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateResizeDepth( DecimalNumber factor, Boolean isVolumePreserved, Duration duration, AnimationStyle animationStyle ) {
-
+  void animateResizeDepth( DecimalNumber factor, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle ) {
+    DecimalNumber secondaryFactor <- dimensionPolicy.secondaryFactor(primaryFactor: factor);
+    Scale scale <- new Scale(x: secondaryFactor, y: secondaryFactor, z: factor);
+    ApplyResizeTween tween <- new ApplyResizeTween(property: this, scale: scale);
+    tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
   @CompletelyHidden Size value;
