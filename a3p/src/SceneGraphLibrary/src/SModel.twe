@@ -40,8 +40,7 @@ class SModel extends SMovableTurnable
 
   void resize(Number factor,
               Duration duration <- Default.duration(),
-              AnimationStyle animationStyle <- Default.animationStyle(),
-              Boolean isVolumePreserved <- Default.isVolumePreserved()) {
+              AnimationStyle animationStyle <- Default.animationStyle()) {
     this.size.animateResize( factor: factor, duration: duration, animationStyle: animationStyle );
   }
 
@@ -49,21 +48,33 @@ class SModel extends SMovableTurnable
                    Duration duration <- Default.duration(),
                    AnimationStyle animationStyle <- Default.animationStyle(),
                    Boolean isVolumePreserved <- Default.isVolumePreserved()) {
-    this.size.animateResizeWidth( factor: factor, isVolumePReserved: isVolumePreserved, duration: duration, animationStyle: animationStyle );
+    DimensionPolicy policy <- DimensionPolicy.PRESERVE_NOTHING;
+    if (isVolumePreserved) {
+      policy <- DimensionPolicy.PRESERVE_VOLUME;
+    }
+    this.size.animateResizeWidth( factor: factor, dimensionPolicy: policy, duration: duration, animationStyle: animationStyle );
   }
 
   void resizeHeight(Number factor,
                     Duration duration <- Default.duration(),
                     AnimationStyle animationStyle <- Default.animationStyle(),
                     Boolean isVolumePreserved <- Default.isVolumePreserved()) {
-    this.size.animateResizeHeight( factor: factor, isVolumePReserved: isVolumePreserved, duration: duration, animationStyle: animationStyle );
+    DimensionPolicy policy <- DimensionPolicy.PRESERVE_NOTHING;
+    if (isVolumePreserved) {
+      policy <- DimensionPolicy.PRESERVE_VOLUME;
+    }
+    this.size.animateResizeHeight( factor: factor, dimensionPolicy: policy, duration: duration, animationStyle: animationStyle );
   }
 
   void resizeDepth(Number factor,
                    Duration duration <- Default.duration(),
                    AnimationStyle animationStyle <- Default.animationStyle(),
                    Boolean isVolumePreserved <- Default.isVolumePreserved()) {
-    this.size.animateResizeDepth( factor: factor, isVolumePReserved: isVolumePreserved, duration: duration, animationStyle: animationStyle );
+    DimensionPolicy policy <- DimensionPolicy.PRESERVE_NOTHING;
+    if (isVolumePreserved) {
+      policy <- DimensionPolicy.PRESERVE_VOLUME;
+    }
+    this.size.animateResizeDepth( factor: factor, dimensionPolicy: policy, duration: duration, animationStyle: animationStyle );
   }
 
   Paint getPaint() {

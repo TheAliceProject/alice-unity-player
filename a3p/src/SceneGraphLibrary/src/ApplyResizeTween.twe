@@ -1,0 +1,29 @@
+class ApplyResizeTween extends PropertyTween {
+  ApplyResizeTween(SizeProperty property, Scale scale) {
+    super();
+    this.property <- property;
+    Size startSize <- property.getValue();
+    this.endSize <- startSize.resize(scale: scale).subtract(other: startSize);
+    this.currentSize <- Size.ZERO;
+  }
+
+  void setEndValue() { 
+    this.interpolate(portion: Portion.WHOLE);
+  }
+
+  void interpolate(Portion portion) {
+    Size nextSize <- endSize.scaledBy(factor: portion.numberValue);
+    Size delta <- nextSize.subtract(other: currentSize);
+    currentSize <- nextSize;
+
+    Size size <- this.property.getValue();
+    size <- size.add(other: delta);
+
+    this.property.setValue(value: size);
+  }
+
+  @CompletelyHidden SizeProperty property;
+  @CompletelyHidden Size endSize;
+  @CompletelyHidden Size currentSize;
+
+}

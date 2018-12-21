@@ -14,6 +14,7 @@ namespace Alice.Player.Primitives
         }
 
         #region Interop Interfaces
+        [PInteropField]
         public static readonly Scale ONE = new Scale(1,1,1);
 
         [PInteropField]
@@ -28,6 +29,12 @@ namespace Alice.Player.Primitives
         public Scale(double x, double y, double z)
         {
             Value = new Vector3(x, y, z);
+        }
+
+        [PInteropConstructor]
+        public Scale(double scale)
+        {
+            Value = new Vector3(scale, scale, scale);
         }
 
         [PInteropMethod]
