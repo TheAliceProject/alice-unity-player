@@ -143,6 +143,21 @@
       "files": ["src/SizeTween.twe"],
       "type": "Class"
     }, {
+      "id": "WidthOnlyTween",
+      "format": "tweedle",
+      "files": ["src/WidthOnlyTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "HeightOnlyTween",
+      "format": "tweedle",
+      "files": ["src/HeightOnlyTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "DepthOnlyTween",
+      "format": "tweedle",
+      "files": ["src/DepthOnlyTween.twe"],
+      "type": "Class"
+    }, {
       "id": "ApplyResizeTween",
       "format": "tweedle",
       "files": ["src/ApplyResizeTween.twe"],
@@ -211,6 +226,11 @@
       "id": "SSphere",
       "format": "tweedle",
       "files": ["src/SSphere.twe"],
+      "type": "Class"
+    }, {
+      "id": "SCylinder",
+      "format": "tweedle",
+      "files": ["src/SCylinder.twe"],
       "type": "Class"
     }, {
       "id": "SProgram",

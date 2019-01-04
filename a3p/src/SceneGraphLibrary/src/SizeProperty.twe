@@ -21,21 +21,36 @@ class SizeProperty extends Property {
   }
 
   void animateWidth(DecimalNumber width, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
-    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: width / value.width );
-    Size finalSize <- new Size( width: width, height: value.height * factor, depth: value.depth * factor );
-    animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
+    if (dimensionPolicy == DimensionPolicy.PRESERVE_NOTHING) {
+      WidthOnlyTween tween <- new WidthOnlyTween(property: this, start: this.value.width, end: width);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    } else {
+      DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: width / value.width );
+      Size finalSize <- new Size( width: width, height: value.height * factor, depth: value.depth * factor );
+      animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
+    }
   }
 
   void animateHeight(DecimalNumber height, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
-    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: height / value.height );
-    Size finalSize <- new Size( width: value.width * factor, height: height, depth: value.depth * factor );
-    animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
+    if (dimensionPolicy == DimensionPolicy.PRESERVE_NOTHING) {
+      HeightOnlyTween tween <- new HeightOnlyTween(property: this, start: this.value.height, end: height);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    } else {
+      DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: height / value.height );
+      Size finalSize <- new Size( width: value.width * factor, height: height, depth: value.depth * factor );
+      animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
+    }
   }
 
   void animateDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
-    DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: depth / value.depth );
-    Size finalSize <- new Size( width: value.width * factor, height: value.height * factor, depth: depth );
-    animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
+    if (dimensionPolicy == DimensionPolicy.PRESERVE_NOTHING) {
+      DepthOnlyTween tween <- new DepthOnlyTween(property: this, start: this.value.depth, end: depth);
+      tween.animate(duration: duration, animationStyle: animationStyle);
+    } else {
+      DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: depth / value.depth );
+      Size finalSize <- new Size( width: value.width * factor, height: value.height * factor, depth: depth );
+      animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
+    }
   }
 
   void animateResize(DecimalNumber factor, Duration duration, AnimationStyle animationStyle ) {

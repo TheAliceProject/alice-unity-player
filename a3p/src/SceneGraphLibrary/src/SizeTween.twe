@@ -2,20 +2,20 @@ class SizeTween extends PropertyTween {
   SizeTween(SizeProperty property, Size start, Size end) {
     super();
     this.property <- property;
-    this.start <- start;
-    this.end <- end;
+    this.startSize <- start;
+    this.endSize <- end;
   }
 
   void setEndValue() { 
-    this.property.setValue(value: end);
+    this.property.setValue(value: endSize);
   }
 
   void interpolate(Portion portion) {
-    this.property.setValue(value: this.start.interpolatePortion(end: this.end, portion: portion));
+    this.property.setValue(value: this.startSize.interpolatePortion(end: this.endSize, portion: portion));
   }
 
   @CompletelyHidden SizeProperty property;
-  @CompletelyHidden Size start;
-  @CompletelyHidden Size end;
+  @CompletelyHidden Size startSize;
+  @CompletelyHidden Size endSize;
 
 }
