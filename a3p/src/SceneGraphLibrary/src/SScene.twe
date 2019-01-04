@@ -189,7 +189,7 @@ class SScene extends SThing {
 
     //this.addCamerasTo( program: program );
 
-    globalBrightness.animateValue( endValue: Portion.WHOLE, duration: Duration.ONE_SECOND, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.WHOLE, duration: Duration.HALF_SECOND, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
     $SceneGraph.activateScene(scene: this);
   }
 
