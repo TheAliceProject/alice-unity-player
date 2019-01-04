@@ -76,7 +76,7 @@ namespace Alice.Player.Unity {
             }
         }
 
-        protected virtual void OnSizePropertyChanged(TValue inValue) {
+        private void OnSizePropertyChanged(TValue inValue) {
             SetSize(inValue.RawStruct<Size>());
         }
 

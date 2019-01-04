@@ -14,24 +14,32 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(message: this.getName() .. ": myFirstMethod()");
 
-    // fade in new boxes
-    Duration fadeDur <- new Duration(seconds: 0.1);
-    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-
     Position camPos <- camera.getPositionRelativeToVehicle();
     Orientation camRot <- camera.getOrientationRelativeToVehicle();
 
-    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box3);
-    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box2);
-    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box4);
+    this.camera.pointAt(target: sphere);
+    sphere.setRadius(radius: 1);
+    sphere.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    sphere.setRadius(radius: 0.3);
+    sphere.setSize(size: Size.ONE);
+
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: cylinder);
+    cylinder.setRadius(radius: 1);
+    cylinder.setLength(length: 3);
+    cylinder.setRadius(radius: 0.5);
+    cylinder.setLength(length: 1);
 
     doTogether {
       camera.setPositionRelativeToVehicle(position: camPos);
       camera.setOrientationRelativeToVehicle(orientation: camRot);
     }
+
+    // fade in boxes
+    Duration fadeDur <- new Duration(seconds: 0.1);
+    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
 
     Position pos <- box2.getPositionRelativeToVehicle();
     Orientation rot <- box2.getOrientationRelativeToVehicle();
@@ -376,6 +384,8 @@ class Scene extends SScene {
   DirectionalBox box3 <- new DirectionalBox();
   DirectionalBox box4 <- new DirectionalBox();
   DirectionalBox box5 <- new DirectionalBox();
+  SSphere sphere <- new SSphere();
+  SCylinder cylinder <- new SCylinder();
 
   void performCustomSetup() {
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: Duration.ZERO);
@@ -411,6 +421,12 @@ class Scene extends SScene {
     box5.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 5.0), duration: Duration.ZERO);
     box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.2)), duration: Duration.ZERO);
     box5.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
+
+    sphere.setVehicle(vehicle: this);
+    sphere.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
+
+    cylinder.setVehicle(vehicle: this);
+    cylinder.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
 
   }
 

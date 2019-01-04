@@ -33,6 +33,9 @@ namespace Alice.Player.Modules {
                 case SPHERE:
                     entity = SGEntity.Create<SGSphere>(model);
                     break;
+                case CYLINDER:
+                    entity = SGEntity.Create<SGCylinder>(model);
+                    break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
             }
