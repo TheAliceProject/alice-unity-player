@@ -12,9 +12,9 @@ namespace Alice.Player.Modules
         static private string s_TimingLabel = "";
 
         [PInteropMethod]
-        static public void log(string @string)
+        static public void log(string message)
         {
-            UnityEngine.Debug.Log(@string);
+            UnityEngine.Debug.Log(message);
         }
 
         [PInteropMethod]

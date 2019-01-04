@@ -10,20 +10,20 @@ class PropertyTween {
 
   }
 
-  void animate(DecimalNumber duration, AnimationStyle animationStyle) {
-    if (duration <= 0) {
+  void animate(Duration duration, AnimationStyle animationStyle) {
+    if (duration.seconds <= 0) {
       this.setEndValue();
       return;
     }
 
-    DecimalNumber startTime <- $Clock.currentTime;
-    DecimalNumber currentTime <- 0;
+    Duration startTime <- $Clock.currentTime;
+    Duration currentTime <- Duration.ZERO;
     
-    while (currentTime < duration) {
+    while (currentTime.seconds < duration.seconds) {
       $Clock.delayOneFrame();
-      currentTime <- $Clock.currentTime - startTime;
+      currentTime <- $Clock.currentTime.subtract(other: startTime);
 
-      if (currentTime >= duration) {
+      if (currentTime.seconds >= duration.seconds) {
         this.setEndValue();
       } else {
         Portion t <- animationStyle.calculatePortion(timeElapsed: currentTime, timeTotal: duration);

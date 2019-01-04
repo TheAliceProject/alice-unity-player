@@ -10,7 +10,7 @@ class SSphere extends SShape
     return this.radius.getValue();
   }
 
-  void setRadius(DecimalNumber radius, DecimalNumber duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  void setRadius(DecimalNumber radius, Duration duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
   {
     this.radius.animateValue(endValue: radius, duration: duration, animationStyle: style);
   }

@@ -15,24 +15,24 @@ class SizeProperty extends Property {
     }
   }
 
-  void animateValue(Size endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateValue(Size endValue, Duration duration, AnimationStyle animationStyle) {
     SizeTween tween <- new SizeTween(property: this, start: this.value, end: endValue);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  void animateWidth(DecimalNumber width, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateWidth(DecimalNumber width, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
     DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: width / value.width );
     Size finalSize <- new Size( width: width, height: value.height * factor, depth: value.depth * factor )
     animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
-  void animateHeight(DecimalNumber height, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateHeight(DecimalNumber height, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
     DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: height / value.height );
     Size finalSize <- new Size( width: value.width * factor, height: height, depth: value.depth * factor )
     animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
   }
 
-  void animateDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateDepth(DecimalNumber depth, DimensionPolicy dimensionPolicy, Duration duration, AnimationStyle animationStyle) {
     DecimalNumber factor <- dimensionPolicy.secondaryFactor( primaryFactor: depth / value.depth );
     Size finalSize <- new Size( width: value.width * factor, height: value.height * factor, depth: depth )
     animateValue( endValue: finalSize, duration: duration, animationStyle: animationStyle );
