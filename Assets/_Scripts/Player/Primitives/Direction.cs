@@ -19,17 +19,17 @@ namespace Alice.Player.Primitives
         [PInteropField]
         public static readonly Direction NaV = new Direction(double.NaN, double.NaN, double.NaN);
         [PInteropField]
-        public static readonly Direction POSITIVE_X_AXIS  = new Direction(1, 0, 0);
+        public static readonly Direction RIGHT = new Direction(1, 0, 0);
         [PInteropField]
-        public static readonly Direction NEGATIVE_X_AXIS  = new Direction(-1, 0, 0);
+        public static readonly Direction LEFT = new Direction(-1, 0, 0);
         [PInteropField]
-        public static readonly Direction POSITIVE_Y_AXIS  = new Direction(0, 1, 0);
+        public static readonly Direction UP = new Direction(0, 1, 0);
         [PInteropField]
-        public static readonly Direction NEGATIVE_Y_AXIS  = new Direction(0, -1, 0);
+        public static readonly Direction DOWN = new Direction(0, -1, 0);
         [PInteropField]
-        public static readonly Direction POSITIVE_Z_AXIS  = new Direction(0, 0, 1);
+        public static readonly Direction FORWARD = new Direction(0, 0, -1);
         [PInteropField]
-        public static readonly Direction NEGATIVE_Z_AXIS  = new Direction(0, 0, -1);
+        public static readonly Direction BACKWARD = new Direction(0, 0, 1);
 
         [PInteropField]
         public double x { get { return Value.X; } }
@@ -112,44 +112,36 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
-        public bool isPositiveXAxis() {
-            return Value == POSITIVE_X_AXIS.Value;
+        public bool isRight() {
+            return Value == RIGHT.Value;
         }
 
         [PInteropMethod]
-        public bool isNegativeXAxis() {
-            return Value == NEGATIVE_X_AXIS.Value;
+        public bool isLeft() {
+            return Value == LEFT.Value;
         }
 
         [PInteropMethod]
-        public bool isPositiveYAxis() {
-            return Value == POSITIVE_Y_AXIS.Value;
+        public bool isUp() {
+            return Value == UP.Value;
         }
 
         [PInteropMethod]
-        public bool isNegativeYAxis() {
-            return Value == NEGATIVE_Y_AXIS.Value;
+        public bool isDown() {
+            return Value == DOWN.Value;
         }
 
         [PInteropMethod]
-        public bool isPositiveZAxis() {
-            return Value == POSITIVE_Z_AXIS.Value;
+        public bool isForward() {
+            return Value == FORWARD.Value;
         }
 
         [PInteropMethod]
-        public bool isNegativeZAxis() {
-            return Value == NEGATIVE_Z_AXIS.Value;
+        public bool isBackward() {
+            return Value == BACKWARD.Value;
         }
 
         #endregion //Interop Interfaces
-
-        
-
-        static public implicit operator UnityEngine.Vector3(Direction inDirection)
-        {
-            return new UnityEngine.Vector3((float)inDirection.Value.X, (float)inDirection.Value.Y, (float)inDirection.Value.Z);
-        }
-
 
         public override string ToString() {
             return string.Format("Direction({0:0.##},{1:0.##},{2:0.##})", Value.X, Value.Y, Value.Z);

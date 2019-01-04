@@ -15,6 +15,9 @@ namespace Alice.Player.Primitives
 
         #region Interop Interfaces
         [PInteropField]
+        public static readonly Size ZERO = new Size(0, 0, 0);
+
+        [PInteropField]
         public double width { get {return Value.X; } }
         [PInteropField]
         public double height { get {return Value.Y; } }
@@ -36,6 +39,21 @@ namespace Alice.Player.Primitives
         [PInteropMethod]
         public Size scaledBy(double factor) {
             return new Size(Value*factor);
+        }
+
+        [PInteropMethod]
+        public Size resize(Scale scale) {
+            return new Size(Value.X*scale.Value.X, Value.Y*scale.Value.Y, Value.Z*scale.Value.Z);
+        }
+
+        [PInteropMethod]
+        public Size add(Size other) {
+            return new Size(Value + other.Value);
+        }
+
+        [PInteropMethod]
+        public Size subtract(Size other) {
+            return new Size(Value - other.Value);
         }
 
         [PInteropMethod]

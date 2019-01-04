@@ -11,10 +11,5 @@ namespace Alice.Player.Unity {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             Init(go.transform, go.GetComponent<MeshRenderer>());
         }
-
-        protected override void OnSizePropertyChanged(TValue inValue) {
-            var size = inValue.RawStruct<Size>();
-            m_ModelTransform.localScale = size;
-        }  
     }
 }

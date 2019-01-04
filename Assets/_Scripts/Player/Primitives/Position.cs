@@ -13,6 +13,16 @@ namespace Alice.Player.Primitives
             Value = inVector;
         }
 
+        #region Unity Conversion
+        public static Position FromUnity(UnityEngine.Vector3 pos) {
+            return new Position(pos.x, pos.y, -pos.z);
+        }
+
+        public UnityEngine.Vector3 UnityPosition() {
+            return new UnityEngine.Vector3((float)Value.X, (float)Value.Y, -(float)Value.Z);
+        }
+        #endregion // Unity Conversion
+
         #region Interop Interfaces
         [PInteropField]
         public static readonly Position NaV = new Position(double.NaN, double.NaN, double.NaN);
@@ -80,11 +90,6 @@ namespace Alice.Player.Primitives
 
         public Position Rotate(Orientation orientation) {
             return new Position(Vector3.Transform(Value, orientation.Value));
-        }
-       
-        static public implicit operator UnityEngine.Vector3(Position inPosition)
-        {
-            return new UnityEngine.Vector3((float)inPosition.Value.X, (float)inPosition.Value.Y, (float)inPosition.Value.Z);
         }
 
         public override string ToString() {

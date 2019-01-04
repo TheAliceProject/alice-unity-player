@@ -21,6 +21,12 @@ class VantagePointProperty extends Property {
     setValue(value: m);
   }
 
+  void animateValue(VantagePoint endValue, SThing asSeenBy, Duration duration, AnimationStyle animationStyle) {
+    VantagePoint start <- owner.getVantagePoint(asSeenBy: asSeenBy);
+    VantagePointTween tween <- new VantagePointTween(property: this, start: start, end: endValue, asSeenBy: asSeenBy);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
   void animatePosition(Position endValue, Duration duration, AnimationStyle animationStyle) {
     PositionTween tween <- new PositionTween(property: this, start: this.value.position, end: endValue, asSeenBy: owner.vehicle);
     tween.animate(duration: duration, animationStyle: animationStyle);
@@ -103,7 +109,7 @@ class VantagePointProperty extends Property {
     Orientation end <- value.orientation;
     if (!Epsilon.REASONABLE.isWithin0InSquaredSpace(number: toTarget.lengthSquared)) {
       // in vehicle space
-      Direction up <- Direction.POSITIVE_Y_AXIS.rotate(orientation: value.orientation);
+      Direction up <- Direction.UP.rotate(orientation: value.orientation);
       Direction newForward <- toTarget.rotate(orientation: value.orientation).normalize();
       end <- new Orientation(forward: newForward, up: up);
     }
@@ -116,25 +122,25 @@ class VantagePointProperty extends Property {
     VantagePoint subjectInViewer <- owner.getVantagePoint(asSeenBy: upAsSeenBy);
     Orientation end <- subjectInViewer.orientation;
 
-    Direction up <- Direction.POSITIVE_Y_AXIS.rotate(orientation: end);
+    Direction up <- Direction.UP.rotate(orientation: end);
     
     if (!Epsilon.REASONABLE.isWithin(number1: up.y, number2: 1.0)) { 
       // is not already oriented up
-      Direction forward <- Direction.POSITIVE_Z_AXIS.rotate(orientation: end);
+      Direction forward <- Direction.FORWARD.rotate(orientation: end);
 
       if (Epsilon.REASONABLE.isWithin(number1: forward.y, number2: 1.0) || Epsilon.REASONABLE.isWithin(number1: forward.y, number2: -1.0)) { 
         // is facing directly up or down
         DecimalNumber revs <- 0;
         if (forward.y < 0.0) {
-          revs <- -0.25;
+          revs <- 0.25;
         } else {
-          revs <- 0.25; 
+          revs <- -0.25; 
         }
-        end <- end.multiply(other: new Orientation(axis: Direction.POSITIVE_X_AXIS, angle: new Angle(revolutions: revs)));
+        end <- end.multiply(other: new Orientation(axis: Direction.RIGHT, angle: new Angle(revolutions: revs)));
       } else {
         // all other orientations
         forward <- new Direction(x: forward.x, y: 0, z: forward.z).normalize();
-        end <- new Orientation(forward: forward, up: Direction.POSITIVE_Y_AXIS);
+        end <- new Orientation(forward: forward, up: Direction.UP);
       }
     }
 

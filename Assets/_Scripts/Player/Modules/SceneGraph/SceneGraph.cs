@@ -102,6 +102,8 @@ namespace Alice.Player.Unity {
             }
         }
 
+        public static bool Exists { get { return !ReferenceEquals(s_Current, null); } }
+
         private List<SGEntity> m_Entities = new List<SGEntity>();
 
         private List<IWaitReturn> m_WaitReturnsQueue = new List<IWaitReturn>();
@@ -209,7 +211,17 @@ namespace Alice.Player.Unity {
             }
         }
 
-    }
+        /**
+        * Cleans up and destroys all scene graph entities
+        */
+        public void Clear() {
+            for (int i = 0; i < m_Entities.Count; ++i) {
+                m_Entities[i].CleanUp();
+                Destroy(m_Entities[i].gameObject);
+            }
 
-    
+            m_Entities.Clear();
+        }
+
+    }
 }

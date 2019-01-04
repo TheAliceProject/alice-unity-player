@@ -1,10 +1,10 @@
 enum SpatialRelation {
-    LEFT_OF(placeAxis: Direction.NEGATIVE_X_AXIS),
-    RIGHT_OF(placeAxis: Direction.POSITIVE_X_AXIS),
-    ABOVE(placeAxis: Direction.POSITIVE_Y_AXIS),
-    BELOW(placeAxis: Direction.NEGATIVE_Y_AXIS),
-    IN_FRONT_OF(placeAxis: Direction.POSITIVE_Z_AXIS),
-    BEHIND(placeAxis: Direction.NEGATIVE_Z_AXIS);
+    LEFT_OF(placeAxis: Direction.LEFT),
+    RIGHT_OF(placeAxis: Direction.RIGHT),
+    ABOVE(placeAxis: Direction.UP),
+    BELOW(placeAxis: Direction.DOWN),
+    IN_FRONT_OF(placeAxis: Direction.FORWARD),
+    BEHIND(placeAxis: Direction.BACKWARD);
 
     SpatialRelation(Direction placeAxis) {
         this.placeAxis <- placeAxis;

@@ -5,8 +5,8 @@ class SmoothPositionTween extends PositionTween {
     startOrientation <- start.orientation;
     endOrientation <- end.orientation;
 
-    Direction startForward <- Direction.POSITIVE_Z_AXIS.rotate(orientation: startOrientation);
-    Direction endForward <- Direction.POSITIVE_Z_AXIS.rotate(orientation: endOrientation);
+    Direction startForward <- Direction.FORWARD.rotate(orientation: startOrientation);
+    Direction endForward <- Direction.FORWARD.rotate(orientation: endOrientation);
     DecimalNumber s <- -8.0;
 
     xHermiteX <- start.position.x;
