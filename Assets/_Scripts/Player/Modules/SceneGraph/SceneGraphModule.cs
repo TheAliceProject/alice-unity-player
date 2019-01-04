@@ -130,7 +130,7 @@ namespace Alice.Player.Modules {
             
             var p = entity.cachedTransform.localPosition;
             var r = entity.cachedTransform.localRotation;
-            return new VantagePoint(new Primitives.Vector3(p.x, p.y, -p.z), new Primitives.Quaternion(r.x, r.y, -r.z, -r.w));
+            return VantagePoint.FromUnity(p, r);
         }
 
         [PInteropMethod]
@@ -168,7 +168,7 @@ namespace Alice.Player.Modules {
             if (entity) {
                 var p = entity.cachedTransform.position;
                 var r = entity.cachedTransform.rotation;
-                return new VantagePoint(new Primitives.Vector3(p.x, p.y, -p.z), new Primitives.Quaternion(r.x, r.y, -r.z, -r.w));
+                return VantagePoint.FromUnity(p, r);
             }
             return VantagePoint.IDENTITY;
         }
@@ -179,7 +179,7 @@ namespace Alice.Player.Modules {
             if (entity) {
                 var r = UnityEngine.Quaternion.Inverse(entity.cachedTransform.rotation);
                 var p = r*-entity.cachedTransform.position;
-                return new VantagePoint(new Primitives.Vector3(p.x, p.y, -p.z), new Primitives.Quaternion(r.x, r.y, -r.z, -r.w));
+                return VantagePoint.FromUnity(p, r);
             }
             return VantagePoint.IDENTITY;
         }
@@ -188,8 +188,7 @@ namespace Alice.Player.Modules {
         public static Position getAbsolutePosition(TValue thing) {
             var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
-                var p = entity.cachedTransform.position;
-                return new Position(p.x, p.y, -p.z);
+                return Position.FromUnity(entity.cachedTransform.position);
             } else {
                 throw new SceneGraphException("No scene graph entity exists for tweedle object.");
             }

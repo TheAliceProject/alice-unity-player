@@ -14,11 +14,9 @@ namespace Alice.Player.Unity {
 
         private void OnTransformationPropertyChanged(TValue inValue) {
             VantagePoint vp = inValue.RawStruct<VantagePoint>();
-            var posVal = vp.position.Value;
-            var rotVal = vp.orientation.Value;
             // convert to left-handedness
-            cachedTransform.localPosition = new UnityEngine.Vector3((float)posVal.X, (float)posVal.Y, -(float)posVal.Z);
-            cachedTransform.localRotation = new UnityEngine.Quaternion((float)rotVal.X, (float)rotVal.Y, -(float)rotVal.Z, -(float)rotVal.W);
+            cachedTransform.localPosition = vp.UnityPosition();
+            cachedTransform.localRotation = vp.UnityRotation();
         }
 
     }
