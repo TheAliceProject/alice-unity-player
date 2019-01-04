@@ -19,7 +19,7 @@ class SScene extends SThing {
   }
 
   void setAtmosphereColor( Color color,
-                           DecimalNumber duration <- Default.duration(),
+                           Duration duration <- Default.duration(),
                            AnimationStyle style <- Default.animationStyle() ) {
     atmosphereColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
@@ -29,7 +29,7 @@ class SScene extends SThing {
   }
 
   @CompletelyHidden void setAmbientLightColor( Color color,
-                                     DecimalNumber duration <- Default.duration(),
+                                     Duration duration <- Default.duration(),
                                      AnimationStyle style <- Default.animationStyle() ) {
     ambientLightColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
@@ -39,7 +39,7 @@ class SScene extends SThing {
   }
 
   void setFromAboveLightColor( Color color,
-                               DecimalNumber duration <- Default.duration(),
+                               Duration duration <- Default.duration(),
                                AnimationStyle style <- Default.animationStyle() ) {
     fromAboveLightColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
@@ -49,7 +49,7 @@ class SScene extends SThing {
   }
 
   void setFromBelowLightColor( Color color,
-                               DecimalNumber duration <- Default.duration(),
+                               Duration duration <- Default.duration(),
                                AnimationStyle style <- Default.animationStyle() ) {
     fromBelowLightColor.animateValue( endValue: color, duration: duration, animationStyle: style );
   }
@@ -59,7 +59,7 @@ class SScene extends SThing {
   }
 
   void setFogDensity( Portion density,
-                      DecimalNumber duration <- Default.duration(),
+                      Duration duration <- Default.duration(),
                       AnimationStyle style <- Default.animationStyle() ) {
     fogDensity.animateValue( endValue: density, duration: duration, animationStyle: style );
   }
@@ -189,12 +189,12 @@ class SScene extends SThing {
 
     //this.addCamerasTo( program: program );
 
-    globalBrightness.animateValue( endValue: Portion.WHOLE, duration: 1, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.WHOLE, duration: Duration.HALF_SECOND, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
     $SceneGraph.activateScene(scene: this);
   }
 
   @CompletelyHidden void deactivate( SProgram program ) {
-    globalBrightness.animateValue( endValue: Portion.NONE, duration: 0.25, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
+    globalBrightness.animateValue( endValue: Portion.NONE, duration: Duration.QUARTER_SECOND, animationStyle: AnimationStyle.BEGIN_AND_END_GENTLY );
     this.changeActiveStatus( isActive: false );
     //this.removeCamerasFrom( program: program );
     this.program <- null;

@@ -15,7 +15,7 @@ class PaintProperty extends Property {
     }
   }
 
-  void animateValue(Paint endValue, DecimalNumber duration, AnimationStyle animationStyle) {
+  void animateValue(Paint endValue, Duration duration, AnimationStyle animationStyle) {
     PaintTween tween <- new PaintTween(property: this, start: this.value, end: endValue);
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
