@@ -27,6 +27,23 @@ namespace Alice.Player.Primitives
                     ( ( ( tt3 * m_h.M41 ) + ( t2 * m_h.M42 ) + m_h.M43) * m_gw );
         }
         #endregion // Cubic Polynomial Evaluation
+
+        #region Unity Conversions
+        /// <summary>
+        /// Convert from Unity's left-hand coord system to Alice's right-hand coord system
+        /// </summary>
+        public static VantagePoint FromUnity(UnityEngine.Vector3 pos, UnityEngine.Quaternion rot) {
+            return new VantagePoint(new Primitives.Vector3(pos.x, pos.y, -pos.z), new Primitives.Quaternion(rot.x, rot.y, -rot.z, -rot.w));
+        }
+
+        public UnityEngine.Vector3 UnityPosition() {
+            return new UnityEngine.Vector3((float)TranslationValue.X, (float)TranslationValue.Y, -(float)TranslationValue.Z);
+        }
+
+        public UnityEngine.Quaternion UnityRotation() {
+            return new UnityEngine.Quaternion((float)RotationValue.X, (float)RotationValue.Y, -(float)RotationValue.Z, -(float)RotationValue.W);
+        }
+        #endregion // Unity Conversions
         
         public readonly Quaternion RotationValue;
         public readonly Vector3 TranslationValue;

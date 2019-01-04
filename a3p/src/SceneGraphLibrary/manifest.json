@@ -143,6 +143,11 @@
       "files": ["src/SizeTween.twe"],
       "type": "Class"
     }, {
+      "id": "ApplyResizeTween",
+      "format": "tweedle",
+      "files": ["src/ApplyResizeTween.twe"],
+      "type": "Class"
+    }, {
       "id": "PaintProperty",
       "format": "tweedle",
       "files": ["src/PaintProperty.twe"],
@@ -181,6 +186,11 @@
       "id": "SMovableTurnable",
       "format": "tweedle",
       "files": ["src/SMovableTurnable.twe"],
+      "type": "Class"
+    }, {
+      "id": "SCamera",
+      "format": "tweedle",
+      "files": ["src/SCamera.twe"],
       "type": "Class"
     }, {
       "id": "SModel",

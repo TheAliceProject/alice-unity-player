@@ -13,8 +13,9 @@ class ApplyRotationTween extends PropertyTween {
   }
 
   void interpolate(Portion portion) {
-    DecimalNumber delta <- portion.numberValue * endAngle.radians - currentAngle;
-    currentAngle <- currentAngle + delta;
+    DecimalNumber nextAngle <- portion.numberValue * endAngle.radians;
+    DecimalNumber delta <- nextAngle - currentAngle;
+    currentAngle <- nextAngle;
     Orientation rotation <- new Orientation(axis: axis, angle: new Angle(revolutions: delta * $Math.RAD2REV));
     VantagePoint m <- new VantagePoint(orientation: rotation);
 

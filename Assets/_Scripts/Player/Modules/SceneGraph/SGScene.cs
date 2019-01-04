@@ -32,14 +32,14 @@ namespace Alice.Player.Unity {
             m_AboveLight = new GameObject("TopLight").AddComponent<Light>();
             m_AboveLight.transform.parent = cachedTransform;
             m_AboveLight.type = LightType.Directional;
-            m_AboveLight.transform.localPosition = new Vector3(5f, 10f, -5f);
+            m_AboveLight.transform.localPosition = new Vector3(-5f, 10f, 5f);
             m_AboveLight.transform.LookAt(Vector3.zero);
             m_AboveLight.intensity = k_AboveLightIntensity;
 
             m_BelowLight = new GameObject("BottomLight").AddComponent<Light>();
             m_BelowLight.transform.parent = cachedTransform;
             m_BelowLight.type = LightType.Directional;
-            m_BelowLight.transform.localPosition = new Vector3(-5f, -10f, 5f);
+            m_BelowLight.transform.localPosition = new Vector3(5f, -10f, -5f);
             m_BelowLight.transform.LookAt(Vector3.zero);
             m_BelowLight.intensity = k_BelowLightIntensity;
 
@@ -113,6 +113,10 @@ namespace Alice.Player.Unity {
             RenderSettings.ambientLight = Color.Lerp(new Color(0,0,0,1), 
                                                      m_AmbientLightColor, 
                                                      m_GlobalBrightness);
+        }
+
+        public override void CleanUp() {
+
         }
 
     }

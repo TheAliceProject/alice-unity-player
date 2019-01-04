@@ -34,7 +34,6 @@ namespace Alice.Player.Unity {
                 if (value != m_Vehicle) {
                     m_Vehicle = value;
                     cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
-                    
                 }
             }
         }
@@ -60,7 +59,6 @@ namespace Alice.Player.Unity {
             } else {
                 throw new SceneGraphException(string.Format("Property \"{0}\" cannot be bound because no valid callback has been registered.", inName));
             }
-
         }
 
         public void UpdateProperty(TValue inProperty, TValue inValue) {
@@ -80,5 +78,7 @@ namespace Alice.Player.Unity {
         protected virtual void Awake() {
             cachedTransform = transform;
         }
+
+        public abstract void CleanUp();
     }
 }

@@ -8,9 +8,9 @@ using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     
-    public abstract class SGModel : SGEntity {
+    public abstract class SGModel : SGTransformableEntity {
 
-        public const string TRANSFORMATION_PROPERTY_NAME = "Transform";
+        
         public const string PAINT_PROPERTY_NAME = "Paint";
         public const string SIZE_PROPERTY_NAME = "Size";
         public const string OPACITY_PROPERTY_NAME = "Opacity";
@@ -24,7 +24,7 @@ namespace Alice.Player.Unity {
         private MaterialPropertyBlock m_PropertyBlock;
         private Paint m_CachedPaint;
         private float m_CachedOpacity = 1;
-        private AxisAlignedBox m_MeshBounds;
+        protected AxisAlignedBox m_MeshBounds;
 
         protected virtual void Init(Transform inModelTransform, Renderer inRenderer) {
             m_ModelTransform = inModelTransform;
@@ -36,7 +36,6 @@ namespace Alice.Player.Unity {
 
             CacheMeshBounds();
 
-            RegisterPropertyDelegate(TRANSFORMATION_PROPERTY_NAME, OnTransformationPropertyChanged);
             RegisterPropertyDelegate(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
             RegisterPropertyDelegate(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
             RegisterPropertyDelegate(OPACITY_PROPERTY_NAME, OnOpacityPropertyChanged);
@@ -65,7 +64,7 @@ namespace Alice.Player.Unity {
             );
         }
 
-        public void CacheMeshBounds() {
+        public virtual void CacheMeshBounds() {
             if (m_Renderer is SkinnedMeshRenderer) {
                 var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
                 // make sure the skinned mesh renderers local bounds get updated
@@ -77,13 +76,18 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private void OnTransformationPropertyChanged(TValue inValue) {
-            VantagePoint vp = inValue.RawStruct<VantagePoint>();
-            cachedTransform.localPosition = vp.position;
-            cachedTransform.localRotation = vp.orientation;
+        protected virtual void OnSizePropertyChanged(TValue inValue) {
+            SetSize(inValue.RawStruct<Size>());
         }
 
-        protected abstract void OnSizePropertyChanged(TValue inValue);
+        protected virtual void SetSize(Size size) {
+            Size meshSize = m_MeshBounds.size;
+            m_ModelTransform.localScale = new UnityEngine.Vector3(
+                (float)(size.width/meshSize.width),
+                (float)(size.height/meshSize.height),
+                (float)(size.depth/meshSize.depth)
+            );
+        }
 
         protected virtual string shaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
 
@@ -138,6 +142,9 @@ namespace Alice.Player.Unity {
                 m_Renderer.GetPropertyBlock(m_PropertyBlock);
             }
         }
+
+
+        public override void CleanUp() {}
 
     }
 }

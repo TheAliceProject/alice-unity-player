@@ -23,6 +23,10 @@ namespace Alice.Tweedle.Parse
             Camera.main.backgroundColor = Color.clear;
             canvas.SetActive(false);
 
+            if (Player.Unity.SceneGraph.Exists) {
+                Player.Unity.SceneGraph.Current.Clear();
+            }
+
             m_System?.Unload();
             if (m_QueueProcessor != null)
             {
@@ -42,6 +46,7 @@ namespace Alice.Tweedle.Parse
             m_System.Link();
             m_System.DumpTypes();
             m_System.QueueProgramMain(m_VM);
+
             StartQueueProcessing();
         }
 

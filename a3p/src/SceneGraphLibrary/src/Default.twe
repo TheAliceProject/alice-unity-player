@@ -7,11 +7,22 @@ class Default {
     return AnimationStyle.BEGIN_AND_END_GENTLY;
   }
 
-  static DimensionPolicy dimensionPolicy() {
-    return DimensionPolicy.PRESERVE_NOTHING;
-  }
-
   static PathStyle pathStyle() {
     return PathStyle.BEE_LINE;
   }
+
+  static DimensionPolicy dimensionPolicy() {
+    return DimensionPolicy.PRESERVE_ASPECT_RATIO;
+  }
+
+  static Boolean isVolumePreserved() {
+    return true;
+  }
+
+  static OverlappingEventPolicy overlappingEventPolicy() {
+    return OverlappingEventPolicy.IGNORE;
+  }
+
+//  static HeldKeyPolicy heldKeyPolicy() {
+//  }
 }
