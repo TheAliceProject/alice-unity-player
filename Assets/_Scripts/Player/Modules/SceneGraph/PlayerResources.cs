@@ -15,6 +15,22 @@ namespace Alice.Player.Unity {
         private Material m_TransparentMaterial;
         public Material TransparentMaterial {get { return m_TransparentMaterial; } }
 
+        [SerializeField]
+        private Mesh m_BoxMesh;
+        public Mesh BoxMesh {get { return m_BoxMesh; } }
+
+        [SerializeField]
+        private Mesh m_SphereMesh;
+        public Mesh SphereMesh {get { return m_SphereMesh; } }
+
+        [SerializeField]
+        private Mesh m_CylinderMesh;
+        public Mesh CylinderMesh {get { return m_CylinderMesh; } }
+
+        [SerializeField]
+        private Mesh m_ConeMesh;
+        public Mesh ConeMesh {get { return m_ConeMesh; } }
+
 #if UNITY_EDITOR
         [MenuItem("Assets/Create/Player Resources Asset")]
         static public void CreatePlayerResourcesAsset() {

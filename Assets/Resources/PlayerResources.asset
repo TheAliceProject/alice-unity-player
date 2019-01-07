@@ -14,3 +14,7 @@ MonoBehaviour:
   m_OpaqueMaterial: {fileID: 2100000, guid: 968faae8520e123408e90b5d94e5c87d, type: 2}
   m_TransparentMaterial: {fileID: 2100000, guid: 045fe162716fc2a4db46211c973ffacd,
     type: 2}
+  m_BoxMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_SphereMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_CylinderMesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  m_ConeMesh: {fileID: 0}
