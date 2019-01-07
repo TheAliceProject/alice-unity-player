@@ -1,0 +1,34 @@
+class SCone extends SShape
+{
+  SCone () 
+  {
+    super(resource: $SceneGraph.CONE);
+  }
+
+  DecimalNumber getBaseRadius() {
+    return this.getSize().width*0.5;
+  }
+
+  void setBaseRadius(DecimalNumber baseRadius, Duration duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    // keep x coord of scale synced with radius
+    Size size <- this.getSize();
+    DecimalNumber w <- baseRadius*2;
+    DecimalNumber d <- (size.depth/size.width)*w;
+
+    doTogether {
+      this.setWidth(width: w, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: style);
+      this.setDepth(depth: d, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: style);
+    }
+  }
+
+  DecimalNumber getLength() {
+    return this.getSize().height;
+  }
+
+  void setLength(Number length,
+                 Duration duration <- Default.duration(),
+                 AnimationStyle animationStyle <- Default.animationStyle() ) {
+    this.setHeight(height: length, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: animationStyle);
+  }
+} 

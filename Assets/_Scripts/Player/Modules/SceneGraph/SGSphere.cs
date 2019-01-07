@@ -11,8 +11,13 @@ namespace Alice.Player.Unity {
 
         protected override void Awake() {
             base.Awake();
-            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Init(go.transform, go.GetComponent<MeshRenderer>());
+
+            var go = new GameObject("Model");
+            var filter = go.AddComponent<MeshFilter>();
+            filter.mesh = SceneGraph.Current.InternalResources.SphereMesh;
+            var rend = go.AddComponent<MeshRenderer>();
+
+            Init(go.transform, rend);
         }
 
         /* 

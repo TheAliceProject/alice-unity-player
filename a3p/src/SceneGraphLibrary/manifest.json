@@ -233,6 +233,11 @@
       "files": ["src/SCylinder.twe"],
       "type": "Class"
     }, {
+      "id": "SCone",
+      "format": "tweedle",
+      "files": ["src/SCone.twe"],
+      "type": "Class"
+    }, {
       "id": "SProgram",
       "format": "tweedle",
       "files": ["src/SProgram.twe"],
