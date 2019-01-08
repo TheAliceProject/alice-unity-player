@@ -17,6 +17,8 @@ namespace Alice.Player.Modules {
         [PInteropField]
         public const string DISC = "Internal/Disc";
         [PInteropField]
+        public const string BILLBOARD = "Internal/Billboard";
+        [PInteropField]
         public const string SPHERE = "Internal/Sphere";
         [PInteropField]
         public const string TORUS = "Internal/Torus";
@@ -35,6 +37,9 @@ namespace Alice.Player.Modules {
                     break;
                 case CYLINDER:
                     entity = SGEntity.Create<SGCylinder>(model);
+                    break;
+                case CONE:
+                    entity = SGEntity.Create<SGCone>(model);
                     break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
