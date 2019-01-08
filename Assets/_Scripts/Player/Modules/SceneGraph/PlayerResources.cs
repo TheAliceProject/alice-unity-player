@@ -31,6 +31,18 @@ namespace Alice.Player.Unity {
         private Mesh m_ConeMesh;
         public Mesh ConeMesh {get { return m_ConeMesh; } }
 
+        [SerializeField]
+        private Mesh m_TorusMesh;
+        public Mesh TorusMesh {get { return m_TorusMesh; } }
+
+        [SerializeField]
+        private Mesh m_BillboardMesh;
+        public Mesh BillboardMesh {get { return m_BillboardMesh; } }
+
+        [SerializeField]
+        private Mesh m_DiscMesh;
+        public Mesh DiscMesh {get { return m_DiscMesh; } }
+
 #if UNITY_EDITOR
         [MenuItem("Assets/Create/Player Resources Asset")]
         static public void CreatePlayerResourcesAsset() {

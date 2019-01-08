@@ -17,17 +17,25 @@ class Scene extends SScene {
     Position camPos <- camera.getPositionRelativeToVehicle();
     Orientation camRot <- camera.getOrientationRelativeToVehicle();
 
+    $Debug.log(message: "sphere");
     this.camera.pointAt(target: sphere);
     sphere.setRadius(radius: 1);
     sphere.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
     sphere.setRadius(radius: 0.3);
     sphere.setSize(size: Size.ONE);
 
+    $Debug.log(message: "cylinder");
     this.camera.moveAndOrientToAGoodVantagePointOf(entity: cylinder);
     cylinder.setRadius(radius: 1);
     cylinder.setLength(length: 3);
     cylinder.setRadius(radius: 0.5);
     cylinder.setLength(length: 1);
+
+    $Debug.log(message: "cone");
+    cone.setBaseRadius(baseRadius: 1);
+    cone.setLength(length: 3);
+    cone.setBaseRadius(baseRadius: 0.5);
+    cone.setLength(length: 1);
 
     doTogether {
       camera.setPositionRelativeToVehicle(position: camPos);
@@ -35,6 +43,7 @@ class Scene extends SScene {
     }
 
     // fade in boxes
+    $Debug.log(message: "opacity");
     Duration fadeDur <- new Duration(seconds: 0.1);
     box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
     box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
@@ -386,6 +395,7 @@ class Scene extends SScene {
   DirectionalBox box5 <- new DirectionalBox();
   SSphere sphere <- new SSphere();
   SCylinder cylinder <- new SCylinder();
+  SCone cone <- new SCone();
 
   void performCustomSetup() {
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: Duration.ZERO);
@@ -427,6 +437,9 @@ class Scene extends SScene {
 
     cylinder.setVehicle(vehicle: this);
     cylinder.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
+
+    cone.setVehicle(vehicle: this);
+    cone.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
 
   }
 
