@@ -41,6 +41,9 @@ namespace Alice.Player.Modules {
                 case CONE:
                     entity = SGEntity.Create<SGCone>(model);
                     break;
+                case TORUS:
+                    entity = SGEntity.Create<SGTorus>(model);
+                    break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
             }

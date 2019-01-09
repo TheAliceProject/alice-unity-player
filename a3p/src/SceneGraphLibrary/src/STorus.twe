@@ -1,6 +1,18 @@
 class STorus extends SShape {
   STorus() {
     super(resource: $SceneGraph.TORUS);
+
+    this.innerRadius <- new ShapeProperty(owner: this, size: size, value: 0.25);
+    $SceneGraph.bindInnerRadiusProperty(owner: this, property: this.innerRadius, value: this.innerRadius.getValue());
+
+    this.outerRadius <- new ShapeProperty(owner: this, size: size, value: size.getValue().width*0.5);
+    $SceneGraph.bindOuterRadiusProperty(owner: this, property: this.outerRadius, value: this.outerRadius.getValue());
+
+    this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
+      DecimalNumber outer <- this.size.getValue().width*0.5;
+      this.innerRadius.value <- this.innerRadius.getValue()*(outer/this.outerRadius.getValue());
+      this.outerRadius.value <- outer;
+    });
   }
 
   DecimalNumber getInnerRadius() {
@@ -8,7 +20,7 @@ class STorus extends SShape {
   }
 
   void setInnerRadius(Number radius,
-                 DecimalNumber duration <- Default.duration(),
+                 Duration duration <- Default.duration(),
                  AnimationStyle style <- Default.animationStyle() ) {
 
     DecimalNumber minRadius <- $Math.min(a: radius, b: outerRadius.getValue());
@@ -20,12 +32,12 @@ class STorus extends SShape {
   }
 
   void setOuterRadius(Number radius,
-                      DecimalNumber duration <- Default.duration(),
+                      Duration duration <- Default.duration(),
                       AnimationStyle style <- Default.animationStyle() ) {
     DecimalNumber maxRadius <- $Math.max(a: radius, b: innerRadius.getValue());
     this.outerRadius.animateValue( endValue: maxRadius, duration: duration, animationStyle: style );
   }
 
-  @CompletelyHidden DecimalNumberProperty innerRadius;
-  @CompletelyHidden DecimalNumberProperty outerRadius;
+  @CompletelyHidden ShapeProperty innerRadius;
+  @CompletelyHidden ShapeProperty outerRadius;
 }
