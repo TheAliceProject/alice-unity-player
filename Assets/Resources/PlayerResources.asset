@@ -21,3 +21,4 @@ MonoBehaviour:
   m_TorusMesh: {fileID: 4300000, guid: f43e91053deeef64abf47f88f662c01c, type: 3}
   m_BillboardMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   m_DiscMesh: {fileID: 4300002, guid: feec5fa165df30647b74424b455bcce6, type: 3}
+  m_GroundMesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
