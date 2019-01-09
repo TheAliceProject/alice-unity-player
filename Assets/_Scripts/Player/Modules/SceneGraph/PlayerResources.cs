@@ -6,7 +6,7 @@ using UnityEditor;
 
 namespace Alice.Player.Unity {
     public sealed class PlayerResources : ScriptableObject {
-
+        [Header("Materials")]
         [SerializeField]
         private Material m_OpaqueMaterial;
         public Material OpaqueMaterial { get {return m_OpaqueMaterial; } }
@@ -15,6 +15,7 @@ namespace Alice.Player.Unity {
         private Material m_TransparentMaterial;
         public Material TransparentMaterial {get { return m_TransparentMaterial; } }
 
+        [Header("Primitive Meshes")]
         [SerializeField]
         private Mesh m_BoxMesh;
         public Mesh BoxMesh {get { return m_BoxMesh; } }
@@ -42,6 +43,10 @@ namespace Alice.Player.Unity {
         [SerializeField]
         private Mesh m_DiscMesh;
         public Mesh DiscMesh {get { return m_DiscMesh; } }
+
+        [SerializeField]
+        private Mesh m_GroundMesh;
+        public Mesh GroundMesh {get { return m_GroundMesh; } }
 
 #if UNITY_EDITOR
         [MenuItem("Assets/Create/Player Resources Asset")]
