@@ -6,15 +6,6 @@ using Alice.Player.Primitives;
 namespace Alice.Player.Unity {
     public sealed class SGBox : SGShape {
 
-        protected override void Awake() {
-            base.Awake();
-
-            var go = new GameObject("Model");
-            var filter = go.AddComponent<MeshFilter>();
-            filter.mesh = SceneGraph.Current.InternalResources.BoxMesh;
-            var rend = go.AddComponent<MeshRenderer>();
-
-            Init(go.transform, rend);
-        }
+        protected override Mesh ShapeMesh { get { return SceneGraph.Current.InternalResources.BoxMesh; } }
     }
 }

@@ -78,6 +78,11 @@
       "files": ["src/DecimalNumberProperty.twe"],
       "type": "Class"
     }, {
+      "id": "ShapeProperty",
+      "format": "tweedle",
+      "files": ["src/ShapeProperty.twe"],
+      "type": "Class"
+    }, {
       "id": "DecimalNumberTween",
       "format": "tweedle",
       "files": ["src/DecimalNumberTween.twe"],

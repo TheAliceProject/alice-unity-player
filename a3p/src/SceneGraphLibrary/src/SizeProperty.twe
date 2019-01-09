@@ -12,6 +12,9 @@ class SizeProperty extends Property {
     if (!this.value.equals(other: value)) {
       this.value <- value;
       $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
+      if (onValueChanged != null) {
+        onValueChanged(this);
+      }
     }
   }
 
@@ -79,5 +82,15 @@ class SizeProperty extends Property {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
+  @TuckedAway void sync() {
+    // get value from scene graph without calling update property
+    value <- $SceneGraph.getLocalBoundingBoxSize(model:owner, dynamic: false);
+  }
+
+  @TuckedAway void setValueChangedListener(<SizeProperty->void> listener) {
+    onValueChanged <- listener;
+  }
+
   @CompletelyHidden Size value;
+  @TuckedAway <SizeProperty->void> onValueChanged <- null;
 }
