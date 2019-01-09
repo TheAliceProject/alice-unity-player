@@ -15,6 +15,14 @@ namespace Alice.Player.Unity {
         private Material m_TransparentMaterial;
         public Material TransparentMaterial {get { return m_TransparentMaterial; } }
 
+        [SerializeField]
+        private Material m_OpaqueTorusMaterial;
+        public Material OpaqueTorusMaterial { get {return m_OpaqueTorusMaterial; } }
+
+        [SerializeField]
+        private Material m_TransparentTorusMaterial;
+        public Material TransparentTorusMaterial {get { return m_TransparentTorusMaterial; } }
+
         [Header("Primitive Meshes")]
         [SerializeField]
         private Mesh m_BoxMesh;

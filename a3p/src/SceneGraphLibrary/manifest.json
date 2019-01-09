@@ -243,6 +243,11 @@
       "files": ["src/SCone.twe"],
       "type": "Class"
     }, {
+      "id": "STorus",
+      "format": "tweedle",
+      "files": ["src/STorus.twe"],
+      "type": "Class"
+    }, {
       "id": "SProgram",
       "format": "tweedle",
       "files": ["src/SProgram.twe"],

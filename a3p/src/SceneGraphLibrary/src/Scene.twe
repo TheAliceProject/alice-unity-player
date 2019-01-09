@@ -24,6 +24,20 @@ class Scene extends SScene {
     sphere.setRadius(radius: 0.3);
     sphere.setSize(size: Size.ONE);
 
+    $Debug.log(message: "torus");
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: torus);
+    torus.setOuterRadius(radius: 1.25);
+    torus.setInnerRadius(radius: 0.1);
+    torus.setInnerRadius(radius: 0.7);
+    torus.setOuterRadius(radius: 0.9);
+    torus.setHeight(height: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    torus.setDepth(depth: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    torus.setInnerRadius(radius: 0.25);
+    torus.setOuterRadius(radius: 0.75);
+    torus.setDepth(depth: 1.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    torus.setHeight(height: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+
+
     $Debug.log(message: "cylinder");
     this.camera.moveAndOrientToAGoodVantagePointOf(entity: cylinder);
     cylinder.setRadius(radius: 1);
@@ -396,6 +410,7 @@ class Scene extends SScene {
   SSphere sphere <- new SSphere();
   SCylinder cylinder <- new SCylinder();
   SCone cone <- new SCone();
+  STorus torus <- new STorus();
 
   void performCustomSetup() {
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: Duration.ZERO);
@@ -440,6 +455,9 @@ class Scene extends SScene {
 
     cone.setVehicle(vehicle: this);
     cone.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
+
+    torus.setVehicle(vehicle: this);
+    torus.setPositionRelativeToVehicle(position: new Position(x: 4, y: 0.0, z: -12.0), duration: Duration.ZERO);
 
   }
 

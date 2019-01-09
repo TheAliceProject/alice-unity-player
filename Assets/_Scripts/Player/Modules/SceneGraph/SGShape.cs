@@ -10,7 +10,7 @@ namespace Alice.Player.Unity {
         public const string OUTER_RADIUS_PROPERTY_NAME = "OuterRadius";
         public const string LENGTH_PROPERTY_NAME = "Length";
 
-        protected override string shaderTextureName { get { return MAIN_TEXTURE_SHADER_NAME; } }
+        protected override string ShaderTextureName { get { return MAIN_TEXTURE_SHADER_NAME; } }
 
         protected abstract Mesh ShapeMesh { get; } 
 
@@ -22,7 +22,7 @@ namespace Alice.Player.Unity {
             filter.mesh = ShapeMesh;
             var rend = go.AddComponent<MeshRenderer>();
 
-            Init(go.transform, rend);
+            Init(go.transform, rend, filter);
         }
     }
 }

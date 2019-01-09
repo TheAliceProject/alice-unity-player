@@ -20,6 +20,7 @@ namespace Alice.Player.Unity {
         public const string COLOR_SHADER_NAME = "_Color";
 
         protected Renderer m_Renderer;
+        protected MeshFilter m_MeshFilter;
         protected Transform m_ModelTransform;
         protected Bounds m_MeshBounds;
         private MaterialPropertyBlock m_PropertyBlock;
@@ -27,13 +28,14 @@ namespace Alice.Player.Unity {
         private float m_CachedOpacity = 1;
         
 
-        protected virtual void Init(Transform inModelTransform, Renderer inRenderer) {
+        protected virtual void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
             m_ModelTransform = inModelTransform;
             m_ModelTransform.SetParent(transform, false);
             m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
             m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
             m_Renderer = inRenderer;
-            m_Renderer.sharedMaterial = SceneGraph.Current.InternalResources.OpaqueMaterial;
+            m_Renderer.sharedMaterial = OpaqueMaterial;
+            m_MeshFilter = inFilter;
 
             CacheMeshBounds();
 
@@ -85,8 +87,7 @@ namespace Alice.Player.Unity {
                 skinnedRenderer.updateWhenOffscreen = true;
                 m_MeshBounds = skinnedRenderer.localBounds;
             } else  {
-                var filter = m_Renderer.GetComponent<MeshFilter>();
-                m_MeshBounds = filter.mesh.bounds;
+                m_MeshBounds = m_MeshFilter.sharedMesh.bounds;
             }
         }
 
@@ -103,14 +104,16 @@ namespace Alice.Player.Unity {
             );
         }
 
-        protected virtual string shaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
+        protected virtual string ShaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
+        protected virtual Material OpaqueMaterial { get { return SceneGraph.Current.InternalResources.OpaqueMaterial; } }
+        protected virtual Material TransparentMaterial { get { return SceneGraph.Current.InternalResources.TransparentMaterial; } }
 
         private void OnPaintPropertyChanged(TValue inValue) {
             m_CachedPaint = inValue.RawObject<Paint>();
 
             PrepPropertyBlock();
 
-            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, shaderTextureName);
+            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
 
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
@@ -127,16 +130,16 @@ namespace Alice.Player.Unity {
                 m_Renderer.enabled = true;
             }
 
-            if (m_CachedOpacity < 0.996f && m_Renderer.sharedMaterial != SceneGraph.Current.InternalResources.TransparentMaterial) {
-                m_Renderer.sharedMaterial = SceneGraph.Current.InternalResources.TransparentMaterial;
-            } else if (m_CachedOpacity >= 0.996f && m_Renderer.sharedMaterial != SceneGraph.Current.InternalResources.OpaqueMaterial) {
-                m_Renderer.sharedMaterial = SceneGraph.Current.InternalResources.OpaqueMaterial;
+            if (m_CachedOpacity < 0.996f && m_Renderer.sharedMaterial != TransparentMaterial) {
+                m_Renderer.sharedMaterial = TransparentMaterial;
+            } else if (m_CachedOpacity >= 0.996f && m_Renderer.sharedMaterial != OpaqueMaterial) {
+                m_Renderer.sharedMaterial = OpaqueMaterial;
             }
 
             PrepPropertyBlock();
 
             if (m_CachedPaint != null) {
-                m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, shaderTextureName);
+                m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
             } else {
                 var color = new UnityEngine.Color(1,1,1, m_CachedOpacity);
                 m_PropertyBlock.SetColor(COLOR_SHADER_NAME, color);
@@ -147,7 +150,7 @@ namespace Alice.Player.Unity {
 
         }
 
-        private void PrepPropertyBlock() {
+        protected MaterialPropertyBlock PrepPropertyBlock() {
             if (m_PropertyBlock == null) {
                 m_PropertyBlock = new MaterialPropertyBlock();
             }
@@ -155,6 +158,8 @@ namespace Alice.Player.Unity {
             if (m_Renderer.HasPropertyBlock()) {
                 m_Renderer.GetPropertyBlock(m_PropertyBlock);
             }
+
+            return m_PropertyBlock;
         }
 
 
