@@ -5,42 +5,24 @@ using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public sealed class SGSphere : SGShape {
-        public const string RADIUS_PROPERTY_NAME = "Radius";
 
-        private float m_Radius = 0.5f;
-
-        protected override void Awake() {
-            base.Awake();
-
-            var go = new GameObject("Model");
-            var filter = go.AddComponent<MeshFilter>();
-            filter.mesh = SceneGraph.Current.InternalResources.SphereMesh;
-            var rend = go.AddComponent<MeshRenderer>();
-
-            Init(go.transform, rend);
-        }
-
-        /* 
+        protected override Mesh ShapeMesh { get { return SceneGraph.Current.InternalResources.SphereMesh; } }
+        
         protected override void Init(Transform inModelTransform, Renderer inRenderer) {
             base.Init(inModelTransform, inRenderer);
             RegisterPropertyDelegate(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
         }
 
         private void OnRadiusPropertyChanged(TValue inValue) {
-            // keep x coord of scale synced with radius
-            m_Radius = (float)inValue.ToDouble();
-            float xScale = m_Radius*2f;
-            float yScale = (m_ModelTransform.localScale.y/m_ModelTransform.localScale.x)*xScale;
-            float zScale = (m_ModelTransform.localScale.z/m_ModelTransform.localScale.x)*xScale;
+            float radius = (float)inValue.ToDouble();
 
-            m_ModelTransform.localScale = new UnityEngine.Vector3(xScale, yScale, zScale);
+            // keep width of size synced with radius
+            var size = this.GetSize(false);
+            float w = radius*2;
+            float h = (size.y/size.x)*w;
+            float d = (size.z/size.x)*w;
+
+            SetSize(new UnityEngine.Vector3(w, h, d));
         }
-
-        protected override void SetSize(Size size) {
-            // keep x coord of scale synced with radius
-            m_Radius = (float)size.Value.X*0.5f;
-            base.SetSize(size);
-        }*/
-
     }
 }

@@ -3,32 +3,38 @@ class SCylinder extends SShape
   SCylinder() 
   {
     super(resource: $SceneGraph.CYLINDER);
+    this.radius <- new ShapeProperty(owner: this, size: size, value: size.getValue().width*0.5);
+    $SceneGraph.bindRadiusProperty(owner: this, property: this.radius, value: this.radius.getValue());
+
+    this.length <- new ShapeProperty(owner: this, size: size, value: size.getValue().height);
+    $SceneGraph.bindLengthProperty(owner: this, property: this.length, value: this.length.getValue());
+
+    this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
+      Size size <- this.size.getValue();
+      this.radius.value <- size.width*0.5;
+      this.length.value <- size.height;
+    });
   }
 
   DecimalNumber getRadius() {
-    return this.getSize().width*0.5;
+    return this.radius.getValue();
   }
 
   void setRadius(DecimalNumber radius, Duration duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
   {
-    // keep x coord of scale synced with radius
-    Size size <- this.getSize();
-    DecimalNumber w <- radius*2;
-    DecimalNumber d <- (size.depth/size.width)*w;
-
-    doTogether {
-      this.setWidth(width: w, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: style);
-      this.setDepth(depth: d, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: style);
-    }
+    this.radius.animateValue(endValue: radius, duration: duration, animationStyle: style);
   }
 
   DecimalNumber getLength() {
-    return this.getSize().height;
+    return this.length.getValue();
   }
 
   void setLength(Number length,
                  Duration duration <- Default.duration(),
-                 AnimationStyle animationStyle <- Default.animationStyle() ) {
-    this.setHeight(height: length, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: animationStyle);
+                 AnimationStyle style <- Default.animationStyle() ) {
+    this.length.animateValue(endValue: length, duration: duration, animationStyle: style);
   }
+
+  @CompletelyHidden ShapeProperty radius;
+  @CompletelyHidden ShapeProperty length;
 } 

@@ -5,8 +5,8 @@ class SModel extends SMovableTurnable
     $SceneGraph.bindTransformationProperty(owner: this, property: this.localTransformation, value: this.localTransformation.getValue());
 
     // get default size 
-    AxisAlignedBox aabb <- $SceneGraph.getLocalBoundingBox(model:this, dynamic: false);
-    this.size.setValue(value: aabb.size);
+    Size bbSize <- $SceneGraph.getLocalBoundingBoxSize(model:this, dynamic: false);
+    this.size.setValue(value: bbSize);
     $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.size.getValue());
 
     $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());

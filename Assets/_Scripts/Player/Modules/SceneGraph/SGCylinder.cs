@@ -4,17 +4,32 @@ using Alice.Tweedle;
 using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
-    public sealed class SGCylinder : SGShape {
-        protected override void Awake() {
-            base.Awake();
+    public class SGCylinder : SGShape {
+        protected override Mesh ShapeMesh { get { return SceneGraph.Current.InternalResources.CylinderMesh; } }
 
-            var go = new GameObject("Model");
-            var filter = go.AddComponent<MeshFilter>();
-            filter.mesh = SceneGraph.Current.InternalResources.CylinderMesh;
-            var rend = go.AddComponent<MeshRenderer>();
-
-            Init(go.transform, rend);
+        protected override void Init(Transform inModelTransform, Renderer inRenderer) {
+            base.Init(inModelTransform, inRenderer);
+            RegisterPropertyDelegate(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
+            RegisterPropertyDelegate(LENGTH_PROPERTY_NAME, OnLengthPropertyChanged);
         }
 
+        private void OnRadiusPropertyChanged(TValue inValue) {
+            float radius = (float)inValue.ToDouble();
+
+            // keep width of size synced with radius
+            var size = this.GetSize(false);
+            float w = radius*2;
+            float d = (size.z/size.x)*w;
+
+            SetSize(new UnityEngine.Vector3(w, size.y, d));
+        }
+
+        private void OnLengthPropertyChanged(TValue inValue) {
+            // keep width of size synced with radius
+            var size = this.GetSize(false);
+            size.y = (float)inValue.ToDouble();
+
+            SetSize(size);
+        }
     }
 }

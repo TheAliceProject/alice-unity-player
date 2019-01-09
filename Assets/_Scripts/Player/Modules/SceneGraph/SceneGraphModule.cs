@@ -79,7 +79,22 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static void bindRadiusProperty(TValue owner, TValue property, TValue value) {
-            SceneGraph.Current.BindProperty(SGSphere.RADIUS_PROPERTY_NAME, owner, property, value);
+            SceneGraph.Current.BindProperty(SGShape.RADIUS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindInnerRadiusProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGShape.INNER_RADIUS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindOuterRadiusProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGShape.OUTER_RADIUS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindLengthProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGShape.LENGTH_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
@@ -197,9 +212,8 @@ namespace Alice.Player.Modules {
             var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
                 return Position.FromUnity(entity.cachedTransform.position);
-            } else {
-                throw new SceneGraphException("No scene graph entity exists for tweedle object.");
             }
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
         }
 
         [PInteropMethod]
@@ -209,7 +223,18 @@ namespace Alice.Player.Modules {
                 var sgModel = (SGModel)entity;
                 return sgModel.GetBounds(dynamic);
             }
-            return AxisAlignedBox.EMPTY;
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
+        }
+
+        [PInteropMethod]
+        public static Size getLocalBoundingBoxSize(TValue model, bool dynamic = false) {
+            var entity = SceneGraph.Current.FindEntity(model);
+            if (entity && entity is SGModel) {
+                var sgModel = (SGModel)entity;
+                var size = sgModel.GetSize(dynamic);
+                return new Size(size.x, size.y, size.z);
+            }
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
         }
         #endregion // Transformations
     }

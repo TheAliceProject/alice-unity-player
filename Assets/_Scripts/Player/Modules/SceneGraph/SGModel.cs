@@ -21,10 +21,11 @@ namespace Alice.Player.Unity {
 
         protected Renderer m_Renderer;
         protected Transform m_ModelTransform;
+        protected Bounds m_MeshBounds;
         private MaterialPropertyBlock m_PropertyBlock;
         private Paint m_CachedPaint;
         private float m_CachedOpacity = 1;
-        protected AxisAlignedBox m_MeshBounds;
+        
 
         protected virtual void Init(Transform inModelTransform, Renderer inRenderer) {
             m_ModelTransform = inModelTransform;
@@ -41,27 +42,40 @@ namespace Alice.Player.Unity {
             RegisterPropertyDelegate(OPACITY_PROPERTY_NAME, OnOpacityPropertyChanged);
         }
 
-        public AxisAlignedBox GetBounds(bool inDynamic) {
-            var scale = m_ModelTransform.localScale;
-
+        public UnityEngine.Vector3 GetSize(bool inDynamic) {
+            UnityEngine.Vector3 size;
             if (inDynamic && m_Renderer is SkinnedMeshRenderer) {
                 var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
-                skinnedRenderer.updateWhenOffscreen = true;
-                var bounds = skinnedRenderer.localBounds;
-                var center = bounds.center;
-                center.Scale(scale);
-                var size = bounds.size;
-                size.Scale(scale);
-
-                bounds.center = center;
-                bounds.size = size;
-                return bounds;
+                size = skinnedRenderer.localBounds.size;
+            } else {
+                size = m_MeshBounds.size;
             }
 
-            return new AxisAlignedBox(
-                new Primitives.Vector3(m_MeshBounds.MinValue.X*scale.x, m_MeshBounds.MinValue.Y*scale.y, m_MeshBounds.MinValue.Z*scale.z),
-                new Primitives.Vector3(m_MeshBounds.MaxValue.X*scale.x, m_MeshBounds.MaxValue.Y*scale.y, m_MeshBounds.MaxValue.Z*scale.z)
-            );
+            size.Scale(m_ModelTransform.localScale);
+            return size;
+        }
+
+        public Bounds GetBounds(bool inDynamic) {
+            
+            Bounds bounds;
+            if (inDynamic && m_Renderer is SkinnedMeshRenderer) {
+                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
+                bounds = skinnedRenderer.localBounds;
+            } else {
+                bounds = m_MeshBounds;
+            }
+
+            var scale = m_ModelTransform.localScale;
+
+            var center = bounds.center;
+            center.Scale(scale);
+            var size = bounds.size;
+            size.Scale(scale);
+
+            bounds.center = center;
+            bounds.size = size;
+
+            return bounds;
         }
 
         public virtual void CacheMeshBounds() {
@@ -80,12 +94,12 @@ namespace Alice.Player.Unity {
             SetSize(inValue.RawStruct<Size>());
         }
 
-        protected virtual void SetSize(Size size) {
-            Size meshSize = m_MeshBounds.size;
+        protected virtual void SetSize(UnityEngine.Vector3 size) {
+            var meshSize = m_MeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
-                (float)(size.width/meshSize.width),
-                (float)(size.height/meshSize.height),
-                (float)(size.depth/meshSize.depth)
+                size.x/meshSize.x,
+                size.y/meshSize.y,
+                size.z/meshSize.z
             );
         }
 

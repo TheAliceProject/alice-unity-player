@@ -1,0 +1,31 @@
+class STorus extends SShape {
+  STorus() {
+    super(resource: $SceneGraph.TORUS);
+  }
+
+  DecimalNumber getInnerRadius() {
+    return innerRadius.getValue();
+  }
+
+  void setInnerRadius(Number radius,
+                 DecimalNumber duration <- Default.duration(),
+                 AnimationStyle style <- Default.animationStyle() ) {
+
+    DecimalNumber minRadius <- $Math.min(a: radius, b: outerRadius.getValue());
+    this.innerRadius.animateValue( endValue: minRadius, duration: duration, animationStyle: style );
+  }
+
+  DecimalNumber getOuterRadius() {
+    return outerRadius.getValue();
+  }
+
+  void setOuterRadius(Number radius,
+                      DecimalNumber duration <- Default.duration(),
+                      AnimationStyle style <- Default.animationStyle() ) {
+    DecimalNumber maxRadius <- $Math.max(a: radius, b: innerRadius.getValue());
+    this.outerRadius.animateValue( endValue: maxRadius, duration: duration, animationStyle: style );
+  }
+
+  @CompletelyHidden DecimalNumberProperty innerRadius;
+  @CompletelyHidden DecimalNumberProperty outerRadius;
+}

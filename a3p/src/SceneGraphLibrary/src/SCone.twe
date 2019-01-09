@@ -3,32 +3,39 @@ class SCone extends SShape
   SCone () 
   {
     super(resource: $SceneGraph.CONE);
+
+    this.baseRadius <- new ShapeProperty(owner: this, size: size, value: size.getValue().width*0.5);
+    $SceneGraph.bindRadiusProperty(owner: this, property: this.baseRadius, value: this.baseRadius.getValue());
+
+    this.length <- new ShapeProperty(owner: this, size: size, value: size.getValue().height);
+    $SceneGraph.bindLengthProperty(owner: this, property: this.length, value: this.length.getValue());
+
+    this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
+      Size size <- this.size.getValue();
+      this.baseRadius.value <- size.width*0.5;
+      this.length.value <- size.height;
+    });
   }
 
   DecimalNumber getBaseRadius() {
-    return this.getSize().width*0.5;
+    return this.baseRadius.getValue();
   }
 
   void setBaseRadius(DecimalNumber baseRadius, Duration duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
   {
-    // keep x coord of scale synced with radius
-    Size size <- this.getSize();
-    DecimalNumber w <- baseRadius*2;
-    DecimalNumber d <- (size.depth/size.width)*w;
-
-    doTogether {
-      this.setWidth(width: w, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: style);
-      this.setDepth(depth: d, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: style);
-    }
+    this.baseRadius.animateValue(endValue: baseRadius, duration: duration, animationStyle: style);
   }
 
   DecimalNumber getLength() {
-    return this.getSize().height;
+    return this.length.getValue();
   }
 
   void setLength(Number length,
                  Duration duration <- Default.duration(),
-                 AnimationStyle animationStyle <- Default.animationStyle() ) {
-    this.setHeight(height: length, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: duration, style: animationStyle);
+                 AnimationStyle style <- Default.animationStyle() ) {
+    this.length.animateValue(endValue: length, duration: duration, animationStyle: style);
   }
+
+  @CompletelyHidden ShapeProperty baseRadius;
+  @CompletelyHidden ShapeProperty length;
 } 
