@@ -1,5 +1,6 @@
 enum Epsilon {
-    REASONABLE(value: 0.001);
+    REASONABLE(value: 0.001),
+    TINY(value: 0.000001);
 
     @CompletelyHidden DecimalNumber value;
 
@@ -15,13 +16,17 @@ enum Epsilon {
         return $Math.abs(number: number1 - number2 ) < value;
     }
 
-    Boolean isWithin1InSquaredSpace( DecimalNumber number ) {
+    Boolean isWithinZero(DecimalNumber number) {
+        return $Math.abs(number: number) < value;
+    }
+
+    Boolean isWithinOneInSquaredSpace( DecimalNumber number ) {
         DecimalNumber min <- 1.0 - value;
         DecimalNumber max <- 1.0 + value;
         return ( ( min * min ) < number ) && ( number < ( max * max ) );
     }
 
-    Boolean isWithin0InSquaredSpace( DecimalNumber number ) {
+    Boolean isWithinZeroInSquaredSpace( DecimalNumber number ) {
         return number < ( value * value );
     }
 }
