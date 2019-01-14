@@ -14,9 +14,9 @@ namespace Alice.Player.Unity {
 
         private bool m_MeshWasCopied = false;
 
-        protected override Mesh ShapeMesh { get { return SceneGraph.Current.InternalResources.TorusMesh; } }
-        protected override Material OpaqueMaterial { get { return SceneGraph.Current.InternalResources.OpaqueTorusMaterial; } }
-        protected override Material TransparentMaterial { get { return SceneGraph.Current.InternalResources.TransparentTorusMaterial; } }
+        protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.TorusMesh; } }
+        protected override Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueTorusMaterial; } }
+        protected override Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentTorusMaterial; } }
 
         protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
             base.Init(inModelTransform, inRenderer, inFilter);

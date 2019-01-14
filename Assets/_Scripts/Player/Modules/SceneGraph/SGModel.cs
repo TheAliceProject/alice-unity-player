@@ -10,8 +10,21 @@ namespace Alice.Player.Unity {
     
     public abstract class SGModel : SGTransformableEntity {
 
-        
+        public static void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
+            var go = new GameObject("Model");
+            outFilter = go.AddComponent<MeshFilter>();
+            outFilter.mesh = inMesh;
+            outRenderer = go.AddComponent<MeshRenderer>();
+            outRenderer.sharedMaterial = inMaterial;
+            outTransform = go.transform;
+
+            outTransform.SetParent(inParent, false);
+            outTransform.localPosition = UnityEngine.Vector3.zero;
+            outTransform.localRotation = UnityEngine.Quaternion.identity;
+        }
+
         public const string PAINT_PROPERTY_NAME = "Paint";
+        public const string BACK_PAINT_PROPERTY_NAME = "BackPaint";
         public const string SIZE_PROPERTY_NAME = "Size";
         public const string OPACITY_PROPERTY_NAME = "Opacity";
 
@@ -24,17 +37,12 @@ namespace Alice.Player.Unity {
         protected Transform m_ModelTransform;
         protected Bounds m_MeshBounds;
         private MaterialPropertyBlock m_PropertyBlock;
-        private Paint m_CachedPaint;
+        private Paint m_CachedPaint = Primitives.Color.WHITE;
         private float m_CachedOpacity = 1;
-        
 
         protected virtual void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
             m_ModelTransform = inModelTransform;
-            m_ModelTransform.SetParent(transform, false);
-            m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
-            m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
             m_Renderer = inRenderer;
-            m_Renderer.sharedMaterial = OpaqueMaterial;
             m_MeshFilter = inFilter;
 
             CacheMeshBounds();
@@ -105,8 +113,8 @@ namespace Alice.Player.Unity {
         }
 
         protected virtual string ShaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
-        protected virtual Material OpaqueMaterial { get { return SceneGraph.Current.InternalResources.OpaqueMaterial; } }
-        protected virtual Material TransparentMaterial { get { return SceneGraph.Current.InternalResources.TransparentMaterial; } }
+        protected virtual Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueMaterial; } }
+        protected virtual Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
 
         private void OnPaintPropertyChanged(TValue inValue) {
             m_CachedPaint = inValue.RawObject<Paint>();
@@ -138,16 +146,8 @@ namespace Alice.Player.Unity {
 
             PrepPropertyBlock();
 
-            if (m_CachedPaint != null) {
-                m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
-            } else {
-                var color = new UnityEngine.Color(1,1,1, m_CachedOpacity);
-                m_PropertyBlock.SetColor(COLOR_SHADER_NAME, color);
-            }
-
-             m_Renderer.SetPropertyBlock(m_PropertyBlock);
-
-
+            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
+            m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
 
         protected MaterialPropertyBlock PrepPropertyBlock() {

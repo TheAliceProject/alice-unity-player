@@ -17,12 +17,13 @@ namespace Alice.Player.Unity {
         protected override void Awake() {
             base.Awake();
 
-            var go = new GameObject("Model");
-            var filter = go.AddComponent<MeshFilter>();
-            filter.mesh = ShapeMesh;
-            var rend = go.AddComponent<MeshRenderer>();
+            Transform trans;
+            Renderer renderer;
+            MeshFilter filter;
 
-            Init(go.transform, rend, filter);
+            CreateModelObject(ShapeMesh, OpaqueMaterial, cachedTransform, out trans, out renderer, out filter);
+
+            Init(trans, renderer, filter);
         }
     }
 }
