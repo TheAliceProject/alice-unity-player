@@ -6,7 +6,7 @@ using Alice.Player.Primitives;
 namespace Alice.Player.Unity {
     public sealed class SGSphere : SGShape {
 
-        protected override Mesh ShapeMesh { get { return SceneGraph.Current.InternalResources.SphereMesh; } }
+        protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.SphereMesh; } }
         
         protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
             base.Init(inModelTransform, inRenderer, inFilter);

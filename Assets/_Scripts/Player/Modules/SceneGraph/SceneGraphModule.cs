@@ -47,6 +47,9 @@ namespace Alice.Player.Modules {
                 case DISC:
                     entity = SGEntity.Create<SGDisc>(model);
                     break;
+                case BILLBOARD:
+                    entity = SGEntity.Create<SGBillboard>(model);
+                    break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
             }
@@ -81,6 +84,11 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void bindPaintProperty(TValue owner, TValue property, TValue value) {
             SceneGraph.Current.BindProperty(SGModel.PAINT_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindBackPaintProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGModel.BACK_PAINT_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
