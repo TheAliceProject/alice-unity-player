@@ -98,9 +98,9 @@ namespace Alice.Player.Unity {
         protected virtual void SetSize(UnityEngine.Vector3 size) {
             var meshSize = m_MeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
-                size.x/meshSize.x,
-                size.y/meshSize.y,
-                size.z/meshSize.z
+                meshSize.x == 0 ? 1 : size.x/meshSize.x,
+                meshSize.y == 0 ? 1 : size.y/meshSize.y,
+                meshSize.z == 0 ? 1 : size.z/meshSize.z
             );
         }
 

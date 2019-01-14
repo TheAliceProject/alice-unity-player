@@ -10,6 +10,7 @@ ModelImporter:
     3300000: //RootNode
     4300000: Cylinder
     4300002: Disc
+    4300004: Circle
   externalObjects: {}
   materials:
     importMaterials: 0
