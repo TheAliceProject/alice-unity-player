@@ -38,8 +38,8 @@ namespace Alice.Player.Unity {
         public const string SIZE_PROPERTY_NAME = "Size";
         public const string OPACITY_PROPERTY_NAME = "Opacity";
 
-        public const string MAIN_TEXTURE_SHADER_NAME = "_MainTexture";
-        public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTexture";
+        public const string MAIN_TEXTURE_SHADER_NAME = "_MainTex";
+        public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTex";
         public const string COLOR_SHADER_NAME = "_Color";
 
         protected Renderer m_Renderer;
