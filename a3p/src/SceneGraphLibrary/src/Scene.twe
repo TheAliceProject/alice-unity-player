@@ -16,6 +16,13 @@ class Scene extends SScene {
     Position camPos <- camera.getPositionRelativeToVehicle();
     Orientation camRot <- camera.getOrientationRelativeToVehicle();
 
+    $Debug.log(message: "billboard");
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: billboard);
+    billboard.setPaint(paint: Color.RED);
+    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
+    billboard.setBackPaint(paint: Color.BLUE);
+    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
+
     $Debug.log(message: "disc");
     this.camera.moveAndOrientToAGoodVantagePointOf(entity: disc);
     disc.setRadius(radius: 1.25);
@@ -419,6 +426,7 @@ class Scene extends SScene {
   SCone cone <- new SCone();
   STorus torus <- new STorus();
   SDisc disc <- new SDisc();
+  SBillboard billboard <- new SBillboard();
 
   void performCustomSetup() {
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: Duration.ZERO);
@@ -469,6 +477,9 @@ class Scene extends SScene {
 
     disc.setVehicle(vehicle: this);
     disc.setPositionRelativeToVehicle(position: new Position(x: -4, y: 0.0, z: -12.0), duration: Duration.ZERO);
+
+    billboard.setVehicle(vehicle: this);
+    billboard.setPositionRelativeToVehicle(position: new Position(x: -6, y: 0.0, z: -12.0), duration: Duration.ZERO);
 
   }
 
