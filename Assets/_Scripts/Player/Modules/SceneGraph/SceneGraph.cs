@@ -114,6 +114,7 @@ namespace Alice.Player.Unity {
         private bool m_IsUpdating;
 
         public PlayerResources InternalResources {get; private set;}
+        public TextureCache TextureCache {get; private set;}
 
         private void Awake() {
             if (!ReferenceEquals(s_Current, null) && !ReferenceEquals(s_Current, this)) {
@@ -124,10 +125,7 @@ namespace Alice.Player.Unity {
             }
 
             InternalResources = Resources.Load<PlayerResources>("PlayerResources");
-        }
-
-        public void Init(TweedleSystem inSystem) {
-            m_System = inSystem;
+            TextureCache = new TextureCache();
         }
 
         private void Update() {
@@ -222,6 +220,9 @@ namespace Alice.Player.Unity {
 
             m_Entities.Clear();
             m_System = null;
+            
+            TextureCache.Clear();
+            TextureCache = null;
         }
 
         private void Destroy() {

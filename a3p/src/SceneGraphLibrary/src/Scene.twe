@@ -22,6 +22,8 @@ class Scene extends SScene {
     billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
     billboard.setBackPaint(paint: Color.BLUE);
     billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
+    billboard.setPaint(paint: new ImageSource(resource: "grass"));
+    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 1), asSeenBy: billboard);
 
     $Debug.log(message: "disc");
     this.camera.moveAndOrientToAGoodVantagePointOf(entity: disc);

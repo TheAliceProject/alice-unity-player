@@ -5,28 +5,27 @@ using Alice.Tweedle.File;
 
 namespace Alice.Player.Unity {
     public sealed class TextureCache {
-
-        private TweedleSystem m_System;
         private Dictionary<string, Texture2D> m_Cache;
 
-        public TextureCache(TweedleSystem inSystem) {
-            m_System = inSystem;
+        public TextureCache() {
             m_Cache = new Dictionary<string, Texture2D>();
         }
 
+        public bool Add(string inIdentifier, Texture2D inTexture) {
+            if (m_Cache.ContainsKey(inIdentifier)) {
+                Debug.LogWarningFormat("Texture cache already has texture for identifier {0}.", inIdentifier);
+                return false;
+            }
+            
+            m_Cache.Add(inIdentifier, inTexture);
+            return true;
+        }
 
-        Texture2D Get(string inIdentifier) {
+        public Texture2D Get(string inIdentifier) {
             Texture2D texture;
 
             if (m_Cache.TryGetValue(inIdentifier, out texture)) {
                 return texture;
-            }
-
-            var id = new ResourceIdentifier(inIdentifier, ContentType.Image, "png");
-
-            ResourceReference resource;
-            if (m_System.Resources.TryGetValue(id, out resource)) {
-                
             }
 
             throw new SceneGraphException(string.Format("No texture resources with identifier {0} found.", inIdentifier));
