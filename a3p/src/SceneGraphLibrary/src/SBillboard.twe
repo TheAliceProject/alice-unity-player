@@ -1,17 +1,16 @@
 class SBillboard extends SModel {
   SBillboard() {
     super(resource: $SceneGraph.BILLBOARD);
-
     $SceneGraph.bindBackPaintProperty(owner: this, property: this.backPaint, value: this.backPaint.getValue());
   }
 
   void setPaint(Paint paint,
-                DecimalNumber duration <- Default.duration(),
-                AnimationStyle animationStyle <- Default.getAnimationStyle() ) {
-    super.setPaint( paint: paint, duration: duration, animationStyle: animationStyle );
-		if( paint.isImage() ) {
-			this.updateAspectRatio();
-		}
+                Duration duration <- Default.duration(),
+                AnimationStyle style <- Default.animationStyle() ) {
+    super.setPaint( paint: paint, duration: duration, style: style );
+    if(paint.isImage ) {
+      this.updateAspectRatio();
+    }
   }
 
   Paint getBackPaint() {
@@ -19,17 +18,17 @@ class SBillboard extends SModel {
   }
 
   void setBackPaint(Paint paint,
-                    DecimalNumber duration <- Default.duration(),
-                    AnimationStyle animationStyle <- Default.animationStyle() ) {
-    this.backPaint.animateValue( endValue: paint, duration: duration, animationStyle: animationStyle );
-		if( paint.isImage() ) {
-			this.updateAspectRatio();
-		}
+                    Duration duration <- Default.duration(),
+                    AnimationStyle style <- Default.animationStyle() ) {
+    this.backPaint.animateValue( endValue: paint, duration: duration, animationStyle: style );
+    if( paint.isImage) {
+      this.updateAspectRatio();
+    }
   }
 
-	@CompletelyHidden void updateAspectRatio() {
-	  //TODO get from BillboardImp
-	}
+  @CompletelyHidden void updateAspectRatio() {
+    //TODO get from BillboardImp
+  }
 
   @CompletelyHidden PaintProperty backPaint <- new PaintProperty(owner: this, value: Color.WHITE);
 }

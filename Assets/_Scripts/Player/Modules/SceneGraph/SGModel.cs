@@ -10,7 +10,7 @@ namespace Alice.Player.Unity {
     
     public abstract class SGModel : SGTransformableEntity {
 
-        public static void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
+        static public  void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
             var go = new GameObject("Model");
             outFilter = go.AddComponent<MeshFilter>();
             outFilter.mesh = inMesh;
@@ -21,6 +21,16 @@ namespace Alice.Player.Unity {
             outTransform.SetParent(inParent, false);
             outTransform.localPosition = UnityEngine.Vector3.zero;
             outTransform.localRotation = UnityEngine.Quaternion.identity;
+        }
+
+        static public void PrepPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
+            if (ioPropertyBlock == null) {
+                ioPropertyBlock = new MaterialPropertyBlock();
+            }
+
+            if (inRenderer.HasPropertyBlock()) {
+                inRenderer.GetPropertyBlock(ioPropertyBlock);
+            }
         }
 
         public const string PAINT_PROPERTY_NAME = "Paint";
@@ -36,9 +46,9 @@ namespace Alice.Player.Unity {
         protected MeshFilter m_MeshFilter;
         protected Transform m_ModelTransform;
         protected Bounds m_MeshBounds;
-        private MaterialPropertyBlock m_PropertyBlock;
+        protected MaterialPropertyBlock m_PropertyBlock;
         private Paint m_CachedPaint = Primitives.Color.WHITE;
-        private float m_CachedOpacity = 1;
+        protected float m_CachedOpacity = 1;
 
         protected virtual void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
             m_ModelTransform = inModelTransform;
@@ -119,15 +129,18 @@ namespace Alice.Player.Unity {
         private void OnPaintPropertyChanged(TValue inValue) {
             m_CachedPaint = inValue.RawObject<Paint>();
 
-            PrepPropertyBlock();
+            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
 
             m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
-
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
 
         private void OnOpacityPropertyChanged(TValue inValue) {
-            m_CachedOpacity = (float)inValue.RawStruct<Portion>().Value;
+            SetOpacity((float)inValue.RawStruct<Portion>().Value);
+        }
+
+        protected virtual void SetOpacity(float inOpacity) {
+            m_CachedOpacity = inOpacity;
             
             if (m_CachedOpacity < 0.004f) {
                 if (m_Renderer.enabled) {
@@ -144,24 +157,11 @@ namespace Alice.Player.Unity {
                 m_Renderer.sharedMaterial = OpaqueMaterial;
             }
 
-            PrepPropertyBlock();
+            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
 
             m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
-
-        protected MaterialPropertyBlock PrepPropertyBlock() {
-            if (m_PropertyBlock == null) {
-                m_PropertyBlock = new MaterialPropertyBlock();
-            }
-
-            if (m_Renderer.HasPropertyBlock()) {
-                m_Renderer.GetPropertyBlock(m_PropertyBlock);
-            }
-
-            return m_PropertyBlock;
-        }
-
 
         public override void CleanUp() {}
 

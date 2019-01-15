@@ -47,12 +47,12 @@ namespace Alice.Player.Unity {
         }
 
         private void UpdateRadiusProperties() {
-            var block = PrepPropertyBlock();
+            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
             var height = m_OuterRadius - m_InnerRadius;
             var crossRadius = height*0.5f;
-            block.SetFloat("_RingRadiusDelta", (m_InnerRadius + crossRadius)-k_RingRadiusRef);
-            block.SetFloat("_CrossRadiusDelta", crossRadius-k_CrossRadiusRef);
-            m_Renderer.SetPropertyBlock(block);
+            m_PropertyBlock.SetFloat("_RingRadiusDelta", (m_InnerRadius + crossRadius)-k_RingRadiusRef);
+            m_PropertyBlock.SetFloat("_CrossRadiusDelta", crossRadius-k_CrossRadiusRef);
+            m_Renderer.SetPropertyBlock(m_PropertyBlock);
 
             var diam = m_OuterRadius*2f;
 

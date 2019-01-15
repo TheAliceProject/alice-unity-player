@@ -253,6 +253,11 @@
       "files": ["src/SDisc.twe"],
       "type": "Class"
     }, {
+      "id": "SBillboard",
+      "format": "tweedle",
+      "files": ["src/SBillboard.twe"],
+      "type": "Class"
+    }, {
       "id": "SProgram",
       "format": "tweedle",
       "files": ["src/SProgram.twe"],
@@ -292,6 +297,12 @@
       "format": "tweedle",
       "files": ["src/DirectionalBox.twe"],
       "type": "Class"
+    },
+    {
+      "id": "grass",
+      "format": "png",
+      "files": ["resources/grass.png"],
+      "type": "Image"
     }
   ]
 }
