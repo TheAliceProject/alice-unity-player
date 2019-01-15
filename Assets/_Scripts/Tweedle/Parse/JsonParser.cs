@@ -75,6 +75,22 @@ namespace Alice.Tweedle.Parse
             return (new StreamReader(entryStream)).ReadToEnd();
         }
 
+        byte[] ReadDataEntry(string location)
+        {
+            ZipEntry entry = m_ZipFile.GetEntry(location);
+            if (entry == null)
+            {
+                UnityEngine.Debug.Log("Did not find entry for: " + location);
+            }
+            return ReadDataEntry(entry);
+        }
+
+        byte[] ReadDataEntry(ZipEntry entry)
+        {
+            Stream entryStream = m_ZipFile.GetInputStream(entry);
+            return (new BinaryReader(entryStream)).ReadBytes((int)entryStream.Length);
+        }
+
         private void ParseResourceDetails(
             List<ResourceReference> resources,
             JSONObject json)
