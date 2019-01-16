@@ -23,6 +23,18 @@ class Default {
     return OverlappingEventPolicy.IGNORE;
   }
 
+  static Angle verticalFOV() {
+    return new Angle(revolutions: 0.5 * $Math.RAD2REV);
+  }
+
+  static DecimalNumber nearClipPlane() {
+    return 0.125;
+  }
+
+  static DecimalNumber farClipPlane() {
+    return 256.0;
+  }
+
 //  static HeldKeyPolicy heldKeyPolicy() {
 //  }
 }

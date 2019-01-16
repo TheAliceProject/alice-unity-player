@@ -158,6 +158,25 @@ namespace Alice.Player.Modules {
         }
         #endregion // Property Binding
 
+        #region Camera
+        [PInteropMethod]
+        public static void setCameraVerticalFOV(TValue camera, Angle fov) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            if (cam) {
+                cam.Camera.fieldOfView = (float)fov.degrees;
+            }
+        }
+
+        [PInteropMethod]
+        public static void setCameraClipPlanes(TValue camera, double nearClip, double farClip) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            if (cam) {
+                cam.Camera.nearClipPlane = (float)nearClip;
+                cam.Camera.farClipPlane = (float)farClip;
+            }
+        }
+        #endregion // Camera
+
         #region Other
 
         [PInteropMethod]
