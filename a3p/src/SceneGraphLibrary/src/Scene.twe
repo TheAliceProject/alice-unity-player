@@ -13,9 +13,8 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(message: this.getName() .. ": myFirstMethod()");
 
-    
-
     Position camPos <- camera.getPositionRelativeToVehicle();
+    camPos <- new Position(x: camPos.x, y: camPos.y + 1, z: camPos.z - 5);
     Orientation camRot <- camera.getOrientationRelativeToVehicle();
 
     $Debug.log(message: "billboard");
@@ -500,7 +499,7 @@ class Scene extends SScene {
     this.setAtmosphereColor(color: new Color(red: 0.0, green: 0.0941, blue: 0.294), duration: Duration.ZERO);
     this.setFromAboveLightColor(color: Color.WHITE, duration: Duration.ZERO);
     this.setFromBelowLightColor(color: new Color(red: 0.541, green: 0.0, blue: 0.125), duration: Duration.ZERO);
-    this.setFogDensity(density: new Portion(portion: 0.05), duration: Duration.ZERO);
+    this.setFogDensity(density: new Portion(portion: 0.2), duration: Duration.ZERO);
     this.setName(name: "myScene");
     this.ground.setPaint(paint: new ImageSource(resource: "grass"), duration: Duration.ZERO);
     this.ground.setOpacity(opacity: Portion.WHOLE, duration: Duration.ZERO);
