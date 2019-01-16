@@ -13,6 +13,14 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(message: this.getName() .. ": myFirstMethod()");
 
+    // fade in boxes
+    $Debug.log(message: "opacity");
+    Duration fadeDur <- new Duration(seconds: 0.5);
+    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+
     Position camPos <- camera.getPositionRelativeToVehicle();
     Orientation camRot <- camera.getOrientationRelativeToVehicle();
 
@@ -72,13 +80,7 @@ class Scene extends SScene {
       camera.setOrientationRelativeToVehicle(orientation: camRot);
     }
 
-    // fade in boxes
-    $Debug.log(message: "opacity");
-    Duration fadeDur <- new Duration(seconds: 0.1);
-    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    
 
     Position pos <- box2.getPositionRelativeToVehicle();
     Orientation rot <- box2.getOrientationRelativeToVehicle();

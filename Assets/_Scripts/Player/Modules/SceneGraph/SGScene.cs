@@ -33,6 +33,7 @@ namespace Alice.Player.Unity {
             m_AboveLight.transform.parent = cachedTransform;
             m_AboveLight.type = LightType.Directional;
             m_AboveLight.shadows = LightShadows.Hard;
+            m_AboveLight.shadowStrength = 0.5f;
             m_AboveLight.transform.localPosition = new Vector3(-5f, 10f, 5f);
             m_AboveLight.transform.LookAt(Vector3.zero);
             m_AboveLight.intensity = k_AboveLightIntensity;
