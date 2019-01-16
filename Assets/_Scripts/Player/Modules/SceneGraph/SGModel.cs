@@ -92,7 +92,7 @@ namespace Alice.Player.Unity {
             var size = bounds.size;
             size.Scale(scale);
 
-            bounds.center = center;
+            bounds.center = center + m_ModelTransform.localPosition;
             bounds.size = size;
 
             return bounds;
