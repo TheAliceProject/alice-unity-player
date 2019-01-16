@@ -67,6 +67,12 @@ namespace Alice.Player.Primitives
             Value = new Color4(red, green, blue, 1);
         }
 
+        [PInteropField]
+        public override double width { get { return 0; } }
+
+        [PInteropField]
+        public override double height { get { return 0; } }
+
         [PInteropMethod]
         public override bool equals(Paint other) 
         {

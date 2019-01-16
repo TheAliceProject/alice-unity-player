@@ -13,13 +13,7 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(message: this.getName() .. ": myFirstMethod()");
 
-    // fade in boxes
-    $Debug.log(message: "opacity");
-    Duration fadeDur <- new Duration(seconds: 0.2);
-    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    
 
     Position camPos <- camera.getPositionRelativeToVehicle();
     Orientation camRot <- camera.getOrientationRelativeToVehicle();
@@ -29,8 +23,11 @@ class Scene extends SScene {
     billboard.setPaint(paint: Color.RED);
     billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
     billboard.setBackPaint(paint: Color.BLUE);
+    delay(duration: new Duration(seconds: 0.1));
+    billboard.setBackPaint(paint: new ImageSource(resource: "grass"));
     billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
-    billboard.setPaint(paint: new ImageSource(resource: "grass"));
+    billboard.setPaint(paint: new ImageSource(resource: "meanQueen"));
+    delay(duration: new Duration(seconds: 0.1));
     billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 1), asSeenBy: billboard);
 
     $Debug.log(message: "disc");
@@ -80,10 +77,16 @@ class Scene extends SScene {
       camera.setOrientationRelativeToVehicle(orientation: camRot);
     }
 
-    
-
     Position pos <- box2.getPositionRelativeToVehicle();
     Orientation rot <- box2.getOrientationRelativeToVehicle();
+
+    // fade in boxes
+    $Debug.log(message: "opacity");
+    Duration fadeDur <- new Duration(seconds: 0.2);
+    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
 
     // vehicle
     $Debug.log(message: "vehicle");
@@ -497,7 +500,7 @@ class Scene extends SScene {
     this.setAtmosphereColor(color: new Color(red: 0.0, green: 0.0941, blue: 0.294), duration: Duration.ZERO);
     this.setFromAboveLightColor(color: Color.WHITE, duration: Duration.ZERO);
     this.setFromBelowLightColor(color: new Color(red: 0.541, green: 0.0, blue: 0.125), duration: Duration.ZERO);
-    this.setFogDensity(density: new Portion(portion: 0.1), duration: Duration.ZERO);
+    this.setFogDensity(density: new Portion(portion: 0.05), duration: Duration.ZERO);
     this.setName(name: "myScene");
     this.ground.setPaint(paint: new ImageSource(resource: "grass"), duration: Duration.ZERO);
     this.ground.setOpacity(opacity: Portion.WHOLE, duration: Duration.ZERO);

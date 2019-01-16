@@ -23,6 +23,12 @@ namespace Alice.Player.Primitives
             Value = SceneGraph.Current?.TextureCache?.Get(resource);
         }
 
+        [PInteropField]
+        public override double width { get { return Value.width; } }
+        
+        [PInteropField]
+        public override double height { get { return Value.height; } }
+
         [PInteropMethod]
         public override bool equals(Paint other) 
         {

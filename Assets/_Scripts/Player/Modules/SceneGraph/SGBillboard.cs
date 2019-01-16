@@ -11,6 +11,9 @@ namespace Alice.Player.Unity {
         private Renderer m_BackRenderer;
 
         protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.BillboardMesh; } }
+        // billboards are always transparent
+        protected override Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
+
 
         protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
             Transform  backTransform;
@@ -43,10 +46,6 @@ namespace Alice.Player.Unity {
 
             if (m_BackRenderer.enabled != m_Renderer.enabled) {
                 m_BackRenderer.enabled = m_Renderer.enabled;
-            }
-
-            if (m_BackRenderer.sharedMaterial != m_Renderer.sharedMaterial) {
-                m_BackRenderer.sharedMaterial = m_Renderer.sharedMaterial;
             }
 
             PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);

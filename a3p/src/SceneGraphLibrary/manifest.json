@@ -308,6 +308,12 @@
       "format": "png",
       "files": ["resources/grass.png"],
       "type": "Image"
+    },
+    {
+      "id": "meanQueen",
+      "format": "png",
+      "files": ["resources/meanQueen.png"],
+      "type": "Image"
     }
   ]
 }
