@@ -189,11 +189,9 @@ Shader "LightweightPipeline/Alice/Standard Torus"
 
             #include "LWRP/ShaderLibrary/LightweightPassShadow.hlsl"
 
-            VertexOutput ShadowPassVertexTorus(VertexInputTorus IN)
+            VertexOutput ShadowPassVertexTorus(VertexInput v)
             {
-                VertexInput v = (VertexInput)0;
-                v.position = TorusVertex(IN.vertex, IN.normal);
-                v.texcoord = IN.texcoord;
+                v.position = TorusVertex(v.position, v.normal); 
                 return ShadowPassVertex(v);
             }
 
