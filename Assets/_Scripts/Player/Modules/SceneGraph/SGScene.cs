@@ -54,7 +54,7 @@ namespace Alice.Player.Unity {
             light.transform.parent = cachedTransform;
             light.type = LightType.Directional;
             light.shadows = useShadows ? LightShadows.Hard : LightShadows.None;
-            light.shadowStrength = 0.5f;
+            light.shadowStrength = 0.8f;
             light.transform.localRotation = Quaternion.Euler(inPitch, inHeading, 0);
             light.intensity = intensity;
 
