@@ -21,29 +21,25 @@ namespace Alice.Player.Unity {
         private Color m_AtmosphereColor = Color.white;
         private float m_GlobalBrightness = 1f;
 
-        private Light m_AboveLight;
-        private const float k_AboveLightIntensity = 1f;
+        private Light m_AboveLightA;
+        private Light m_AboveLightB;
+        private Light m_AboveLightC;
+        private const float k_AboveLightIntensity = 0.533f;
+        private const float k_AboveLightPitch = 45f;
         private Light m_BelowLight;
-        private const float k_BelowLightIntensity = 0.5f;
+        private const float k_BelowLightIntensity = 1f;
+        private const float k_BelowLightPitch = -90f;
 
         protected override void Awake() {
             base.Awake();
 
-            m_AboveLight = new GameObject("TopLight").AddComponent<Light>();
-            m_AboveLight.transform.parent = cachedTransform;
-            m_AboveLight.type = LightType.Directional;
-            m_AboveLight.shadows = LightShadows.Hard;
-            m_AboveLight.shadowStrength = 0.5f;
-            m_AboveLight.transform.localPosition = new Vector3(-5f, 10f, 5f);
-            m_AboveLight.transform.LookAt(Vector3.zero);
-            m_AboveLight.intensity = k_AboveLightIntensity;
+            m_AboveLightA = CreateLight(k_AboveLightPitch, 0f, k_AboveLightIntensity, true);
+            m_AboveLightB = CreateLight(k_AboveLightPitch, 120f, k_AboveLightIntensity, false);
+            m_AboveLightC = CreateLight(k_AboveLightPitch, 240f, k_AboveLightIntensity, false);
 
-            m_BelowLight = new GameObject("BottomLight").AddComponent<Light>();
-            m_BelowLight.transform.parent = cachedTransform;
-            m_BelowLight.type = LightType.Directional;
-            m_BelowLight.transform.localPosition = new Vector3(5f, -10f, -5f);
-            m_BelowLight.transform.LookAt(Vector3.zero);
-            m_BelowLight.intensity = k_BelowLightIntensity;
+            m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
+
+            RenderSettings.fogMode = FogMode.Exponential;
 
             RegisterPropertyDelegate(FOG_DENSITY_PROPERTY_NAME, OnUpdateFogDensity);
             RegisterPropertyDelegate(ATMOSPHERE_COLOR_PROPERTY_NAME, OnUpdateAtmosphereColor);
@@ -51,7 +47,18 @@ namespace Alice.Player.Unity {
             RegisterPropertyDelegate(AMBIENT_LIGHT_COLOR_PROPERTY_NAME, OnUpdateAmbientLightColor);
             RegisterPropertyDelegate(ABOVE_LIGHT_COLOR_PROPERTY_NAME, OnUpdateAboveLightColor);
             RegisterPropertyDelegate(BELOW_LIGHT_COLOR_PROPERTY_NAME, OnUpdateBelowLightColor);
+        }
 
+        private Light CreateLight(float inPitch, float inHeading, float intensity, bool useShadows) {
+            var light = new GameObject("Light").AddComponent<Light>();
+            light.transform.parent = cachedTransform;
+            light.type = LightType.Directional;
+            light.shadows = useShadows ? LightShadows.Hard : LightShadows.None;
+            light.shadowStrength = 0.5f;
+            light.transform.localRotation = Quaternion.Euler(inPitch, inHeading, 0);
+            light.intensity = intensity;
+
+            return light;
         }
 
         public void AddActivationListener(PAction inListener) {
@@ -66,7 +73,7 @@ namespace Alice.Player.Unity {
 
         private void OnUpdateFogDensity(TValue inValue) {
             var density = (float)inValue.RawStruct<Primitives.Portion>().Value;
-            RenderSettings.fogDensity = density;
+            RenderSettings.fogDensity = density * density * density; // alice is cubing the density to give some more control
             RenderSettings.fog = density > float.Epsilon;
         }
 
@@ -82,7 +89,7 @@ namespace Alice.Player.Unity {
             m_GlobalBrightness = brightness;
             //RenderSettings.ambientIntensity = brightness;
             RenderSettings.reflectionIntensity = brightness;
-            m_AboveLight.intensity = k_AboveLightIntensity * brightness;
+            m_AboveLightA.intensity = m_AboveLightB.intensity = m_AboveLightC.intensity = k_AboveLightIntensity * brightness;
             m_BelowLight.intensity = k_BelowLightIntensity * brightness;
 
             UpdateAtmosphereColor();
@@ -96,8 +103,11 @@ namespace Alice.Player.Unity {
         }
 
         private void OnUpdateAboveLightColor(TValue inValue) {
-            var color = inValue.RawObject<Primitives.Color>().Value;
-            m_AboveLight.color = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            var aliceColor = inValue.RawObject<Primitives.Color>().Value;
+            var unityColor = new Color((float)aliceColor.R, (float)aliceColor.G, (float)aliceColor.B, (float)aliceColor.A);
+            m_AboveLightA.color = unityColor;
+            m_AboveLightB.color = unityColor;
+            m_AboveLightC.color = unityColor;
         }
 
         private void OnUpdateBelowLightColor(TValue inValue) {
