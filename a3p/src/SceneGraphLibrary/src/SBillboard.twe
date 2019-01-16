@@ -7,10 +7,11 @@ class SBillboard extends SModel {
   void setPaint(Paint paint,
                 Duration duration <- Default.duration(),
                 AnimationStyle style <- Default.animationStyle() ) {
-    super.setPaint( paint: paint, duration: duration, style: style );
-    if(paint.isImage ) {
-      this.updateAspectRatio();
+    if (paint.isImage) {
+      this.updateAspectRatio(frontPaint: paint, backPaint: getBackPaint());
     }
+    super.setPaint( paint: paint, duration: duration, style: style );
+
   }
 
   Paint getBackPaint() {
@@ -20,14 +21,34 @@ class SBillboard extends SModel {
   void setBackPaint(Paint paint,
                     Duration duration <- Default.duration(),
                     AnimationStyle style <- Default.animationStyle() ) {
-    this.backPaint.animateValue( endValue: paint, duration: duration, animationStyle: style );
-    if( paint.isImage) {
-      this.updateAspectRatio();
+    if (paint.isImage) {
+      this.updateAspectRatio(frontPaint: getPaint(), backPaint: paint);
     }
+    this.backPaint.animateValue( endValue: paint, duration: duration, animationStyle: style );
+    
   }
 
-  @CompletelyHidden void updateAspectRatio() {
-    //TODO get from BillboardImp
+  @CompletelyHidden void updateAspectRatio(Paint frontPaint, Paint backPaint) {
+    DecimalNumber width <- 0;
+    DecimalNumber height <- 0;
+    
+    if( frontPaint.isImage ) {
+      width <- frontPaint.width;
+      height <- frontPaint.height;
+      $Debug.log(message: "front paint " .. width .. " x " .. height);
+    }
+
+    if(!frontPaint.isImage && backPaint.isImage) {
+      width <- backPaint.width;
+      height <- backPaint.height;
+    }
+
+    DecimalNumber widthToHeightAspectRatio <- 1;
+    if( width > 0  &&  height > 0 ) {
+      widthToHeightAspectRatio <- width / height;
+    }
+
+    setWidth(width: getSize().height*widthToHeightAspectRatio, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING, duration: Duration.ZERO);
   }
 
   @CompletelyHidden PaintProperty backPaint <- new PaintProperty(owner: this, value: Color.WHITE);
