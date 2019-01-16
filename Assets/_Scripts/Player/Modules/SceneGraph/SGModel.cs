@@ -113,12 +113,12 @@ namespace Alice.Player.Unity {
             SetSize(inValue.RawStruct<Size>());
         }
 
-        protected virtual void SetSize(UnityEngine.Vector3 size) {
+        protected virtual void SetSize(UnityEngine.Vector3 inSize) {
             var meshSize = m_MeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
-                meshSize.x == 0 ? 1 : size.x/meshSize.x,
-                meshSize.y == 0 ? 1 : size.y/meshSize.y,
-                meshSize.z == 0 ? 1 : size.z/meshSize.z
+                meshSize.x == 0 ? 1 : inSize.x/meshSize.x,
+                meshSize.y == 0 ? 1 : inSize.y/meshSize.y,
+                meshSize.z == 0 ? 1 : inSize.z/meshSize.z
             );
         }
 

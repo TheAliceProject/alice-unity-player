@@ -7,14 +7,14 @@ class DirectionalBox extends SBox models Box {
     nose.setVehicle(vehicle: this);
     nose.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: Duration.ZERO);
     nose.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: Duration.ZERO);
-    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: -0.5), duration: Duration.ZERO);
+    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0.25, z: -0.5), duration: Duration.ZERO);
 
     hat <- new SBox();
     hat.setName(name: "Hat");
     hat.setVehicle(vehicle: this);
     hat.setSize(size: new Size(width: 0.25, height: 0.25, depth: 0.25), duration: Duration.ZERO);
     hat.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: Duration.ZERO);
-    hat.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0.5, z: 0), duration: Duration.ZERO);
+    hat.setPositionRelativeToVehicle(position: new Position(x: 0, y: 1, z: 0), duration: Duration.ZERO);
     hat.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
   }
 

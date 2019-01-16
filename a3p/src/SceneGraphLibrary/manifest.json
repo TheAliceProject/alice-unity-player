@@ -258,6 +258,11 @@
       "files": ["src/SBillboard.twe"],
       "type": "Class"
     }, {
+      "id": "SGround",
+      "format": "tweedle",
+      "files": ["src/SGround.twe"],
+      "type": "Class"
+    }, {
       "id": "SProgram",
       "format": "tweedle",
       "files": ["src/SProgram.twe"],
