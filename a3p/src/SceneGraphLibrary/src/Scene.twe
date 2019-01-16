@@ -416,7 +416,7 @@ class Scene extends SScene {
     target.setPaint(paint: Color.WHITE, duration: Duration.HALF_SECOND);
   }
 
-  //SGround ground <- new SGround();
+  SGround ground <- new SGround();
   SCamera camera <- new SCamera();
   Box box <- new Box();
   DirectionalBox box2 <- new DirectionalBox();
@@ -440,7 +440,7 @@ class Scene extends SScene {
     nose.setVehicle(vehicle: box);
     nose.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: Duration.ZERO);
     nose.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: Duration.ZERO);
-    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: -0.5), duration: Duration.ZERO);
+    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0.25, z: -0.5), duration: Duration.ZERO);
     
     box3.setName(name: "box3");
     box3.setVehicle(vehicle: this);
@@ -455,18 +455,18 @@ class Scene extends SScene {
 
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);
-    box4.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: -4.0), duration: Duration.ZERO);
+    box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.5, z: -4.0), duration: Duration.ZERO);
     box4.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: -0.25)), duration: Duration.ZERO);
     box4.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
     box5.setName(name: "box5");
     box5.setVehicle(vehicle: this);
-    box5.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 5.0), duration: Duration.ZERO);
+    box5.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 1, z: 5.0), duration: Duration.ZERO);
     box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.2)), duration: Duration.ZERO);
     box5.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
     sphere.setVehicle(vehicle: this);
-    sphere.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
+    sphere.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.5, z: -12.0), duration: Duration.ZERO);
 
     cylinder.setVehicle(vehicle: this);
     cylinder.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
@@ -475,7 +475,7 @@ class Scene extends SScene {
     cone.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
 
     torus.setVehicle(vehicle: this);
-    torus.setPositionRelativeToVehicle(position: new Position(x: 4, y: 0.0, z: -12.0), duration: Duration.ZERO);
+    torus.setPositionRelativeToVehicle(position: new Position(x: 4, y: 1, z: -12.0), duration: Duration.ZERO);
 
     disc.setVehicle(vehicle: this);
     disc.setPositionRelativeToVehicle(position: new Position(x: -4, y: 0.0, z: -12.0), duration: Duration.ZERO);
@@ -497,10 +497,10 @@ class Scene extends SScene {
     this.setFromBelowLightColor(color: new Color(red: 0.541, green: 0.0, blue: 0.125), duration: Duration.ZERO);
     this.setFogDensity(density: new Portion(portion: 0.1), duration: Duration.ZERO);
     this.setName(name: "myScene");
-    //this.ground.setPaint(paint: SurfaceAppearance.DARK_GRASS);
-    //this.ground.setOpacity(opacity: 1.0);
-    //this.ground.setName(name: "ground");
-    //this.ground.setVehicle(vehicle: this);
+    this.ground.setPaint(paint: new ImageSource(resource: "grass"), duration: Duration.ZERO);
+    this.ground.setOpacity(opacity: Portion.WHOLE, duration: Duration.ZERO);
+    this.ground.setName(name: "ground");
+    this.ground.setVehicle(vehicle: this);
     this.camera.setName(name: "camera");
     this.camera.setVehicle(vehicle: this);
     this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.995185, z: 0.0980144, w: 6.12323E-17), duration: Duration.ZERO);
@@ -514,9 +514,9 @@ class Scene extends SScene {
     this.box.setSize(size: new Size(width: 1.0, height: 1.0, depth: 1.0), duration: Duration.ZERO);
   }
 
-  /*SGround getGround() {
+  SGround getGround() {
     return this.ground;
-  }*/
+  }
   SCamera getCamera() {
     return this.camera;
   }

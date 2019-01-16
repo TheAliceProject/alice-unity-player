@@ -48,7 +48,6 @@ namespace Alice.Player.Primitives
         public override PaintTypeID PaintType { get { return PaintTypeID.ImageSource; } }
 
         public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName) {
-            UnityEngine.Debug.Log(inTextureName);
             inPropertyBlock.SetTexture(inTextureName, Value);
 
             var color = new UnityEngine.Color(1, 1, 1, inOpacity);

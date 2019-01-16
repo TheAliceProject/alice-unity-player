@@ -68,6 +68,12 @@ namespace Alice.Player.Modules {
             var entity = SGEntity.Create<SGCamera>(camera);
             SceneGraph.Current.AddEntity(entity);
         }
+
+        [PInteropMethod]
+        public static void createGroundEntity(TValue ground) {
+            var entity = SGEntity.Create<SGGround>(ground);
+            SceneGraph.Current.AddEntity(entity);
+        }
         #endregion // Entity Instantiation
 
         #region Property Binding
