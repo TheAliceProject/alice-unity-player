@@ -237,6 +237,7 @@ expression
     | methodCall
     | prefix=('+'|'-') expression
     | prefix='!' expression
+    | expression bop=(INSTANCEOF | AS) typeType
     | expression bop=('*'|'/'|'%') expression
     | expression bop='..' expression
     | expression bop=('+'|'-') expression

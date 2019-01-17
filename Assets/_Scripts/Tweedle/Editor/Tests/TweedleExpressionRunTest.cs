@@ -11,7 +11,8 @@ namespace Alice.Tweedle.Parse
 
         private void Init()
         {
-            vm = new TestVirtualMachine(null);
+            vm = new TestVirtualMachine(new TweedleSystem());
+            vm.Library.Link();
             scope = new ExecutionScope("Test", vm);
         }
 
@@ -102,6 +103,42 @@ namespace Alice.Tweedle.Parse
             RunStatement("DecimalNumber y <- x;", scope);
 
             Assert.IsInstanceOf<TDecimalNumberType>(scope.GetValue("y").Type);
+        }
+
+        [Test]
+        public void WholeNumberShouldExplicitlyCastToDecimalNumber()
+        {
+            Init();
+            RunStatement("Any x <- 3 as DecimalNumber;", scope);
+            
+            Assert.IsInstanceOf<TDecimalNumberType>(scope.GetValue("x").Type);
+        }
+
+        [Test]
+        public void DecimalNumberShouldExplicitlyCastToWholeNumber()
+        {
+            Init();
+            RunStatement("Any x <- 3.5555 as WholeNumber;", scope);
+            
+            Assert.IsInstanceOf<TWholeNumberType>(scope.GetValue("x").Type);
+        }
+
+        [Test]
+        public void DecimalNumberIsInstanceOfNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3.5 instanceof Number;", scope);
+            
+            Assert.IsTrue(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void DecimalNumberIsNotInstanceOfWholeNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3.5 instanceof WholeNumber;", scope);
+            
+            Assert.IsFalse(scope.GetValue("x").ToBoolean());
         }
 
     }

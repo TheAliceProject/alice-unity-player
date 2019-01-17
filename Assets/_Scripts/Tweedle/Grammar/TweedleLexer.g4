@@ -123,6 +123,9 @@ URSHIFT_ASSIGN:     '>>>=';
 // Java 8 tokens
 ARROW:              '->';
 COLONCOLON:         '::';
+// Casting
+AS:                 'as';
+INSTANCEOF:         'instanceof';
 // Additional symbols not defined in the lexical specification
 AT:                 '@';
 CONCAT:             '..';
