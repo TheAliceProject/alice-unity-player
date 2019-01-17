@@ -149,7 +149,7 @@ namespace Alice.Tweedle.Parse
         }
 
         private void CacheSceneGraphTexture(ResourceReference resourceRef) {
-            if (resourceRef.files.Count > 0) {
+            if (UnityEngine.Application.isPlaying && resourceRef.files.Count > 0) {
                 byte[] data = ReadDataEntry(resourceRef.files[0]);
                 var texture = new UnityEngine.Texture2D(0,0);
                 if (UnityEngine.ImageConversion.LoadImage(texture, data, true)) {
