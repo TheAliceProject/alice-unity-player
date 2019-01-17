@@ -97,6 +97,21 @@ namespace Alice.Tweedle
 
         #region Tweedle Casting
 
+        public override bool CanCast(TType inType)
+        {
+            return inType == TBuiltInTypes.WHOLE_NUMBER || base.CanCast(inType);
+        }
+
+        public override TValue Cast(ref TValue inValue, TType inType)
+        {
+            if (inType == TBuiltInTypes.WHOLE_NUMBER)
+            {
+                return TValue.FromInt((int)inValue.RawNumber());
+            }
+
+            return base.Cast(ref inValue, inType);
+        }
+
         #endregion // Tweedle Casting
 
         #region Conversion Semantics
