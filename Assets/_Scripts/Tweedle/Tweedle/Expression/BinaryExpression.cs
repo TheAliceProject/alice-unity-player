@@ -7,7 +7,7 @@ namespace Alice.Tweedle
         ITweedleExpression lhs;
         ITweedleExpression rhs;
 
-        public BinaryExpression(ITweedleExpression lhs, ITweedleExpression rhs, TType type)
+        public BinaryExpression(ITweedleExpression lhs, ITweedleExpression rhs, TTypeRef type)
             : base(type)
         {
             this.lhs = lhs;
