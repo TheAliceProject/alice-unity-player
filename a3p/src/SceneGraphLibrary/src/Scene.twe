@@ -397,7 +397,7 @@ class Scene extends SScene {
   void pointAtBox(SBox box, SBox target, SThing upAsSeenBy) {
     doTogether {
       target.setPaint(paint: Color.RED);
-      if ($System.isInstanceOf(instance: upAsSeenBy, type: SModel)) {
+      if (upAsSeenBy instanceof SModel) {
         SModel modelViewer <- upAsSeenBy;
         modelViewer.setPaint(paint: Color.BLUE);
       }
@@ -405,7 +405,7 @@ class Scene extends SScene {
     }
     doTogether {
       target.setPaint(paint: Color.WHITE, duration: Duration.HALF_SECOND);
-      if ($System.isInstanceOf(instance: upAsSeenBy, type: SModel)) {
+      if (upAsSeenBy instanceof SModel) {
         SModel modelViewer <- upAsSeenBy;
         modelViewer.setPaint(paint: Color.WHITE, duration: Duration.HALF_SECOND);
       }
