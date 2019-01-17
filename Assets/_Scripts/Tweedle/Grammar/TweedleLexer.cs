@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from /Users/daniel/dev/alice/alice/core/tweedle/src/main/antlr4/org/alice/tweedle/TweedleLexer.g4 by ANTLR 4.7
+// Generated from C:/Users/jkieffer.FILAMENT/Documents/Repos/alice-unity-player/Assets/_Scripts/Tweedle/Grammar\TweedleLexer.g4 by ANTLR 4.7
 
 // Unreachable code detected
 #pragma warning disable 0162
