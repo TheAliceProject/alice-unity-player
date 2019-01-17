@@ -83,5 +83,26 @@ namespace Alice.Tweedle.Parse
             TValue newVal = scope.GetValue("v");
             Assert.AreEqual(4, newVal.ToInt());
         }
+
+        [Test]
+        public void DecimalNumberShouldImplicitlyCastToWholeNumber()
+        {
+            Init();
+            RunStatement("DecimalNumber x <- 3.0;", scope);
+            RunStatement("WholeNumber y <- x;", scope);
+
+            Assert.IsInstanceOf<TWholeNumberType>(scope.GetValue("y").Type);
+        }
+
+        [Test]
+        public void WholeNumberShouldImplicitlyCastToDecimalNumber()
+        {
+            Init();
+            RunStatement("WholeNumber x <- 3;", scope);
+            RunStatement("DecimalNumber y <- x;", scope);
+
+            Assert.IsInstanceOf<TDecimalNumberType>(scope.GetValue("y").Type);
+        }
+
     }
 }

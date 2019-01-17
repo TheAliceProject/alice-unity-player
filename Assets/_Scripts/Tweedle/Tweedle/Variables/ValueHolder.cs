@@ -52,12 +52,14 @@
             return new ValueHolder(Type, m_Value);
         }
 
-        private void CheckType(TType inType, ref TValue inValue)
+        private void CheckType(TType inType, ref TValue ioValue)
         {
-            if (inValue.Type == null || !inValue.Type.CanCast(inType))
+            if (ioValue.Type == null || !ioValue.Type.CanCast(inType))
             {
-                throw new TweedleRuntimeException("Unable to treat type " + inValue.Type + " as type " + inType);
+                throw new TweedleRuntimeException("Unable to treat type " + ioValue.Type + " as type " + inType);
             }
+
+            ioValue = ioValue.Type.Cast(ref ioValue, inType);
         }
     }
 }

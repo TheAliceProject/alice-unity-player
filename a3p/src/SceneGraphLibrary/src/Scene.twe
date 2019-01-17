@@ -20,14 +20,14 @@ class Scene extends SScene {
     $Debug.log(message: "billboard");
     this.camera.moveAndOrientToAGoodVantagePointOf(entity: billboard);
     billboard.setPaint(paint: Color.RED);
-    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
+    billboard.turn(direction: TurnDirection.LEFT, amount: new Angle(revolutions: 0.5), asSeenBy: billboard);
     billboard.setBackPaint(paint: Color.BLUE);
     delay(duration: new Duration(seconds: 0.1));
     billboard.setBackPaint(paint: new ImageSource(resource: "grass"));
-    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
+    billboard.turn(direction: TurnDirection.LEFT, amount: new Angle(revolutions: 0.5), asSeenBy: billboard);
     billboard.setPaint(paint: new ImageSource(resource: "meanQueen"));
     delay(duration: new Duration(seconds: 0.1));
-    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 1), asSeenBy: billboard);
+    billboard.turn(direction: TurnDirection.LEFT, amount: new Angle(revolutions: 1), asSeenBy: billboard);
 
     $Debug.log(message: "disc");
     this.camera.moveAndOrientToAGoodVantagePointOf(entity: disc);
