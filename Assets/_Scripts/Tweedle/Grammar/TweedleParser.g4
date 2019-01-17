@@ -272,6 +272,7 @@ primary
     | SUPER superSuffix
     | literal
     | IDENTIFIER
+    | typeType
     ;
 
 creator

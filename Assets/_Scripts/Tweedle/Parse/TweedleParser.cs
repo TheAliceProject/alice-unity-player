@@ -383,6 +383,10 @@ namespace Alice.Tweedle.Parse
                 {
                     return new IdentifierReference(context.IDENTIFIER().GetText());
                 }
+                if (context.typeType() != null)
+                {
+                    return TValue.FromType(GetTypeRef(context.typeType().GetText()));
+                }
 
                 return base.VisitChildren(context);
             }
