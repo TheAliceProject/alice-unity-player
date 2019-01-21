@@ -35,7 +35,6 @@ class SBillboard extends SModel {
     if( frontPaint.isImage ) {
       width <- frontPaint.width;
       height <- frontPaint.height;
-      $Debug.log(message: "front paint " .. width .. " x " .. height);
     }
 
     if(!frontPaint.isImage && backPaint.isImage) {

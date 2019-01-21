@@ -67,7 +67,7 @@ namespace Alice.Player.Unity {
             if (m_Properties.TryGetValue(propertyObj, out @delegate)) {
                 @delegate(inValue);
             } else {
-                Debug.Log("no delegate found for property of " + this.GetType().Name);
+                Debug.LogFormat("no delegate found for property type {0} of {1}", inProperty.Type.Name, this.GetType().Name);
             }
         }
 
