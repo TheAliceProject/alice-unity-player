@@ -5,9 +5,9 @@ class SModel extends SMovableTurnable
     $SceneGraph.bindTransformationProperty(owner: this, property: this.localTransformation, value: this.localTransformation.getValue());
 
     // get default size 
-    this.defaultSize <- $SceneGraph.getLocalBoundingBoxSize(model:this, dynamic: false);
-    this.size.setValue(value: this.defaultSize);
-    $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.size.getValue());
+    this.size.sync();
+    this.defaultSize <- this.size.getValue();
+    $SceneGraph.bindSizeProperty(owner: this, property: this.size, value: this.defaultSize);
 
     $SceneGraph.bindPaintProperty(owner: this, property: this.paint, value: this.paint.getValue());
     $SceneGraph.bindOpacityProperty(owner: this, property: this.opacity, value: this.opacity.getValue());
