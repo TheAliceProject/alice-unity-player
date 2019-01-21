@@ -11,7 +11,7 @@ namespace Alice.Player.Modules
         [PInteropMethod]
         static public bool isInstanceOf(TValue instance, TType type)
         {
-            return instance.Type.CanCast(type);
+            return TType.InstanceOf(instance, type);
         }
 
         [PInteropMethod]
