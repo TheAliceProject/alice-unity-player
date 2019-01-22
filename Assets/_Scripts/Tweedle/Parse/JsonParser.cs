@@ -75,6 +75,22 @@ namespace Alice.Tweedle.Parse
             return (new StreamReader(entryStream)).ReadToEnd();
         }
 
+        byte[] ReadDataEntry(string location)
+        {
+            ZipEntry entry = m_ZipFile.GetEntry(location);
+            if (entry == null)
+            {
+                UnityEngine.Debug.Log("Did not find entry for: " + location);
+            }
+            return ReadDataEntry(entry);
+        }
+
+        byte[] ReadDataEntry(ZipEntry entry)
+        {
+            Stream entryStream = m_ZipFile.GetInputStream(entry);
+            return (new BinaryReader(entryStream)).ReadBytes((int)entryStream.Length);
+        }
+
         private void ParseResourceDetails(
             List<ResourceReference> resources,
             JSONObject json)
@@ -114,6 +130,7 @@ namespace Alice.Tweedle.Parse
                     }
                     return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
                 case ContentType.Image:
+                    CacheSceneGraphTexture(resourceRef);
                     return UnityEngine.JsonUtility.FromJson<ImageReference>(refJson);
                 case ContentType.Model:
                     for (int j = 0; j < resourceRef.files.Count; j++)
@@ -125,9 +142,20 @@ namespace Alice.Tweedle.Parse
                 case ContentType.SkeletonMesh:
                     return UnityEngine.JsonUtility.FromJson<StructureReference>(refJson);
                 case ContentType.Texture:
+                    CacheSceneGraphTexture(resourceRef);
                     return UnityEngine.JsonUtility.FromJson<TextureReference>(refJson);
             }
             return null;
+        }
+
+        private void CacheSceneGraphTexture(ResourceReference resourceRef) {
+            if (UnityEngine.Application.isPlaying && resourceRef.files.Count > 0) {
+                byte[] data = ReadDataEntry(resourceRef.files[0]);
+                var texture = new UnityEngine.Texture2D(0,0);
+                if (UnityEngine.ImageConversion.LoadImage(texture, data, true)) {
+                    Player.Unity.SceneGraph.Current?.TextureCache?.Add(resourceRef.id, texture);
+                }
+            }
         }
     }
 }

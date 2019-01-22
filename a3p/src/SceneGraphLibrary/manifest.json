@@ -26,42 +26,42 @@
       "id": "AnimationStyle",
       "format": "tweedle",
       "files": ["src/AnimationStyle.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "DimensionPolicy",
       "format": "tweedle",
       "files": ["src/DimensionPolicy.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "TurnDirection",
       "format": "tweedle",
       "files": ["src/TurnDirection.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "RollDirection",
       "format": "tweedle",
       "files": ["src/RollDirection.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "MoveDirection",
       "format": "tweedle",
       "files": ["src/MoveDirection.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "PathStyle",
       "format": "tweedle",
       "files": ["src/PathStyle.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "SpatialRelation",
       "format": "tweedle",
       "files": ["src/SpatialRelation.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "Epsilon",
       "format": "tweedle",
       "files": ["src/Epsilon.twe"],
-      "type": "Class"
+      "type": "Enum"
     }, {
       "id": "Property",
       "format": "tweedle",
@@ -76,6 +76,11 @@
       "id": "DecimalNumberProperty",
       "format": "tweedle",
       "files": ["src/DecimalNumberProperty.twe"],
+      "type": "Class"
+    }, {
+      "id": "DimensionProperty",
+      "format": "tweedle",
+      "files": ["src/DimensionProperty.twe"],
       "type": "Class"
     }, {
       "id": "DecimalNumberTween",
@@ -141,6 +146,21 @@
       "id": "SizeTween",
       "format": "tweedle",
       "files": ["src/SizeTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "WidthOnlyTween",
+      "format": "tweedle",
+      "files": ["src/WidthOnlyTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "HeightOnlyTween",
+      "format": "tweedle",
+      "files": ["src/HeightOnlyTween.twe"],
+      "type": "Class"
+    }, {
+      "id": "DepthOnlyTween",
+      "format": "tweedle",
+      "files": ["src/DepthOnlyTween.twe"],
       "type": "Class"
     }, {
       "id": "ApplyResizeTween",
@@ -213,6 +233,36 @@
       "files": ["src/SSphere.twe"],
       "type": "Class"
     }, {
+      "id": "SCylinder",
+      "format": "tweedle",
+      "files": ["src/SCylinder.twe"],
+      "type": "Class"
+    }, {
+      "id": "SCone",
+      "format": "tweedle",
+      "files": ["src/SCone.twe"],
+      "type": "Class"
+    }, {
+      "id": "STorus",
+      "format": "tweedle",
+      "files": ["src/STorus.twe"],
+      "type": "Class"
+    }, {
+      "id": "SDisc",
+      "format": "tweedle",
+      "files": ["src/SDisc.twe"],
+      "type": "Class"
+    }, {
+      "id": "SBillboard",
+      "format": "tweedle",
+      "files": ["src/SBillboard.twe"],
+      "type": "Class"
+    }, {
+      "id": "SGround",
+      "format": "tweedle",
+      "files": ["src/SGround.twe"],
+      "type": "Class"
+    }, {
       "id": "SProgram",
       "format": "tweedle",
       "files": ["src/SProgram.twe"],
@@ -252,6 +302,18 @@
       "format": "tweedle",
       "files": ["src/DirectionalBox.twe"],
       "type": "Class"
+    },
+    {
+      "id": "grass",
+      "format": "png",
+      "files": ["resources/grass.png"],
+      "type": "Image"
+    },
+    {
+      "id": "meanQueen",
+      "format": "png",
+      "files": ["resources/meanQueen.png"],
+      "type": "Image"
     }
   ]
 }

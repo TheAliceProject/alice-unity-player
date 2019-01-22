@@ -16,6 +16,8 @@ namespace Alice.Player.Primitives
         #region Interop Interfaces
         [PInteropField]
         public static readonly Size ZERO = new Size(0, 0, 0);
+        [PInteropField]
+        public static readonly Size ONE = new Size(1, 1, 1);
 
         [PInteropField]
         public double width { get {return Value.X; } }

@@ -1,0 +1,27 @@
+class DimensionProperty extends DecimalNumberProperty {
+  DimensionProperty(SThing owner, SizeProperty sizeProperty, DecimalNumber value) {
+    super(owner: owner);
+    this.value <- value;
+    this.sizeProperty <- sizeProperty;
+  }
+
+  DecimalNumber getValue() {
+    return this.value;
+  }
+
+  void setValue(DecimalNumber value) {
+    if (this.value != value) {
+      this.value <- value;
+      $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
+      sizeProperty.sync();
+    }
+  }
+
+  void animateValue(DecimalNumber endValue, Duration duration, AnimationStyle animationStyle) {
+    DecimalNumberTween tween <- new DecimalNumberTween(property: this, start: this.value, end: endValue);
+    tween.animate(duration: duration, animationStyle: animationStyle);
+  }
+
+  @CompletelyHidden SizeProperty sizeProperty;
+  @CompletelyHidden DecimalNumber value;
+}

@@ -107,7 +107,7 @@ class VantagePointProperty extends Property {
     Direction toTarget <- new Direction(x: tp.x, y: 0, z: tp.z);
 
     Orientation end <- value.orientation;
-    if (!Epsilon.REASONABLE.isWithin0InSquaredSpace(number: toTarget.lengthSquared)) {
+    if (!Epsilon.REASONABLE.isWithinZeroInSquaredSpace(number: toTarget.lengthSquared)) {
       // in vehicle space
       Direction up <- Direction.UP.rotate(orientation: value.orientation);
       Direction newForward <- toTarget.rotate(orientation: value.orientation).normalize();
@@ -156,7 +156,7 @@ class VantagePointProperty extends Property {
     Direction toTarget <- targetInViewer.position.directionFrom(other: subjectInViewer.position);
 
     Orientation end <- subjectInViewer.orientation;
-    if (!Epsilon.REASONABLE.isWithin0InSquaredSpace(number: toTarget.lengthSquared)) {
+    if (!Epsilon.REASONABLE.isWithinZeroInSquaredSpace(number: toTarget.lengthSquared)) {
         end <- new Orientation(forward: toTarget.normalize());
     }
 

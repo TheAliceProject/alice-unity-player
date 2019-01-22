@@ -1,0 +1,26 @@
+class HeightOnlyTween extends PropertyTween {
+  HeightOnlyTween(SizeProperty property, DecimalNumber start, DecimalNumber end) {
+    super();
+    this.property <- property;
+    this.startHeight <- start;
+    this.endHeight <- end;
+    this.delta <- end - start;
+  }
+
+  void setEndValue() {
+    Size value <- this.property.getValue();
+    this.property.setValue(value: new Size(width: value.width, height: endHeight, depth: value.depth));
+  }
+
+  void interpolate(Portion portion) {
+    Size value <- this.property.getValue();
+    DecimalNumber h <- startHeight + delta * portion.numberValue;
+    this.property.setValue(value: new Size(width: value.width, height: h, depth: value.depth));
+  }
+
+  @CompletelyHidden SizeProperty property;
+  @CompletelyHidden DecimalNumber startHeight;
+  @CompletelyHidden DecimalNumber endHeight;
+  @CompletelyHidden DecimalNumber delta;
+
+}

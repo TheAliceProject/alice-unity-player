@@ -1,0 +1,41 @@
+class SCone extends SShape
+{
+  SCone () 
+  {
+    super(resource: $SceneGraph.CONE);
+
+    this.baseRadius <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().width*0.5);
+    $SceneGraph.bindRadiusProperty(owner: this, property: this.baseRadius, value: this.baseRadius.getValue());
+
+    this.length <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().height);
+    $SceneGraph.bindLengthProperty(owner: this, property: this.length, value: this.length.getValue());
+
+    this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
+      Size size <- this.size.getValue();
+      this.baseRadius.value <- size.width*0.5;
+      this.length.value <- size.height;
+    });
+  }
+
+  DecimalNumber getBaseRadius() {
+    return this.baseRadius.getValue();
+  }
+
+  void setBaseRadius(DecimalNumber baseRadius, Duration duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    this.baseRadius.animateValue(endValue: baseRadius, duration: duration, animationStyle: style);
+  }
+
+  DecimalNumber getLength() {
+    return this.length.getValue();
+  }
+
+  void setLength(Number length,
+                 Duration duration <- Default.duration(),
+                 AnimationStyle style <- Default.animationStyle() ) {
+    this.length.animateValue(endValue: length, duration: duration, animationStyle: style);
+  }
+
+  @CompletelyHidden DimensionProperty baseRadius;
+  @CompletelyHidden DimensionProperty length;
+} 

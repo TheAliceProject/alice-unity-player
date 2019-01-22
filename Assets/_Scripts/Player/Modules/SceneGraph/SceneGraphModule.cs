@@ -17,6 +17,8 @@ namespace Alice.Player.Modules {
         [PInteropField]
         public const string DISC = "Internal/Disc";
         [PInteropField]
+        public const string BILLBOARD = "Internal/Billboard";
+        [PInteropField]
         public const string SPHERE = "Internal/Sphere";
         [PInteropField]
         public const string TORUS = "Internal/Torus";
@@ -32,6 +34,21 @@ namespace Alice.Player.Modules {
                     break;
                 case SPHERE:
                     entity = SGEntity.Create<SGSphere>(model);
+                    break;
+                case CYLINDER:
+                    entity = SGEntity.Create<SGCylinder>(model);
+                    break;
+                case CONE:
+                    entity = SGEntity.Create<SGCone>(model);
+                    break;
+                case TORUS:
+                    entity = SGEntity.Create<SGTorus>(model);
+                    break;
+                case DISC:
+                    entity = SGEntity.Create<SGDisc>(model);
+                    break;
+                case BILLBOARD:
+                    entity = SGEntity.Create<SGBillboard>(model);
                     break;
                 default:
                     throw new SceneGraphException("No model resource found for " + resource);
@@ -49,6 +66,12 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void createCameraEntity(TValue camera) {
             var entity = SGEntity.Create<SGCamera>(camera);
+            SceneGraph.Current.AddEntity(entity);
+        }
+
+        [PInteropMethod]
+        public static void createGroundEntity(TValue ground) {
+            var entity = SGEntity.Create<SGGround>(ground);
             SceneGraph.Current.AddEntity(entity);
         }
         #endregion // Entity Instantiation
@@ -70,8 +93,28 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void bindBackPaintProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGModel.BACK_PAINT_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
         public static void bindRadiusProperty(TValue owner, TValue property, TValue value) {
-            SceneGraph.Current.BindProperty(SGSphere.RADIUS_PROPERTY_NAME, owner, property, value);
+            SceneGraph.Current.BindProperty(SGShape.RADIUS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindInnerRadiusProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGShape.INNER_RADIUS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindOuterRadiusProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGShape.OUTER_RADIUS_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindLengthProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGShape.LENGTH_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
@@ -114,6 +157,25 @@ namespace Alice.Player.Modules {
             SceneGraph.Current.UpdateProperty(owner, property, value);
         }
         #endregion // Property Binding
+
+        #region Camera
+        [PInteropMethod]
+        public static void setCameraVerticalFOV(TValue camera, Angle fov) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            if (cam) {
+                cam.Camera.fieldOfView = (float)fov.degrees;
+            }
+        }
+
+        [PInteropMethod]
+        public static void setCameraClipPlanes(TValue camera, double nearClip, double farClip) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            if (cam) {
+                cam.Camera.nearClipPlane = (float)nearClip;
+                cam.Camera.farClipPlane = (float)farClip;
+            }
+        }
+        #endregion // Camera
 
         #region Other
 
@@ -189,9 +251,8 @@ namespace Alice.Player.Modules {
             var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
                 return Position.FromUnity(entity.cachedTransform.position);
-            } else {
-                throw new SceneGraphException("No scene graph entity exists for tweedle object.");
             }
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
         }
 
         [PInteropMethod]
@@ -201,7 +262,18 @@ namespace Alice.Player.Modules {
                 var sgModel = (SGModel)entity;
                 return sgModel.GetBounds(dynamic);
             }
-            return AxisAlignedBox.EMPTY;
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
+        }
+
+        [PInteropMethod]
+        public static Size getLocalBoundingBoxSize(TValue model, bool dynamic = false) {
+            var entity = SceneGraph.Current.FindEntity(model);
+            if (entity && entity is SGModel) {
+                var sgModel = (SGModel)entity;
+                var size = sgModel.GetSize(dynamic);
+                return new Size(size.x, size.y, size.z);
+            }
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
         }
         #endregion // Transformations
     }

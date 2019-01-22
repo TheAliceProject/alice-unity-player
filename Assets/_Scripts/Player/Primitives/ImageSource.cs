@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using System;
+using Alice.Player.Unity;
 
 namespace Alice.Player.Primitives
 {
@@ -19,8 +20,14 @@ namespace Alice.Player.Primitives
         [PInteropConstructor]
         public ImageSource(string resource)
         {
-            Value = UnityEngine.Texture2D.whiteTexture;
+            Value = SceneGraph.Current?.TextureCache?.Get(resource);
         }
+
+        [PInteropField]
+        public override double width { get { return Value.width; } }
+        
+        [PInteropField]
+        public override double height { get { return Value.height; } }
 
         [PInteropMethod]
         public override bool equals(Paint other) 
