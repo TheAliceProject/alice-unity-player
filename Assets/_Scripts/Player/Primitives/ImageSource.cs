@@ -24,10 +24,10 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropField]
-        public override double width { get { return Value.width; } }
+        public override int width { get { return Value.width; } }
         
         [PInteropField]
-        public override double height { get { return Value.height; } }
+        public override int height { get { return Value.height; } }
 
         [PInteropMethod]
         public override bool equals(Paint other) 
