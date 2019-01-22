@@ -23,6 +23,9 @@ namespace Alice.Player.Modules
         [PInteropMethod]
         static public TValue cast(TValue instance, TType type)
         {
+            if (!instance.Type.CanCast(type)) {
+                throw new TweedleRuntimeException(string.Format("Cannot cast instance of {0} to {1}.", instance.Type.Name, type.Name));
+            }
             return instance.Type.Cast(ref instance, type);
         }
     }
