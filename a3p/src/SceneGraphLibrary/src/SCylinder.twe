@@ -3,10 +3,10 @@ class SCylinder extends SShape
   SCylinder() 
   {
     super(resource: $SceneGraph.CYLINDER);
-    this.radius <- new ShapeProperty(owner: this, size: size, value: size.getValue().width*0.5);
+    this.radius <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().width*0.5);
     $SceneGraph.bindRadiusProperty(owner: this, property: this.radius, value: this.radius.getValue());
 
-    this.length <- new ShapeProperty(owner: this, size: size, value: size.getValue().height);
+    this.length <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().height);
     $SceneGraph.bindLengthProperty(owner: this, property: this.length, value: this.length.getValue());
 
     this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
@@ -35,6 +35,6 @@ class SCylinder extends SShape
     this.length.animateValue(endValue: length, duration: duration, animationStyle: style);
   }
 
-  @CompletelyHidden ShapeProperty radius;
-  @CompletelyHidden ShapeProperty length;
+  @CompletelyHidden DimensionProperty radius;
+  @CompletelyHidden DimensionProperty length;
 } 

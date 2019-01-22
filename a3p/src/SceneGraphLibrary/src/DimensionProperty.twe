@@ -1,8 +1,8 @@
-class ShapeProperty extends DecimalNumberProperty {
-  ShapeProperty(SThing owner, SizeProperty size, DecimalNumber value) {
+class DimensionProperty extends DecimalNumberProperty {
+  DimensionProperty(SThing owner, SizeProperty sizeProperty, DecimalNumber value) {
     super(owner: owner);
     this.value <- value;
-    this.size <- size;
+    this.sizeProperty <- sizeProperty;
   }
 
   DecimalNumber getValue() {
@@ -13,7 +13,7 @@ class ShapeProperty extends DecimalNumberProperty {
     if (this.value != value) {
       this.value <- value;
       $SceneGraph.updateProperty(owner: this.owner, property: this, value: value);
-      size.sync();
+      sizeProperty.sync();
     }
   }
 
@@ -22,6 +22,6 @@ class ShapeProperty extends DecimalNumberProperty {
     tween.animate(duration: duration, animationStyle: animationStyle);
   }
 
-  @CompletelyHidden SizeProperty size;
+  @CompletelyHidden SizeProperty sizeProperty;
   @CompletelyHidden DecimalNumber value;
 }

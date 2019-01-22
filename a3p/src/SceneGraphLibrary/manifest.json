@@ -78,9 +78,9 @@
       "files": ["src/DecimalNumberProperty.twe"],
       "type": "Class"
     }, {
-      "id": "ShapeProperty",
+      "id": "DimensionProperty",
       "format": "tweedle",
-      "files": ["src/ShapeProperty.twe"],
+      "files": ["src/DimensionProperty.twe"],
       "type": "Class"
     }, {
       "id": "DecimalNumberTween",

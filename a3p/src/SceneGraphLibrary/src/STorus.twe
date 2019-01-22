@@ -2,10 +2,10 @@ class STorus extends SShape {
   STorus() {
     super(resource: $SceneGraph.TORUS);
 
-    this.innerRadius <- new ShapeProperty(owner: this, size: size, value: 0.25);
+    this.innerRadius <- new DimensionProperty(owner: this, sizeProperty: size, value: 0.25);
     $SceneGraph.bindInnerRadiusProperty(owner: this, property: this.innerRadius, value: this.innerRadius.getValue());
 
-    this.outerRadius <- new ShapeProperty(owner: this, size: size, value: size.getValue().width*0.5);
+    this.outerRadius <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().width*0.5);
     $SceneGraph.bindOuterRadiusProperty(owner: this, property: this.outerRadius, value: this.outerRadius.getValue());
 
     this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
@@ -38,6 +38,6 @@ class STorus extends SShape {
     this.outerRadius.animateValue( endValue: maxRadius, duration: duration, animationStyle: style );
   }
 
-  @CompletelyHidden ShapeProperty innerRadius;
-  @CompletelyHidden ShapeProperty outerRadius;
+  @CompletelyHidden DimensionProperty innerRadius;
+  @CompletelyHidden DimensionProperty outerRadius;
 }

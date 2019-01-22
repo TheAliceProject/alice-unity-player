@@ -4,7 +4,7 @@ class SSphere extends SShape
   {
     super(resource: $SceneGraph.SPHERE);
 
-    this.radius <- new ShapeProperty(owner: this, size: size, value: size.getValue().width*0.5);
+    this.radius <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().width*0.5);
     $SceneGraph.bindRadiusProperty(owner: this, property: this.radius, value: this.radius.getValue());
 
     this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
@@ -21,5 +21,5 @@ class SSphere extends SShape
     this.radius.animateValue(endValue: radius, duration: duration, animationStyle: style);
   }
 
-  @CompletelyHidden ShapeProperty radius;
+  @CompletelyHidden DimensionProperty radius;
 } 
