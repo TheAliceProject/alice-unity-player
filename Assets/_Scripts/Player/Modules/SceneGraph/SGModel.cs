@@ -10,29 +10,50 @@ namespace Alice.Player.Unity {
     
     public abstract class SGModel : SGTransformableEntity {
 
-        
+        static public  void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
+            var go = new GameObject("Model");
+            outFilter = go.AddComponent<MeshFilter>();
+            outFilter.mesh = inMesh;
+            outRenderer = go.AddComponent<MeshRenderer>();
+            outRenderer.sharedMaterial = inMaterial;
+            outTransform = go.transform;
+
+            outTransform.SetParent(inParent, false);
+            outTransform.localPosition = UnityEngine.Vector3.zero;
+            outTransform.localRotation = UnityEngine.Quaternion.identity;
+        }
+
+        static public void PrepPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
+            if (ioPropertyBlock == null) {
+                ioPropertyBlock = new MaterialPropertyBlock();
+            }
+
+            if (inRenderer.HasPropertyBlock()) {
+                inRenderer.GetPropertyBlock(ioPropertyBlock);
+            }
+        }
+
         public const string PAINT_PROPERTY_NAME = "Paint";
+        public const string BACK_PAINT_PROPERTY_NAME = "BackPaint";
         public const string SIZE_PROPERTY_NAME = "Size";
         public const string OPACITY_PROPERTY_NAME = "Opacity";
 
-        public const string MAIN_TEXTURE_SHADER_NAME = "_MainTexture";
-        public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTexture";
+        public const string MAIN_TEXTURE_SHADER_NAME = "_MainTex";
+        public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTex";
         public const string COLOR_SHADER_NAME = "_Color";
 
         protected Renderer m_Renderer;
+        protected MeshFilter m_MeshFilter;
         protected Transform m_ModelTransform;
-        private MaterialPropertyBlock m_PropertyBlock;
-        private Paint m_CachedPaint;
-        private float m_CachedOpacity = 1;
-        protected AxisAlignedBox m_MeshBounds;
+        protected Bounds m_MeshBounds;
+        protected MaterialPropertyBlock m_PropertyBlock;
+        private Paint m_CachedPaint = Primitives.Color.WHITE;
+        protected float m_CachedOpacity = 1;
 
-        protected virtual void Init(Transform inModelTransform, Renderer inRenderer) {
+        protected virtual void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
             m_ModelTransform = inModelTransform;
-            m_ModelTransform.SetParent(transform, false);
-            m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
-            m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
             m_Renderer = inRenderer;
-            m_Renderer.sharedMaterial = SceneGraph.Current.InternalResources.OpaqueMaterial;
+            m_MeshFilter = inFilter;
 
             CacheMeshBounds();
 
@@ -41,27 +62,40 @@ namespace Alice.Player.Unity {
             RegisterPropertyDelegate(OPACITY_PROPERTY_NAME, OnOpacityPropertyChanged);
         }
 
-        public AxisAlignedBox GetBounds(bool inDynamic) {
-            var scale = m_ModelTransform.localScale;
-
+        public UnityEngine.Vector3 GetSize(bool inDynamic) {
+            UnityEngine.Vector3 size;
             if (inDynamic && m_Renderer is SkinnedMeshRenderer) {
                 var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
-                skinnedRenderer.updateWhenOffscreen = true;
-                var bounds = skinnedRenderer.localBounds;
-                var center = bounds.center;
-                center.Scale(scale);
-                var size = bounds.size;
-                size.Scale(scale);
-
-                bounds.center = center;
-                bounds.size = size;
-                return bounds;
+                size = skinnedRenderer.localBounds.size;
+            } else {
+                size = m_MeshBounds.size;
             }
 
-            return new AxisAlignedBox(
-                new Primitives.Vector3(m_MeshBounds.MinValue.X*scale.x, m_MeshBounds.MinValue.Y*scale.y, m_MeshBounds.MinValue.Z*scale.z),
-                new Primitives.Vector3(m_MeshBounds.MaxValue.X*scale.x, m_MeshBounds.MaxValue.Y*scale.y, m_MeshBounds.MaxValue.Z*scale.z)
-            );
+            size.Scale(m_ModelTransform.localScale);
+            return size;
+        }
+
+        public Bounds GetBounds(bool inDynamic) {
+            
+            Bounds bounds;
+            if (inDynamic && m_Renderer is SkinnedMeshRenderer) {
+                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
+                bounds = skinnedRenderer.localBounds;
+            } else {
+                bounds = m_MeshBounds;
+            }
+
+            var scale = m_ModelTransform.localScale;
+
+            var center = bounds.center;
+            center.Scale(scale);
+            var size = bounds.size;
+            size.Scale(scale);
+
+            bounds.center = center + m_ModelTransform.localPosition;
+            bounds.size = size;
+
+            return bounds;
         }
 
         public virtual void CacheMeshBounds() {
@@ -71,38 +105,42 @@ namespace Alice.Player.Unity {
                 skinnedRenderer.updateWhenOffscreen = true;
                 m_MeshBounds = skinnedRenderer.localBounds;
             } else  {
-                var filter = m_Renderer.GetComponent<MeshFilter>();
-                m_MeshBounds = filter.mesh.bounds;
+                m_MeshBounds = m_MeshFilter.sharedMesh.bounds;
             }
         }
 
-        protected virtual void OnSizePropertyChanged(TValue inValue) {
+        private void OnSizePropertyChanged(TValue inValue) {
             SetSize(inValue.RawStruct<Size>());
         }
 
-        protected virtual void SetSize(Size size) {
-            Size meshSize = m_MeshBounds.size;
+        protected virtual void SetSize(UnityEngine.Vector3 inSize) {
+            var meshSize = m_MeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
-                (float)(size.width/meshSize.width),
-                (float)(size.height/meshSize.height),
-                (float)(size.depth/meshSize.depth)
+                meshSize.x == 0 ? 1 : inSize.x/meshSize.x,
+                meshSize.y == 0 ? 1 : inSize.y/meshSize.y,
+                meshSize.z == 0 ? 1 : inSize.z/meshSize.z
             );
         }
 
-        protected virtual string shaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
+        protected virtual string ShaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
+        protected virtual Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueMaterial; } }
+        protected virtual Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
 
         private void OnPaintPropertyChanged(TValue inValue) {
             m_CachedPaint = inValue.RawObject<Paint>();
 
-            PrepPropertyBlock();
+            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
 
-            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, shaderTextureName);
-
+            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
 
         private void OnOpacityPropertyChanged(TValue inValue) {
-            m_CachedOpacity = (float)inValue.RawStruct<Portion>().Value;
+            SetOpacity((float)inValue.RawStruct<Portion>().Value);
+        }
+
+        protected virtual void SetOpacity(float inOpacity) {
+            m_CachedOpacity = inOpacity;
             
             if (m_CachedOpacity < 0.004f) {
                 if (m_Renderer.enabled) {
@@ -113,36 +151,17 @@ namespace Alice.Player.Unity {
                 m_Renderer.enabled = true;
             }
 
-            if (m_CachedOpacity < 0.996f && m_Renderer.sharedMaterial != SceneGraph.Current.InternalResources.TransparentMaterial) {
-                m_Renderer.sharedMaterial = SceneGraph.Current.InternalResources.TransparentMaterial;
-            } else if (m_CachedOpacity >= 0.996f && m_Renderer.sharedMaterial != SceneGraph.Current.InternalResources.OpaqueMaterial) {
-                m_Renderer.sharedMaterial = SceneGraph.Current.InternalResources.OpaqueMaterial;
+            if (m_CachedOpacity < 0.996f && m_Renderer.sharedMaterial != TransparentMaterial) {
+                m_Renderer.sharedMaterial = TransparentMaterial;
+            } else if (m_CachedOpacity >= 0.996f && m_Renderer.sharedMaterial != OpaqueMaterial) {
+                m_Renderer.sharedMaterial = OpaqueMaterial;
             }
 
-            PrepPropertyBlock();
+            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
 
-            if (m_CachedPaint != null) {
-                m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, shaderTextureName);
-            } else {
-                var color = new UnityEngine.Color(1,1,1, m_CachedOpacity);
-                m_PropertyBlock.SetColor(COLOR_SHADER_NAME, color);
-            }
-
-             m_Renderer.SetPropertyBlock(m_PropertyBlock);
-
-
+            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
+            m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
-
-        private void PrepPropertyBlock() {
-            if (m_PropertyBlock == null) {
-                m_PropertyBlock = new MaterialPropertyBlock();
-            }
-
-            if (m_Renderer.HasPropertyBlock()) {
-                m_Renderer.GetPropertyBlock(m_PropertyBlock);
-            }
-        }
-
 
         public override void CleanUp() {}
 

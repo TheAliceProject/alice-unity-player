@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
 using Alice.Tweedle;
+using Alice.Tweedle.Parse;
 using Alice.Tweedle.Interop;
 using System;
 
@@ -104,6 +105,7 @@ namespace Alice.Player.Unity {
 
         public static bool Exists { get { return !ReferenceEquals(s_Current, null); } }
 
+        private TweedleSystem m_System;
         private List<SGEntity> m_Entities = new List<SGEntity>();
 
         private List<IWaitReturn> m_WaitReturnsQueue = new List<IWaitReturn>();
@@ -112,6 +114,7 @@ namespace Alice.Player.Unity {
         private bool m_IsUpdating;
 
         public PlayerResources InternalResources {get; private set;}
+        public TextureCache TextureCache {get; private set;}
 
         private void Awake() {
             if (!ReferenceEquals(s_Current, null) && !ReferenceEquals(s_Current, this)) {
@@ -122,12 +125,7 @@ namespace Alice.Player.Unity {
             }
 
             InternalResources = Resources.Load<PlayerResources>("PlayerResources");
-        }
-
-        private void Destroy() {
-            if (ReferenceEquals(s_Current, this)) {
-                s_Current = null;
-            }
+            TextureCache = new TextureCache();
         }
 
         private void Update() {
@@ -221,7 +219,16 @@ namespace Alice.Player.Unity {
             }
 
             m_Entities.Clear();
+            m_System = null;
+            
+            TextureCache.Clear();
+            TextureCache = null;
         }
 
+        private void Destroy() {
+            if (ReferenceEquals(s_Current, this)) {
+                s_Current = null;
+            }
+        }
     }
 }

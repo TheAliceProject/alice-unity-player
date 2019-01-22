@@ -2,7 +2,6 @@ class Scene extends SScene {
   Scene() {
     super();
   }
-  
 
   void initializeEventListeners() {
     this.addSceneActivationListener(listener: (SceneActivationEvent event)-> {
@@ -14,19 +13,63 @@ class Scene extends SScene {
     // Make adjustments to the starting scene, in a way not available in the Scene editor
     $Debug.log(message: this.getName() .. ": myFirstMethod()");
 
-    // fade in new boxes
-    Duration fadeDur <- new Duration(seconds: 0.1);
-    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
-
     Position camPos <- camera.getPositionRelativeToVehicle();
+    camPos <- new Position(x: camPos.x, y: camPos.y + 1, z: camPos.z - 5);
     Orientation camRot <- camera.getOrientationRelativeToVehicle();
 
-    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box3);
-    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box2);
-    this.camera.moveAndOrientToAGoodVantagePointOf(entity: box4);
+    $Debug.log(message: "billboard");
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: billboard);
+    billboard.setPaint(paint: Color.RED);
+    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
+    billboard.setBackPaint(paint: Color.BLUE);
+    delay(duration: new Duration(seconds: 0.1));
+    billboard.setBackPaint(paint: new ImageSource(resource: "grass"));
+    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 0.5), asSeenBy: billboard);
+    billboard.setPaint(paint: new ImageSource(resource: "meanQueen"));
+    delay(duration: new Duration(seconds: 0.1));
+    billboard.turn(direction: TurnDirection.LEFT, amount new Angle(revolutions: 1), asSeenBy: billboard);
+
+    $Debug.log(message: "disc");
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: disc);
+    disc.setRadius(radius: 1.25);
+    disc.setHeight(height: 1.25);
+    disc.setDepth(depth: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    disc.setWidth(width: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    disc.setRadius(radius: 0.5);
+
+    $Debug.log(message: "sphere");
+    this.camera.pointAt(target: sphere);
+    sphere.setRadius(radius: 1);
+    sphere.setHeight(height: 1, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    sphere.setRadius(radius: 0.3);
+    sphere.setSize(size: Size.ONE);
+
+    $Debug.log(message: "torus");
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: torus);
+    torus.setOuterRadius(radius: 1.25);
+    torus.setInnerRadius(radius: 0.1);
+    torus.setInnerRadius(radius: 0.7);
+    torus.setOuterRadius(radius: 0.9);
+    torus.setHeight(height: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    torus.setDepth(depth: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    torus.setInnerRadius(radius: 0.25);
+    torus.setOuterRadius(radius: 0.75);
+    torus.setDepth(depth: 1.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+    torus.setHeight(height: 0.5, dimensionPolicy: DimensionPolicy.PRESERVE_NOTHING);
+
+
+    $Debug.log(message: "cylinder");
+    this.camera.moveAndOrientToAGoodVantagePointOf(entity: cylinder);
+    cylinder.setRadius(radius: 1);
+    cylinder.setLength(length: 3);
+    cylinder.setRadius(radius: 0.5);
+    cylinder.setLength(length: 1);
+
+    $Debug.log(message: "cone");
+    cone.setBaseRadius(baseRadius: 1);
+    cone.setLength(length: 3);
+    cone.setBaseRadius(baseRadius: 0.5);
+    cone.setLength(length: 1);
 
     doTogether {
       camera.setPositionRelativeToVehicle(position: camPos);
@@ -35,6 +78,14 @@ class Scene extends SScene {
 
     Position pos <- box2.getPositionRelativeToVehicle();
     Orientation rot <- box2.getOrientationRelativeToVehicle();
+
+    // fade in boxes
+    $Debug.log(message: "opacity");
+    Duration fadeDur <- new Duration(seconds: 0.2);
+    box2.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box3.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box4.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
+    box5.setOpacity(opacity: Portion.WHOLE, duration: fadeDur);
 
     // vehicle
     $Debug.log(message: "vehicle");
@@ -369,13 +420,19 @@ class Scene extends SScene {
     target.setPaint(paint: Color.WHITE, duration: Duration.HALF_SECOND);
   }
 
-  //SGround ground <- new SGround();
+  SGround ground <- new SGround();
   SCamera camera <- new SCamera();
   Box box <- new Box();
   DirectionalBox box2 <- new DirectionalBox();
   DirectionalBox box3 <- new DirectionalBox();
   DirectionalBox box4 <- new DirectionalBox();
   DirectionalBox box5 <- new DirectionalBox();
+  SSphere sphere <- new SSphere();
+  SCylinder cylinder <- new SCylinder();
+  SCone cone <- new SCone();
+  STorus torus <- new STorus();
+  SDisc disc <- new SDisc();
+  SBillboard billboard <- new SBillboard();
 
   void performCustomSetup() {
     this.box.setPositionRelativeToVehicle(position: new Position(x: -0.5, y: 0.0, z: 0.0), duration: Duration.ZERO);
@@ -387,7 +444,7 @@ class Scene extends SScene {
     nose.setVehicle(vehicle: box);
     nose.setSize(size: new Size(width: 0.5, height: 0.5, depth: 0.5), duration: Duration.ZERO);
     nose.setOrientationRelativeToVehicle(orientation: Orientation.IDENTITY, duration: Duration.ZERO);
-    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0, z: -0.5), duration: Duration.ZERO);
+    nose.setPositionRelativeToVehicle(position: new Position(x: 0, y: 0.25, z: -0.5), duration: Duration.ZERO);
     
     box3.setName(name: "box3");
     box3.setVehicle(vehicle: this);
@@ -402,15 +459,33 @@ class Scene extends SScene {
 
     box4.setName(name: "box4");
     box4.setVehicle(vehicle: this);
-    box4.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: -4.0), duration: Duration.ZERO);
+    box4.setPositionRelativeToVehicle(position: new Position(x: -3.0, y: 0.5, z: -4.0), duration: Duration.ZERO);
     box4.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: 1, z: 1).normalize(), angle: new Angle(revolutions: -0.25)), duration: Duration.ZERO);
     box4.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
 
     box5.setName(name: "box5");
     box5.setVehicle(vehicle: this);
-    box5.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.0, z: 5.0), duration: Duration.ZERO);
+    box5.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 1, z: 5.0), duration: Duration.ZERO);
     box5.setOrientationRelativeToVehicle(orientation: new Orientation(axis: new Direction(x: 1, y: -1, z: 1).normalize(), angle: new Angle(revolutions: 0.2)), duration: Duration.ZERO);
     box5.setOpacity(opacity: Portion.NONE, duration: Duration.ZERO);
+
+    sphere.setVehicle(vehicle: this);
+    sphere.setPositionRelativeToVehicle(position: new Position(x: 2.0, y: 0.5, z: -12.0), duration: Duration.ZERO);
+
+    cylinder.setVehicle(vehicle: this);
+    cylinder.setPositionRelativeToVehicle(position: new Position(x: -2.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
+
+    cone.setVehicle(vehicle: this);
+    cone.setPositionRelativeToVehicle(position: new Position(x: 0.0, y: 0.0, z: -12.0), duration: Duration.ZERO);
+
+    torus.setVehicle(vehicle: this);
+    torus.setPositionRelativeToVehicle(position: new Position(x: 4, y: 0.5, z: -12.0), duration: Duration.ZERO);
+
+    disc.setVehicle(vehicle: this);
+    disc.setPositionRelativeToVehicle(position: new Position(x: -4, y: 0.0, z: -12.0), duration: Duration.ZERO);
+
+    billboard.setVehicle(vehicle: this);
+    billboard.setPositionRelativeToVehicle(position: new Position(x: -6, y: 0.0, z: -12.0), duration: Duration.ZERO);
 
   }
 
@@ -424,12 +499,12 @@ class Scene extends SScene {
     this.setAtmosphereColor(color: new Color(red: 0.0, green: 0.0941, blue: 0.294), duration: Duration.ZERO);
     this.setFromAboveLightColor(color: Color.WHITE, duration: Duration.ZERO);
     this.setFromBelowLightColor(color: new Color(red: 0.541, green: 0.0, blue: 0.125), duration: Duration.ZERO);
-    this.setFogDensity(density: new Portion(portion: 0.1), duration: Duration.ZERO);
+    this.setFogDensity(density: new Portion(portion: 0.2), duration: Duration.ZERO);
     this.setName(name: "myScene");
-    //this.ground.setPaint(paint: SurfaceAppearance.DARK_GRASS);
-    //this.ground.setOpacity(opacity: 1.0);
-    //this.ground.setName(name: "ground");
-    //this.ground.setVehicle(vehicle: this);
+    this.ground.setPaint(paint: new ImageSource(resource: "grass"), duration: Duration.ZERO);
+    this.ground.setOpacity(opacity: Portion.WHOLE, duration: Duration.ZERO);
+    this.ground.setName(name: "ground");
+    this.ground.setVehicle(vehicle: this);
     this.camera.setName(name: "camera");
     this.camera.setVehicle(vehicle: this);
     this.camera.setOrientationRelativeToVehicle(orientation: new Orientation(x: 0.0, y: 0.995185, z: 0.0980144, w: 6.12323E-17), duration: Duration.ZERO);
@@ -443,9 +518,9 @@ class Scene extends SScene {
     this.box.setSize(size: new Size(width: 1.0, height: 1.0, depth: 1.0), duration: Duration.ZERO);
   }
 
-  /*SGround getGround() {
+  SGround getGround() {
     return this.ground;
-  }*/
+  }
   SCamera getCamera() {
     return this.camera;
   }

@@ -1,0 +1,40 @@
+class SCylinder extends SShape
+{
+  SCylinder() 
+  {
+    super(resource: $SceneGraph.CYLINDER);
+    this.radius <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().width*0.5);
+    $SceneGraph.bindRadiusProperty(owner: this, property: this.radius, value: this.radius.getValue());
+
+    this.length <- new DimensionProperty(owner: this, sizeProperty: size, value: size.getValue().height);
+    $SceneGraph.bindLengthProperty(owner: this, property: this.length, value: this.length.getValue());
+
+    this.size.setValueChangedListener(listener: (SizeProperty sizeProperty) -> {
+      Size size <- this.size.getValue();
+      this.radius.value <- size.width*0.5;
+      this.length.value <- size.height;
+    });
+  }
+
+  DecimalNumber getRadius() {
+    return this.radius.getValue();
+  }
+
+  void setRadius(DecimalNumber radius, Duration duration <- Default.duration(),  AnimationStyle style <- Default.animationStyle()) 
+  {
+    this.radius.animateValue(endValue: radius, duration: duration, animationStyle: style);
+  }
+
+  DecimalNumber getLength() {
+    return this.length.getValue();
+  }
+
+  void setLength(Number length,
+                 Duration duration <- Default.duration(),
+                 AnimationStyle style <- Default.animationStyle() ) {
+    this.length.animateValue(endValue: length, duration: duration, animationStyle: style);
+  }
+
+  @CompletelyHidden DimensionProperty radius;
+  @CompletelyHidden DimensionProperty length;
+} 
