@@ -27,7 +27,7 @@ namespace Alice.Tweedle
 
             if (!inValue.Type.CanCast(castedType))
             {
-                throw new TweedleRuntimeException("Cannot cast type " + inValue.Type.Name + " to type " + castedType.Name);
+                return TValue.NULL;
             }
 
             return inValue.Type.Cast(ref inValue, castedType);

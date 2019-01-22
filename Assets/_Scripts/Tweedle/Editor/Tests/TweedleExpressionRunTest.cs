@@ -124,6 +124,15 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
+        public void DecimalNumberShouldNotExplicitlyCastToTextString()
+        {
+            Init();
+            RunStatement("Any x <- 3.5555 as TextString;", scope);
+            
+            Assert.IsInstanceOf<TNullType>(scope.GetValue("x").Type);
+        }
+
+        [Test]
         public void DecimalNumberIsInstanceOfNumber()
         {
             Init();
