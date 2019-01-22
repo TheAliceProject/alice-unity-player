@@ -74,7 +74,7 @@ namespace Alice.Tweedle
         }
 
         /// <summary>
-        /// Returns if a value's type is within the given type hierarchy.
+        /// Returns true if a value's type is within the given type hierarchy.
         /// </summary>
         static protected bool InstanceOf(ref TValue inValue, TType inType, bool inbAllowTypeRef)
         {
@@ -87,11 +87,11 @@ namespace Alice.Tweedle
         }
 
         /// <summary>
-        /// Returns if a value's type is within the given type hierarchy.
+        /// Returns true if a value's type is within the given type hierarchy.
         /// </summary>
         static public bool InstanceOf(TValue inValue, TType inType)
         {
-            return IsAssignableFrom(inType, inValue.Type);
+            return InstanceOf(ref inValue, inType, false);
         }
 
         /// <summary>
