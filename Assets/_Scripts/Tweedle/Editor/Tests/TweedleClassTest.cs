@@ -27,6 +27,15 @@ namespace Alice.Tweedle.Parse
             + "  WholeNumber thisless() {\n"
             + "    return threeMore();\n"
             + "  }\n"
+            + "  WholeNumber optionalOrDefaultMore(WholeNumber n <- 3) {\n"
+            + "    return n + x;\n"
+            + "  }\n"
+            + "  WholeNumber optionalOrDefaultMoreVariable(WholeNumber n <- x) {\n"
+            + "    return n + x;\n"
+            + "  }\n"
+            + "  WholeNumber requiredMore(WholeNumber n) {\n"
+            + "    return n + x;\n"
+            + "  }\n"
             + "  WholeNumber doParallelArraySteps() {\n"
             + "    WholeNumber x <- 0;"
             // + "    eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) { x <- x + c; }"
@@ -421,6 +430,85 @@ namespace Alice.Tweedle.Parse
             TValue tested = scope.GetValue("val");
 
             Assert.IsInstanceOf<TWholeNumberType>(tested.Type);
+        }
+
+        [Test]
+        public void MethodWithRequiredArgumentShouldExecuteAndReturn()
+        {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+            ExecuteStatement("WholeNumber val  <- obj.requiredMore(n: 3);");
+            TValue tested = scope.GetValue("val");
+
+            Assert.AreEqual(8, tested.ToInt());
+        }
+
+        [Test]
+        public void MethodWithRequiredArgumentShouldRequireArgument()
+        {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+
+            Assert.Throws<TweedleLinkException>(()=> {
+                ExecuteStatement("WholeNumber val  <- obj.requiredMore();");
+            });
+        }
+
+        [Test]
+        public void MethodShouldNotAllowUnexpectedArgumentNames()
+        {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+
+            Assert.Throws<TweedleLinkException>(()=> {
+                ExecuteStatement("WholeNumber val  <- obj.requiredMore(t: 5);");
+            });
+        }
+
+        [Test]
+        public void MethodWithUnnamedOptionalArgumentShouldUseDefaultValue()
+        {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+            ExecuteStatement("WholeNumber val  <- obj.optionalOrDefaultMore();");
+            TValue tested = scope.GetValue("val");
+
+            Assert.AreEqual(8, tested.ToInt());
+        }
+
+        [Test]
+        public void MethodWithNamedOptionalArgumentShouldUseNamedValue()
+        {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave();");
+            ExecuteStatement("WholeNumber val  <- obj.optionalOrDefaultMore(n: 5);");
+            TValue tested = scope.GetValue("val");
+
+            Assert.AreEqual(10, tested.ToInt());
+        }
+
+        [Test]
+        public void MethodWithUnnamedOptionalArgumentShouldUseDefaultValueFromInvocationScope()
+        {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 4);");
+            ExecuteStatement("WholeNumber x <- 2;");
+            ExecuteStatement("WholeNumber val  <- obj.optionalOrDefaultMoreVariable();");
+            TValue tested = scope.GetValue("val");
+
+            Assert.AreEqual(8, tested.ToInt());
+        }
+
+        [Test]
+        public void MethodWithNamedOptionalArgumentShouldUseNamedValueFromCallingScope()
+        {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 4);");
+            ExecuteStatement("WholeNumber x <- 2;");
+            ExecuteStatement("WholeNumber val  <- obj.optionalOrDefaultMoreVariable(n: x);");
+            TValue tested = scope.GetValue("val");
+
+            Assert.AreEqual(6, tested.ToInt());
         }
     }
 }
