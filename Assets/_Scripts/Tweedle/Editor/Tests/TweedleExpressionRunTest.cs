@@ -106,24 +106,6 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        public void WholeNumberShouldExplicitlyCastToDecimalNumber()
-        {
-            Init();
-            RunStatement("Any x <- 3 as DecimalNumber;", scope);
-            
-            Assert.IsInstanceOf<TDecimalNumberType>(scope.GetValue("x").Type);
-        }
-
-        [Test]
-        public void DecimalNumberShouldExplicitlyCastToWholeNumber()
-        {
-            Init();
-            RunStatement("Any x <- 3.5555 as WholeNumber;", scope);
-            
-            Assert.IsInstanceOf<TWholeNumberType>(scope.GetValue("x").Type);
-        }
-
-        [Test]
         public void DecimalNumberShouldNotExplicitlyCastToTextString()
         {
             Init();
@@ -146,6 +128,15 @@ namespace Alice.Tweedle.Parse
         {
             Init();
             RunStatement("Boolean x <- 3.5 instanceof WholeNumber;", scope);
+            
+            Assert.IsFalse(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void WholeNumberIsNotInstanceOfDecimalNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3 instanceof DecimalNumber;", scope);
             
             Assert.IsFalse(scope.GetValue("x").ToBoolean());
         }

@@ -534,7 +534,7 @@ namespace Alice.Tweedle.Parse
             Init();
             ExecuteStatement("Parent childAsParent <- new Child();");
 
-            Assert.Throws<TweedleRuntimeException>(()=> {
+            Assert.Throws<TweedleLinkException>(()=> {
                 ExecuteStatement("Child childAsChild <- childAsParent;");
             });
         }
@@ -546,6 +546,26 @@ namespace Alice.Tweedle.Parse
             ExecuteStatement("Child child <- new Child();");
             Assert.Throws<TweedleRuntimeException>(()=> {
                 ExecuteStatement("Sibling childAsSibling <- child;");
+            });
+        }
+
+        [Test]
+        public void ChildClassShouldExplicityCastDownToParentClass()
+        {
+            Init();
+            ExecuteStatement("Parent childAsParent <- new Child();");
+            ExecuteStatement("Child childAsChild <- childAsParent as Child;");
+            var tested = scope.GetValue("childAsChild");
+            Assert.IsInstanceOf<TObject>(tested.Object());
+        }
+
+        [Test]
+        public void ChildClassShouldNotExplicityCastToSiblingClass()
+        {
+            Init();
+            ExecuteStatement("Child child <- new Child();");
+            Assert.Throws<TweedleRuntimeException>(()=> {
+                ExecuteStatement("Sibling childAsSibling <- child as Sibling;");
             });
         }
     }
