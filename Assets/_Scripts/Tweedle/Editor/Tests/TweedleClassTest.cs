@@ -72,6 +72,11 @@ namespace Alice.Tweedle.Parse
             + "  return par;\n }\n"
             + "\n}";
 
+        static string sibClass =
+            "class Sibling extends Parent {\n"
+            + "  Sibling()\n{ super();"
+            + "}\n}";
+
         TweedleSystem NewSystem()
         {
             TweedleSystem system = new TweedleSystem();
@@ -79,6 +84,7 @@ namespace Alice.Tweedle.Parse
             assembly.Add(ParseClass(classToHave, assembly));
             assembly.Add(ParseClass(parentClass, assembly));
             assembly.Add(ParseClass(childClass, assembly));
+            assembly.Add(ParseClass(sibClass, assembly));
             system.Link();
             return system;
         }
@@ -509,6 +515,38 @@ namespace Alice.Tweedle.Parse
             TValue tested = scope.GetValue("val");
 
             Assert.AreEqual(6, tested.ToInt());
+        }
+
+        [Test]
+        public void ChildClassShouldImplicityCastUpToParentClass()
+        {
+            Init();
+            ExecuteStatement("Child child <- new Child();");
+            ExecuteStatement("Parent childAsParent <- child;");
+            var tested = scope.GetValue("childAsParent");
+
+            Assert.IsInstanceOf<TObject>(tested.Object());
+        }
+
+        [Test]
+        public void ChildClassShouldNotImplicityCastDownToParentClass()
+        {
+            Init();
+            ExecuteStatement("Parent childAsParent <- new Child();");
+
+            Assert.Throws<TweedleRuntimeException>(()=> {
+                ExecuteStatement("Child childAsChild <- childAsParent;");
+            });
+        }
+
+        [Test]
+        public void ChildClassShouldNotImplicityCastToSiblingClass()
+        {
+            Init();
+            ExecuteStatement("Child child <- new Child();");
+            Assert.Throws<TweedleRuntimeException>(()=> {
+                ExecuteStatement("Sibling childAsSibling <- child;");
+            });
         }
     }
 }
