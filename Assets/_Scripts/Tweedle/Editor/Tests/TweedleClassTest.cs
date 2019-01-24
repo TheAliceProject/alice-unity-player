@@ -529,7 +529,7 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        public void ChildClassShouldNotImplicityCastDownToParentClass()
+        public void ChildClassShouldNotImplicityCastDownFromParentClass()
         {
             Init();
             ExecuteStatement("Parent childAsParent <- new Child();");
@@ -550,7 +550,7 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        public void ChildClassShouldExplicityCastDownToParentClass()
+        public void ChildClassShouldExplicityCastDownFromParentClassIfChildObjectIsOfChildClass()
         {
             Init();
             ExecuteStatement("Parent childAsParent <- new Child();");
