@@ -498,6 +498,7 @@ namespace Alice.Tweedle.Parse
         {
             Init();
             ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 4);");
+            // add local variable with same name as the default argument value member name to the calling scope
             ExecuteStatement("WholeNumber x <- 2;");
             ExecuteStatement("WholeNumber val  <- obj.optionalOrDefaultMoreVariable();");
             TValue tested = scope.GetValue("val");
