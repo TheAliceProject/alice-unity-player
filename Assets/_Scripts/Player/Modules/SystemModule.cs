@@ -9,12 +9,6 @@ namespace Alice.Player.Modules
     static public class SystemModule
     {
         [PInteropMethod]
-        static public bool isInstanceOf(TValue instance, TTypeRef type)
-        {
-            return instance.Type.CanCast(type.Get());
-        }
-
-        [PInteropMethod]
         static public string getClassName(TValue instance)
         {
             return instance.Type.Name;

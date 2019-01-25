@@ -11,7 +11,8 @@ namespace Alice.Tweedle.Parse
 
         private void Init()
         {
-            vm = new TestVirtualMachine(null);
+            vm = new TestVirtualMachine(new TweedleSystem());
+            vm.Library.Link();
             scope = new ExecutionScope("Test", vm);
         }
 
@@ -83,5 +84,102 @@ namespace Alice.Tweedle.Parse
             TValue newVal = scope.GetValue("v");
             Assert.AreEqual(4, newVal.ToInt());
         }
+
+        [Test]
+        public void DecimalNumberNotShouldImplicitlyCastToWholeNumber()
+        {
+            Init();
+            RunStatement("DecimalNumber x <- 3.0;", scope);
+            
+            Assert.Throws<TweedleRuntimeException>(()=> {
+                RunStatement("WholeNumber y <- x;", scope);
+            });
+        }
+
+        [Test]
+        public void WholeNumberShouldImplicitlyCastToDecimalNumber()
+        {
+            Init();
+            RunStatement("WholeNumber x <- 3;", scope);
+            RunStatement("DecimalNumber y <- x;", scope);
+            Assert.IsInstanceOf<TDecimalNumberType>(scope.GetValue("y").Type);
+        }
+
+        [Test]
+        public void DecimalNumberShouldNotExplicitlyCastToTextString()
+        {
+            Init();
+            Assert.Throws<TweedleRuntimeException>(()=> {
+                RunStatement("Any x <- 3.5555 as TextString;", scope);
+            });
+        }
+
+        [Test]
+        public void DecimalNumberShouldBeInstanceOfNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3.5 instanceof Number;", scope);
+            Assert.IsTrue(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void DecimalNumberShouldNotBeInstanceOfWholeNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3.5 instanceof WholeNumber;", scope);
+            
+            Assert.IsFalse(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void WholeNumberShouldNotBeInstanceOfDecimalNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3 instanceof DecimalNumber;", scope);
+            
+            Assert.IsFalse(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void ArithmeticExpressionShouldFollowNormalOrderOfOperations()
+        {
+            Init();
+            TValue tested = RunExpression("3 - 4 * 3 + 12 / 3 + 6 % 5");
+            Assert.AreEqual(-4, tested.ToInt(), "The VM should have returned -4.");
+        }
+
+        [Test]
+        public void ConcatOperatorShouldHappenAfterArithmeticOperators()
+        {
+            Init();
+            TValue tested = RunExpression("\"\" .. 3 + 4");
+            Assert.AreEqual("7", tested.ToTextString(), "The VM should have returned a text string");
+        }
+
+        [Test]
+        public void InstanceofOperatorShouldHappenAfterAsOperator()
+        {
+            Init();
+            RunStatement("Boolean x <- 3 as DecimalNumber instanceof WholeNumber;", scope);
+            Assert.IsFalse(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void AsOperatorShouldHappenBeforeArithmeticOperators()
+        {
+            Init();
+            RunStatement("Boolean x <- 3 instanceof DecimalNumber;", scope);
+            TValue tested = RunExpression("4 + 3.6 as WholeNumber", scope);
+            Assert.AreEqual(7, tested.ToInt(), "The VM should have returned 7");
+        }
+
+        [Test]
+        public void InstanceofOperatorShouldHappenBeforeEqualityOperatorsAndAfterOtherComparisonOperators()
+        {
+            Init();
+            RunStatement("Boolean x <- 3 > 5 instanceof Boolean;", scope);
+            Assert.IsTrue(scope.GetValue("x").ToBoolean());
+        }
+
     }
 }

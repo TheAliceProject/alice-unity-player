@@ -592,5 +592,19 @@ namespace Alice.Tweedle.Parse
             ITweedleExpression tested = ParseExpression("new TextString[] {this.sphere, this.walrus}");
             Assert.IsInstanceOf<ArrayInitializer>(tested, "The parser should have returned a TweedleArrayInitializer.");
         }
+
+        [Test]
+        public void AnInstanceOfExpressionShouldBeCreated()
+        {
+            ITweedleExpression tested = ParseExpression("this.sphere instanceof SSphere");
+            Assert.IsInstanceOf<InstanceOfExpression>(tested, "The parser should have returned an InstanceOfExpression.");
+        }
+
+        [Test]
+        public void ACastExpressionShouldBeCreated()
+        {
+            ITweedleExpression tested = ParseExpression("this.sphere as SThing");
+            Assert.IsInstanceOf<CastExpression>(tested, "The parser should have returned a CastExpression.");
+        }
     }
 }

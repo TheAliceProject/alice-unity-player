@@ -12,6 +12,7 @@ namespace Alice.Tweedle.Interop
 
         // Basic conversions
         static private readonly IntPtr TYPEPTR_TVALUE = GetTypePtr<TValue>();
+        static private readonly IntPtr TYPEPTR_TTYPE = GetTypePtr<TType>();
         static private readonly IntPtr TYPEPTR_TTYPEREF = GetTypePtr<TTypeRef>();
 
         static private readonly IntPtr TYPEPTR_VOID = typeof(void).TypeHandle.Value;
@@ -133,6 +134,11 @@ namespace Alice.Tweedle.Interop
                 outValue = TValue.FromType((TTypeRef)inObject);
                 return true;
             }
+            else if (inTypeHandle == TYPEPTR_TTYPE)
+            {
+                outValue = TValue.FromType((TType)inObject);
+                return true;
+            }
             else
             {
                 outValue = TValue.UNDEFINED;
@@ -170,6 +176,10 @@ namespace Alice.Tweedle.Interop
             if (typePtr == TYPEPTR_TVALUE)
             {
                 return (object)inValue;
+            }
+            if (typePtr == TYPEPTR_TTYPE)
+            {
+                return ((TTypeRef) inValue.ToPObject()).Get(inScope);
             }
 
             if (inType.IsArray)
@@ -240,6 +250,10 @@ namespace Alice.Tweedle.Interop
                 return TBuiltInTypes.ANY;
             }
             else if (typePtr == TYPEPTR_TTYPEREF)
+            {
+                return TBuiltInTypes.TYPE_REF;
+            }
+            else if (typePtr == TYPEPTR_TTYPE)
             {
                 return TBuiltInTypes.TYPE_REF;
             }

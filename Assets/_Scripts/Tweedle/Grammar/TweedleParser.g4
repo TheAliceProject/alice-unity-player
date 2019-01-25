@@ -233,14 +233,16 @@ expression
     | expression bop='.' (IDENTIFIER | methodCall)
     | expression bracket='[' expression ']'
     | NEW creator
+    | expression bop=AS typeType
     | expression lambdaCall
     | methodCall
     | prefix=('+'|'-') expression
     | prefix='!' expression
     | expression bop=('*'|'/'|'%') expression
-    | expression bop='..' expression
     | expression bop=('+'|'-') expression
+    | expression bop='..' expression
     | expression bop=('<=' | '>=' | '>' | '<') expression
+    | expression bop=INSTANCEOF typeType
     | expression bop=('==' | '!=') expression
     | expression bop='&&' expression
     | expression bop='||' expression

@@ -1,4 +1,4 @@
-// Generated from f:\Beauchesne\Filament\Projects\ALICE\alice-unity-player\Assets\_Scripts\Tweedle\Grammar\TweedleParser.g4 by ANTLR 4.7.1
+// Generated from c:\Users\jkieffer.FILAMENT\Documents\Repos\alice-unity-player\Assets\_Scripts\Tweedle\Grammar\TweedleParser.g4 by ANTLR 4.7.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -1210,9 +1210,14 @@ public class TweedleParser extends Parser {
 				arrayInitializer();
 				}
 				break;
+			case BOOLEAN:
+			case DECIMAL_NUMBER:
 			case NEW:
+			case NUMBER:
 			case SUPER:
 			case THIS:
+			case TEXT_STRING:
+			case WHOLE_NUMBER:
 			case DECIMAL_LITERAL:
 			case FLOAT_LITERAL:
 			case BOOL_LITERAL:
@@ -1266,7 +1271,7 @@ public class TweedleParser extends Parser {
 			setState(245);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NEW) | (1L << SUPER) | (1L << THIS) | (1L << DECIMAL_LITERAL) | (1L << FLOAT_LITERAL) | (1L << BOOL_LITERAL) | (1L << STRING_LITERAL) | (1L << NULL_LITERAL) | (1L << LPAREN) | (1L << BANG) | (1L << ADD) | (1L << SUB))) != 0) || _la==IDENTIFIER) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << DECIMAL_NUMBER) | (1L << NEW) | (1L << NUMBER) | (1L << SUPER) | (1L << THIS) | (1L << TEXT_STRING) | (1L << WHOLE_NUMBER) | (1L << DECIMAL_LITERAL) | (1L << FLOAT_LITERAL) | (1L << BOOL_LITERAL) | (1L << STRING_LITERAL) | (1L << NULL_LITERAL) | (1L << LPAREN) | (1L << BANG) | (1L << ADD) | (1L << SUB))) != 0) || _la==IDENTIFIER) {
 				{
 				setState(244);
 				unlabeledExpressionList();
@@ -1978,7 +1983,7 @@ public class TweedleParser extends Parser {
 				setState(367);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << NEW) | (1L << SUPER) | (1L << THIS) | (1L << DECIMAL_LITERAL) | (1L << FLOAT_LITERAL) | (1L << BOOL_LITERAL) | (1L << STRING_LITERAL) | (1L << NULL_LITERAL) | (1L << LPAREN) | (1L << BANG) | (1L << ADD) | (1L << SUB))) != 0) || _la==IDENTIFIER) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << DECIMAL_NUMBER) | (1L << NEW) | (1L << NUMBER) | (1L << SUPER) | (1L << THIS) | (1L << TEXT_STRING) | (1L << WHOLE_NUMBER) | (1L << DECIMAL_LITERAL) | (1L << FLOAT_LITERAL) | (1L << BOOL_LITERAL) | (1L << STRING_LITERAL) | (1L << NULL_LITERAL) | (1L << LPAREN) | (1L << BANG) | (1L << ADD) | (1L << SUB))) != 0) || _la==IDENTIFIER) {
 					{
 					setState(366);
 					expression(0);
@@ -1989,9 +1994,14 @@ public class TweedleParser extends Parser {
 				match(SEMI);
 				}
 				break;
+			case BOOLEAN:
+			case DECIMAL_NUMBER:
 			case NEW:
+			case NUMBER:
 			case SUPER:
 			case THIS:
+			case TEXT_STRING:
+			case WHOLE_NUMBER:
 			case DECIMAL_LITERAL:
 			case FLOAT_LITERAL:
 			case BOOL_LITERAL:
@@ -2891,6 +2901,9 @@ public class TweedleParser extends Parser {
 			return getRuleContext(LiteralContext.class,0);
 		}
 		public TerminalNode IDENTIFIER() { return getToken(TweedleParser.IDENTIFIER, 0); }
+		public PrimitiveTypeContext primitiveType() {
+			return getRuleContext(PrimitiveTypeContext.class,0);
+		}
 		public PrimaryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2901,7 +2914,7 @@ public class TweedleParser extends Parser {
 		PrimaryContext _localctx = new PrimaryContext(_ctx, getState());
 		enterRule(_localctx, 90, RULE_primary);
 		try {
-			setState(520);
+			setState(521);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LPAREN:
@@ -2949,6 +2962,17 @@ public class TweedleParser extends Parser {
 				match(IDENTIFIER);
 				}
 				break;
+			case BOOLEAN:
+			case DECIMAL_NUMBER:
+			case NUMBER:
+			case TEXT_STRING:
+			case WHOLE_NUMBER:
+				enterOuterAlt(_localctx, 6);
+				{
+				setState(520);
+				primitiveType();
+				}
+				break;
 			default:
 				throw new NoViableAltException(this);
 			}
@@ -2986,20 +3010,20 @@ public class TweedleParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(522);
+			setState(523);
 			createdName();
-			setState(525);
+			setState(526);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LBRACK:
 				{
-				setState(523);
+				setState(524);
 				arrayCreatorRest();
 				}
 				break;
 			case LPAREN:
 				{
-				setState(524);
+				setState(525);
 				classCreatorRest();
 				}
 				break;
@@ -3034,13 +3058,13 @@ public class TweedleParser extends Parser {
 		CreatedNameContext _localctx = new CreatedNameContext(_ctx, getState());
 		enterRule(_localctx, 94, RULE_createdName);
 		try {
-			setState(529);
+			setState(530);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case IDENTIFIER:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(527);
+				setState(528);
 				match(IDENTIFIER);
 				}
 				break;
@@ -3051,7 +3075,7 @@ public class TweedleParser extends Parser {
 			case WHOLE_NUMBER:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(528);
+				setState(529);
 				primitiveType();
 				}
 				break;
@@ -3089,22 +3113,27 @@ public class TweedleParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(531);
+			setState(532);
 			match(LBRACK);
-			setState(537);
+			setState(538);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case RBRACK:
 				{
-				setState(532);
-				match(RBRACK);
 				setState(533);
+				match(RBRACK);
+				setState(534);
 				arrayInitializer();
 				}
 				break;
+			case BOOLEAN:
+			case DECIMAL_NUMBER:
 			case NEW:
+			case NUMBER:
 			case SUPER:
 			case THIS:
+			case TEXT_STRING:
+			case WHOLE_NUMBER:
 			case DECIMAL_LITERAL:
 			case FLOAT_LITERAL:
 			case BOOL_LITERAL:
@@ -3116,9 +3145,9 @@ public class TweedleParser extends Parser {
 			case SUB:
 			case IDENTIFIER:
 				{
-				setState(534);
-				expression(0);
 				setState(535);
+				expression(0);
+				setState(536);
 				match(RBRACK);
 				}
 				break;
@@ -3154,7 +3183,7 @@ public class TweedleParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(539);
+			setState(540);
 			arguments();
 			}
 		}
@@ -3190,7 +3219,7 @@ public class TweedleParser extends Parser {
 		enterRule(_localctx, 100, RULE_typeType);
 		int _la;
 		try {
-			setState(550);
+			setState(551);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BOOLEAN:
@@ -3201,12 +3230,12 @@ public class TweedleParser extends Parser {
 			case IDENTIFIER:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(543);
+				setState(544);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case IDENTIFIER:
 					{
-					setState(541);
+					setState(542);
 					classType();
 					}
 					break;
@@ -3216,21 +3245,21 @@ public class TweedleParser extends Parser {
 				case TEXT_STRING:
 				case WHOLE_NUMBER:
 					{
-					setState(542);
+					setState(543);
 					primitiveType();
 					}
 					break;
 				default:
 					throw new NoViableAltException(this);
 				}
-				setState(547);
+				setState(548);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==LBRACK) {
 					{
-					setState(545);
-					match(LBRACK);
 					setState(546);
+					match(LBRACK);
+					setState(547);
 					match(RBRACK);
 					}
 				}
@@ -3240,7 +3269,7 @@ public class TweedleParser extends Parser {
 			case LT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(549);
+				setState(550);
 				lambdaTypeSignature();
 				}
 				break;
@@ -3278,7 +3307,7 @@ public class TweedleParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(552);
+			setState(553);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOLEAN) | (1L << DECIMAL_NUMBER) | (1L << NUMBER) | (1L << TEXT_STRING) | (1L << WHOLE_NUMBER))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -3316,29 +3345,29 @@ public class TweedleParser extends Parser {
 		SuperSuffixContext _localctx = new SuperSuffixContext(_ctx, getState());
 		enterRule(_localctx, 104, RULE_superSuffix);
 		try {
-			setState(560);
+			setState(561);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case LPAREN:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(554);
+				setState(555);
 				arguments();
 				}
 				break;
 			case DOT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(555);
-				match(DOT);
 				setState(556);
+				match(DOT);
+				setState(557);
 				match(IDENTIFIER);
-				setState(558);
+				setState(559);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,55,_ctx) ) {
 				case 1:
 					{
-					setState(557);
+					setState(558);
 					arguments();
 					}
 					break;
@@ -3377,19 +3406,19 @@ public class TweedleParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(562);
+			setState(563);
 			match(LPAREN);
-			setState(564);
+			setState(565);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==IDENTIFIER) {
 				{
-				setState(563);
+				setState(564);
 				labeledExpressionList();
 				}
 			}
 
-			setState(566);
+			setState(567);
 			match(RPAREN);
 			}
 		}
@@ -3440,7 +3469,7 @@ public class TweedleParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\\\u023b\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\\\u023c\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -3476,25 +3505,25 @@ public class TweedleParser extends Parser {
 		"*\3*\3*\3*\7*\u01d6\n*\f*\16*\u01d9\13*\3+\3+\3+\3+\3,\3,\3,\3,\7,\u01e3"+
 		"\n,\f,\16,\u01e6\13,\5,\u01e8\n,\3,\3,\3-\3-\3-\3-\3-\3-\3.\3.\3.\3.\3"+
 		".\3.\3.\7.\u01f9\n.\f.\16.\u01fc\13.\3.\3.\5.\u0200\n.\3/\3/\3/\3/\3/"+
-		"\3/\3/\3/\3/\5/\u020b\n/\3\60\3\60\3\60\5\60\u0210\n\60\3\61\3\61\5\61"+
-		"\u0214\n\61\3\62\3\62\3\62\3\62\3\62\3\62\5\62\u021c\n\62\3\63\3\63\3"+
-		"\64\3\64\5\64\u0222\n\64\3\64\3\64\5\64\u0226\n\64\3\64\5\64\u0229\n\64"+
-		"\3\65\3\65\3\66\3\66\3\66\3\66\5\66\u0231\n\66\5\66\u0233\n\66\3\67\3"+
-		"\67\5\67\u0237\n\67\3\67\3\67\3\67\2\3R8\2\4\6\b\n\f\16\20\22\24\26\30"+
-		"\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjl\2\t\5\2\20"+
-		"\20\27\27\35\35\3\2!%\3\2>?\4\2@AEE\4\2\60\61\678\4\2\66\6699\7\2\3\3"+
-		"\7\7\26\26\34\34  \2\u0259\2v\3\2\2\2\4z\3\2\2\2\6|\3\2\2\2\b\177\3\2"+
-		"\2\2\n\u0081\3\2\2\2\f\u008d\3\2\2\2\16\u008f\3\2\2\2\20\u009d\3\2\2\2"+
-		"\22\u00a5\3\2\2\2\24\u00a9\3\2\2\2\26\u00b0\3\2\2\2\30\u00c1\3\2\2\2\32"+
-		"\u00c6\3\2\2\2\34\u00c8\3\2\2\2\36\u00d6\3\2\2\2 \u00da\3\2\2\2\"\u00dc"+
+		"\3/\3/\3/\3/\3/\5/\u020c\n/\3\60\3\60\3\60\5\60\u0211\n\60\3\61\3\61\5"+
+		"\61\u0215\n\61\3\62\3\62\3\62\3\62\3\62\3\62\5\62\u021d\n\62\3\63\3\63"+
+		"\3\64\3\64\5\64\u0223\n\64\3\64\3\64\5\64\u0227\n\64\3\64\5\64\u022a\n"+
+		"\64\3\65\3\65\3\66\3\66\3\66\3\66\5\66\u0232\n\66\5\66\u0234\n\66\3\67"+
+		"\3\67\5\67\u0238\n\67\3\67\3\67\3\67\2\3R8\2\4\6\b\n\f\16\20\22\24\26"+
+		"\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjl\2\t\5\2"+
+		"\20\20\27\27\35\35\3\2!%\3\2>?\4\2@AEE\4\2\60\61\678\4\2\66\6699\7\2\3"+
+		"\3\7\7\26\26\34\34  \2\u025b\2v\3\2\2\2\4z\3\2\2\2\6|\3\2\2\2\b\177\3"+
+		"\2\2\2\n\u0081\3\2\2\2\f\u008d\3\2\2\2\16\u008f\3\2\2\2\20\u009d\3\2\2"+
+		"\2\22\u00a5\3\2\2\2\24\u00a9\3\2\2\2\26\u00b0\3\2\2\2\30\u00c1\3\2\2\2"+
+		"\32\u00c6\3\2\2\2\34\u00c8\3\2\2\2\36\u00d6\3\2\2\2 \u00da\3\2\2\2\"\u00dc"+
 		"\3\2\2\2$\u00e0\3\2\2\2&\u00e4\3\2\2\2(\u00e9\3\2\2\2*\u00f3\3\2\2\2,"+
 		"\u00f5\3\2\2\2.\u00fb\3\2\2\2\60\u00fd\3\2\2\2\62\u0123\3\2\2\2\64\u0125"+
 		"\3\2\2\2\66\u0128\3\2\2\28\u012d\3\2\2\2:\u0131\3\2\2\2<\u0133\3\2\2\2"+
 		">\u0144\3\2\2\2@\u0147\3\2\2\2B\u0177\3\2\2\2D\u0179\3\2\2\2F\u017e\3"+
 		"\2\2\2H\u0182\3\2\2\2J\u018a\3\2\2\2L\u0192\3\2\2\2N\u0196\3\2\2\2P\u019d"+
 		"\3\2\2\2R\u01ae\3\2\2\2T\u01da\3\2\2\2V\u01de\3\2\2\2X\u01eb\3\2\2\2Z"+
-		"\u01ff\3\2\2\2\\\u020a\3\2\2\2^\u020c\3\2\2\2`\u0213\3\2\2\2b\u0215\3"+
-		"\2\2\2d\u021d\3\2\2\2f\u0228\3\2\2\2h\u022a\3\2\2\2j\u0232\3\2\2\2l\u0234"+
+		"\u01ff\3\2\2\2\\\u020b\3\2\2\2^\u020d\3\2\2\2`\u0214\3\2\2\2b\u0216\3"+
+		"\2\2\2d\u021e\3\2\2\2f\u0229\3\2\2\2h\u022b\3\2\2\2j\u0233\3\2\2\2l\u0235"+
 		"\3\2\2\2np\5\6\4\2on\3\2\2\2op\3\2\2\2ps\3\2\2\2qt\5\n\6\2rt\5\16\b\2"+
 		"sq\3\2\2\2sr\3\2\2\2tw\3\2\2\2uw\7,\2\2vo\3\2\2\2vu\3\2\2\2w\3\3\2\2\2"+
 		"x{\5\6\4\2y{\7\31\2\2zx\3\2\2\2zy\3\2\2\2{\5\3\2\2\2|}\7S\2\2}~\5\b\5"+
@@ -3623,29 +3652,30 @@ public class TweedleParser extends Parser {
 		"\3\2\2\2\u01fa\u01fb\3\2\2\2\u01fb\u01fd\3\2\2\2\u01fc\u01fa\3\2\2\2\u01fd"+
 		"\u01fe\7\'\2\2\u01fe\u0200\3\2\2\2\u01ff\u01f1\3\2\2\2\u01ff\u01f3\3\2"+
 		"\2\2\u01ff\u01f4\3\2\2\2\u0200[\3\2\2\2\u0201\u0202\7&\2\2\u0202\u0203"+
-		"\5R*\2\u0203\u0204\7\'\2\2\u0204\u020b\3\2\2\2\u0205\u020b\7\33\2\2\u0206"+
-		"\u0207\7\32\2\2\u0207\u020b\5j\66\2\u0208\u020b\5:\36\2\u0209\u020b\7"+
-		"\\\2\2\u020a\u0201\3\2\2\2\u020a\u0205\3\2\2\2\u020a\u0206\3\2\2\2\u020a"+
-		"\u0208\3\2\2\2\u020a\u0209\3\2\2\2\u020b]\3\2\2\2\u020c\u020f\5`\61\2"+
-		"\u020d\u0210\5b\62\2\u020e\u0210\5d\63\2\u020f\u020d\3\2\2\2\u020f\u020e"+
-		"\3\2\2\2\u0210_\3\2\2\2\u0211\u0214\7\\\2\2\u0212\u0214\5h\65\2\u0213"+
-		"\u0211\3\2\2\2\u0213\u0212\3\2\2\2\u0214a\3\2\2\2\u0215\u021b\7*\2\2\u0216"+
-		"\u0217\7+\2\2\u0217\u021c\5,\27\2\u0218\u0219\5R*\2\u0219\u021a\7+\2\2"+
-		"\u021a\u021c\3\2\2\2\u021b\u0216\3\2\2\2\u021b\u0218\3\2\2\2\u021cc\3"+
-		"\2\2\2\u021d\u021e\5l\67\2\u021ee\3\2\2\2\u021f\u0222\5.\30\2\u0220\u0222"+
-		"\5h\65\2\u0221\u021f\3\2\2\2\u0221\u0220\3\2\2\2\u0222\u0225\3\2\2\2\u0223"+
-		"\u0224\7*\2\2\u0224\u0226\7+\2\2\u0225\u0223\3\2\2\2\u0225\u0226\3\2\2"+
-		"\2\u0226\u0229\3\2\2\2\u0227\u0229\5X-\2\u0228\u0221\3\2\2\2\u0228\u0227"+
-		"\3\2\2\2\u0229g\3\2\2\2\u022a\u022b\t\b\2\2\u022bi\3\2\2\2\u022c\u0233"+
-		"\5l\67\2\u022d\u022e\7.\2\2\u022e\u0230\7\\\2\2\u022f\u0231\5l\67\2\u0230"+
-		"\u022f\3\2\2\2\u0230\u0231\3\2\2\2\u0231\u0233\3\2\2\2\u0232\u022c\3\2"+
-		"\2\2\u0232\u022d\3\2\2\2\u0233k\3\2\2\2\u0234\u0236\7&\2\2\u0235\u0237"+
-		"\5J&\2\u0236\u0235\3\2\2\2\u0236\u0237\3\2\2\2\u0237\u0238\3\2\2\2\u0238"+
-		"\u0239\7\'\2\2\u0239m\3\2\2\2<osvz\u0085\u0089\u0093\u0096\u0099\u00a2"+
-		"\u00a7\u00ad\u00b4\u00bd\u00c1\u00c6\u00cf\u00d6\u00da\u00e7\u00ee\u00f3"+
-		"\u00f7\u00ff\u0108\u010f\u0114\u011b\u0120\u0123\u0137\u0144\u0147\u0159"+
-		"\u0171\u0177\u0187\u018f\u0199\u01a0\u01ae\u01cc\u01d5\u01d7\u01e4\u01e7"+
-		"\u01fa\u01ff\u020a\u020f\u0213\u021b\u0221\u0225\u0228\u0230\u0232\u0236";
+		"\5R*\2\u0203\u0204\7\'\2\2\u0204\u020c\3\2\2\2\u0205\u020c\7\33\2\2\u0206"+
+		"\u0207\7\32\2\2\u0207\u020c\5j\66\2\u0208\u020c\5:\36\2\u0209\u020c\7"+
+		"\\\2\2\u020a\u020c\5h\65\2\u020b\u0201\3\2\2\2\u020b\u0205\3\2\2\2\u020b"+
+		"\u0206\3\2\2\2\u020b\u0208\3\2\2\2\u020b\u0209\3\2\2\2\u020b\u020a\3\2"+
+		"\2\2\u020c]\3\2\2\2\u020d\u0210\5`\61\2\u020e\u0211\5b\62\2\u020f\u0211"+
+		"\5d\63\2\u0210\u020e\3\2\2\2\u0210\u020f\3\2\2\2\u0211_\3\2\2\2\u0212"+
+		"\u0215\7\\\2\2\u0213\u0215\5h\65\2\u0214\u0212\3\2\2\2\u0214\u0213\3\2"+
+		"\2\2\u0215a\3\2\2\2\u0216\u021c\7*\2\2\u0217\u0218\7+\2\2\u0218\u021d"+
+		"\5,\27\2\u0219\u021a\5R*\2\u021a\u021b\7+\2\2\u021b\u021d\3\2\2\2\u021c"+
+		"\u0217\3\2\2\2\u021c\u0219\3\2\2\2\u021dc\3\2\2\2\u021e\u021f\5l\67\2"+
+		"\u021fe\3\2\2\2\u0220\u0223\5.\30\2\u0221\u0223\5h\65\2\u0222\u0220\3"+
+		"\2\2\2\u0222\u0221\3\2\2\2\u0223\u0226\3\2\2\2\u0224\u0225\7*\2\2\u0225"+
+		"\u0227\7+\2\2\u0226\u0224\3\2\2\2\u0226\u0227\3\2\2\2\u0227\u022a\3\2"+
+		"\2\2\u0228\u022a\5X-\2\u0229\u0222\3\2\2\2\u0229\u0228\3\2\2\2\u022ag"+
+		"\3\2\2\2\u022b\u022c\t\b\2\2\u022ci\3\2\2\2\u022d\u0234\5l\67\2\u022e"+
+		"\u022f\7.\2\2\u022f\u0231\7\\\2\2\u0230\u0232\5l\67\2\u0231\u0230\3\2"+
+		"\2\2\u0231\u0232\3\2\2\2\u0232\u0234\3\2\2\2\u0233\u022d\3\2\2\2\u0233"+
+		"\u022e\3\2\2\2\u0234k\3\2\2\2\u0235\u0237\7&\2\2\u0236\u0238\5J&\2\u0237"+
+		"\u0236\3\2\2\2\u0237\u0238\3\2\2\2\u0238\u0239\3\2\2\2\u0239\u023a\7\'"+
+		"\2\2\u023am\3\2\2\2<osvz\u0085\u0089\u0093\u0096\u0099\u00a2\u00a7\u00ad"+
+		"\u00b4\u00bd\u00c1\u00c6\u00cf\u00d6\u00da\u00e7\u00ee\u00f3\u00f7\u00ff"+
+		"\u0108\u010f\u0114\u011b\u0120\u0123\u0137\u0144\u0147\u0159\u0171\u0177"+
+		"\u0187\u018f\u0199\u01a0\u01ae\u01cc\u01d5\u01d7\u01e4\u01e7\u01fa\u01ff"+
+		"\u020b\u0210\u0214\u021c\u0222\u0226\u0229\u0231\u0233\u0237";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
