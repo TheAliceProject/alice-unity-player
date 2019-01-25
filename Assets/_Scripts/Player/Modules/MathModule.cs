@@ -26,7 +26,6 @@ namespace Alice.Player.Modules
         [PInteropField]
         public const double REV2RAD = Math.PI*2;
 
-
         [PInteropMethod]
         static public double sqrt(double number) {
             return Math.Sqrt(number);
@@ -48,8 +47,33 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        static public double clamp(double number, double min, double max) {
-            return Math.Min(Math.Max(number, min), max);
+        static public int roundToInteger(double number) {
+            return Convert.ToInt32(Math.Round(number));
+        }
+
+        [PInteropMethod]
+        static public int floorToInteger(double number) {
+            return Convert.ToInt32(Math.Floor(number));
+        }
+
+        [PInteropMethod]
+        static public int ceilingToInteger(double number) {
+            return Convert.ToInt32(Math.Ceiling(number));
+        }
+
+        [PInteropMethod]
+        static public double round(double number) {
+            return Math.Round(number);
+        }
+
+        [PInteropMethod]
+        static public double floor(double number) {
+            return Math.Floor(number);
+        }
+
+        [PInteropMethod]
+        static public double ceiling(double number) {
+            return Math.Ceiling(number);
         }
     }
 }

@@ -25,12 +25,12 @@ namespace Alice.Tweedle
         {
             TType castedType = m_TypeRef.Get();
 
-            if (!inValue.Type.CanCast(castedType))
+            if (!inValue.Type.CanCastExplicitly(castedType))
             {
                 throw new TweedleRuntimeException("Cannot cast type " + inValue.Type.Name + " to type " + castedType.Name);
             }
 
-            return inValue.Type.Cast(ref inValue, castedType);
+            return inValue.Type.CastExplicitly(ref inValue, castedType);
         }
     }
 }
