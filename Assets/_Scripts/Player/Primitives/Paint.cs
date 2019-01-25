@@ -16,9 +16,9 @@ namespace Alice.Player.Primitives
         [PInteropField]
         public bool isImage { get { return PaintType == PaintTypeID.ImageSource; } }
         [PInteropField]
-        public abstract double width { get; }
+        public abstract int width { get; }
         [PInteropField]
-        public abstract double height { get; }
+        public abstract int height { get; }
         [PInteropMethod]
         public abstract bool equals(Paint other);
         [PInteropMethod]

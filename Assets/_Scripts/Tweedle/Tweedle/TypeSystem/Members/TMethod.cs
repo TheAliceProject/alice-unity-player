@@ -179,7 +179,7 @@ namespace Alice.Tweedle
                     TParameter optionalParam = OptionalParams[i];
                     if (paramNameSet.Add(optionalParam.Name))
                     {
-                        ioMain.AddStep(ArgumentStep(inScope, optionalParam, optionalParam.Initializer));
+                        ioMain.AddStep(DefaultValueArgumentStep(inScope, optionalParam, optionalParam.Initializer));
                     }
                 }
             }
@@ -191,6 +191,18 @@ namespace Alice.Tweedle
             ExecutionStep storeStep = new ValueComputationStep(
                 "Arg",
                 inScope.callingScope,
+                arg => inScope.SetLocalValue(inArgDeclaration, arg)
+            );
+            argStep.OnCompletionNotify(storeStep);
+            return argStep;
+        }
+
+        private ExecutionStep DefaultValueArgumentStep(InvocationScope inScope, TValueHolderDeclaration inArgDeclaration, ITweedleExpression inExpression)
+        {
+            ExecutionStep argStep = inExpression.AsStep(inScope);
+            ExecutionStep storeStep = new ValueComputationStep(
+                "Arg",
+                inScope,
                 arg => inScope.SetLocalValue(inArgDeclaration, arg)
             );
             argStep.OnCompletionNotify(storeStep);

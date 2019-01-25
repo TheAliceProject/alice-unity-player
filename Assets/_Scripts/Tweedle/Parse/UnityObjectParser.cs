@@ -10,6 +10,8 @@ namespace Alice.Tweedle.Parse
     {
         static string project_ext = "a3p";
 
+        public bool dumpTypeOutlines = false;
+
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
         private Coroutine m_QueueProcessor;
@@ -44,7 +46,12 @@ namespace Alice.Tweedle.Parse
             }
             
             m_System.Link();
-            m_System.DumpTypes();
+
+            if (dumpTypeOutlines)
+            {
+                m_System.DumpTypes();
+            }
+
             m_System.QueueProgramMain(m_VM);
 
             StartQueueProcessing();

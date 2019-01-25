@@ -95,7 +95,22 @@ namespace Alice.Tweedle
 
         #endregion // Lifecycle
 
-        #region Tweedle Casting
+        #region Tweedle Explicit Casting
+
+        public override bool CanCastExplicitly(TType inType)
+        {
+            return inType == TBuiltInTypes.WHOLE_NUMBER || base.CanCast(inType);
+        }
+
+        public override TValue CastExplicitly(ref TValue inValue, TType inType)
+        {
+            if (inType == TBuiltInTypes.WHOLE_NUMBER)
+            {
+                return TValue.FromInt((int)inValue.RawNumber());
+            }
+
+            return base.CastExplicitly(ref inValue, inType);
+        }
 
         #endregion // Tweedle Casting
 

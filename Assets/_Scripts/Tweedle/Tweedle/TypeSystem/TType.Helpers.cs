@@ -64,18 +64,19 @@ namespace Alice.Tweedle
             TType type = inSource;
             while(type != null)
             {
-                if (type == inSource)
+                if (type == inTarget)
                     return true;
-                type = inSource.SuperType.Get();
+                
+                type = type.SuperType?.Get();
             }
 
-            return inSource == TBuiltInTypes.ANY;
+            return inTarget == TBuiltInTypes.ANY;
         }
 
         /// <summary>
-        /// Returns if a value's type is within the given type hierarchy.
+        /// Returns true if a value's type is within the given type hierarchy.
         /// </summary>
-        static protected bool InstanceOf(ref TValue inValue, TType inType, bool inbAllowTypeRef = true)
+        static protected bool InstanceOf(ref TValue inValue, TType inType, bool inbAllowTypeRef)
         {
             TType type = inValue.Type;
             if (type == inType)
@@ -83,6 +84,14 @@ namespace Alice.Tweedle
             if (inbAllowTypeRef && type == TBuiltInTypes.TYPE_REF)
                 type = inValue.TypeRef().Get();
             return IsAssignableFrom(inType, type);
+        }
+
+        /// <summary>
+        /// Returns true if a value's type is within the given type hierarchy.
+        /// </summary>
+        static public bool InstanceOf(TValue inValue, TType inType)
+        {
+            return InstanceOf(ref inValue, inType, false);
         }
 
         /// <summary>

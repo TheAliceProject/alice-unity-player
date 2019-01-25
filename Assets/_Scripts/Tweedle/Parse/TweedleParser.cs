@@ -341,6 +341,20 @@ namespace Alice.Tweedle.Parse
                         case "<-":
                             expressions = TypedExpression(context, null);
                             return new AssignmentExpression(expressions[0], expressions[1]);
+                        case "as":
+                            {
+                                ITweedleExpression exp;
+                                TTypeRef type;
+                                CastingExpressions(context, out exp, out type);
+                                return new CastExpression(exp, type);
+                            }
+                        case "instanceof":
+                            {
+                                ITweedleExpression exp;
+                                TTypeRef type;
+                                CastingExpressions(context, out exp, out type);
+                                return new InstanceOfExpression(exp, type);
+                            }
                         default:
                             throw new System.Exception("Binary operation not found.");
                     }
@@ -533,6 +547,13 @@ namespace Alice.Tweedle.Parse
             {
                 ExpressionVisitor expVisitor = new ExpressionVisitor(assembly, type);
                 return context.expression().Select(exp => exp.Accept(expVisitor)).ToArray();
+            }
+
+            private void CastingExpressions(Tweedle.TweedleParser.ExpressionContext context, out ITweedleExpression outExpression, out TTypeRef outType)
+            {
+                ExpressionVisitor expVisitor = new ExpressionVisitor(assembly, null);
+                outExpression = context.expression(0).Accept(expVisitor);
+                outType = GetTypeRef(context.typeType().GetText());
             }
 
             private ITweedleExpression NegativeExpression(ITweedleExpression exp)

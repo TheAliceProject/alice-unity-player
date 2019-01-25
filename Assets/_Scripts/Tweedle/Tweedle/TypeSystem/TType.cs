@@ -194,6 +194,15 @@ namespace Alice.Tweedle
             return inValue;
         }
 
+        public virtual bool CanCastExplicitly(TType inType) {
+            return CanCast(inType);
+        }
+
+        public virtual TValue CastExplicitly(ref TValue inValue, TType inType)
+        {
+            return Cast(ref inValue, inType);
+        }
+
         // This check is disabled in non-development builds
         [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD"), Conditional("DEBUG")]
         protected void AssertValueIsType(ref TValue inValue)
