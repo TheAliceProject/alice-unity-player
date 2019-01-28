@@ -21,12 +21,4 @@ Json Zip - the UI for selecting and reading Json zip files.
 Tweedle Project - the UI for selecting and reading a3p files into a TweedleSystem.
 
 # Tweedle Submodule
-This repo uses git submodules. A syslink is required for the generated tweedle lexer and parser code
-
-Windows:
-`cd <repo/directory>`
-`mklink /j Assets\_Scripts\Tweedle\Grammar submodules\tweedle\Grammar\CSharp\Alice\Tweedle`
-
-Mac:
-`cd <repo/directory>`
-`ln -s submodules/tweedle/Grammar/CSharp/Alice/Tweedle Assets/_Scripts/Tweedle/Grammar`
+This repo uses git submodules. A syslink is automatically made for the generated tweedle lexer and parser code.
