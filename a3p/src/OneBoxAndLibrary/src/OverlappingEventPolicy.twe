@@ -1,6 +1,0 @@
-// Formerly MultipleEventPolicy. Combine is now Overlap
-enum OverlappingEventPolicy {
-	ENQUEUE,
-	IGNORE,
-	OVERLAP
-}

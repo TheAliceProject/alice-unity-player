@@ -1,4 +1,0 @@
-class SCameraMarker extends SMarker {
-  SCameraMarker() {
-  }
-}

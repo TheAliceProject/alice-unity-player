@@ -1,5 +1,0 @@
-class SShape extends SModel {
-  SShape(TextString resource) {
-    super(resource: resource);
-  }
-} 

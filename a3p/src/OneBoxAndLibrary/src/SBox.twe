@@ -1,6 +1,0 @@
-class SBox extends SShape {
-  SBox() {
-    super();
-    sgModel <- $SceneGraph.createEntity(displayModel: $SceneGraph.Box);
-  }
-}
