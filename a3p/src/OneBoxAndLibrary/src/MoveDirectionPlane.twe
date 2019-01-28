@@ -1,4 +1,0 @@
-enum MoveDirectionPlane {
-  FORWARD_BACKWARD_LEFT_RIGHT,
-  UP_DOWN_LEFT_RIGHT;
-}
