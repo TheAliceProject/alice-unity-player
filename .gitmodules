@@ -1,0 +1,3 @@
+[submodule "submodules/tweedle"]
+	path = submodules/tweedle
+	url = git@github.com:TheAliceProject/tweedle.git
