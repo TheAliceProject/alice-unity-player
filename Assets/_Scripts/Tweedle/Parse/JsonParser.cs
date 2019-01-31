@@ -88,7 +88,7 @@ namespace Alice.Tweedle.Parse
         byte[] ReadDataEntry(ZipEntry entry)
         {
             Stream entryStream = m_ZipFile.GetInputStream(entry);
-            return (new BinaryReader(entryStream)).ReadBytes((int)entryStream.Length);
+            return (new BinaryReader(entryStream)).ReadBytes((int)entry.Size);
         }
 
         private void ParseResourceDetails(
