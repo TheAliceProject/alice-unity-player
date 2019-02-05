@@ -1,7 +1,0 @@
-class Property {
-  Property(SThing owner) {
-    this.owner <- owner;
-  }
-
-  @CompletelyHidden SThing owner;
-}

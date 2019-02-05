@@ -1,7 +1,0 @@
-class SBox extends SShape 
-{
-  SBox() 
-  {
-    super(resource: $SceneGraph.BOX);
-  }
-} 
