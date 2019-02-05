@@ -1,4 +1,5 @@
 using UnityEngine;
+using TriLib;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -55,6 +56,18 @@ namespace Alice.Player.Unity {
         [SerializeField]
         private Mesh m_GroundMesh;
         public Mesh GroundMesh {get { return m_GroundMesh; } }
+
+        [Header("TriLib Loader Options")]
+        AssetLoaderOptions m_ModelLoaderOptions;
+        public AssetLoaderOptions ModelLoaderOptions {
+            get { 
+                if (m_ModelLoaderOptions == null) {
+                    m_ModelLoaderOptions = AssetLoaderOptions.CreateInstance();
+                    m_ModelLoaderOptions.AutoPlayAnimations = false;
+                }
+                return m_ModelLoaderOptions; 
+            }
+        }
 
 #if UNITY_EDITOR
         [MenuItem("Assets/Create/Player Resources Asset")]

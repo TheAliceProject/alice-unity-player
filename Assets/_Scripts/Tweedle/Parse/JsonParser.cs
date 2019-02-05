@@ -25,21 +25,22 @@ namespace Alice.Tweedle.Parse
 
         internal void Parse()
         {
-            ParseJson(ReadEntry("manifest.json"));
-        }
-
-        public void ParseJson(string manifestJson)
-        {
-            Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(manifestJson);
-            JSONObject jsonObj = new JSONObject(manifestJson);
-
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
             m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
+            ParseJson(ReadEntry("manifest.json"), "");
+        }
+
+        public void ParseJson(string manifestJson, string pathBase = "")
+        {
+            Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(manifestJson);
+            JSONObject jsonObj = new JSONObject(manifestJson);
+
             ParseResourceDetails(
                 asset.resources,
-                jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)]
+                jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)],
+                pathBase
                 );
             ProjectType t = asset.Identifier.Type;
             switch (t)
@@ -80,7 +81,11 @@ namespace Alice.Tweedle.Parse
             ZipEntry entry = m_ZipFile.GetEntry(location);
             if (entry == null)
             {
-                UnityEngine.Debug.Log("Did not find entry for: " + location);
+                var dirPath = Path.GetDirectoryName(location);
+                var dirEntry =  m_ZipFile.GetEntry(dirPath);
+
+                UnityEngine.Debug.Log("Did not find entry for: " + location + " dir entry " + dirPath);
+                return null;
             }
             return ReadDataEntry(entry);
         }
@@ -93,7 +98,9 @@ namespace Alice.Tweedle.Parse
 
         private void ParseResourceDetails(
             List<ResourceReference> resources,
-            JSONObject json)
+            JSONObject json,
+            string pathBase
+            )
         {
             if (json == null || json.type != JSONObject.Type.ARRAY)
             {
@@ -101,13 +108,13 @@ namespace Alice.Tweedle.Parse
             }
             for (int i = 0; i < resources.Count; i++)
             {
-                ResourceReference strictResource = ReadResource(resources[i], json.list[i].ToString());
+                ResourceReference strictResource = ReadResource(resources[i], json.list[i].ToString(), pathBase);
                 resources[i] = strictResource;
                 m_System.AddResource(strictResource);
             }
         }
 
-        private ResourceReference ReadResource(ResourceReference resourceRef, string refJson)
+        private ResourceReference ReadResource(ResourceReference resourceRef, string refJson, string pathBase)
         {
             switch (resourceRef.ContentType)
             {
@@ -116,7 +123,7 @@ namespace Alice.Tweedle.Parse
                 case ContentType.Class:
                     for (int j = 0; j < resourceRef.files.Count; j++)
                     {
-                        string tweedleCode = ReadEntry(resourceRef.files[j]);
+                        string tweedleCode = ReadEntry(pathBase + resourceRef.files[j]);
                         TType tweClass = (TType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
                         m_System.GetRuntimeAssembly().Add(tweClass);
                     }
@@ -124,36 +131,49 @@ namespace Alice.Tweedle.Parse
                 case ContentType.Enum:
                     for (int j = 0; j < resourceRef.files.Count; j++)
                     {
-                        string tweedleCode = ReadEntry(resourceRef.files[j]);
+                        string tweedleCode = ReadEntry(pathBase + resourceRef.files[j]);
                         TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
                         m_System.GetRuntimeAssembly().Add(tweedleEnum);
                     }
                     return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
                 case ContentType.Image:
-                    CacheSceneGraphTexture(resourceRef);
+                    CacheSceneGraphTexture(resourceRef, pathBase);
                     return UnityEngine.JsonUtility.FromJson<ImageReference>(refJson);
                 case ContentType.Model:
                     for (int j = 0; j < resourceRef.files.Count; j++)
                     {
-                        string subJson = System.IO.File.ReadAllText(resourceRef.files[j]);
-                        ParseJson(subJson);
+                        string subJson = ReadEntry(resourceRef.files[j]);
+                        string manifestDir = pathBase + (Path.GetDirectoryName(resourceRef.files[j]) + Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/');
+                        ParseJson(subJson, manifestDir);
                     }
                     return UnityEngine.JsonUtility.FromJson<ModelReference>(refJson);
                 case ContentType.SkeletonMesh:
+                    CacheSceneGraphModel(resourceRef, pathBase);
                     return UnityEngine.JsonUtility.FromJson<StructureReference>(refJson);
                 case ContentType.Texture:
-                    CacheSceneGraphTexture(resourceRef);
+                    CacheSceneGraphTexture(resourceRef, pathBase);
                     return UnityEngine.JsonUtility.FromJson<TextureReference>(refJson);
             }
             return null;
         }
 
-        private void CacheSceneGraphTexture(ResourceReference resourceRef) {
+        private void CacheSceneGraphTexture(ResourceReference resourceRef, string pathBase) {
             if (UnityEngine.Application.isPlaying && resourceRef.files.Count > 0) {
-                byte[] data = ReadDataEntry(resourceRef.files[0]);
+                byte[] data = ReadDataEntry(pathBase + resourceRef.files[0]);
                 var texture = new UnityEngine.Texture2D(0,0);
                 if (UnityEngine.ImageConversion.LoadImage(texture, data, true)) {
-                    Player.Unity.SceneGraph.Current?.TextureCache?.Add(resourceRef.id, texture);
+                    Player.Unity.SceneGraph.Current.TextureCache.Add(resourceRef.id, texture);
+                }
+            }
+        }
+
+        private void CacheSceneGraphModel(ResourceReference resourceRef, string pathBase) {
+            if (UnityEngine.Application.isPlaying && resourceRef.files.Count > 0) {
+                byte[] data = ReadDataEntry(pathBase + resourceRef.files[0]);
+                using (var assetLoader = new TriLib.AssetLoader())
+                { //Initializes our Asset Loader.
+                    UnityEngine.GameObject loadedModel = assetLoader.LoadFromMemory(data, resourceRef.files[0], Player.Unity.SceneGraph.Current?.InternalResources?.ModelLoaderOptions); //Loads our model.
+                    Player.Unity.SceneGraph.Current.ModelCache.Add(resourceRef.id, loadedModel);
                 }
             }
         }

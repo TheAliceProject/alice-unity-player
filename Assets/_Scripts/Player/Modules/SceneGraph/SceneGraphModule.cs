@@ -51,7 +51,8 @@ namespace Alice.Player.Modules {
                     entity = SGEntity.Create<SGBillboard>(model);
                     break;
                 default:
-                    throw new SceneGraphException("No model resource found for " + resource);
+                    break;
+                    //throw new SceneGraphException("No model resource found for " + resource);
             }
 
             SceneGraph.Current.AddEntity(entity);
