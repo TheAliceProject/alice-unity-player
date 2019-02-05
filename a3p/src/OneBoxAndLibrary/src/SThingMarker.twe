@@ -1,4 +1,0 @@
-class SThingMarker extends SMarker {
-  SThingMarker() {
-  }
-}
