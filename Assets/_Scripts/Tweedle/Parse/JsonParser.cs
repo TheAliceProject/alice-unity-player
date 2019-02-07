@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 namespace Alice.Tweedle.Parse
 {
@@ -10,16 +11,19 @@ namespace Alice.Tweedle.Parse
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
+        private Player.Unity.SceneGraph m_SceneGraph;
+
 
         public TweedleSystem StoredSystem
         {
             get { return m_System; }
         }
 
-        public JsonParser(TweedleSystem inSystem, ZipFile inZipFile)
+        public JsonParser(TweedleSystem inSystem, ZipFile inZipFile, Player.Unity.SceneGraph inSceneGraph = null)
         {
             m_System = inSystem;
             m_ZipFile = inZipFile;
+            m_SceneGraph = inSceneGraph;
             m_Parser = new TweedleParser();
         }
 
@@ -29,152 +33,114 @@ namespace Alice.Tweedle.Parse
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
             m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
-            ParseJson(ReadEntry("manifest.json"), "");
+            ParseJson(m_ZipFile.ReadEntry("manifest.json"));
         }
 
-        public void ParseJson(string manifestJson, string pathBase = "")
+        public void ParseJson(string inManifestJson, string inWorkingDir = "")
         {
-            Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(manifestJson);
-            JSONObject jsonObj = new JSONObject(manifestJson);
+            Manifest asset = JsonUtility.FromJson<Manifest>(inManifestJson);
+            JSONObject jsonObj = new JSONObject(inManifestJson);
 
-            ParseResourceDetails(
-                asset.resources,
-                jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)],
-                pathBase
-                );
+            
             ProjectType t = asset.Identifier.Type;
             switch (t)
             {
                 case ProjectType.Library:
                     LibraryManifest libAsset = new LibraryManifest(asset);
                     m_System.AddLibrary(libAsset);
+                    asset = libAsset;
                     break;
                 case ProjectType.World:
                     ProgramDescription worldAsset = new ProgramDescription(asset);
                     m_System.AddProgram(worldAsset);
+                    asset = worldAsset;
                     break;
                 case ProjectType.Model:
-                    ModelManifest modelAsset = UnityEngine.JsonUtility.FromJson<ModelManifest>(manifestJson);
+                    ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);
+                    
                     m_System.AddModel(modelAsset);
+                    asset = modelAsset;
                     break;
             }
+
+            ParseResourceDetails(
+                asset,
+                jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)],
+                inWorkingDir
+                );
         }
 
-        string ReadEntry(string location)
-        {
-            ZipEntry entry = m_ZipFile.GetEntry(location);
-            if (entry == null)
-            {
-                UnityEngine.Debug.Log("Did not find entry for: " + location);
-            }
-            return ReadEntry(entry);
-        }
-
-        string ReadEntry(ZipEntry entry)
-        {
-            Stream entryStream = m_ZipFile.GetInputStream(entry);
-            return (new StreamReader(entryStream)).ReadToEnd();
-        }
-
-        byte[] ReadDataEntry(string location)
-        {
-            ZipEntry entry = m_ZipFile.GetEntry(location);
-            if (entry == null)
-            {
-                var dirPath = Path.GetDirectoryName(location);
-                var dirEntry =  m_ZipFile.GetEntry(dirPath);
-
-                UnityEngine.Debug.Log("Did not find entry for: " + location + " dir entry " + dirPath);
-                return null;
-            }
-            return ReadDataEntry(entry);
-        }
-
-        byte[] ReadDataEntry(ZipEntry entry)
-        {
-            Stream entryStream = m_ZipFile.GetInputStream(entry);
-            return (new BinaryReader(entryStream)).ReadBytes((int)entry.Size);
-        }
+        
 
         private void ParseResourceDetails(
-            List<ResourceReference> resources,
+            Manifest manifest,
             JSONObject json,
-            string pathBase
+            string workingDir
             )
         {
             if (json == null || json.type != JSONObject.Type.ARRAY)
             {
                 return;
             }
-            for (int i = 0; i < resources.Count; i++)
+            for (int i = 0; i < manifest.resources.Count; i++)
             {
-                ResourceReference strictResource = ReadResource(resources[i], json.list[i].ToString(), pathBase);
-                resources[i] = strictResource;
+                ResourceReference strictResource = ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
+                manifest.resources[i] = strictResource;
                 m_System.AddResource(strictResource);
             }
         }
 
-        private ResourceReference ReadResource(ResourceReference resourceRef, string refJson, string pathBase)
+        private ResourceReference ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
         {
+            ResourceReference strictRef = null;
+
             switch (resourceRef.ContentType)
             {
                 case ContentType.Audio:
-                    return UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+                    strictRef =  UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+                    break;
                 case ContentType.Class:
-                    for (int j = 0; j < resourceRef.files.Count; j++)
-                    {
-                        string tweedleCode = ReadEntry(pathBase + resourceRef.files[j]);
-                        TType tweClass = (TType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-                        m_System.GetRuntimeAssembly().Add(tweClass);
-                    }
-                    return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
+                    ParseTweedleTypeResource(resourceRef, workingDir);
+                    strictRef =  JsonUtility.FromJson<ClassReference>(refJson);
+                    break;
                 case ContentType.Enum:
-                    for (int j = 0; j < resourceRef.files.Count; j++)
-                    {
-                        string tweedleCode = ReadEntry(pathBase + resourceRef.files[j]);
-                        TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-                        m_System.GetRuntimeAssembly().Add(tweedleEnum);
-                    }
-                    return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
+                    ParseTweedleTypeResource(resourceRef, workingDir);
+                    strictRef =  JsonUtility.FromJson<EnumReference>(refJson);
+                    break;
                 case ContentType.Image:
-                    CacheSceneGraphTexture(resourceRef, pathBase);
-                    return UnityEngine.JsonUtility.FromJson<ImageReference>(refJson);
+                    strictRef =  JsonUtility.FromJson<ImageReference>(refJson);
+                    break;
                 case ContentType.Model:
                     for (int j = 0; j < resourceRef.files.Count; j++)
                     {
-                        string subJson = ReadEntry(resourceRef.files[j]);
-                        string manifestDir = pathBase + (Path.GetDirectoryName(resourceRef.files[j]) + Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/');
+                        string subJson = m_ZipFile.ReadEntry(resourceRef.files[j]);
+                        string manifestDir = workingDir + (Path.GetDirectoryName(resourceRef.files[j]) + Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/');
                         ParseJson(subJson, manifestDir);
                     }
-                    return UnityEngine.JsonUtility.FromJson<ModelReference>(refJson);
+                    strictRef =  JsonUtility.FromJson<ModelReference>(refJson);
+                    break;
                 case ContentType.SkeletonMesh:
-                    CacheSceneGraphModel(resourceRef, pathBase);
-                    return UnityEngine.JsonUtility.FromJson<StructureReference>(refJson);
+                    strictRef =  JsonUtility.FromJson<StructureReference>(refJson);
+                    break;
                 case ContentType.Texture:
-                    CacheSceneGraphTexture(resourceRef, pathBase);
-                    return UnityEngine.JsonUtility.FromJson<TextureReference>(refJson);
+                    strictRef =  JsonUtility.FromJson<TextureReference>(refJson);
+                    break;
             }
-            return null;
+
+            // prepend working path to files
+            for (int i = 0, fileCount = strictRef.files.Count; i < fileCount; ++i) {
+                strictRef.files[i] = workingDir + strictRef.files[i];
+            }
+
+            return strictRef;
         }
 
-        private void CacheSceneGraphTexture(ResourceReference resourceRef, string pathBase) {
-            if (UnityEngine.Application.isPlaying && resourceRef.files.Count > 0) {
-                byte[] data = ReadDataEntry(pathBase + resourceRef.files[0]);
-                var texture = new UnityEngine.Texture2D(0,0);
-                if (UnityEngine.ImageConversion.LoadImage(texture, data, true)) {
-                    Player.Unity.SceneGraph.Current.TextureCache.Add(resourceRef.id, texture);
-                }
-            }
-        }
-
-        private void CacheSceneGraphModel(ResourceReference resourceRef, string pathBase) {
-            if (UnityEngine.Application.isPlaying && resourceRef.files.Count > 0) {
-                byte[] data = ReadDataEntry(pathBase + resourceRef.files[0]);
-                using (var assetLoader = new TriLib.AssetLoader())
-                { //Initializes our Asset Loader.
-                    UnityEngine.GameObject loadedModel = assetLoader.LoadFromMemory(data, resourceRef.files[0], Player.Unity.SceneGraph.Current?.InternalResources?.ModelLoaderOptions); //Loads our model.
-                    Player.Unity.SceneGraph.Current.ModelCache.Add(resourceRef.id, loadedModel);
-                }
+        private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
+            for (int j = 0; j < resourceRef.files.Count; j++)
+            {
+                string tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.files[j]);
+                TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
+                m_System.GetRuntimeAssembly().Add(tweedleType);
             }
         }
     }

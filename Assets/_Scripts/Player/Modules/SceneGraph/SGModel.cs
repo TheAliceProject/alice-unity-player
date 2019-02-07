@@ -50,12 +50,8 @@ namespace Alice.Player.Unity {
         private Paint m_CachedPaint = Primitives.Color.WHITE;
         protected float m_CachedOpacity = 1;
 
-        protected virtual void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
-            m_ModelTransform = inModelTransform;
-            m_Renderer = inRenderer;
-            m_MeshFilter = inFilter;
-
-            CacheMeshBounds();
+        protected override void Awake() {
+            base.Awake();
 
             RegisterPropertyDelegate(SIZE_PROPERTY_NAME, OnSizePropertyChanged);
             RegisterPropertyDelegate(PAINT_PROPERTY_NAME, OnPaintPropertyChanged);
@@ -122,7 +118,7 @@ namespace Alice.Player.Unity {
             );
         }
 
-        protected virtual string ShaderTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
+        protected virtual string PaintTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
         protected virtual Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueMaterial; } }
         protected virtual Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
 
@@ -131,7 +127,7 @@ namespace Alice.Player.Unity {
 
             PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
 
-            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
+            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, PaintTextureName);
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
 
@@ -159,7 +155,7 @@ namespace Alice.Player.Unity {
 
             PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
 
-            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, ShaderTextureName);
+            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, PaintTextureName);
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
 

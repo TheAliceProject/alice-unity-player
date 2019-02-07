@@ -5,6 +5,8 @@ using Alice.Tweedle.Interop;
 using Alice.Tweedle.VM;
 using Alice.Player.Primitives;
 using Alice.Player.Modules;
+using UnityEngine;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Alice.Tweedle.Parse
 {
@@ -114,6 +116,60 @@ namespace Alice.Tweedle.Parse
                 TType type = allTypes[i];
                 m_TypeList.Add(type);
                 m_TypeMap.Add(type.Name, type);
+            }
+        }
+
+        public void LoadResources(ZipFile inFile) {
+            foreach (var resourceRef in Resources.Values) {
+                switch (resourceRef.ContentType) {
+                    case ContentType.Image:
+                        LoadTexture(resourceRef, inFile);
+                        break;
+                    case ContentType.Texture:
+                        LoadTexture(resourceRef, inFile);
+                        break;
+                }
+            }
+            foreach (var modelManifest in Models.Values) {
+                LoadModel(modelManifest, inFile);
+            }
+        }
+
+        private void LoadTexture(ResourceReference inResourceRef, ZipFile inFile) {
+            if (UnityEngine.Application.isPlaying && inResourceRef.files.Count > 0) {
+                byte[] data = inFile.ReadDataEntry(inResourceRef.files[0]);
+                var texture = new Texture2D(0,0);
+                if (ImageConversion.LoadImage(texture, data, true)) {
+                    Player.Unity.SceneGraph.Current.TextureCache.Add(inResourceRef.id, texture);
+                }
+            }
+        }
+
+        private void LoadModel(ModelManifest inManifest, ZipFile inFile) {
+            if (UnityEngine.Application.isPlaying) {
+
+                for (int i = 0; i < inManifest.models.Count; ++i) {
+                    var meshID = new ResourceIdentifier(inManifest.models[i].structure, ContentType.SkeletonMesh, "dae");
+                    ResourceReference meshRef;
+                    if (Resources.TryGetValue(meshID, out meshRef)) {
+                        byte[] data = inFile.ReadDataEntry(meshRef.files[0]);
+                        using (var assetLoader = new TriLib.AssetLoader())
+                        {
+                            var options = Player.Unity.SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
+                            GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.files[0], options); //Loads our model.
+                            var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
+                            Player.Unity.SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
+
+                            var tex = Player.Unity.SceneGraph.Current.TextureCache.Get(inManifest.models[i].textureSet);
+                            if (tex) {
+                                foreach (var renderer in loadedModel.GetComponentsInChildren<Renderer>()) {
+                                    renderer.sharedMaterial.mainTexture = tex;
+                                }
+                            }
+
+                        }
+                    }
+                }
             }
         }
 

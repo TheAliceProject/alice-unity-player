@@ -3,8 +3,9 @@
     [System.Serializable]
     public class ModelVariant
     {
-        private string structure;
-        private string textureSet;
-        private string icon;
+        public string name;
+        public string structure;
+        public string textureSet;
+        public string icon;
     }
 }

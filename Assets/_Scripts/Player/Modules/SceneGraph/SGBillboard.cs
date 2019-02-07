@@ -14,17 +14,16 @@ namespace Alice.Player.Unity {
         // billboards are always transparent
         protected override Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
 
-
-        protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
-            Transform  backTransform;
-            MeshFilter  backFilter;
-            CreateModelObject(ShapeMesh, OpaqueMaterial, inModelTransform, out backTransform, out m_BackRenderer, out backFilter);
-            backTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
-            inModelTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
-
-            base.Init(inModelTransform, inRenderer, inFilter);
+        protected override void Awake() {
+            base.Awake();
 
             RegisterPropertyDelegate(BACK_PAINT_PROPERTY_NAME, OnBackPaintPropertyChanged);
+
+            Transform  backTransform;
+            MeshFilter  backFilter;
+            CreateModelObject(ShapeMesh, OpaqueMaterial, m_ModelTransform, out backTransform, out m_BackRenderer, out backFilter);
+            backTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
+            m_ModelTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
         }
 
         protected override void SetSize(UnityEngine.Vector3 size) {
@@ -37,7 +36,7 @@ namespace Alice.Player.Unity {
 
             PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
 
-            m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, ShaderTextureName);
+            m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, PaintTextureName);
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
         }
 
@@ -50,7 +49,7 @@ namespace Alice.Player.Unity {
 
             PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
 
-            m_CachedBackPaint.Apply(m_BackPropertyBlock, inOpacity, ShaderTextureName);
+            m_CachedBackPaint.Apply(m_BackPropertyBlock, inOpacity, PaintTextureName);
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
         }
     }

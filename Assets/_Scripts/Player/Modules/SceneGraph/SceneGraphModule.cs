@@ -51,8 +51,10 @@ namespace Alice.Player.Modules {
                     entity = SGEntity.Create<SGBillboard>(model);
                     break;
                 default:
+                    var jointedEntity = SGEntity.Create<SGJointedModel>(model);
+                    jointedEntity.SetResource(resource);
+                    entity = jointedEntity;
                     break;
-                    //throw new SceneGraphException("No model resource found for " + resource);
             }
 
             SceneGraph.Current.AddEntity(entity);

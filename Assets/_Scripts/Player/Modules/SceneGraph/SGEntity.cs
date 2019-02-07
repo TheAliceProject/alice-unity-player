@@ -14,6 +14,7 @@ namespace Alice.Player.Unity {
 
         public static T Create<T>(TValue owner) where T : SGEntity {
             var go = new GameObject(typeof(T).Name);
+            go.transform.SetParent(SceneGraph.Current.transform, false);
             var entity = go.AddComponent<T>();
             entity.owner = owner;
             return entity;
