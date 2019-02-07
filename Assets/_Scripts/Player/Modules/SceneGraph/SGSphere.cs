@@ -8,8 +8,8 @@ namespace Alice.Player.Unity {
 
         protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.SphereMesh; } }
         
-        protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
-            base.Init(inModelTransform, inRenderer, inFilter);
+        protected override void Awake() {
+            base.Awake();
             RegisterPropertyDelegate(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
         }
 

@@ -11,19 +11,6 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public override GameObject Get(string inIdentifier) { 
-            return Get(inIdentifier, null);
-        }
-
-        public GameObject Get(string inIdentifier, Transform inParent) {
-            GameObject modelPrefab = base.Get(inIdentifier);
-            if (modelPrefab) {
-                var modelInstance = GameObject.Instantiate(modelPrefab, inParent);
-                return modelInstance;
-            }
-            return null;
-        }
-
         public override bool Add(string inIdentifier, GameObject inModel) {
             bool success = base.Add(inIdentifier, inModel);
             NormalizeWeightsInModel(inModel);

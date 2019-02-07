@@ -64,6 +64,8 @@ namespace Alice.Player.Unity {
                 if (m_ModelLoaderOptions == null) {
                     m_ModelLoaderOptions = AssetLoaderOptions.CreateInstance();
                     m_ModelLoaderOptions.AutoPlayAnimations = false;
+                    m_ModelLoaderOptions.PostProcessSteps = AssimpProcessPreset.TargetRealtimeFast;
+                    m_ModelLoaderOptions.RotationAngles = Vector3.zero;
                 }
                 return m_ModelLoaderOptions; 
             }
