@@ -14,10 +14,26 @@ namespace Alice.Player.Unity {
 
         protected abstract Mesh ShapeMesh { get; } 
 
+        protected Renderer m_Renderer;
+        protected MeshFilter m_MeshFilter;
+        protected MaterialPropertyBlock m_PropertyBlock;
+
         protected override void Awake() {
             base.Awake();
             CreateModelObject(ShapeMesh, OpaqueMaterial, cachedTransform, out m_ModelTransform, out m_Renderer, out m_MeshFilter);
             CacheMeshBounds();
+        }
+
+        protected override Bounds GetMeshBounds() {
+            return m_MeshFilter.sharedMesh.bounds;
+        }
+
+        protected override void OnOpacityChanged() {
+            ApplyOpacity(m_Renderer, ref m_PropertyBlock);
+        }
+
+        protected override void OnPaintChanged() {
+            ApplyPaint(m_Renderer, ref m_PropertyBlock);
         }
     }
 }

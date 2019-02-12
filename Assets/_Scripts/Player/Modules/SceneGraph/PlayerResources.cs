@@ -17,12 +17,18 @@ namespace Alice.Player.Unity {
         public Material TransparentMaterial {get { return m_TransparentMaterial; } }
 
         [SerializeField]
+        private Material m_TransparentMultipassMaterial;
+        public Material TransparentMultipassMaterial {get { return m_TransparentMultipassMaterial; } }
+
+        [SerializeField]
         private Material m_OpaqueTorusMaterial;
         public Material OpaqueTorusMaterial { get {return m_OpaqueTorusMaterial; } }
 
         [SerializeField]
         private Material m_TransparentTorusMaterial;
         public Material TransparentTorusMaterial {get { return m_TransparentTorusMaterial; } }
+
+        
 
         [Header("Primitive Meshes")]
         [SerializeField]
@@ -63,6 +69,7 @@ namespace Alice.Player.Unity {
             get { 
                 if (m_ModelLoaderOptions == null) {
                     m_ModelLoaderOptions = AssetLoaderOptions.CreateInstance();
+                    m_ModelLoaderOptions.DontLoadAnimations = true; 
                     m_ModelLoaderOptions.AutoPlayAnimations = false;
                     m_ModelLoaderOptions.PostProcessSteps = AssimpProcessPreset.TargetRealtimeFast;
                     m_ModelLoaderOptions.RotationAngles = Vector3.zero;

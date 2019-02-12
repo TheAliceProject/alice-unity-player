@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Name: PlayerResources
   m_EditorClassIdentifier: 
   m_OpaqueMaterial: {fileID: 2100000, guid: 968faae8520e123408e90b5d94e5c87d, type: 2}
-  m_TransparentMaterial: {fileID: 2100000, guid: 045fe162716fc2a4db46211c973ffacd,
+  m_TransparentMaterial: {fileID: 2100000, guid: f0f7e44c346155b43a79f863c3ba12f9,
+    type: 2}
+  m_TransparentMultipassMaterial: {fileID: 2100000, guid: 045fe162716fc2a4db46211c973ffacd,
     type: 2}
   m_OpaqueTorusMaterial: {fileID: 2100000, guid: fdad6720e29d5d3408d531f012527636,
     type: 2}

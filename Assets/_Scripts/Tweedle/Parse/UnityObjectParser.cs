@@ -40,7 +40,7 @@ namespace Alice.Tweedle.Parse
             {
                 using (ZipFile zipFile = new ZipFile(fileStream))
                 {
-                    JsonParser reader = new JsonParser(m_System, zipFile, Player.Unity.SceneGraph.Current);
+                    JsonParser reader = new JsonParser(m_System, zipFile);
                     reader.Parse();
                     m_System.LoadResources(zipFile);
                 }

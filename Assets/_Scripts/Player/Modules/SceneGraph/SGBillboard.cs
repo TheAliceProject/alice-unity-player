@@ -13,6 +13,7 @@ namespace Alice.Player.Unity {
         protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.BillboardMesh; } }
         // billboards are always transparent
         protected override Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
+        protected override Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
 
         protected override void Awake() {
             base.Awake();
@@ -40,8 +41,8 @@ namespace Alice.Player.Unity {
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
         }
 
-        protected override void SetOpacity(float inOpacity) {
-            base.SetOpacity(inOpacity);
+        protected override void OnOpacityChanged() {
+            base.OnOpacityChanged();
 
             if (m_BackRenderer.enabled != m_Renderer.enabled) {
                 m_BackRenderer.enabled = m_Renderer.enabled;
@@ -49,7 +50,7 @@ namespace Alice.Player.Unity {
 
             PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
 
-            m_CachedBackPaint.Apply(m_BackPropertyBlock, inOpacity, PaintTextureName);
+            m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, PaintTextureName);
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
         }
     }

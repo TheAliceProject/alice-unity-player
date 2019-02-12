@@ -27,10 +27,7 @@ namespace Alice.Tweedle.File {
             ZipEntry entry = zipFile.GetEntry(location);
             if (entry == null)
             {
-                var dirPath = Path.GetDirectoryName(location);
-                var dirEntry =  zipFile.GetEntry(dirPath);
-
-                Debug.Log("Did not find entry for: " + location + " dir entry " + dirPath);
+                Debug.Log("Did not find entry for: " + location);
                 return null;
             }
             return ReadDataEntry(zipFile, entry);
