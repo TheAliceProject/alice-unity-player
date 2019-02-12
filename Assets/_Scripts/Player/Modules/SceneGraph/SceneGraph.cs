@@ -109,7 +109,6 @@ namespace Alice.Player.Unity {
         public TextureCache TextureCache {get; private set;}
         public ModelCache ModelCache {get; private set;}
 
-        private TweedleSystem m_System;
         private List<SGEntity> m_Entities = new List<SGEntity>();
         private Transform m_ModelCacheRoot;
 
@@ -224,7 +223,6 @@ namespace Alice.Player.Unity {
                 Destroy(m_Entities[i].gameObject);
             }
             m_Entities.Clear();
-            m_System = null;
 
             Destroy(m_ModelCacheRoot);
             

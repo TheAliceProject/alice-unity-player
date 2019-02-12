@@ -152,29 +152,18 @@ namespace Alice.Tweedle.Parse
                     var meshID = new ResourceIdentifier(inManifest.models[i].structure, ContentType.SkeletonMesh, "dae");
                     ResourceReference meshRef;
                     if (Resources.TryGetValue(meshID, out meshRef)) {
-                        //byte[] data = inFile.ReadDataEntry(meshRef.files[0]);
-
-
+                        byte[] data = inFile.ReadDataEntry(meshRef.files[0]);
 
                         using (var assetLoader = new TriLib.AssetLoader())
                         {
                             var options = Player.Unity.SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
                             var cachePath = Application.temporaryCachePath + "/" + meshRef.files[0];
                             options.TexturesPathOverride = System.IO.Path.GetDirectoryName(cachePath);
-                            //GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.files[0], options); //Loads our model.
-                            GameObject loadedModel = assetLoader.LoadFromFile(cachePath, options);
+                            
+                            GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.files[0], options);
+
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
                             Player.Unity.SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
-
-                            /*
-                            var tex = Player.Unity.SceneGraph.Current.TextureCache.Get(inManifest.models[i].textureSet);
-                            if (tex) {
-                                foreach (var renderer in loadedModel.GetComponentsInChildren<Renderer>()) {
-                                    renderer.sharedMaterial.mainTexture = tex;
-                                }
-                            }
-                            */
-
                         }
                     }
                 }
