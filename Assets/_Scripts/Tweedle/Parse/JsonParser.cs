@@ -120,9 +120,6 @@ namespace Alice.Tweedle.Parse
                     break;
                 case ContentType.SkeletonMesh:
                     strictRef =  JsonUtility.FromJson<StructureReference>(refJson);
-                    if (manifest is ModelManifest) {
-                        CacheToDisk(resourceRef, workingDir);
-                    }
                     break;
                 case ContentType.Texture:
                     strictRef =  JsonUtility.FromJson<TextureReference>(refJson);
