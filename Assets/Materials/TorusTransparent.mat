@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: TransparentTorus
-  m_Shader: {fileID: 4800000, guid: d81a1e0a8348846479427d46780e23a0, type: 3}
+  m_Name: TorusTransparent
+  m_Shader: {fileID: 4800000, guid: 632cab370df77034e9477b6417dca321, type: 3}
   m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1

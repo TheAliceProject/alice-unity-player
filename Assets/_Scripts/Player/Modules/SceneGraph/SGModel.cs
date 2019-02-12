@@ -42,13 +42,18 @@ namespace Alice.Player.Unity {
         public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTex";
         public const string COLOR_SHADER_NAME = "_Color";
 
-        protected Renderer m_Renderer;
-        protected MeshFilter m_MeshFilter;
+        
         protected Transform m_ModelTransform;
-        protected Bounds m_MeshBounds;
-        protected MaterialPropertyBlock m_PropertyBlock;
+        private Bounds m_CachedMeshBounds;
+        
         private Paint m_CachedPaint = Primitives.Color.WHITE;
         protected float m_CachedOpacity = 1;
+
+        protected Bounds MeshBounds { get {return m_CachedMeshBounds; } }
+
+        protected virtual string PaintTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
+        protected virtual Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueMaterial; } }
+        protected virtual Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMultipassMaterial; } }
 
         protected override void Awake() {
             base.Awake();
@@ -59,28 +64,14 @@ namespace Alice.Player.Unity {
         }
 
         public UnityEngine.Vector3 GetSize(bool inDynamic) {
-            UnityEngine.Vector3 size;
-            if (inDynamic && m_Renderer is SkinnedMeshRenderer) {
-                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
-                size = skinnedRenderer.localBounds.size;
-            } else {
-                size = m_MeshBounds.size;
-            }
-
+            UnityEngine.Vector3 size = inDynamic ? GetMeshBounds().size : m_CachedMeshBounds.size;
             size.Scale(m_ModelTransform.localScale);
             return size;
         }
 
         public Bounds GetBounds(bool inDynamic) {
-            
-            Bounds bounds;
-            if (inDynamic && m_Renderer is SkinnedMeshRenderer) {
-                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
-                bounds = skinnedRenderer.localBounds;
-            } else {
-                bounds = m_MeshBounds;
-            }
 
+            Bounds bounds = inDynamic ? GetMeshBounds() : m_CachedMeshBounds;
             var scale = m_ModelTransform.localScale;
 
             var center = bounds.center;
@@ -94,23 +85,18 @@ namespace Alice.Player.Unity {
             return bounds;
         }
 
-        public virtual void CacheMeshBounds() {
-            if (m_Renderer is SkinnedMeshRenderer) {
-                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderer;
-                // make sure the skinned mesh renderers local bounds get updated
-                skinnedRenderer.updateWhenOffscreen = true;
-                m_MeshBounds = skinnedRenderer.localBounds;
-            } else  {
-                m_MeshBounds = m_MeshFilter.sharedMesh.bounds;
-            }
+        protected void CacheMeshBounds() {
+            m_CachedMeshBounds = GetMeshBounds();
         }
+
+        protected abstract Bounds GetMeshBounds();
 
         private void OnSizePropertyChanged(TValue inValue) {
             SetSize(inValue.RawStruct<Size>());
         }
 
         protected virtual void SetSize(UnityEngine.Vector3 inSize) {
-            var meshSize = m_MeshBounds.size;
+            var meshSize = m_CachedMeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
                 meshSize.x == 0 ? 1 : inSize.x/meshSize.x,
                 meshSize.y == 0 ? 1 : inSize.y/meshSize.y,
@@ -118,45 +104,49 @@ namespace Alice.Player.Unity {
             );
         }
 
-        protected virtual string PaintTextureName { get { return FILTER_TEXTURE_SHADER_NAME; } }
-        protected virtual Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueMaterial; } }
-        protected virtual Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
+        
 
         private void OnPaintPropertyChanged(TValue inValue) {
-            m_CachedPaint = inValue.RawObject<Paint>();
+            m_CachedPaint = inValue.RawObject<Paint>();  
+            OnPaintChanged();
+        }
 
-            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
+        protected abstract void OnPaintChanged();
 
-            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, PaintTextureName);
-            m_Renderer.SetPropertyBlock(m_PropertyBlock);
+        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock inPropertyBlock) {
+            PrepPropertyBlock(inRenderer, ref inPropertyBlock);
+
+            m_CachedPaint.Apply(inPropertyBlock, m_CachedOpacity, PaintTextureName);
+            inRenderer.SetPropertyBlock(inPropertyBlock);
         }
 
         private void OnOpacityPropertyChanged(TValue inValue) {
-            SetOpacity((float)inValue.RawStruct<Portion>().Value);
+            m_CachedOpacity = (float)inValue.RawStruct<Portion>().Value;
+            OnOpacityChanged();
         }
 
-        protected virtual void SetOpacity(float inOpacity) {
-            m_CachedOpacity = inOpacity;
-            
-            if (m_CachedOpacity < 0.004f) {
-                if (m_Renderer.enabled) {
-                    m_Renderer.enabled = false;
+        protected abstract void OnOpacityChanged();
+
+        protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock inPropertyBlock) {
+             if (m_CachedOpacity < 0.004f) {
+                if (inRenderer.enabled) {
+                    inRenderer.enabled = false;
                 }
                 return;
-            } else if (!m_Renderer.enabled) {
-                m_Renderer.enabled = true;
+            } else if (!inRenderer.enabled) {
+                inRenderer.enabled = true;
             }
 
-            if (m_CachedOpacity < 0.996f && m_Renderer.sharedMaterial != TransparentMaterial) {
-                m_Renderer.sharedMaterial = TransparentMaterial;
-            } else if (m_CachedOpacity >= 0.996f && m_Renderer.sharedMaterial != OpaqueMaterial) {
-                m_Renderer.sharedMaterial = OpaqueMaterial;
+            if (m_CachedOpacity < 0.996f && inRenderer.sharedMaterial != TransparentMaterial) {
+                inRenderer.sharedMaterial = TransparentMaterial;
+            } else if (m_CachedOpacity >= 0.996f && inRenderer.sharedMaterial != OpaqueMaterial) {
+                inRenderer.sharedMaterial = OpaqueMaterial;
             }
 
-            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
+            PrepPropertyBlock(inRenderer, ref inPropertyBlock);
 
-            m_CachedPaint.Apply(m_PropertyBlock, m_CachedOpacity, PaintTextureName);
-            m_Renderer.SetPropertyBlock(m_PropertyBlock);
+            m_CachedPaint.Apply(inPropertyBlock, m_CachedOpacity, PaintTextureName);
+            inRenderer.SetPropertyBlock(inPropertyBlock);
         }
 
         public override void CleanUp() {}

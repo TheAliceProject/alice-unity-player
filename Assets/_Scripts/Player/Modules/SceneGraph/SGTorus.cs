@@ -77,7 +77,7 @@ namespace Alice.Player.Unity {
 
         private void OnDrawGizmosSelected() {
             Gizmos.matrix = m_ModelTransform.localToWorldMatrix;
-            Gizmos.DrawWireCube(UnityEngine.Vector3.zero, m_MeshBounds.size);
+            Gizmos.DrawWireCube(UnityEngine.Vector3.zero, MeshBounds.size);
         }
     }
 }

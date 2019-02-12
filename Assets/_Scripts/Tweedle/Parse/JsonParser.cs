@@ -11,7 +11,6 @@ namespace Alice.Tweedle.Parse
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
-        private Player.Unity.SceneGraph m_SceneGraph;
 
 
         public TweedleSystem StoredSystem
@@ -19,11 +18,10 @@ namespace Alice.Tweedle.Parse
             get { return m_System; }
         }
 
-        public JsonParser(TweedleSystem inSystem, ZipFile inZipFile, Player.Unity.SceneGraph inSceneGraph = null)
+        public JsonParser(TweedleSystem inSystem, ZipFile inZipFile)
         {
             m_System = inSystem;
             m_ZipFile = inZipFile;
-            m_SceneGraph = inSceneGraph;
             m_Parser = new TweedleParser();
         }
 
@@ -72,11 +70,7 @@ namespace Alice.Tweedle.Parse
 
         
 
-        private void ParseResourceDetails(
-            Manifest manifest,
-            JSONObject json,
-            string workingDir
-            )
+        private void ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
         {
             if (json == null || json.type != JSONObject.Type.ARRAY)
             {
@@ -108,7 +102,12 @@ namespace Alice.Tweedle.Parse
                     strictRef =  JsonUtility.FromJson<EnumReference>(refJson);
                     break;
                 case ContentType.Image:
-                    strictRef =  JsonUtility.FromJson<ImageReference>(refJson);
+                    if (manifest is ModelManifest) {
+                        CacheToDisk(resourceRef, workingDir);
+                        strictRef = resourceRef;
+                    } else {
+                        strictRef =  JsonUtility.FromJson<ImageReference>(refJson);
+                    }
                     break;
                 case ContentType.Model:
                     for (int j = 0; j < resourceRef.files.Count; j++)
@@ -121,6 +120,9 @@ namespace Alice.Tweedle.Parse
                     break;
                 case ContentType.SkeletonMesh:
                     strictRef =  JsonUtility.FromJson<StructureReference>(refJson);
+                    if (manifest is ModelManifest) {
+                        CacheToDisk(resourceRef, workingDir);
+                    }
                     break;
                 case ContentType.Texture:
                     strictRef =  JsonUtility.FromJson<TextureReference>(refJson);
@@ -142,6 +144,16 @@ namespace Alice.Tweedle.Parse
                 TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
                 m_System.GetRuntimeAssembly().Add(tweedleType);
             }
+        }
+
+        private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
+            var cachePath = Application.temporaryCachePath + "/" + workingDir;
+            if (!Directory.Exists(cachePath)) {
+                Directory.CreateDirectory(cachePath);
+            }
+
+            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.files[0]);
+            System.IO.File.WriteAllBytes(cachePath + resourceRef.files[0], data);
         }
     }
 }
