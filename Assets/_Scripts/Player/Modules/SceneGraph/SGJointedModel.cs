@@ -5,7 +5,8 @@ using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
-
+        
+        private string m_Resource;
         private Renderer[] m_Renderers;
         private MeshFilter[] m_Filters;
         private MaterialPropertyBlock[] m_PropertyBlocks;
@@ -13,12 +14,23 @@ namespace Alice.Player.Unity {
         private int m_BoundsRendererIndex = -1;
 
         public void SetResource(string inIdentifier) {
+
+            if (m_Resource == inIdentifier) {
+                return;
+            }
+
+            if (m_ModelTransform) {
+                Destroy(m_ModelTransform.gameObject);
+                m_ModelTransform = null;
+            }
+
             var prefab = SceneGraph.Current.ModelCache.Get(inIdentifier);
 
             if (prefab) {
-                var model = Instantiate(prefab, UnityEngine.Vector3.zero, UnityEngine.Quaternion.identity, cachedTransform);
-
+                var model = Instantiate(prefab, cachedTransform);
                 m_ModelTransform = model.transform;
+                m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
+                m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
 
                 m_Filters = model.GetComponentsInChildren<MeshFilter>();
                 if (m_Renderers == null) {
@@ -38,7 +50,6 @@ namespace Alice.Player.Unity {
                     PrepPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
                     m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
                     
-                    
                     UnityEngine.Vector3 size;
                     if (m_Renderers[i] is SkinnedMeshRenderer) {
                         // make sure the skinned mesh renderers local bounds get updated
@@ -57,10 +68,17 @@ namespace Alice.Player.Unity {
                     }
                 }
                 CacheMeshBounds();
+            } else {
+                m_Renderers = null;
+                m_Filters = null;
             }
         }
 
         protected override Bounds GetMeshBounds() {
+            if (m_Filters == null) {
+                return new Bounds(UnityEngine.Vector3.zero, UnityEngine.Vector3.zero);
+            }
+
             if (m_Renderers[m_BoundsRendererIndex] is SkinnedMeshRenderer) {
                 var skinnedRenderer = (SkinnedMeshRenderer)m_Renderers[m_BoundsRendererIndex];
                 return skinnedRenderer.localBounds;
@@ -70,13 +88,13 @@ namespace Alice.Player.Unity {
         }
 
         protected override void OnPaintChanged() {
-            for (int i = 0; i < m_Renderers.Length; ++i) {
+            for (int i = 0; i < m_Renderers?.Length; ++i) {
                 ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }
 
         protected override void OnOpacityChanged() {
-            for (int i = 0; i < m_Renderers.Length; ++i) {
+            for (int i = 0; i < m_Renderers?.Length; ++i) {
                 ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }

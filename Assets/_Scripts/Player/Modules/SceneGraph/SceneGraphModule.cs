@@ -185,7 +185,15 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void setEntityName(TValue thing, string name) {
             var entity = SceneGraph.Current.FindEntity(thing);
-            entity.SetName(name);
+            entity?.SetName(name);
+        }
+
+        [PInteropMethod]
+        public static void setEntityResource(TValue model, string resource) {
+            var modelEnt = SceneGraph.Current.FindEntity<SGJointedModel>(model);
+            if (modelEnt) {
+                modelEnt.SetResource(resource);
+            }
         }
 
         [PInteropMethod]
