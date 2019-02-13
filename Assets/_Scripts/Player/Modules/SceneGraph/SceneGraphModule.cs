@@ -82,6 +82,12 @@ namespace Alice.Player.Modules {
             var entity = SGEntity.Create<SGGround>(ground);
             SceneGraph.Current.AddEntity(entity);
         }
+
+        [PInteropMethod]
+        public static void createMarkerEntity(TValue marker) {
+            var entity = SGEntity.Create<SGMarker>(marker);
+            SceneGraph.Current.AddEntity(entity);
+        }
         #endregion // Entity Instantiation
 
         #region Property Binding
@@ -204,11 +210,15 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static VantagePoint setVehicle(TValue vehicle, TValue rider) {
             var entity = SceneGraph.Current.FindEntity(rider);
-            entity.vehicle = SceneGraph.Current.FindEntity(vehicle);
-            
-            var p = entity.cachedTransform.localPosition;
-            var r = entity.cachedTransform.localRotation;
-            return VantagePoint.FromUnity(p, r);
+            if (entity) {
+                entity.vehicle = SceneGraph.Current.FindEntity(vehicle);
+                
+                var p = entity.cachedTransform.localPosition;
+                var r = entity.cachedTransform.localRotation;
+                return VantagePoint.FromUnity(p, r);
+            } else {
+                throw new SceneGraphException("No scene graph entity exists for tweedle object.");
+            }
         }
 
         [PInteropMethod]
