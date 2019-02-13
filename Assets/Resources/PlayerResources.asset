@@ -28,3 +28,5 @@ MonoBehaviour:
   m_BillboardMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   m_DiscMesh: {fileID: 4300004, guid: feec5fa165df30647b74424b455bcce6, type: 3}
   m_GroundMesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+  m_AxesModel: {fileID: 114812418435751640, guid: 218ae427f5e998c4a86d3896c93ae513,
+    type: 2}

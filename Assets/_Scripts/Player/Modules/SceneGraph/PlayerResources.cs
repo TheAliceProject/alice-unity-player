@@ -33,35 +33,39 @@ namespace Alice.Player.Unity {
         [Header("Primitive Meshes")]
         [SerializeField]
         private Mesh m_BoxMesh;
-        public Mesh BoxMesh {get { return m_BoxMesh; } }
+        public Mesh BoxMesh { get { return m_BoxMesh; } }
 
         [SerializeField]
         private Mesh m_SphereMesh;
-        public Mesh SphereMesh {get { return m_SphereMesh; } }
+        public Mesh SphereMesh { get { return m_SphereMesh; } }
 
         [SerializeField]
         private Mesh m_CylinderMesh;
-        public Mesh CylinderMesh {get { return m_CylinderMesh; } }
+        public Mesh CylinderMesh { get { return m_CylinderMesh; } }
 
         [SerializeField]
         private Mesh m_ConeMesh;
-        public Mesh ConeMesh {get { return m_ConeMesh; } }
+        public Mesh ConeMesh { get { return m_ConeMesh; } }
 
         [SerializeField]
         private Mesh m_TorusMesh;
-        public Mesh TorusMesh {get { return m_TorusMesh; } }
+        public Mesh TorusMesh { get { return m_TorusMesh; } }
 
         [SerializeField]
         private Mesh m_BillboardMesh;
-        public Mesh BillboardMesh {get { return m_BillboardMesh; } }
+        public Mesh BillboardMesh { get { return m_BillboardMesh; } }
 
         [SerializeField]
         private Mesh m_DiscMesh;
-        public Mesh DiscMesh {get { return m_DiscMesh; } }
+        public Mesh DiscMesh { get { return m_DiscMesh; } }
 
         [SerializeField]
         private Mesh m_GroundMesh;
-        public Mesh GroundMesh {get { return m_GroundMesh; } }
+        public Mesh GroundMesh { get { return m_GroundMesh; } }
+
+        [SerializeField]
+        private AxesModel m_AxesModel;
+        public AxesModel AxesModel { get { return m_AxesModel; } }
 
         [Header("TriLib Loader Options")]
         AssetLoaderOptions m_ModelLoaderOptions;
