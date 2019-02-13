@@ -47,7 +47,7 @@ namespace Alice.Player.Unity {
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     m_Renderers[i] = m_Filters[i].GetComponent<Renderer>();
 
-                    PrepPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
+                    GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
                     m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
                     
                     UnityEngine.Vector3 size;

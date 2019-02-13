@@ -1,14 +1,13 @@
 using UnityEngine;
-
+using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public sealed class SGAxes : SGModel {
         
-        private static readonly Color k_ForwardColor = Color.white;
-        private static readonly Color k_BackColor = Color.blue;
-        private static readonly Color k_RightColor = Color.red;
-        private static readonly Color k_UpColor = Color.green;
-
+        private static readonly Primitives.Color k_ForwardColor = Primitives.Color.WHITE;
+        private static readonly Primitives.Color k_BackColor = Primitives.Color.BLUE;
+        private static readonly Primitives.Color k_RightColor = Primitives.Color.RED;
+        private static readonly Primitives.Color k_UpColor = Primitives.Color.GREEN;
         
         AxesModel m_Model;
 
@@ -19,50 +18,32 @@ namespace Alice.Player.Unity {
 
             m_Model = Instantiate(SceneGraph.Current.InternalResources.AxesModel, cachedTransform, false);
             m_ModelTransform = m_Model.transform;
-            m_ModelTransform.localPosition = Vector3.zero;
-            m_ModelTransform.localRotation = Quaternion.identity;
-            
-            
+            m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
+            m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
 
             CacheMeshBounds();
         }
 
-        private void SetRendererColor(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Color inColor) {
-            PrepPropertyBlock(inRenderer, ref ioPropertyBlock);
-            ioPropertyBlock.SetColor("_Color", inColor);
-            inRenderer.SetPropertyBlock(ioPropertyBlock);
-        }
 
         protected override Bounds GetMeshBounds() {
             return m_Model.bounds;
         }
 
         protected override void OnPaintChanged() {
-            SetRendererColor(m_Model.ForwardCylinderRenderer, ref m_PropertyBlocks[0], k_ForwardColor);
-            SetRendererColor(m_Model.ForwardConeRenderer, ref m_PropertyBlocks[1], k_ForwardColor);
-
-            SetRendererColor(m_Model.BackCylinderRenderer, ref m_PropertyBlocks[2], k_BackColor);
-            SetRendererColor(m_Model.BackConeRenderer, ref m_PropertyBlocks[3], k_BackColor);
-
-            SetRendererColor(m_Model.RightCylinderRenderer, ref m_PropertyBlocks[4], k_RightColor);
-            SetRendererColor(m_Model.RightConeRenderer, ref m_PropertyBlocks[5], k_RightColor);
-
-            SetRendererColor(m_Model.UpCylinderRenderer, ref m_PropertyBlocks[6], k_UpColor);
-            SetRendererColor(m_Model.UpConeRenderer, ref m_PropertyBlocks[7], k_UpColor);
         }
 
         protected override void OnOpacityChanged() {
-            ApplyOpacity(m_Model.ForwardCylinderRenderer, ref m_PropertyBlocks[0]);
-            ApplyOpacity(m_Model.ForwardConeRenderer, ref m_PropertyBlocks[1]);
+            ApplyPaintAndOpacity(m_Model.ForwardCylinderRenderer, ref m_PropertyBlocks[0], k_ForwardColor, m_CachedOpacity);
+            ApplyPaintAndOpacity(m_Model.ForwardConeRenderer, ref m_PropertyBlocks[1], k_ForwardColor, m_CachedOpacity);
 
-            ApplyOpacity(m_Model.BackCylinderRenderer, ref m_PropertyBlocks[2]);
-            ApplyOpacity(m_Model.BackConeRenderer, ref m_PropertyBlocks[3]);
+            ApplyPaintAndOpacity(m_Model.BackCylinderRenderer, ref m_PropertyBlocks[2], k_BackColor, m_CachedOpacity);
+            ApplyPaintAndOpacity(m_Model.BackConeRenderer, ref m_PropertyBlocks[3], k_BackColor, m_CachedOpacity);
 
-            ApplyOpacity(m_Model.RightCylinderRenderer, ref m_PropertyBlocks[4]);
-            ApplyOpacity(m_Model.RightConeRenderer, ref m_PropertyBlocks[5]);
+            ApplyPaintAndOpacity(m_Model.RightCylinderRenderer, ref m_PropertyBlocks[4], k_RightColor, m_CachedOpacity);
+            ApplyPaintAndOpacity(m_Model.RightConeRenderer, ref m_PropertyBlocks[5], k_RightColor, m_CachedOpacity);
 
-            ApplyOpacity(m_Model.UpCylinderRenderer, ref m_PropertyBlocks[6]);
-            ApplyOpacity(m_Model.UpConeRenderer, ref m_PropertyBlocks[7]);
+            ApplyPaintAndOpacity(m_Model.UpCylinderRenderer, ref m_PropertyBlocks[6], k_UpColor, m_CachedOpacity);
+            ApplyPaintAndOpacity(m_Model.UpConeRenderer, ref m_PropertyBlocks[7], k_UpColor, m_CachedOpacity);
         }
 
     }

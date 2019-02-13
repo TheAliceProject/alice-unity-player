@@ -35,7 +35,7 @@ namespace Alice.Player.Unity {
         private void OnBackPaintPropertyChanged(TValue inValue) {
             m_CachedBackPaint = inValue.RawObject<Paint>();
 
-            PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
+            GetPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
 
             m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, PaintTextureName);
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
@@ -48,7 +48,7 @@ namespace Alice.Player.Unity {
                 m_BackRenderer.enabled = m_Renderer.enabled;
             }
 
-            PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
+            GetPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
 
             m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, PaintTextureName);
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
