@@ -27,7 +27,7 @@ namespace Alice.Player.Unity {
             var prefab = SceneGraph.Current.ModelCache.Get(inIdentifier);
 
             if (prefab) {
-                var model = Instantiate(prefab, cachedTransform);
+                var model = Instantiate(prefab, cachedTransform, false);
                 m_ModelTransform = model.transform;
                 m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
                 m_ModelTransform.localPosition = UnityEngine.Vector3.zero;

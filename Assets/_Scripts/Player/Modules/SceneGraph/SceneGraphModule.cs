@@ -22,6 +22,8 @@ namespace Alice.Player.Modules {
         public const string SPHERE = "Internal/Sphere";
         [PInteropField]
         public const string TORUS = "Internal/Torus";
+        [PInteropField]
+        public const string AXES = "Internal/Axes";
 
         #region Entity Instantiation
         [PInteropMethod]
@@ -49,6 +51,9 @@ namespace Alice.Player.Modules {
                     break;
                 case BILLBOARD:
                     entity = SGEntity.Create<SGBillboard>(model);
+                    break;
+                case AXES:
+                    entity = SGEntity.Create<SGAxes>(model);
                     break;
                 default:
                     var jointedEntity = SGEntity.Create<SGJointedModel>(model);
