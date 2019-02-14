@@ -6,7 +6,7 @@ using Alice.Player.Primitives;
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
         
-        private string m_Resource;
+        private string m_ResourceId;
         private Renderer[] m_Renderers;
         private MeshFilter[] m_Filters;
         private MaterialPropertyBlock[] m_PropertyBlocks;
@@ -15,9 +15,11 @@ namespace Alice.Player.Unity {
 
         public void SetResource(string inIdentifier) {
 
-            if (m_Resource == inIdentifier) {
+            if (m_ResourceId == inIdentifier) {
                 return;
             }
+
+            m_ResourceId = inIdentifier;
 
             if (m_ModelTransform) {
                 Destroy(m_ModelTransform.gameObject);
