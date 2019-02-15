@@ -105,16 +105,17 @@ namespace Alice.Player.Unity {
 
         public static bool Exists { get { return !ReferenceEquals(s_Current, null); } }
 
-        private TweedleSystem m_System;
+        public PlayerResources InternalResources {get; private set;}
+        public TextureCache TextureCache {get; private set;}
+        public ModelCache ModelCache {get; private set;}
+
         private List<SGEntity> m_Entities = new List<SGEntity>();
+        private Transform m_ModelCacheRoot;
 
         private List<IWaitReturn> m_WaitReturnsQueue = new List<IWaitReturn>();
         private List<IWaitReturn> m_WaitReturns = new List<IWaitReturn>();
 
         private bool m_IsUpdating;
-
-        public PlayerResources InternalResources {get; private set;}
-        public TextureCache TextureCache {get; private set;}
 
         private void Awake() {
             if (!ReferenceEquals(s_Current, null) && !ReferenceEquals(s_Current, this)) {
@@ -124,8 +125,12 @@ namespace Alice.Player.Unity {
                 s_Current = this;
             }
 
+            m_ModelCacheRoot = new GameObject("ModelCache").transform;
+            m_ModelCacheRoot.SetParent(transform, false);
+
             InternalResources = Resources.Load<PlayerResources>("PlayerResources");
             TextureCache = new TextureCache();
+            ModelCache = new ModelCache(m_ModelCacheRoot);
         }
 
         private void Update() {
@@ -217,9 +222,9 @@ namespace Alice.Player.Unity {
                 m_Entities[i].CleanUp();
                 Destroy(m_Entities[i].gameObject);
             }
-
             m_Entities.Clear();
-            m_System = null;
+
+            Destroy(m_ModelCacheRoot);
             
             TextureCache.Clear();
             TextureCache = null;

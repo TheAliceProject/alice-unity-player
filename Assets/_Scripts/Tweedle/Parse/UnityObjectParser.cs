@@ -42,10 +42,12 @@ namespace Alice.Tweedle.Parse
                 {
                     JsonParser reader = new JsonParser(m_System, zipFile);
                     reader.Parse();
+                    m_System.LoadResources(zipFile);
                 }
             }
             
             m_System.Link();
+            
 
             if (dumpTypeOutlines)
             {

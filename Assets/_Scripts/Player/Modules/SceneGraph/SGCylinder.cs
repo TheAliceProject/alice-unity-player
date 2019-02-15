@@ -7,8 +7,8 @@ namespace Alice.Player.Unity {
     public class SGCylinder : SGShape {
         protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.CylinderMesh; } }
 
-        protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
-            base.Init(inModelTransform, inRenderer, inFilter);
+        protected override void Awake() {
+            base.Awake();
             RegisterPropertyDelegate(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
             RegisterPropertyDelegate(LENGTH_PROPERTY_NAME, OnLengthPropertyChanged);
         }
