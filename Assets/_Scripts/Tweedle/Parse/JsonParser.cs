@@ -39,6 +39,11 @@ namespace Alice.Tweedle.Parse
             Manifest asset = JsonUtility.FromJson<Manifest>(inManifestJson);
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
+            ParsePrerequisiteDetails(
+                asset,
+                jsonObj[MemberInfoGetter.GetMemberName(() => asset.prerequisites)],
+                inWorkingDir
+                );
             
             ProjectType t = asset.Identifier.Type;
             switch (t)
@@ -68,7 +73,22 @@ namespace Alice.Tweedle.Parse
                 );
         }
 
-        
+        private void ParsePrerequisiteDetails(Manifest manifest, JSONObject json, string workingDir)
+        {
+            if (json == null || json.type != JSONObject.Type.ARRAY)
+            {
+                return;
+            }
+            for (int i = 0; i < manifest.prerequisites.Count; i++)
+            {
+                if  (!m_System.LoadedFiles.Contains(manifest.prerequisites[i].identifier)) {
+                    string manifestPath = workingDir + manifest.prerequisites[i].manifest;
+                    string manifestJson = m_ZipFile.ReadEntry(manifestPath);
+                    string manifestDir = GetDirectoryEntryPath(manifestPath);
+                    ParseJson(manifestJson, manifestDir);
+                }
+            }
+        }
 
         private void ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
         {
@@ -112,9 +132,10 @@ namespace Alice.Tweedle.Parse
                 case ContentType.Model:
                     for (int j = 0; j < resourceRef.files.Count; j++)
                     {
-                        string subJson = m_ZipFile.ReadEntry(resourceRef.files[j]);
-                        string manifestDir = workingDir + (Path.GetDirectoryName(resourceRef.files[j]) + Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/');
-                        ParseJson(subJson, manifestDir);
+                        string manifestPath = workingDir + resourceRef.files[j];
+                        string manifestJson = m_ZipFile.ReadEntry(manifestPath);
+                        string manifestDir = GetDirectoryEntryPath(manifestPath);
+                        ParseJson(manifestJson, manifestDir);
                     }
                     strictRef =  JsonUtility.FromJson<ModelReference>(refJson);
                     break;
@@ -151,6 +172,10 @@ namespace Alice.Tweedle.Parse
 
             var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.files[0]);
             System.IO.File.WriteAllBytes(cachePath + resourceRef.files[0], data);
+        }
+
+        private static string GetDirectoryEntryPath(string inFilePath) {
+            return Path.GetDirectoryName(inFilePath).Replace(Path.DirectorySeparatorChar, '/') + "/";
         }
     }
 }
