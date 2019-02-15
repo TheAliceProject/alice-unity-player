@@ -4,7 +4,7 @@ using Alice.Tweedle;
 using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
-    public class SGTorus : SGShape {
+    public sealed class SGTorus : SGShape {
 
         private const float k_RingRadiusRef = 0.5f;
         private const float k_CrossRadiusRef = 0.25f;
@@ -18,8 +18,8 @@ namespace Alice.Player.Unity {
         protected override Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueTorusMaterial; } }
         protected override Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentTorusMaterial; } }
 
-        protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
-            base.Init(inModelTransform, inRenderer, inFilter);
+        protected override void Awake() {
+            base.Awake();
             RegisterPropertyDelegate(INNER_RADIUS_PROPERTY_NAME, OnInnerRadiusPropertyChanged);
             RegisterPropertyDelegate(OUTER_RADIUS_PROPERTY_NAME, OnOuterRadiusPropertyChanged);
         }
@@ -47,7 +47,7 @@ namespace Alice.Player.Unity {
         }
 
         private void UpdateRadiusProperties() {
-            PrepPropertyBlock(m_Renderer, ref m_PropertyBlock);
+            GetPropertyBlock(m_Renderer, ref m_PropertyBlock);
             var height = m_OuterRadius - m_InnerRadius;
             var crossRadius = height*0.5f;
             m_PropertyBlock.SetFloat("_RingRadiusDelta", (m_InnerRadius + crossRadius)-k_RingRadiusRef);
@@ -77,7 +77,7 @@ namespace Alice.Player.Unity {
 
         private void OnDrawGizmosSelected() {
             Gizmos.matrix = m_ModelTransform.localToWorldMatrix;
-            Gizmos.DrawWireCube(UnityEngine.Vector3.zero, m_MeshBounds.size);
+            Gizmos.DrawWireCube(UnityEngine.Vector3.zero, MeshBounds.size);
         }
     }
 }

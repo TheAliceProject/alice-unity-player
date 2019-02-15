@@ -1,4 +1,5 @@
 using UnityEngine;
+using TriLib;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -16,6 +17,10 @@ namespace Alice.Player.Unity {
         public Material TransparentMaterial {get { return m_TransparentMaterial; } }
 
         [SerializeField]
+        private Material m_TransparentMultipassMaterial;
+        public Material TransparentMultipassMaterial {get { return m_TransparentMultipassMaterial; } }
+
+        [SerializeField]
         private Material m_OpaqueTorusMaterial;
         public Material OpaqueTorusMaterial { get {return m_OpaqueTorusMaterial; } }
 
@@ -23,38 +28,59 @@ namespace Alice.Player.Unity {
         private Material m_TransparentTorusMaterial;
         public Material TransparentTorusMaterial {get { return m_TransparentTorusMaterial; } }
 
+        
+
         [Header("Primitive Meshes")]
         [SerializeField]
         private Mesh m_BoxMesh;
-        public Mesh BoxMesh {get { return m_BoxMesh; } }
+        public Mesh BoxMesh { get { return m_BoxMesh; } }
 
         [SerializeField]
         private Mesh m_SphereMesh;
-        public Mesh SphereMesh {get { return m_SphereMesh; } }
+        public Mesh SphereMesh { get { return m_SphereMesh; } }
 
         [SerializeField]
         private Mesh m_CylinderMesh;
-        public Mesh CylinderMesh {get { return m_CylinderMesh; } }
+        public Mesh CylinderMesh { get { return m_CylinderMesh; } }
 
         [SerializeField]
         private Mesh m_ConeMesh;
-        public Mesh ConeMesh {get { return m_ConeMesh; } }
+        public Mesh ConeMesh { get { return m_ConeMesh; } }
 
         [SerializeField]
         private Mesh m_TorusMesh;
-        public Mesh TorusMesh {get { return m_TorusMesh; } }
+        public Mesh TorusMesh { get { return m_TorusMesh; } }
 
         [SerializeField]
         private Mesh m_BillboardMesh;
-        public Mesh BillboardMesh {get { return m_BillboardMesh; } }
+        public Mesh BillboardMesh { get { return m_BillboardMesh; } }
 
         [SerializeField]
         private Mesh m_DiscMesh;
-        public Mesh DiscMesh {get { return m_DiscMesh; } }
+        public Mesh DiscMesh { get { return m_DiscMesh; } }
 
         [SerializeField]
         private Mesh m_GroundMesh;
-        public Mesh GroundMesh {get { return m_GroundMesh; } }
+        public Mesh GroundMesh { get { return m_GroundMesh; } }
+
+        [SerializeField]
+        private AxesModel m_AxesModel;
+        public AxesModel AxesModel { get { return m_AxesModel; } }
+
+        [Header("TriLib Loader Options")]
+        AssetLoaderOptions m_ModelLoaderOptions;
+        public AssetLoaderOptions ModelLoaderOptions {
+            get { 
+                if (m_ModelLoaderOptions == null) {
+                    m_ModelLoaderOptions = AssetLoaderOptions.CreateInstance();
+                    m_ModelLoaderOptions.DontLoadAnimations = true; 
+                    m_ModelLoaderOptions.AutoPlayAnimations = false;
+                    m_ModelLoaderOptions.PostProcessSteps = AssimpProcessPreset.TargetRealtimeFast;
+                    m_ModelLoaderOptions.RotationAngles = Vector3.zero;
+                }
+                return m_ModelLoaderOptions; 
+            }
+        }
 
 #if UNITY_EDITOR
         [MenuItem("Assets/Create/Player Resources Asset")]

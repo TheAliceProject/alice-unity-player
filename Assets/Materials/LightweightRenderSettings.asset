@@ -19,7 +19,7 @@ MonoBehaviour:
   m_SupportsHDR: 0
   m_MSAA: 4
   m_RenderScale: 1
-  m_ShadowType: 1
+  m_ShadowType: 0
   m_ShadowAtlasResolution: 2048
   m_ShadowNearPlaneOffset: 2
   m_ShadowDistance: 50

@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 namespace Alice.Tweedle.Parse
 {
@@ -10,6 +11,7 @@ namespace Alice.Tweedle.Parse
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
+
 
         public TweedleSystem StoredSystem
         {
@@ -25,137 +27,130 @@ namespace Alice.Tweedle.Parse
 
         internal void Parse()
         {
-            ParseJson(ReadEntry("manifest.json"));
-        }
-
-        public void ParseJson(string manifestJson)
-        {
-            Manifest asset = UnityEngine.JsonUtility.FromJson<Manifest>(manifestJson);
-            JSONObject jsonObj = new JSONObject(manifestJson);
-
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
             m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
-            ParseResourceDetails(
-                asset.resources,
-                jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)]
-                );
+            ParseJson(m_ZipFile.ReadEntry("manifest.json"));
+        }
+
+        public void ParseJson(string inManifestJson, string inWorkingDir = "")
+        {
+            Manifest asset = JsonUtility.FromJson<Manifest>(inManifestJson);
+            JSONObject jsonObj = new JSONObject(inManifestJson);
+
+            
             ProjectType t = asset.Identifier.Type;
             switch (t)
             {
                 case ProjectType.Library:
                     LibraryManifest libAsset = new LibraryManifest(asset);
                     m_System.AddLibrary(libAsset);
+                    asset = libAsset;
                     break;
                 case ProjectType.World:
                     ProgramDescription worldAsset = new ProgramDescription(asset);
                     m_System.AddProgram(worldAsset);
+                    asset = worldAsset;
                     break;
                 case ProjectType.Model:
-                    ModelManifest modelAsset = UnityEngine.JsonUtility.FromJson<ModelManifest>(manifestJson);
+                    ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);
+                    
                     m_System.AddModel(modelAsset);
+                    asset = modelAsset;
                     break;
             }
+
+            ParseResourceDetails(
+                asset,
+                jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)],
+                inWorkingDir
+                );
         }
 
-        string ReadEntry(string location)
-        {
-            ZipEntry entry = m_ZipFile.GetEntry(location);
-            if (entry == null)
-            {
-                UnityEngine.Debug.Log("Did not find entry for: " + location);
-            }
-            return ReadEntry(entry);
-        }
+        
 
-        string ReadEntry(ZipEntry entry)
-        {
-            Stream entryStream = m_ZipFile.GetInputStream(entry);
-            return (new StreamReader(entryStream)).ReadToEnd();
-        }
-
-        byte[] ReadDataEntry(string location)
-        {
-            ZipEntry entry = m_ZipFile.GetEntry(location);
-            if (entry == null)
-            {
-                UnityEngine.Debug.Log("Did not find entry for: " + location);
-            }
-            return ReadDataEntry(entry);
-        }
-
-        byte[] ReadDataEntry(ZipEntry entry)
-        {
-            Stream entryStream = m_ZipFile.GetInputStream(entry);
-            return (new BinaryReader(entryStream)).ReadBytes((int)entry.Size);
-        }
-
-        private void ParseResourceDetails(
-            List<ResourceReference> resources,
-            JSONObject json)
+        private void ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
         {
             if (json == null || json.type != JSONObject.Type.ARRAY)
             {
                 return;
             }
-            for (int i = 0; i < resources.Count; i++)
+            for (int i = 0; i < manifest.resources.Count; i++)
             {
-                ResourceReference strictResource = ReadResource(resources[i], json.list[i].ToString());
-                resources[i] = strictResource;
+                ResourceReference strictResource = ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
+                manifest.resources[i] = strictResource;
                 m_System.AddResource(strictResource);
             }
         }
 
-        private ResourceReference ReadResource(ResourceReference resourceRef, string refJson)
+        private ResourceReference ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
         {
+            ResourceReference strictRef = null;
+
             switch (resourceRef.ContentType)
             {
                 case ContentType.Audio:
-                    return UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+                    strictRef =  UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+                    break;
                 case ContentType.Class:
-                    for (int j = 0; j < resourceRef.files.Count; j++)
-                    {
-                        string tweedleCode = ReadEntry(resourceRef.files[j]);
-                        TType tweClass = (TType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-                        m_System.GetRuntimeAssembly().Add(tweClass);
-                    }
-                    return UnityEngine.JsonUtility.FromJson<ClassReference>(refJson);
+                    ParseTweedleTypeResource(resourceRef, workingDir);
+                    strictRef =  JsonUtility.FromJson<ClassReference>(refJson);
+                    break;
                 case ContentType.Enum:
-                    for (int j = 0; j < resourceRef.files.Count; j++)
-                    {
-                        string tweedleCode = ReadEntry(resourceRef.files[j]);
-                        TEnumType tweedleEnum = (TEnumType)m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-                        m_System.GetRuntimeAssembly().Add(tweedleEnum);
-                    }
-                    return UnityEngine.JsonUtility.FromJson<EnumReference>(refJson);
+                    ParseTweedleTypeResource(resourceRef, workingDir);
+                    strictRef =  JsonUtility.FromJson<EnumReference>(refJson);
+                    break;
                 case ContentType.Image:
-                    CacheSceneGraphTexture(resourceRef);
-                    return UnityEngine.JsonUtility.FromJson<ImageReference>(refJson);
+                    if (manifest is ModelManifest) {
+                        CacheToDisk(resourceRef, workingDir);
+                        strictRef = resourceRef;
+                    } else {
+                        strictRef =  JsonUtility.FromJson<ImageReference>(refJson);
+                    }
+                    break;
                 case ContentType.Model:
                     for (int j = 0; j < resourceRef.files.Count; j++)
                     {
-                        string subJson = System.IO.File.ReadAllText(resourceRef.files[j]);
-                        ParseJson(subJson);
+                        string subJson = m_ZipFile.ReadEntry(resourceRef.files[j]);
+                        string manifestDir = workingDir + (Path.GetDirectoryName(resourceRef.files[j]) + Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/');
+                        ParseJson(subJson, manifestDir);
                     }
-                    return UnityEngine.JsonUtility.FromJson<ModelReference>(refJson);
+                    strictRef =  JsonUtility.FromJson<ModelReference>(refJson);
+                    break;
                 case ContentType.SkeletonMesh:
-                    return UnityEngine.JsonUtility.FromJson<StructureReference>(refJson);
+                    strictRef =  JsonUtility.FromJson<StructureReference>(refJson);
+                    break;
                 case ContentType.Texture:
-                    CacheSceneGraphTexture(resourceRef);
-                    return UnityEngine.JsonUtility.FromJson<TextureReference>(refJson);
+                    strictRef =  JsonUtility.FromJson<TextureReference>(refJson);
+                    break;
             }
-            return null;
+
+            // prepend working path to files
+            for (int i = 0, fileCount = strictRef.files.Count; i < fileCount; ++i) {
+                strictRef.files[i] = workingDir + strictRef.files[i];
+            }
+
+            return strictRef;
         }
 
-        private void CacheSceneGraphTexture(ResourceReference resourceRef) {
-            if (UnityEngine.Application.isPlaying && resourceRef.files.Count > 0) {
-                byte[] data = ReadDataEntry(resourceRef.files[0]);
-                var texture = new UnityEngine.Texture2D(0,0);
-                if (UnityEngine.ImageConversion.LoadImage(texture, data, true)) {
-                    Player.Unity.SceneGraph.Current?.TextureCache?.Add(resourceRef.id, texture);
-                }
+        private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
+            for (int j = 0; j < resourceRef.files.Count; j++)
+            {
+                string tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.files[j]);
+                TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
+                m_System.GetRuntimeAssembly().Add(tweedleType);
             }
+        }
+
+        private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
+            var cachePath = Application.temporaryCachePath + "/" + workingDir;
+            if (!Directory.Exists(cachePath)) {
+                Directory.CreateDirectory(cachePath);
+            }
+
+            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.files[0]);
+            System.IO.File.WriteAllBytes(cachePath + resourceRef.files[0], data);
         }
     }
 }

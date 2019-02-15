@@ -13,18 +13,18 @@ namespace Alice.Player.Unity {
         protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.BillboardMesh; } }
         // billboards are always transparent
         protected override Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
+        protected override Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentMaterial; } }
 
-
-        protected override void Init(Transform inModelTransform, Renderer inRenderer, MeshFilter inFilter) {
-            Transform  backTransform;
-            MeshFilter  backFilter;
-            CreateModelObject(ShapeMesh, OpaqueMaterial, inModelTransform, out backTransform, out m_BackRenderer, out backFilter);
-            backTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
-            inModelTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
-
-            base.Init(inModelTransform, inRenderer, inFilter);
+        protected override void Awake() {
+            base.Awake();
 
             RegisterPropertyDelegate(BACK_PAINT_PROPERTY_NAME, OnBackPaintPropertyChanged);
+
+            Transform  backTransform;
+            MeshFilter  backFilter;
+            CreateModelObject(ShapeMesh, OpaqueMaterial, m_ModelTransform, out backTransform, out m_BackRenderer, out backFilter);
+            backTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
+            m_ModelTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
         }
 
         protected override void SetSize(UnityEngine.Vector3 size) {
@@ -35,22 +35,22 @@ namespace Alice.Player.Unity {
         private void OnBackPaintPropertyChanged(TValue inValue) {
             m_CachedBackPaint = inValue.RawObject<Paint>();
 
-            PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
+            GetPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
 
-            m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, ShaderTextureName);
+            m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, PaintTextureName);
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
         }
 
-        protected override void SetOpacity(float inOpacity) {
-            base.SetOpacity(inOpacity);
+        protected override void OnOpacityChanged() {
+            base.OnOpacityChanged();
 
             if (m_BackRenderer.enabled != m_Renderer.enabled) {
                 m_BackRenderer.enabled = m_Renderer.enabled;
             }
 
-            PrepPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
+            GetPropertyBlock(m_BackRenderer, ref m_BackPropertyBlock);
 
-            m_CachedBackPaint.Apply(m_BackPropertyBlock, inOpacity, ShaderTextureName);
+            m_CachedBackPaint.Apply(m_BackPropertyBlock, m_CachedOpacity, PaintTextureName);
             m_BackRenderer.SetPropertyBlock(m_BackPropertyBlock);
         }
     }

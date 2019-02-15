@@ -22,6 +22,8 @@ namespace Alice.Player.Modules {
         public const string SPHERE = "Internal/Sphere";
         [PInteropField]
         public const string TORUS = "Internal/Torus";
+        [PInteropField]
+        public const string AXES = "Internal/Axes";
 
         #region Entity Instantiation
         [PInteropMethod]
@@ -50,8 +52,14 @@ namespace Alice.Player.Modules {
                 case BILLBOARD:
                     entity = SGEntity.Create<SGBillboard>(model);
                     break;
+                case AXES:
+                    entity = SGEntity.Create<SGAxes>(model);
+                    break;
                 default:
-                    throw new SceneGraphException("No model resource found for " + resource);
+                    var jointedEntity = SGEntity.Create<SGJointedModel>(model);
+                    jointedEntity.SetResource(resource);
+                    entity = jointedEntity;
+                    break;
             }
 
             SceneGraph.Current.AddEntity(entity);
@@ -72,6 +80,12 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void createGroundEntity(TValue ground) {
             var entity = SGEntity.Create<SGGround>(ground);
+            SceneGraph.Current.AddEntity(entity);
+        }
+
+        [PInteropMethod]
+        public static void createMarkerEntity(TValue marker) {
+            var entity = SGEntity.Create<SGMarker>(marker);
             SceneGraph.Current.AddEntity(entity);
         }
         #endregion // Entity Instantiation
@@ -182,17 +196,29 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void setEntityName(TValue thing, string name) {
             var entity = SceneGraph.Current.FindEntity(thing);
-            entity.SetName(name);
+            entity?.SetName(name);
+        }
+
+        [PInteropMethod]
+        public static void setEntityResource(TValue model, string resource) {
+            var modelEnt = SceneGraph.Current.FindEntity<SGJointedModel>(model);
+            if (modelEnt) {
+                modelEnt.SetResource(resource);
+            }
         }
 
         [PInteropMethod]
         public static VantagePoint setVehicle(TValue vehicle, TValue rider) {
             var entity = SceneGraph.Current.FindEntity(rider);
-            entity.vehicle = SceneGraph.Current.FindEntity(vehicle);
-            
-            var p = entity.cachedTransform.localPosition;
-            var r = entity.cachedTransform.localRotation;
-            return VantagePoint.FromUnity(p, r);
+            if (entity) {
+                entity.vehicle = SceneGraph.Current.FindEntity(vehicle);
+                
+                var p = entity.cachedTransform.localPosition;
+                var r = entity.cachedTransform.localRotation;
+                return VantagePoint.FromUnity(p, r);
+            } else {
+                throw new SceneGraphException("No scene graph entity exists for tweedle object.");
+            }
         }
 
         [PInteropMethod]
