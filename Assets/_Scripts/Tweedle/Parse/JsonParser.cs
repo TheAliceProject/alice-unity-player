@@ -60,7 +60,6 @@ namespace Alice.Tweedle.Parse
                     break;
                 case ProjectType.Model:
                     ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);
-                    
                     m_System.AddModel(modelAsset);
                     asset = modelAsset;
                     break;
