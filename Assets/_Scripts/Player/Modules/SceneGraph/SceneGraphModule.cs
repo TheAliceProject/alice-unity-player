@@ -66,6 +66,17 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void createJointEntity(TValue joint, string id, TValue model) {
+            var modelEnt = SceneGraph.Current.FindEntity<SGJointedModel>(model);
+            if (modelEnt) {
+                var jointEnt = modelEnt.LinkJoint(joint, id);
+                if (jointEnt) {
+                    SceneGraph.Current.AddEntity(jointEnt);
+                }
+            }
+        }
+
+        [PInteropMethod]
         public static void createSceneEntity(TValue scene) {
             var entity = SGEntity.Create<SGScene>(scene);
             SceneGraph.Current.AddEntity(entity);
@@ -248,6 +259,17 @@ namespace Alice.Player.Modules {
             }
 
             return getInverseAbsoluteTransformation(viewer).multiply(getAbsoluteTransformation(target));
+        }
+
+        [PInteropMethod]
+        public static VantagePoint getLocalTransformation(TValue thing) {
+            var entity = SceneGraph.Current.FindEntity(thing);
+            if (entity) {
+                var p = entity.cachedTransform.localPosition;
+                var r = entity.cachedTransform.localRotation;
+                return VantagePoint.FromUnity(p, r);
+            }
+            return VantagePoint.IDENTITY;
         }
 
         [PInteropMethod]
