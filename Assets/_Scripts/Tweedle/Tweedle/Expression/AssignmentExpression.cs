@@ -18,6 +18,10 @@ namespace Alice.Tweedle
                 Identifier = ((IdentifierReference)assigneeExp).Name;
                 TargetExp = null;
             }
+            else if (assigneeExp is ArrayIndexExpression) {
+                Identifier = null;
+                TargetExp = assigneeExp;
+            }
             else
             {
                 if (assigneeExp is FieldAccess)
@@ -46,6 +50,10 @@ namespace Alice.Tweedle
             }
             else
             {
+                if (TargetExp is ArrayIndexExpression) {
+                    return ((ArrayIndexExpression)TargetExp).AsAssignmentStep(scope, ValueExp);
+                }
+
                 return new TwoValueComputationStep(
                     ToTweedle(),
                     scope,
