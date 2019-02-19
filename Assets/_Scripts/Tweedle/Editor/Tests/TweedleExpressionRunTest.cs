@@ -64,6 +64,8 @@ namespace Alice.Tweedle.Parse
             Assert.AreEqual(3, newVal.ToInt(), "The VM should have returned 3.");
         }
 
+        
+
         [Test]
         public void APrimitiveArrayShouldBeCreated()
         {
@@ -83,6 +85,18 @@ namespace Alice.Tweedle.Parse
 
             TValue newVal = scope.GetValue("v");
             Assert.AreEqual(4, newVal.ToInt());
+        }
+
+        [Test]
+        public void AnAssignmentExpressionShouldUpdateArrayElement()
+        {
+            Init();
+            RunStatement("WholeNumber[] a <- new WholeNumber[] {3, 4, 5};", scope);
+            RunStatement("a[1] <- 7;", scope);
+            RunStatement("WholeNumber v <- a[1];", scope);
+
+            TValue newVal = scope.GetValue("v");
+            Assert.AreEqual(7, newVal.ToInt());
         }
 
         [Test]

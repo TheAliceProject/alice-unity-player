@@ -25,6 +25,22 @@ namespace Alice.Tweedle
                 (arr, val) => (arr.Array())[val.ToInt()]);
         }
 
+
+        public ExecutionStep AsAssignmentStep(ExecutionScope scope, ITweedleExpression valueExp)
+        {
+
+            return new ThreeValueComputationStep(
+               ToTweedle(), 
+               scope, 
+               array, 
+               index, 
+               valueExp, 
+               (arr, idx, val) => {
+                   (arr.Array())[idx.ToInt()] = val;
+                   return val;
+               });
+        }
+
         public override string ToTweedle()
         {
             return array.ToTweedle() + "[" + index.ToTweedle() + "]";
