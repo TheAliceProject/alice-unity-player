@@ -18,7 +18,7 @@ namespace Alice.Tweedle.File
         public Description description;
         public Provenance provenance;
         public MetaData metadata;
-        public List<PrerequisiteReference> prerequisites;
+        public List<ProjectIdentifier> prerequisites;
         public List<ResourceReference> resources;
 
         public Manifest() {}
