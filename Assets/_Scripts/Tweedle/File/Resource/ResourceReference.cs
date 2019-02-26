@@ -31,6 +31,6 @@ namespace Alice.Tweedle.File
         public string id;
         public string type;
         public string format;
-        public List<string> files;
+        public string file;
     }
 }
