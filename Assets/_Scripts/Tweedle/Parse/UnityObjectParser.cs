@@ -3,13 +3,13 @@ using UnityEngine;
 
 using ICSharpCode.SharpZipLib.Zip;
 using Alice.Tweedle.VM;
+using Alice.Tweedle.File;
 
 namespace Alice.Tweedle.Parse
 {
     public class UnityObjectParser : MonoBehaviour
     {
         static string project_ext = "a3p";
-
         public bool dumpTypeOutlines = false;
 
         private TweedleSystem m_System;
@@ -42,7 +42,6 @@ namespace Alice.Tweedle.Parse
                 {
                     JsonParser reader = new JsonParser(m_System, zipFile);
                     reader.Parse();
-                    m_System.LoadResources(zipFile);
                 }
             }
             
