@@ -136,8 +136,8 @@ namespace Alice.Tweedle.Parse
         }
 
         private void LoadTexture(ResourceReference inResourceRef, ZipFile inFile) {
-            if (UnityEngine.Application.isPlaying && inResourceRef.files.Count > 0) {
-                byte[] data = inFile.ReadDataEntry(inResourceRef.files[0]);
+            if (UnityEngine.Application.isPlaying) {
+                byte[] data = inFile.ReadDataEntry(inResourceRef.file);
                 var texture = new Texture2D(0,0);
                 if (ImageConversion.LoadImage(texture, data, true)) {
                     Player.Unity.SceneGraph.Current.TextureCache.Add(inResourceRef.id, texture);
@@ -152,15 +152,15 @@ namespace Alice.Tweedle.Parse
                     var meshID = new ResourceIdentifier(inManifest.models[i].structure, ContentType.SkeletonMesh, "dae");
                     ResourceReference meshRef;
                     if (Resources.TryGetValue(meshID, out meshRef)) {
-                        byte[] data = inFile.ReadDataEntry(meshRef.files[0]);
+                        byte[] data = inFile.ReadDataEntry(meshRef.file);
 
                         using (var assetLoader = new TriLib.AssetLoader())
                         {
                             var options = Player.Unity.SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
-                            var cachePath = Application.temporaryCachePath + "/" + meshRef.files[0];
+                            var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
                             options.TexturesPathOverride = System.IO.Path.GetDirectoryName(cachePath);
                             
-                            GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.files[0], options);
+                            GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.file, options);
 
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
                             Player.Unity.SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);

@@ -106,6 +106,8 @@ namespace Alice.Tweedle.Parse
         private ResourceReference ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
         {
             ResourceReference strictRef = null;
+            string zipPath = workingDir + resourceRef.file;
+
 
             switch (resourceRef.ContentType)
             {
@@ -129,13 +131,9 @@ namespace Alice.Tweedle.Parse
                     }
                     break;
                 case ContentType.Model:
-                    for (int j = 0; j < resourceRef.files.Count; j++)
-                    {
-                        string manifestPath = workingDir + resourceRef.files[j];
-                        string manifestJson = m_ZipFile.ReadEntry(manifestPath);
-                        string manifestDir = GetDirectoryEntryPath(manifestPath);
-                        ParseJson(manifestJson, manifestDir);
-                    }
+                    string manifestJson = m_ZipFile.ReadEntry(zipPath);
+                    string manifestDir = GetDirectoryEntryPath(zipPath);
+                    ParseJson(manifestJson, manifestDir);
                     strictRef =  JsonUtility.FromJson<ModelReference>(refJson);
                     break;
                 case ContentType.SkeletonMesh:
@@ -146,21 +144,16 @@ namespace Alice.Tweedle.Parse
                     break;
             }
 
-            // prepend working path to files
-            for (int i = 0, fileCount = strictRef.files.Count; i < fileCount; ++i) {
-                strictRef.files[i] = workingDir + strictRef.files[i];
-            }
+            // prepend working path to resource file
+            strictRef.file = zipPath;
 
             return strictRef;
         }
 
         private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
-            for (int j = 0; j < resourceRef.files.Count; j++)
-            {
-                string tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.files[j]);
-                TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-                m_System.GetRuntimeAssembly().Add(tweedleType);
-            }
+            string tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.file);
+            TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
+            m_System.GetRuntimeAssembly().Add(tweedleType);
         }
 
         private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
@@ -169,8 +162,8 @@ namespace Alice.Tweedle.Parse
                 Directory.CreateDirectory(cachePath);
             }
 
-            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.files[0]);
-            System.IO.File.WriteAllBytes(cachePath + resourceRef.files[0], data);
+            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
+            System.IO.File.WriteAllBytes(cachePath + resourceRef.file, data);
         }
 
         private static string GetDirectoryEntryPath(string inFilePath) {
