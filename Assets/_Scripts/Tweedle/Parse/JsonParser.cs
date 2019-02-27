@@ -9,6 +9,17 @@ namespace Alice.Tweedle.Parse
 {
     public class JsonParser
     {
+
+        public static void ParseZipFile(TweedleSystem inSystem, string inZipPath) {
+            using (FileStream stream = new FileStream(inZipPath, FileMode.Open, FileAccess.Read, FileShare.None)) {
+                using (ZipFile zipFile = new ZipFile(stream))
+                {
+                    JsonParser reader = new JsonParser(inSystem, zipFile);
+                    reader.Parse();
+                }
+            }
+        }
+
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
@@ -26,7 +37,7 @@ namespace Alice.Tweedle.Parse
             m_Parser = new TweedleParser();
         }
 
-        internal void Parse()
+        private void Parse()
         {
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
@@ -79,14 +90,7 @@ namespace Alice.Tweedle.Parse
 
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
-
-                        using (FileStream stream = new FileStream(libRef.path.fullPath, FileMode.Open, FileAccess.Read, FileShare.None)) {
-                            using (ZipFile zipFile = new ZipFile(stream))
-                            {
-                                JsonParser reader = new JsonParser(m_System, zipFile);
-                                reader.Parse();
-                            }
-                        }
+                        ParseZipFile(m_System, libRef.path.fullPath);
                     } else {
                         throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].id);
                     }
