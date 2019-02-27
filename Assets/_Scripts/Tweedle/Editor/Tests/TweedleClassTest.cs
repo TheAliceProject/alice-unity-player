@@ -49,12 +49,6 @@ namespace Alice.Tweedle.Parse
             + "    myConstructedThing <- new ClassToHave(start: 27);\n"
             + "    myReplacedThing <- new ClassToHave(start: -5);\n"
             + "}\n"
-            + "  Parent(WholeNumber staticStart)\n{\n"
-            + "    myConstructedThing <- new ClassToHave(start: 27);\n"
-            + "    myReplacedThing <- new ClassToHave(start: -5);\n"
-            + "    Parent.myStaticThing.x <- staticStart;\n"
-            + "}\n"
-            + "  static ClassToHave myStaticThing <- new ClassToHave();"
             + "  ClassToHave myThing <- new ClassToHave();"
             + "  ClassToHave mySpecialThing <- new ClassToHave(start: 100 - 3);"
             + "  ClassToHave myConstructedThing;"
@@ -178,16 +172,6 @@ namespace Alice.Tweedle.Parse
             TObject tested = scope.GetValue("obj").Object();
 
             Assert.AreEqual(5, tested.Get("x").ToInt());
-        }
-
-        [Test]
-        public void AStaticFieldShouldBeInitializedInAConstructor()
-        {
-            Init();
-            ExecuteStatement("Parent obj <- new Parent(staticStart: 18);");
-            var tested = scope.GetValue("obj");
-
-            Assert.IsInstanceOf<TObject>(tested.Object());
         }
 
         [Test]
