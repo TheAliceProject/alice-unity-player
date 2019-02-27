@@ -36,17 +36,8 @@ namespace Alice.Tweedle.Parse
             }
 
             m_System = new TweedleSystem();
-            using (FileStream fileStream = new FileStream(zipPath, FileMode.Open, FileAccess.Read, FileShare.None))
-            {
-                using (ZipFile zipFile = new ZipFile(fileStream))
-                {
-                    JsonParser reader = new JsonParser(m_System, zipFile);
-                    reader.Parse();
-                }
-            }
-            
+            JsonParser.ParseZipFile(m_System, zipPath);
             m_System.Link();
-            
 
             if (dumpTypeOutlines)
             {
