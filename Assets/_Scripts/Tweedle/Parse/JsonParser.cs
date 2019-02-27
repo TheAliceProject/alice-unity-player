@@ -1,4 +1,5 @@
 ﻿using Alice.Tweedle.File;
+using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.IO;
@@ -174,17 +175,17 @@ namespace Alice.Tweedle.Parse
         }
 
         private void LoadTexture(ResourceReference resourceRef, string workingDir) {
-            if (UnityEngine.Application.isPlaying) {
+            if (Application.isPlaying) {
                 byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
                 var texture = new Texture2D(0,0);
                 if (ImageConversion.LoadImage(texture, data, true)) {
-                    Player.Unity.SceneGraph.Current.TextureCache.Add(resourceRef.id, texture);
+                    SceneGraph.Current.TextureCache.Add(resourceRef.id, texture);
                 }
             }
         }
 
         private void LoadModelStructures(ModelManifest inManifest) {
-            if (UnityEngine.Application.isPlaying) {
+            if (Application.isPlaying) {
 
                 for (int i = 0; i < inManifest.models.Count; ++i) {
                     ResourceReference meshRef = null;
@@ -202,14 +203,14 @@ namespace Alice.Tweedle.Parse
 
                         using (var assetLoader = new TriLib.AssetLoader())
                         {
-                            var options = Player.Unity.SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
+                            var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
                             var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
                             options.TexturesPathOverride = System.IO.Path.GetDirectoryName(cachePath);
                             
                             GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.file, options);
 
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
-                            Player.Unity.SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
+                            SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
                         }
                     }
                 }
