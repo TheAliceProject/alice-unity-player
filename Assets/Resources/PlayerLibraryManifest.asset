@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0614eab3cb65ee2438c20b7ee73218cd, type: 3}
+  m_Name: PlayerLibraryManifest
+  m_EditorClassIdentifier: 
+  m_BuiltInLibraries:
+  - path:
+      relativePath: SceneGraphLibrary.a3p
+    identifier:
+      id: 970a310f-90a7-4d29-8380-5b2a742e3ee4
+      version: 1.0
+      type: Library

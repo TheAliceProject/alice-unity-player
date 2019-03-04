@@ -100,5 +100,31 @@ namespace Alice.Player.Unity {
                 ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }
+
+        public SGJoint LinkJoint(TValue inOwner, string inName) {
+            var bone = FindInHierarchy(m_ModelTransform, inName.ToUpper());
+            SGJoint joint = null;
+            if (bone != null) {
+                joint = SGEntity.Create<SGJoint>(inOwner, bone);
+            }
+            return joint;
+        }
+
+        private GameObject FindInHierarchy(Transform inTransform, string inName) {
+            
+
+            foreach (Transform child in inTransform) {
+                if (child.gameObject.name == inName) {
+                    return child.gameObject;
+                }
+
+                var match = FindInHierarchy(child, inName);
+                if (match) {
+                    return match;
+                }
+            }
+            
+            return null;
+        }
     }
 }

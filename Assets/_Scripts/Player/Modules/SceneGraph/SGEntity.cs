@@ -12,11 +12,17 @@ namespace Alice.Player.Unity {
         
         public delegate void UpdatePropertyDelegate(TValue inValue);
 
-        public static T Create<T>(TValue owner) where T : SGEntity {
-            var go = new GameObject(typeof(T).Name);
-            go.transform.SetParent(SceneGraph.Current.transform, false);
-            var entity = go.AddComponent<T>();
-            entity.owner = owner;
+        public static T Create<T>(TValue inOwner) where T : SGEntity {
+            var host = new GameObject(typeof(T).Name);
+            host.transform.SetParent(SceneGraph.Current.transform, false);
+            var entity = host.AddComponent<T>();
+            entity.owner = inOwner;
+            return entity;
+        }
+
+        public static T Create<T>(TValue inOwner, GameObject inHost) where T : SGEntity {
+            var entity = inHost.AddComponent<T>();
+            entity.owner = inOwner;
             return entity;
         }
 
