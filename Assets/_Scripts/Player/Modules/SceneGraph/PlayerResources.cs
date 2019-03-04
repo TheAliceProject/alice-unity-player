@@ -1,11 +1,8 @@
 using UnityEngine;
 using TriLib;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 
 namespace Alice.Player.Unity {
+    [CreateAssetMenu(menuName = "Player Resources", fileName = "New Player Resources")]
     public sealed class PlayerResources : ScriptableObject {
         [Header("Materials")]
         [SerializeField]
@@ -27,8 +24,6 @@ namespace Alice.Player.Unity {
         [SerializeField]
         private Material m_TransparentTorusMaterial;
         public Material TransparentTorusMaterial {get { return m_TransparentTorusMaterial; } }
-
-        
 
         [Header("Primitive Meshes")]
         [SerializeField]
@@ -81,14 +76,6 @@ namespace Alice.Player.Unity {
                 return m_ModelLoaderOptions; 
             }
         }
-
-#if UNITY_EDITOR
-        [MenuItem("Assets/Create/Player Resources Asset")]
-        static public void CreatePlayerResourcesAsset() {
-            var asset =  CreateInstance<PlayerResources>();
-            ProjectWindowUtil.CreateAsset(asset, "New" + typeof(PlayerResources).Name + ".asset");
-        }
-#endif
 
     }
 

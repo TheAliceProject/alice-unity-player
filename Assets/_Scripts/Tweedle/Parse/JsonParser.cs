@@ -1,4 +1,5 @@
 ﻿using Alice.Tweedle.File;
+using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,17 @@ namespace Alice.Tweedle.Parse
 {
     public class JsonParser
     {
+
+        public static void ParseZipFile(TweedleSystem inSystem, string inZipPath) {
+            using (FileStream stream = new FileStream(inZipPath, FileMode.Open, FileAccess.Read, FileShare.None)) {
+                using (ZipFile zipFile = new ZipFile(stream))
+                {
+                    JsonParser reader = new JsonParser(inSystem, zipFile);
+                    reader.Parse();
+                }
+            }
+        }
+
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
@@ -25,7 +37,7 @@ namespace Alice.Tweedle.Parse
             m_Parser = new TweedleParser();
         }
 
-        internal void Parse()
+        private void Parse()
         {
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
@@ -34,11 +46,12 @@ namespace Alice.Tweedle.Parse
             ParseJson(m_ZipFile.ReadEntry("manifest.json"));
         }
 
-        public void ParseJson(string inManifestJson, string inWorkingDir = "")
+        public Manifest ParseJson(string inManifestJson, string inWorkingDir = "")
         {
             Manifest asset = JsonUtility.FromJson<Manifest>(inManifestJson);
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
+            ParsePrerequisites(asset.prerequisites);
             
             ProjectType t = asset.Identifier.Type;
             switch (t)
@@ -55,7 +68,6 @@ namespace Alice.Tweedle.Parse
                     break;
                 case ProjectType.Model:
                     ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);
-                    
                     m_System.AddModel(modelAsset);
                     asset = modelAsset;
                     break;
@@ -66,9 +78,25 @@ namespace Alice.Tweedle.Parse
                 jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)],
                 inWorkingDir
                 );
+
+            return asset;
         }
 
-        
+        private void ParsePrerequisites(List<ProjectIdentifier> prerequisites)
+        {
+            for (int i = 0; i < prerequisites.Count; i++)
+            {
+                if  (!m_System.LoadedFiles.Contains(prerequisites[i])) {
+
+                    PlayerLibraryReference libRef;
+                    if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
+                        ParseZipFile(m_System, libRef.path.fullPath);
+                    } else {
+                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].id);
+                    }
+                }
+            }
+        }
 
         private void ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
         {
@@ -76,6 +104,7 @@ namespace Alice.Tweedle.Parse
             {
                 return;
             }
+
             for (int i = 0; i < manifest.resources.Count; i++)
             {
                 ResourceReference strictResource = ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
@@ -87,6 +116,8 @@ namespace Alice.Tweedle.Parse
         private ResourceReference ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
         {
             ResourceReference strictRef = null;
+            string zipPath = workingDir + resourceRef.file;
+
 
             switch (resourceRef.ContentType)
             {
@@ -106,41 +137,35 @@ namespace Alice.Tweedle.Parse
                         CacheToDisk(resourceRef, workingDir);
                         strictRef = resourceRef;
                     } else {
+                        LoadTexture(resourceRef, workingDir);
                         strictRef =  JsonUtility.FromJson<ImageReference>(refJson);
                     }
                     break;
                 case ContentType.Model:
-                    for (int j = 0; j < resourceRef.files.Count; j++)
-                    {
-                        string subJson = m_ZipFile.ReadEntry(resourceRef.files[j]);
-                        string manifestDir = workingDir + (Path.GetDirectoryName(resourceRef.files[j]) + Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/');
-                        ParseJson(subJson, manifestDir);
-                    }
-                    strictRef =  JsonUtility.FromJson<ModelReference>(refJson);
+                    string manifestJson = m_ZipFile.ReadEntry(zipPath);
+                    string manifestDir = GetDirectoryEntryPath(zipPath);
+                    var modelManifest = (ModelManifest)ParseJson(manifestJson, manifestDir);
+                    LoadModelStructures(modelManifest);
+                    strictRef = JsonUtility.FromJson<ModelReference>(refJson);
                     break;
                 case ContentType.SkeletonMesh:
-                    strictRef =  JsonUtility.FromJson<StructureReference>(refJson);
+                    strictRef = JsonUtility.FromJson<StructureReference>(refJson);
                     break;
                 case ContentType.Texture:
-                    strictRef =  JsonUtility.FromJson<TextureReference>(refJson);
+                    strictRef = JsonUtility.FromJson<TextureReference>(refJson);
                     break;
             }
 
-            // prepend working path to files
-            for (int i = 0, fileCount = strictRef.files.Count; i < fileCount; ++i) {
-                strictRef.files[i] = workingDir + strictRef.files[i];
-            }
+            // prepend working path to resource file
+            strictRef.file = zipPath;
 
             return strictRef;
         }
 
         private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
-            for (int j = 0; j < resourceRef.files.Count; j++)
-            {
-                string tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.files[j]);
-                TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-                m_System.GetRuntimeAssembly().Add(tweedleType);
-            }
+            string tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.file);
+            TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
+            m_System.GetRuntimeAssembly().Add(tweedleType);
         }
 
         private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
@@ -149,8 +174,55 @@ namespace Alice.Tweedle.Parse
                 Directory.CreateDirectory(cachePath);
             }
 
-            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.files[0]);
-            System.IO.File.WriteAllBytes(cachePath + resourceRef.files[0], data);
+            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
+            System.IO.File.WriteAllBytes(cachePath + resourceRef.file, data);
+        }
+
+        private void LoadTexture(ResourceReference resourceRef, string workingDir) {
+            if (Application.isPlaying) {
+                byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
+                var texture = new Texture2D(0,0);
+                if (ImageConversion.LoadImage(texture, data, true)) {
+                    SceneGraph.Current.TextureCache.Add(resourceRef.id, texture);
+                }
+            }
+        }
+
+        private void LoadModelStructures(ModelManifest inManifest) {
+            if (Application.isPlaying) {
+
+                for (int i = 0; i < inManifest.models.Count; ++i) {
+                    ResourceReference meshRef = null;
+
+                    // find struct resource
+                    for (int j = 0; j < inManifest.resources.Count; ++j) {
+                        if (inManifest.resources[j].id == inManifest.models[i].structure) {
+                            meshRef = inManifest.resources[j];
+                            break;
+                        }
+                    }
+
+                    if (meshRef != null) {
+                        byte[] data = m_ZipFile.ReadDataEntry(meshRef.file);
+
+                        using (var assetLoader = new TriLib.AssetLoader())
+                        {
+                            var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
+                            var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
+                            options.TexturesPathOverride = System.IO.Path.GetDirectoryName(cachePath);
+                            
+                            GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.file, options);
+
+                            var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
+                            SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static string GetDirectoryEntryPath(string inFilePath) {
+            return Path.GetDirectoryName(inFilePath).Replace(Path.DirectorySeparatorChar, '/') + "/";
         }
     }
 }
