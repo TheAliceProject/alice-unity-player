@@ -6,7 +6,7 @@ using ICSharpCode.SharpZipLib.Core;
 
 public class JsonParser : MonoBehaviour
 {
-	[SerializeField] private Text text;
+	[SerializeField] private Text text = null;
 
 	#region JSON_FILE
 

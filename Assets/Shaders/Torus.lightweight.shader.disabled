@@ -55,6 +55,8 @@ Shader "LightweightPipeline/Alice/Standard Torus"
         // torus
         [HideInInspector] _RingRadiusDelta("__ringDelta", Float) = 0.0
         [HideInInspector] _CrossRadiusDelta("__crossDelta", Float) = 0.0
+
+        _ReceiveShadows("Receive Shadows", Float) = 1.0
     }
 
     

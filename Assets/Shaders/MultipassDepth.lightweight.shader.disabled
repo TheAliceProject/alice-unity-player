@@ -1,4 +1,4 @@
-﻿Shader "LightweightPipeline/Alice/Standard Multipass Depth"
+﻿Shader "LightweightPipeline/Standard (Physically Based)"
 {
     Properties
     {
@@ -51,6 +51,8 @@
         [HideInInspector] _DstBlend("__dst", Float) = 0.0
         [HideInInspector] _ZWrite("__zw", Float) = 1.0
         [HideInInspector] _Cull("__cull", Float) = 2.0
+
+        _ReceiveShadows("Receive Shadows", Float) = 1.0
     }
 
     SubShader
@@ -61,7 +63,7 @@
         Tags{"RenderType" = "Opaque" "RenderPipeline" = "LightweightPipeline" "IgnoreProjector" = "True"}
         LOD 300
 
-		Pass
+        Pass
         {
             Name "Depth Fill"
             Tags{"LightMode" = "SRPDefaultUnlit"}
@@ -114,6 +116,7 @@
         {
             // Lightmode matches the ShaderPassName set in LightweightPipeline.cs. SRPDefaultUnlit and passes with
             // no LightMode tag are also rendered by Lightweight Pipeline
+            Name "StandardLit"
             Tags{"LightMode" = "LightweightForward"}
 
             Blend[_SrcBlend][_DstBlend]
@@ -140,19 +143,23 @@
             #pragma shader_feature _SPECULARHIGHLIGHTS_OFF
             #pragma shader_feature _GLOSSYREFLECTIONS_OFF
             #pragma shader_feature _SPECULAR_SETUP
+            #pragma shader_feature _RECEIVE_SHADOWS_OFF
 
             // -------------------------------------
             // Lightweight Pipeline keywords
             #pragma multi_compile _ _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _VERTEX_LIGHTS
             #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
-            #pragma multi_compile _ FOG_LINEAR FOG_EXP2
             #pragma multi_compile _ _SHADOWS_ENABLED
+            #pragma multi_compile _ _LOCAL_SHADOWS_ENABLED
+            #pragma multi_compile _ _SHADOWS_SOFT
+            #pragma multi_compile _ _SHADOWS_CASCADE
 
             // -------------------------------------
             // Unity defined keywords
             #pragma multi_compile _ DIRLIGHTMAP_COMBINED
             #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile_fog
 
             //--------------------------------------
             // GPU Instancing
@@ -166,10 +173,9 @@
             ENDHLSL
         }
 
-		
-
         Pass
         {
+            Name "ShadowCaster"
             Tags{"LightMode" = "ShadowCaster"}
 
             ZWrite On
@@ -201,6 +207,7 @@
 
         Pass
         {
+            Name "DepthOnly"
             Tags{"LightMode" = "DepthOnly"}
 
             ZWrite On
@@ -233,6 +240,7 @@
         // This pass it not used during regular rendering, only for lightmap baking.
         Pass
         {
+            Name "Meta"
             Tags{"LightMode" = "Meta"}
 
             Cull Off
