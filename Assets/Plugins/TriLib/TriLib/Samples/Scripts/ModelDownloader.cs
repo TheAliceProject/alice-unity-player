@@ -75,7 +75,11 @@ namespace TriLib
 			private IEnumerator DownloadModel()
 			{
 				_unityWebRequest = UnityWebRequest.Get(ModelURI);
+				#if UNITY_2018_3_OR_NEWER
+				yield return _unityWebRequest.SendWebRequest();
+				#else
 				yield return _unityWebRequest.Send();
+				#endif
 				if (string.IsNullOrEmpty(_unityWebRequest.error))
 				{
 					using (var assetLoader = new AssetLoader())

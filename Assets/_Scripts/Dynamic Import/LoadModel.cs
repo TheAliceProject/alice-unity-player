@@ -10,7 +10,7 @@ public class LoadModel : MonoBehaviour {
     [SerializeField] private readonly bool useTriLib = true;
     [Tooltip("Can only load models from the Asset/Models folder per this script.")]
     [SerializeField] private string fileName = "ColaBottle.dae";
-	[SerializeField] private Texture texOverride;
+	[SerializeField] private Texture texOverride = null;
 
     private List<Mesh> GetMeshes( Transform rootTransform )
     {

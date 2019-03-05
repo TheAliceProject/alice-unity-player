@@ -65,27 +65,27 @@ namespace TriLib
             /// "Container Transform" reference.
             /// </summary>
             [SerializeField]
-            private Transform _containerTransform;
+            private Transform _containerTransform = null;
             /// <summary>
             /// "<see cref="FileText"/> prefab" reference.
             /// </summary>
             [SerializeField]
-            private FileText _fileTextPrefab;
+            private FileText _fileTextPrefab = null;
             /// <summary>
             /// "Inner Game Object" reference.
             /// </summary>
             [SerializeField]
-            private GameObject _fileLoaderRenderer;
+            private GameObject _fileLoaderRenderer = null;
             /// <summary>
             /// "Close button" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Button _closeButton;
+            private UnityEngine.UI.Button _closeButton = null;
             /// <summary>
             /// "Header text" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Text _headerText;
+            private UnityEngine.UI.Text _headerText = null;
             /// <summary>
             /// Working directory.
             /// </summary>

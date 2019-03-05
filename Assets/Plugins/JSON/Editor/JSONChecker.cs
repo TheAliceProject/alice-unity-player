@@ -45,15 +45,25 @@ public class JSONChecker : EditorWindow {
 		URL = EditorGUILayout.TextField("URL", URL);
 		if (GUILayout.Button("Get JSON")) {
 			Debug.Log(URL);
+			#if UNITY_2018_3_OR_NEWER
+			UnityEngine.Networking.UnityWebRequest test = UnityEngine.Networking.UnityWebRequest.Get(URL);
+			#else
 			WWW test = new WWW(URL);
+			#endif
 			while (!test.isDone) ;
 			if (!string.IsNullOrEmpty(test.error)) {
 				Debug.Log(test.error);
 			} else {
+				#if UNITY_2018_3_OR_NEWER
+				Debug.Log(test.downloadHandler.text);
+				j = new JSONObject(test.downloadHandler.text);
+				#else
 				Debug.Log(test.text);
 				j = new JSONObject(test.text);
+				#endif
 				Debug.Log(j.ToString(true));
 			}
+
 		}
 		if(j) {
 			//Debug.Log(System.GC.GetTotalMemory(false) + "");

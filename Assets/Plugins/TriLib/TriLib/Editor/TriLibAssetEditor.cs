@@ -130,7 +130,12 @@ namespace TriLibEditor
 			switch (_currentTab) {
 			case 0:
 				EditorGUILayout.LabelField ("General", EditorStyles.boldLabel);
+				#if UNITY_2018_3_OR_NEWER
+				_tempAssetLoaderOptions.PostProcessSteps = (AssimpPostProcessSteps)EditorGUILayout.EnumFlagsField ("Post Processor Options", _tempAssetLoaderOptions.PostProcessSteps);
+				#else
 				_tempAssetLoaderOptions.PostProcessSteps = (AssimpPostProcessSteps)EditorGUILayout.EnumMaskField ("Post Processor Options", _tempAssetLoaderOptions.PostProcessSteps);
+				#endif
+				
 				break;
 			case 1:
 				{
@@ -318,7 +323,11 @@ namespace TriLibEditor
 								var aiComponentDefaultValue = hasDefaultValue ? (AiComponent)defaultValue : AiComponent.Animations;
 								if (elementSerializedProperty == null) {
 									GUI.enabled = false;
-									EditorGUILayout.EnumMaskField (aiComponentDefaultValue);
+										#if UNITY_2018_3_OR_NEWER
+										EditorGUILayout.EnumFlagsField (aiComponentDefaultValue);
+										#else
+										EditorGUILayout.EnumMaskField (aiComponentDefaultValue);
+										#endif
 								} else {
 									GUI.enabled = true;
 									valueSerializedProperty = elementSerializedProperty.FindPropertyRelative ("IntValue");
@@ -332,7 +341,11 @@ namespace TriLibEditor
 								var aiPrimitiveTypeDefaultValue = hasDefaultValue ? (AiPrimitiveType)defaultValue : AiPrimitiveType.Line;
 								if (elementSerializedProperty == null) {
 									GUI.enabled = false;
+									#if UNITY_2018_3_OR_NEWER
+									EditorGUILayout.EnumFlagsField (aiPrimitiveTypeDefaultValue);
+									#else
 									EditorGUILayout.EnumMaskField (aiPrimitiveTypeDefaultValue);
+									#endif
 								} else {
 									GUI.enabled = true;
 									valueSerializedProperty = elementSerializedProperty.FindPropertyRelative ("IntValue");
@@ -346,7 +359,11 @@ namespace TriLibEditor
 								var aiUvTransformDefaultValue = hasDefaultValue ? (AiUVTransform)defaultValue : AiUVTransform.Rotation;
 								if (elementSerializedProperty == null) {
 									GUI.enabled = false;
+									#if UNITY_2018_3_OR_NEWER
+									EditorGUILayout.EnumFlagsField (aiUvTransformDefaultValue);
+									#else
 									EditorGUILayout.EnumMaskField (aiUvTransformDefaultValue);
+									#endif
 								} else {
 									GUI.enabled = true;
 									valueSerializedProperty = elementSerializedProperty.FindPropertyRelative ("IntValue");
@@ -452,7 +469,11 @@ namespace TriLibEditor
 			default:
 				return;
 			}
+			#if UNITY_2018_3_OR_NEWER
+			property.intValue = Convert.ToInt32 (EditorGUI.EnumFlagsField (position, enumValue));
+			#else
 			property.intValue = Convert.ToInt32 (EditorGUI.EnumMaskField (position, enumValue));
+			#endif
 			EditorGUI.EndProperty ();
 		}
 

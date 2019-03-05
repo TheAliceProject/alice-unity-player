@@ -18,19 +18,19 @@ namespace TriLib
             /// "OK button" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Button _okButton;
+            private UnityEngine.UI.Button _okButton = null;
 
             /// <summary>
             /// "Error text" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.InputField _errorText;
+            private UnityEngine.UI.InputField _errorText = null;
 
             /// <summary>
             /// "Error dialog inner Game Object" reference.
             /// </summary>
             [SerializeField]
-            private GameObject _rendererGameObject;
+            private GameObject _rendererGameObject = null;
 
             public string Text
             {

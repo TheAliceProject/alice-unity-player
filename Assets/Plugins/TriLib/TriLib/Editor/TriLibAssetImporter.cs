@@ -36,6 +36,9 @@ namespace TriLibEditor
                 (animationClipIndex, animationClip) => ReplaceOldAsset(animationClip, prefabPath);
             assimpLoader.OnObjectLoaded += delegate(GameObject loadedGameObject)
             {
+                #if UNITY_2018_3_OR_NEWER
+                var existingPrefab = PrefabUtility.SaveAsPrefabAsset(loadedGameObject, prefabPath);
+                #else
                 var existingPrefab = AssetDatabase.LoadAssetAtPath(prefabPath, typeof(GameObject));
                 if (existingPrefab == null)
                 {
@@ -46,6 +49,8 @@ namespace TriLibEditor
                     existingPrefab = PrefabUtility.ReplacePrefab(loadedGameObject, existingPrefab,
                         ReplacePrefabOptions.ReplaceNameBased);
                 }
+                #endif
+                
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 AssetDatabase.ImportAsset(prefabPath);

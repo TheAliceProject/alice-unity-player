@@ -17,62 +17,62 @@ namespace TriLib
             /// "Load asset button" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Button _loadAssetButton;
+            private UnityEngine.UI.Button _loadAssetButton = null;
             /// <summary>
             /// "Spinning text" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Text _spinningText;            
+            private UnityEngine.UI.Text _spinningText = null;            
 			/// <summary>
 			/// "Cutout toggle" reference.
 			/// </summary>
 			[SerializeField]
-			private UnityEngine.UI.Toggle _cutoutToggle;
+			private UnityEngine.UI.Toggle _cutoutToggle = null;
 			/// <summary>
 			/// "Spin X toggle" reference.
 			/// </summary>
 			[SerializeField]
-            private UnityEngine.UI.Toggle _spinXToggle;
+            private UnityEngine.UI.Toggle _spinXToggle = null;
             /// <summary>
             /// "Spin Y toggle" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Toggle _spinYToggle;
+            private UnityEngine.UI.Toggle _spinYToggle = null;
             /// <summary>
             /// "Reset rotation button" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Button _resetRotationButton;
+            private UnityEngine.UI.Button _resetRotationButton = null;
             /// <summary>
             /// "Stop animation button" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Button _stopAnimationButton;
+            private UnityEngine.UI.Button _stopAnimationButton = null;
             /// <summary>
             /// "Animations text" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Text _animationsText;
+            private UnityEngine.UI.Text _animationsText = null;
             /// <summary>
             /// "Animations scroll rect "reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.ScrollRect _animationsScrollRect;
+            private UnityEngine.UI.ScrollRect _animationsScrollRect = null;
             /// <summary>
             /// "Animations scroll rect container" reference.
             /// </summary>
             [SerializeField]
-            private Transform _containerTransform;
+            private Transform _containerTransform = null;
             /// <summary>
             /// <see cref="AnimationText"/> prefab reference.
             /// </summary>
             [SerializeField]
-            private AnimationText _animationTextPrefab;
+            private AnimationText _animationTextPrefab = null;
             /// <summary>
             /// "Background (gradient) canvas" reference.
             /// </summary>
             [SerializeField]
-            private Canvas _backgroundCanvas;
+            private Canvas _backgroundCanvas = null;
             /// <summary>
             /// Loaded Game Object reference.
             /// </summary>

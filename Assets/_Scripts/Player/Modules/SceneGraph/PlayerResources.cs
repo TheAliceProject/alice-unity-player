@@ -6,60 +6,60 @@ namespace Alice.Player.Unity {
     public sealed class PlayerResources : ScriptableObject {
         [Header("Materials")]
         [SerializeField]
-        private Material m_OpaqueMaterial;
+        private Material m_OpaqueMaterial = null;
         public Material OpaqueMaterial { get {return m_OpaqueMaterial; } }
 
         [SerializeField]
-        private Material m_TransparentMaterial;
+        private Material m_TransparentMaterial = null;
         public Material TransparentMaterial {get { return m_TransparentMaterial; } }
 
         [SerializeField]
-        private Material m_TransparentMultipassMaterial;
+        private Material m_TransparentMultipassMaterial = null;
         public Material TransparentMultipassMaterial {get { return m_TransparentMultipassMaterial; } }
 
         [SerializeField]
-        private Material m_OpaqueTorusMaterial;
+        private Material m_OpaqueTorusMaterial = null;
         public Material OpaqueTorusMaterial { get {return m_OpaqueTorusMaterial; } }
 
         [SerializeField]
-        private Material m_TransparentTorusMaterial;
+        private Material m_TransparentTorusMaterial = null;
         public Material TransparentTorusMaterial {get { return m_TransparentTorusMaterial; } }
 
         [Header("Primitive Meshes")]
         [SerializeField]
-        private Mesh m_BoxMesh;
+        private Mesh m_BoxMesh = null;
         public Mesh BoxMesh { get { return m_BoxMesh; } }
 
         [SerializeField]
-        private Mesh m_SphereMesh;
+        private Mesh m_SphereMesh = null;
         public Mesh SphereMesh { get { return m_SphereMesh; } }
 
         [SerializeField]
-        private Mesh m_CylinderMesh;
+        private Mesh m_CylinderMesh = null;
         public Mesh CylinderMesh { get { return m_CylinderMesh; } }
 
         [SerializeField]
-        private Mesh m_ConeMesh;
+        private Mesh m_ConeMesh = null;
         public Mesh ConeMesh { get { return m_ConeMesh; } }
 
         [SerializeField]
-        private Mesh m_TorusMesh;
+        private Mesh m_TorusMesh = null;
         public Mesh TorusMesh { get { return m_TorusMesh; } }
 
         [SerializeField]
-        private Mesh m_BillboardMesh;
+        private Mesh m_BillboardMesh = null;
         public Mesh BillboardMesh { get { return m_BillboardMesh; } }
 
         [SerializeField]
-        private Mesh m_DiscMesh;
+        private Mesh m_DiscMesh = null;
         public Mesh DiscMesh { get { return m_DiscMesh; } }
 
         [SerializeField]
-        private Mesh m_GroundMesh;
+        private Mesh m_GroundMesh = null;
         public Mesh GroundMesh { get { return m_GroundMesh; } }
 
         [SerializeField]
-        private AxesModel m_AxesModel;
+        private AxesModel m_AxesModel = null;
         public AxesModel AxesModel { get { return m_AxesModel; } }
 
         [Header("TriLib Loader Options")]
