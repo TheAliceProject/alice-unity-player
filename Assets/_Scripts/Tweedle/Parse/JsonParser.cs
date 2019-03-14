@@ -135,6 +135,7 @@ namespace Alice.Tweedle.Parse
                 case ContentType.Image:
                     if (manifest is ModelManifest) {
                         CacheToDisk(resourceRef, workingDir);
+                        resourceRef.id = manifest.description.name + "/" + resourceRef.id;
                         strictRef = resourceRef;
                     } else {
                         LoadTexture(resourceRef, workingDir);
