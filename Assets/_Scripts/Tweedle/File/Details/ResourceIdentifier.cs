@@ -24,12 +24,16 @@
 
         public bool Equals(ResourceIdentifier other)
         {
-            return id.Equals(id) && contentType.Equals(other.contentType) && format.Equals(other.format);
+            return id.Equals(other.id) && contentType.Equals(other.contentType) && format.Equals(other.format);
         }
 
         public override int GetHashCode()
         {
             return new { A = id, B = contentType, C = format }.GetHashCode();
+        }
+
+        public override string ToString() {
+            return string.Format("{{{0}, {1}, {2}}}", id, contentType, format);
         }
     }
 }
