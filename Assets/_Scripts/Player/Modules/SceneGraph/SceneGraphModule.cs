@@ -95,6 +95,12 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void createRoomEntity(TValue room) {
+            var entity = SGEntity.Create<SGRoom>(room);
+            SceneGraph.Current.AddEntity(entity);
+        }
+
+        [PInteropMethod]
         public static void createMarkerEntity(TValue marker) {
             var entity = SGEntity.Create<SGMarker>(marker);
             SceneGraph.Current.AddEntity(entity);
@@ -120,6 +126,16 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void bindBackPaintProperty(TValue owner, TValue property, TValue value) {
             SceneGraph.Current.BindProperty(SGModel.BACK_PAINT_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindFloorPaintProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGRoom.FLOOR_PAINT_PROPERTY_NAME, owner, property, value);
+        }
+
+         [PInteropMethod]
+        public static void bindCeilingPaintProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGRoom.CEILING_PAINT_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
