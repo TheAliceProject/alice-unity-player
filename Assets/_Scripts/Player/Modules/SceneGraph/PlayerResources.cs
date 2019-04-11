@@ -66,6 +66,12 @@ namespace Alice.Player.Unity {
         private AxesModel m_AxesModel = null;
         public AxesModel AxesModel { get { return m_AxesModel; } }
 
+        [Header("UI")]
+        [SerializeField]
+        private SceneCanvas m_SceneCanvas = null;
+        public SceneCanvas SceneCanvas { get { return m_SceneCanvas; } }
+
+
         [Header("TriLib Loader Options")]
         AssetLoaderOptions m_ModelLoaderOptions;
         public AssetLoaderOptions ModelLoaderOptions {
