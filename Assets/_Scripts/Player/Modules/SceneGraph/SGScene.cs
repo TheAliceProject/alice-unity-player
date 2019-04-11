@@ -21,6 +21,7 @@ namespace Alice.Player.Unity {
         private Color m_AtmosphereColor = Color.white;
         private float m_GlobalBrightness = 1f;
 
+        private SceneCanvas m_SceneCanvas;
         private Light m_AboveLightA;
         private Light m_AboveLightB;
         private Light m_AboveLightC;
@@ -39,6 +40,7 @@ namespace Alice.Player.Unity {
 
             m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
 
+            m_SceneCanvas = CreateCanvas();
             RenderSettings.fogMode = FogMode.Exponential;
 
             RegisterPropertyDelegate(FOG_DENSITY_PROPERTY_NAME, OnUpdateFogDensity);
@@ -61,6 +63,18 @@ namespace Alice.Player.Unity {
             return light;
         }
 
+        private SceneCanvas CreateCanvas()
+        {
+            var canvas = Instantiate(SceneGraph.Current.InternalResources.SceneCanvas);
+            canvas.transform.SetParent(cachedTransform);
+            return canvas;
+        }
+
+        public SceneCanvas GetCurrentCanvas()
+        {
+            return m_SceneCanvas;
+        }
+        
         public void AddActivationListener(PAction inListener) {
             m_ActivationListeners.Add(inListener);
         }

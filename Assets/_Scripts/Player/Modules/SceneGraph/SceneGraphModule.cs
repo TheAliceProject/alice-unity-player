@@ -2,6 +2,7 @@ using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
 using Alice.Player.Primitives;
+using UnityEngine;
 
 namespace Alice.Player.Modules {
     [PInteropType("SceneGraph")]
@@ -80,6 +81,7 @@ namespace Alice.Player.Modules {
         public static void createSceneEntity(TValue scene) {
             var entity = SGEntity.Create<SGScene>(scene);
             SceneGraph.Current.AddEntity(entity);
+            SceneGraph.Current.Scene = entity;
         }
 
         [PInteropMethod]
@@ -105,6 +107,7 @@ namespace Alice.Player.Modules {
             var entity = SGEntity.Create<SGMarker>(marker);
             SceneGraph.Current.AddEntity(entity);
         }
+
         #endregion // Entity Instantiation
 
         #region Property Binding
@@ -255,6 +258,36 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static AsyncReturn sayThink(TValue entity, string bubbleText, bool bubbleStyle, int position, 
+                                    int fontType, int textStyle, double textScale, TValue bubbleColor, 
+                                    TValue outlineColor, TValue textColor, Duration duration) {
+            // bubbleStyle: true == "say", false == "think"
+            var bubbleColorRaw = bubbleColor.RawObject<Primitives.Color>().Value;
+            UnityEngine.Color bubbleColorConverted = new UnityEngine.Color((float)bubbleColorRaw.R, (float)bubbleColorRaw.G, (float)bubbleColorRaw.B, (float)bubbleColorRaw.A);
+            
+            var outlineColorRaw = outlineColor.RawObject<Primitives.Color>().Value;
+            UnityEngine.Color outlineColorConverted = new UnityEngine.Color((float)outlineColorRaw.R, (float)outlineColorRaw.G, (float)outlineColorRaw.B, (float)outlineColorRaw.A);
+            
+            var textColorRaw = textColor.RawObject<Primitives.Color>().Value;
+            UnityEngine.Color textColorConverted = new UnityEngine.Color((float)textColorRaw.R, (float)textColorRaw.G, (float)textColorRaw.B, (float)textColorRaw.A);
+
+            AsyncReturn asyncReturn = new AsyncReturn();
+
+            SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+            var entityXform = SceneGraph.Current.FindEntity(entity);
+            var p = entityXform.cachedTransform.localPosition;
+            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, bubbleStyle, 
+                                                (BubblePosition)position, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
+                                                bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
+        
+            
+            return asyncReturn;
+        }
+
+        #endregion // Other
+
+        #region Events
+        [PInteropMethod]
         public static void addSceneActivationListener(TValue scene, PAction listener) {
             var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
             entity.AddActivationListener(listener);
@@ -265,7 +298,7 @@ namespace Alice.Player.Modules {
             var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
             entity.Activate();
         }
-        #endregion // Other
+        #endregion // Events
 
         #region Transformations
         [PInteropMethod]
