@@ -1,0 +1,134 @@
+FlyingText3D Release Notes
+--------------------------
+
+FlyingText3D 2.2.1
+
+Fixes:
+	• Fixed error when creating 3D text in the editor when using Unity 5.4.
+
+-----------
+
+FlyingText3D 2.2
+
+Additions:
+	• "Compute Tangents" option, for materials that require tangents (such as bump mapping).
+
+Fixes:
+	• Vertical text formatting doesn't gradually offset the horizontal letter position.
+
+-----------
+
+FlyingText3D 2.1.2
+
+Fixes:
+	• The convert utility works with files ending in .TTF as well as .ttf.
+	• Works with Unity 5.
+
+-----------
+
+FlyingText3D 2.1.1
+
+Fixes:
+	• The fixed rendering glitch in 2.1 wasn't actually correct in all cases, so now that's fixed.
+
+-----------
+
+FlyingText3D 2.1
+
+Changes:
+	• More accurate character placement. Note that this may change character spacing a little compared to earlier versions.
+
+Fixes:
+	• Fixed inspector to work properly with Unity 4.0-4.2.
+	• Character settings foldout works.
+	• Fixed glitch in rendering for certain fonts where curves are constructed in a less-common way.
+
+-----------
+
+FlyingText3D 2.0.3
+
+Fixes:
+	• Fixed warnings when using Unity 4.3 or later.
+
+-----------
+
+FlyingText3D 2.0.2
+
+Enhancements:
+	• Speedup for character lookup tables, useful for fonts with lots (thousands) of characters.
+
+Fixes:
+	• Fixed Justify.Center and Justify.Right crashing when using a single line of text.
+
+-----------
+
+FlyingText3D 2.0.1
+
+Fixes:
+	• Fixed silly Color/Color32 bug that prevented <color> tags from working.
+
+-----------
+
+FlyingText3D 2.0
+
+Additions:
+	• Separate materials for the front/back faces and extruded edges can be used now. As such there is a defaultEdgeMaterial variable, and a useEdgeMaterial variable. If useEdgeMaterial is false, then only the standard material will be used.
+	• An UpdateObject function, so that a previously-made text object can be updated with new text, instead of having to destroy/recreate game objects.
+	• A defaultLineWidth variable, for specifying the maximum number of world units wide a line can be (0 means no limit). If this width is exceeded, then the text flows to a new line.
+	• A wordWrap variable, which is only used if the default line width is greater than 0. If wordWrap is true, then any line that would exceed the line width is broken at the last full word instead of the last letter.
+	• GetObjectsArray function, which returns a GameObject array containing separate letters. Contrast to the existing GetObjects function, which returns a single GameObject with separate letters as children. Use GetObjectsArray if you want the array of letters to be in a defined order (namely, the order of objects in the array corresponds to the order of letters in the text).
+	• A verticalLayout variable, which, if true, makes text flow vertically instead of horizontally. A newline character will start another column in this case.
+	• Support for tab characters with a tabStop variable, so a tab will make the next character start at the next available position that's a multiple of tabStop. This is specified in world units, where 0 means tabs are not used.
+
+Changes:
+	• You can add a position and rotation when calling the GetObject functions, so the generated objects are positioned/rotated accordingly. Just like Instantiate: "FlyingText.GetObject (myText, Vector3(10, 0, 5), Quaternion.Euler(0, 45, 0))".
+	• As the result of having the option for a separate edge material, the GetObject functions require two materials to be specified (if you're specifying any material at all): the standard material first and the edge material second. If you're not using an edge material, you can write "null".
+	• When calling the GetObject functions and specifying the character spacing/line spacing, you must also specify the line width. So the complete version is now "GetObject (text, material, edgeMaterial, size, extrudeDepth, resolution, characterSpacing, lineSpacing, lineWidth)".  (Plus position and rotation if desired, as mentioned above.)
+	• The text anchor now uses the vertical extents from the font as a whole rather than individual characters. This is so text placement will be consistent if the text is changed. As a result, text will be positioned somewhat differently compared to previous versions, especially for the upper and lower options.
+	• Mesh colliders (convex or otherwise) can be used for combined text that's not split into separate letter objects. Just keep in mind that mesh colliders can be CPU-intensive to compute, so complex text with a mesh collider may be subject to a delay before it appears.
+	• It's possible to use right justification and center justification with single lines of text now. Since with the addition of line width, there's something to justify it to (as long as the line width is not 0).
+	• If no fonts are defined, a specific error about this is generated rather than the "FlyingText hasn't been initialized yet" error.
+	• An empty string can be passed for the text when using the GetObject functions. You might use this to initialize a text object using GetObject, so it can be updated later with actual text using UpdateObject.
+	• Character spacing can be negative.
+	• The "text settings" section in the FlyingText inspector has been split into two sections, "character settings" and "text settings", where the character settings are for the things that affects how the letter objects actually look, and the text settings are for the things that affects how the text is arranged.
+	• Requires Unity 3.5 as a minimum now.
+
+Fixes:
+	• Color and depth tags work correctly in strings with multiple lines.
+	• Changing FlyingText.includeBackface between GetObject calls no longer causes errors.
+
+-----------
+
+FlyingText3D 1.2.2
+
+Fixes:
+	• Fixed issue which resulted in some characters not rendering on iOS.
+
+-----------
+
+FlyingText3D 1.2.1
+
+Changes:
+	• Removed override characters, since that's no longer needed (due to fix below).
+
+Fixes:
+	• Outline data parsing fixed for outlines with repeated data.
+
+-----------
+
+FlyingText3D 1.2
+
+Additions:
+	• Smoothing angle for making extruded edges have smooth lighting. It works the same way that the smoothing angle for imported meshes works in Unity.
+	• Left, right, and center justification for lines of text.
+	• A "justify" tag, so that different lines can have different justifications.
+
+Improvements:
+	• Warnings printed for unrecognized tags (helpful for catching typos).
+
+-----------
+
+FlyingText3D 1.1
+
+Improvements:
+	• Initial support for compound glyphs, which seems to cover actual usage in fonts (the more esoteric stuff doesn't actually seemed to be used much), so things like accented characters will work.
