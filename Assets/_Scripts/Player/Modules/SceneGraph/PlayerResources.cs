@@ -59,8 +59,18 @@ namespace Alice.Player.Unity {
         public Mesh GroundMesh { get { return m_GroundMesh; } }
 
         [SerializeField]
+        private Mesh m_WallMesh = null;
+        public Mesh WallMesh { get { return m_WallMesh; } }
+
+        [SerializeField]
         private AxesModel m_AxesModel = null;
         public AxesModel AxesModel { get { return m_AxesModel; } }
+
+        [Header("UI")]
+        [SerializeField]
+        private SceneCanvas m_SceneCanvas = null;
+        public SceneCanvas SceneCanvas { get { return m_SceneCanvas; } }
+
 
         [Header("TriLib Loader Options")]
         AssetLoaderOptions m_ModelLoaderOptions;
