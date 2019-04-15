@@ -115,6 +115,8 @@ namespace Alice.Player.Unity {
         private List<IWaitReturn> m_WaitReturnsQueue = new List<IWaitReturn>();
         private List<IWaitReturn> m_WaitReturns = new List<IWaitReturn>();
 
+        public SGScene Scene { get; set; } 
+
         private bool m_IsUpdating;
 
         private void Awake() {
@@ -228,6 +230,7 @@ namespace Alice.Player.Unity {
             
             TextureCache.Clear();
             TextureCache = null;
+            Scene = null;
         }
 
         private void Destroy() {
