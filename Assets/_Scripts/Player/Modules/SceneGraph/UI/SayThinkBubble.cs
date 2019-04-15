@@ -32,8 +32,8 @@ namespace Alice.Player.Unity {
         private RectTransform tailPivot;
 
         private SayThinkControl sayThinkControlRef;
-        private Routine spawnRoutine;
-        private Routine tailRoutine;
+        private Routine spawnRoutine = Routine.Null;
+        private Routine tailRoutine = Routine.Null;
 
         void Start()
         {
