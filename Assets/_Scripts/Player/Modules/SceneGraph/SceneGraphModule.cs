@@ -258,10 +258,9 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static AsyncReturn sayThink(TValue entity, string bubbleText, bool bubbleStyle, int position, 
+        public static AsyncReturn say(TValue entity, string bubbleText, int position, 
                                     int fontType, int textStyle, double textScale, TValue bubbleColor, 
                                     TValue outlineColor, TValue textColor, Duration duration) {
-            // bubbleStyle: true == "say", false == "think"
             var bubbleColorRaw = bubbleColor.RawObject<Primitives.Color>().Value;
             UnityEngine.Color bubbleColorConverted = new UnityEngine.Color((float)bubbleColorRaw.R, (float)bubbleColorRaw.G, (float)bubbleColorRaw.B, (float)bubbleColorRaw.A);
             
@@ -276,7 +275,33 @@ namespace Alice.Player.Modules {
             SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
             var entityXform = SceneGraph.Current.FindEntity(entity);
             var p = entityXform.cachedTransform.localPosition;
-            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, bubbleStyle, 
+            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, true, 
+                                                (BubblePosition)position, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
+                                                bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
+        
+            
+            return asyncReturn;
+        }
+
+        [PInteropMethod]
+        public static AsyncReturn think(TValue entity, string bubbleText, int position, 
+                                    int fontType, int textStyle, double textScale, TValue bubbleColor, 
+                                    TValue outlineColor, TValue textColor, Duration duration) {
+            var bubbleColorRaw = bubbleColor.RawObject<Primitives.Color>().Value;
+            UnityEngine.Color bubbleColorConverted = new UnityEngine.Color((float)bubbleColorRaw.R, (float)bubbleColorRaw.G, (float)bubbleColorRaw.B, (float)bubbleColorRaw.A);
+            
+            var outlineColorRaw = outlineColor.RawObject<Primitives.Color>().Value;
+            UnityEngine.Color outlineColorConverted = new UnityEngine.Color((float)outlineColorRaw.R, (float)outlineColorRaw.G, (float)outlineColorRaw.B, (float)outlineColorRaw.A);
+            
+            var textColorRaw = textColor.RawObject<Primitives.Color>().Value;
+            UnityEngine.Color textColorConverted = new UnityEngine.Color((float)textColorRaw.R, (float)textColorRaw.G, (float)textColorRaw.B, (float)textColorRaw.A);
+
+            AsyncReturn asyncReturn = new AsyncReturn();
+
+            SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+            var entityXform = SceneGraph.Current.FindEntity(entity);
+            var p = entityXform.cachedTransform.localPosition;
+            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, false, 
                                                 (BubblePosition)position, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
                                                 bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
         
