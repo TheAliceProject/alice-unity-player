@@ -3,6 +3,7 @@ using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
 using Alice.Player.Primitives;
 using UnityEngine;
+using FlyingText3D;
 
 namespace Alice.Player.Modules {
     [PInteropType("SceneGraph")]
@@ -25,6 +26,8 @@ namespace Alice.Player.Modules {
         public const string TORUS = "Internal/Torus";
         [PInteropField]
         public const string AXES = "Internal/Axes";
+        [PInteropField]
+        public const string TEXTMODEL = "Internal/TextModel";
 
         #region Entity Instantiation
         [PInteropMethod]
@@ -55,6 +58,17 @@ namespace Alice.Player.Modules {
                     break;
                 case AXES:
                     entity = SGEntity.Create<SGAxes>(model);
+                    break;
+                case TEXTMODEL:
+                    var flyingText = FlyingText.instance;
+                    // Instantiate the flying text object if not already instantiated. Might see a "Don't Destroy on Load" wanring here from the asset.
+                    if (flyingText == null) {
+                        var fto = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.FlyingTextObject, SceneGraph.Current.transform);
+                        fto.name = "Tweedle Flying Text";
+                    }
+                    entity = SGEntity.Create<SGTextModel>(model);
+                    SGTextModel textModel = entity as SGTextModel;
+
                     break;
                 default:
                     var jointedEntity = SGEntity.Create<SGJointedModel>(model);
@@ -194,6 +208,11 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static void bindFromBelowLightColorProperty(TValue owner, TValue property, TValue value) {
             SceneGraph.Current.BindProperty(SGScene.BELOW_LIGHT_COLOR_PROPERTY_NAME, owner, property, value);
+        }
+
+        [PInteropMethod]
+        public static void bindTextProperty(TValue owner, TValue property, TValue value) {
+            SceneGraph.Current.BindProperty(SGTextModel.TEXT_PROPERTY_NAME, owner, property, value);
         }
 
         [PInteropMethod]
