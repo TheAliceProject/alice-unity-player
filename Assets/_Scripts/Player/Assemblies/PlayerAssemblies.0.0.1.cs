@@ -38,6 +38,7 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Paint)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Color)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ImageSource)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Character)));
             
 
         }
