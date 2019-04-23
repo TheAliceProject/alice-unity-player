@@ -3,6 +3,7 @@ using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 using System;
 using System.Collections.Generic;
+using Alice.Player.Modules;
 
 namespace Alice.Player.Unity {
     
@@ -16,6 +17,7 @@ namespace Alice.Player.Unity {
         public const string BELOW_LIGHT_COLOR_PROPERTY_NAME = "BelowLightColor";
 
         private List<PAction> m_ActivationListeners = new List<PAction>();
+        private List<TimeEvent> m_TimeListeners = new List<TimeEvent>();
 
         private Color m_AmbientLightColor = new Color(0.25f, 0.25f, 0.25f, 1f);
         private Color m_AtmosphereColor = Color.white;
@@ -51,6 +53,16 @@ namespace Alice.Player.Unity {
             RegisterPropertyDelegate(BELOW_LIGHT_COLOR_PROPERTY_NAME, OnUpdateBelowLightColor);
         }
 
+        // Time, Mouse, and Keyboard intercepting
+        void Update(){
+            for(int i = 0; i < m_TimeListeners.Count; i++)
+            {
+                {
+                    m_TimeListeners[i].CheckEvent();
+                }
+            }
+        }
+
         private Light CreateLight(float inPitch, float inHeading, float intensity, bool useShadows) {
             var light = new GameObject("Light").AddComponent<Light>();
             light.transform.parent = cachedTransform;
@@ -75,8 +87,12 @@ namespace Alice.Player.Unity {
             return m_SceneCanvas;
         }
         
-        public void AddActivationListener(PAction inListener) {
+        public void  AddActivationListener(PAction inListener) {
             m_ActivationListeners.Add(inListener);
+        }
+
+        public void AddTimeListener(PAction inListener, float frequency, OverlappingEventPolicy eventPolicy) {
+            m_TimeListeners.Add(new TimeEvent(inListener, frequency, eventPolicy));
         }
 
         public void Activate() {
