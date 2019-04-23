@@ -86,7 +86,7 @@ namespace Alice.Player.Unity {
         }
 
         private void OnUpdateFogDensity(TValue inValue) {
-            var density = (float)inValue.RawStruct<Primitives.Portion>().Value;
+            var density = (float)inValue.RawObject<Primitives.Portion>().Value;
             RenderSettings.fogDensity = density * density * density; // alice is cubing the density to give some more control
             RenderSettings.fog = density > float.Epsilon;
         }
@@ -99,7 +99,7 @@ namespace Alice.Player.Unity {
         }
 
         private void OnUpdateGlobalBrightness(TValue inValue) {
-            var brightness = (float)inValue.RawStruct<Primitives.Portion>().Value;
+            var brightness = (float)inValue.RawObject<Primitives.Portion>().Value;
             m_GlobalBrightness = brightness;
             //RenderSettings.ambientIntensity = brightness;
             RenderSettings.reflectionIntensity = brightness;

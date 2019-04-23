@@ -6,7 +6,7 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public struct Angle
+    public class Angle
     {
         public readonly double Value;
 

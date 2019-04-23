@@ -5,7 +5,7 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public struct Orientation
+    public class Orientation
     {
         public readonly Quaternion Value;
 
