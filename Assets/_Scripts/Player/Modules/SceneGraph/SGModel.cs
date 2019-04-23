@@ -92,7 +92,7 @@ namespace Alice.Player.Unity {
         protected abstract Bounds GetMeshBounds();
 
         private void OnSizePropertyChanged(TValue inValue) {
-            SetSize(inValue.RawStruct<Size>());
+            SetSize(inValue.RawObject<Size>());
         }
 
         protected virtual void SetSize(UnityEngine.Vector3 inSize) {
@@ -119,7 +119,7 @@ namespace Alice.Player.Unity {
         }
 
         private void OnOpacityPropertyChanged(TValue inValue) {
-            m_CachedOpacity = (float)inValue.RawStruct<Portion>().Value;
+            m_CachedOpacity = (float)inValue.RawObject<Portion>().Value;
             OnOpacityChanged();
         }
 

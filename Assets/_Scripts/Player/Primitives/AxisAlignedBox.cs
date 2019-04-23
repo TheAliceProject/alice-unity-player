@@ -4,7 +4,7 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public struct AxisAlignedBox
+    public class AxisAlignedBox
     {
         [PInteropField]
         public static readonly AxisAlignedBox EMPTY  = new AxisAlignedBox(Position.ZERO, Position.ZERO);

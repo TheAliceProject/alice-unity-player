@@ -4,7 +4,7 @@ using Alice.Tweedle.Interop;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public struct Scale
+    public class Scale
     {
         public readonly Vector3 Value;
 

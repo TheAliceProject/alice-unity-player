@@ -4,7 +4,7 @@ using Alice.Tweedle.Interop;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public struct VantagePoint {
+    public class VantagePoint {
         #region Cubic Polynomial Evaluation
         // NOTE: hermite cubic matrix is transposed from Alice because of microsoft's matrix is row-ordered
         static private readonly Matrix4x4 s_HermiteCubic = Matrix4x4.Transpose(new Matrix4x4(2, -2, 1, 1, -3, 3, -2, -1, 0, 0, 1, 0, 1, 0, 0, 0));

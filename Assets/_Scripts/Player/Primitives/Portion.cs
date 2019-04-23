@@ -5,7 +5,7 @@ using Alice.Tweedle;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public struct Portion
+    public class Portion
     {
        
         public readonly double Value;
