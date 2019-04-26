@@ -10,11 +10,10 @@ namespace Alice.Player.Modules
     [PInteropType("Mouse")]
     static public class MouseModule
     {
-
         [PInteropMethod]
-        public static void addClickOnObjectListener() {
-            // Add listener
+        public static void addMouseEventListener(PAction listener, int eventPolicy, TValue scene) {
+            var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
+            entity.AddMouseClickListener(listener, (OverlappingEventPolicy)eventPolicy);
         }
-
     }
 }
