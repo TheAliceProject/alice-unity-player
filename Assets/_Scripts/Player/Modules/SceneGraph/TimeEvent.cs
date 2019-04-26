@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Player.Modules;
+using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public class TimeEvent{
         
-        public PAction listener;
+        public PAction<Duration> listener;
         public float frequency;
         public OverlappingEventPolicy policy;
 
@@ -20,11 +21,10 @@ namespace Alice.Player.Unity {
         // TODO: Figure out real time vs simulated time?
         ///////////////////////
 
-        public TimeEvent(PAction listener, float freq, OverlappingEventPolicy policy){
+        public TimeEvent(PAction<Duration> listener, float freq, OverlappingEventPolicy policy){
             this.listener = listener;
             this.frequency = freq;
             this.policy = policy;
-            Debug.Log("Time event created. Policy: " + (int)policy);
         }
 
         public float getTimeSinceLastFire(){
@@ -42,10 +42,9 @@ namespace Alice.Player.Unity {
                     return;
                 }
             }
-            Debug.Log(Time.time + " Event called");
             lastFireTime = Time.time;
             AsyncReturn callReturn;
-            callReturn = listener.Call();
+            callReturn = listener.Call(new Duration(lastFireTime));
             callActive = true;
             callReturn.OnReturn(() => {
                 returnedCall();

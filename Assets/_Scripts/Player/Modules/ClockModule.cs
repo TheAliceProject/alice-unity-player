@@ -58,7 +58,7 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        public static void addTimeEventListener(PAction listener, Duration duration, int eventPolicy, TValue scene) {
+        public static void addTimeEventListener(PAction<Duration> listener, Duration duration, int eventPolicy, TValue scene) {
             var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
             entity.AddTimeListener(listener, duration, (OverlappingEventPolicy)eventPolicy);
         }

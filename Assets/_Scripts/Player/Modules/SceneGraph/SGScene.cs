@@ -4,6 +4,7 @@ using Alice.Tweedle.Interop;
 using System;
 using System.Collections.Generic;
 using Alice.Player.Modules;
+using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     
@@ -18,9 +19,10 @@ namespace Alice.Player.Unity {
 
         private List<PAction> m_ActivationListeners = new List<PAction>();
         private List<TimeEvent> m_TimeListeners = new List<TimeEvent>();
+        private List<MouseEvent> m_MouseClickListeners = new List<MouseEvent>();
 
-        private Color m_AmbientLightColor = new Color(0.25f, 0.25f, 0.25f, 1f);
-        private Color m_AtmosphereColor = Color.white;
+        private UnityEngine.Color m_AmbientLightColor = new UnityEngine.Color(0.25f, 0.25f, 0.25f, 1f);
+        private UnityEngine.Color m_AtmosphereColor = UnityEngine.Color.white;
         private float m_GlobalBrightness = 1f;
 
         private SceneCanvas m_SceneCanvas;
@@ -55,10 +57,14 @@ namespace Alice.Player.Unity {
 
         // Time, Mouse, and Keyboard intercepting
         void Update(){
-            for(int i = 0; i < m_TimeListeners.Count; i++)
-            {
-                {
+            for(int i = 0; i < m_TimeListeners.Count; i++){
                     m_TimeListeners[i].CheckEvent();
+            }
+
+            if(Input.GetKeyDown(KeyCode.Mouse0)){
+                Debug.Log("Mouse down");
+                for(int i = 0; i < m_MouseClickListeners.Count; i++){
+                    m_MouseClickListeners[i].CallEvent();
                 }
             }
         }
@@ -69,7 +75,7 @@ namespace Alice.Player.Unity {
             light.type = LightType.Directional;
             light.shadows = useShadows ? LightShadows.Hard : LightShadows.None;
             light.shadowStrength = 0.8f;
-            light.transform.localRotation = Quaternion.Euler(inPitch, inHeading, 0);
+            light.transform.localRotation = UnityEngine.Quaternion.Euler(inPitch, inHeading, 0);
             light.intensity = intensity;
 
             return light;
@@ -91,8 +97,12 @@ namespace Alice.Player.Unity {
             m_ActivationListeners.Add(inListener);
         }
 
-        public void AddTimeListener(PAction inListener, float frequency, OverlappingEventPolicy eventPolicy) {
+        public void AddTimeListener(PAction<Duration> inListener, float frequency, OverlappingEventPolicy eventPolicy) {
             m_TimeListeners.Add(new TimeEvent(inListener, frequency, eventPolicy));
+        }
+
+        public void AddMouseClickListener(PAction inListener, OverlappingEventPolicy eventPolicy) {
+            m_MouseClickListeners.Add(new MouseEvent(inListener, eventPolicy));
         }
 
         public void Activate() {
@@ -109,7 +119,7 @@ namespace Alice.Player.Unity {
 
         private void OnUpdateAtmosphereColor(TValue inValue) {
             var color = inValue.RawObject<Primitives.Color>().Value;
-            m_AtmosphereColor = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            m_AtmosphereColor = new UnityEngine.Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
             
             UpdateAtmosphereColor();
         }
@@ -128,13 +138,13 @@ namespace Alice.Player.Unity {
 
         private void OnUpdateAmbientLightColor(TValue inValue) {
             var color = inValue.RawObject<Primitives.Color>().Value;
-            m_AmbientLightColor = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            m_AmbientLightColor = new UnityEngine.Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
             UpdateAmbientLightColor();
         }
 
         private void OnUpdateAboveLightColor(TValue inValue) {
             var aliceColor = inValue.RawObject<Primitives.Color>().Value;
-            var unityColor = new Color((float)aliceColor.R, (float)aliceColor.G, (float)aliceColor.B, (float)aliceColor.A);
+            var unityColor = new UnityEngine.Color((float)aliceColor.R, (float)aliceColor.G, (float)aliceColor.B, (float)aliceColor.A);
             m_AboveLightA.color = unityColor;
             m_AboveLightB.color = unityColor;
             m_AboveLightC.color = unityColor;
@@ -142,17 +152,17 @@ namespace Alice.Player.Unity {
 
         private void OnUpdateBelowLightColor(TValue inValue) {
             var color = inValue.RawObject<Primitives.Color>().Value;
-            m_BelowLight.color = new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            m_BelowLight.color = new UnityEngine.Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
         }
 
         private void UpdateAtmosphereColor() {
-            Camera.main.backgroundColor = RenderSettings.fogColor = Color.Lerp(Color.clear, 
+            Camera.main.backgroundColor = RenderSettings.fogColor = UnityEngine.Color.Lerp(UnityEngine.Color.clear, 
                                                                                m_AtmosphereColor, 
                                                                                m_GlobalBrightness);
         }   
 
         private void UpdateAmbientLightColor() {
-            RenderSettings.ambientLight = Color.Lerp(new Color(0,0,0,1), 
+            RenderSettings.ambientLight = UnityEngine.Color.Lerp(new UnityEngine.Color(0,0,0,1), 
                                                      m_AmbientLightColor, 
                                                      m_GlobalBrightness);
         }
