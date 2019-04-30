@@ -66,6 +66,10 @@ namespace Alice.Player.Unity {
         private AxesModel m_AxesModel = null;
         public AxesModel AxesModel { get { return m_AxesModel; } }
 
+        [SerializeField]
+        private GameObject m_FlyingText = null;
+        public GameObject FlyingTextObject { get { return m_FlyingText; } }
+
         [Header("UI")]
         [SerializeField]
         private SceneCanvas m_SceneCanvas = null;
