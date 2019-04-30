@@ -32,5 +32,7 @@ MonoBehaviour:
   m_WallMesh: {fileID: 4300002, guid: d1b8941baf535bc46b8f40fbdb9a6442, type: 3}
   m_AxesModel: {fileID: 114812418435751640, guid: 218ae427f5e998c4a86d3896c93ae513,
     type: 3}
+  m_FlyingText: {fileID: 7801169308338121330, guid: 38dd5eae6afbaeb45932f2a6c836397d,
+    type: 3}
   m_SceneCanvas: {fileID: 773480886470413249, guid: 5cfb8ef305475774184a722dace45635,
     type: 3}
