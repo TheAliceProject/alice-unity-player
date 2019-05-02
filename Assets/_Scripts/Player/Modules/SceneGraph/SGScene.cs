@@ -18,8 +18,8 @@ namespace Alice.Player.Unity {
         public const string BELOW_LIGHT_COLOR_PROPERTY_NAME = "BelowLightColor";
 
         private List<PAction> m_ActivationListeners = new List<PAction>();
-        private List<TimeEvent> m_TimeListeners = new List<TimeEvent>();
-        private List<MouseEvent> m_MouseClickListeners = new List<MouseEvent>();
+        private List<TimeEventListenerProxy> m_TimeListeners = new List<TimeEventListenerProxy>();
+        private List<MouseEventListenerProxy> m_MouseClickListeners = new List<MouseEventListenerProxy>();
 
         private UnityEngine.Color m_AmbientLightColor = new UnityEngine.Color(0.25f, 0.25f, 0.25f, 1f);
         private UnityEngine.Color m_AtmosphereColor = UnityEngine.Color.white;
@@ -98,11 +98,11 @@ namespace Alice.Player.Unity {
         }
 
         public void AddTimeListener(PAction<Duration> inListener, float frequency, OverlappingEventPolicy eventPolicy) {
-            m_TimeListeners.Add(new TimeEvent(inListener, frequency, eventPolicy));
+            m_TimeListeners.Add(new TimeEventListenerProxy(inListener, frequency, eventPolicy));
         }
 
         public void AddMouseClickListener(PAction inListener, OverlappingEventPolicy eventPolicy) {
-            m_MouseClickListeners.Add(new MouseEvent(inListener, eventPolicy));
+            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy));
         }
 
         public void Activate() {
