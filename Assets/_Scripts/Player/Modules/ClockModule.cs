@@ -56,5 +56,11 @@ namespace Alice.Player.Modules
             SceneGraph.Current.QueueFrameReturn(returnValue, frames);
             return returnValue;
         }
+
+        [PInteropMethod]
+        public static void addTimeEventListener(PAction<Duration> listener, Duration duration, int eventPolicy, TValue scene) {
+            var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
+            entity.AddTimeListener(listener, duration, (OverlappingEventPolicy)eventPolicy);
+        }
     }
 }
