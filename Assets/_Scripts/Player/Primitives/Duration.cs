@@ -6,7 +6,7 @@ using System;
 namespace Alice.Player.Primitives
 {
     [PInteropType]
-    public struct Duration
+    public class Duration
     {
         // base value is in seconds
         public readonly double Value;

@@ -6,7 +6,7 @@ namespace Alice.Player.Primitives
 
 
     [PInteropType]
-    public struct Direction
+    public class Direction
     {
         public readonly Vector3 Value;
 
