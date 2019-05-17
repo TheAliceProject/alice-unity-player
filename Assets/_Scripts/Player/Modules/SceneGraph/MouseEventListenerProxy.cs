@@ -9,19 +9,25 @@ namespace Alice.Player.Unity {
         
         public PAction listener;
         public OverlappingEventPolicy policy;
+        public GameObject[] targets;
+        public bool onlyOnModels = false;
 
         private bool callActive = false;
         private float lastCheckedTime = 0f;
         private int queuedCalls = 0;
 
-        ///////////////////////
-        // TODO: Figure out real time vs simulated time?
-        ///////////////////////
-
-        public MouseEventListenerProxy(PAction listener, OverlappingEventPolicy policy){
+        public MouseEventListenerProxy(PAction listener, OverlappingEventPolicy policy, bool isModelClick, SGModel[] triggerTargets){
             this.listener = listener;
             this.policy = policy;
-            Debug.Log("Added mouse event");
+            this.onlyOnModels = isModelClick;
+            // Specify which objects we are looking for clicks on
+            if(isModelClick)
+            {
+                targets = new GameObject[triggerTargets.Length];
+                for(int i = 0; i < triggerTargets.Length; i++){
+                    targets[i] = triggerTargets[i].gameObject;
+                }
+            }
         }
 
         public void CallEvent(){
