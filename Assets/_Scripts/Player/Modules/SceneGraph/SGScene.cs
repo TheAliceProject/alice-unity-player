@@ -61,10 +61,29 @@ namespace Alice.Player.Unity {
                     m_TimeListeners[i].CheckEvent();
             }
 
-            if(Input.GetKeyDown(KeyCode.Mouse0)){
-                Debug.Log("Mouse down");
+            if(Input.GetKeyDown(KeyCode.Mouse0)){ // Left mouse click
                 for(int i = 0; i < m_MouseClickListeners.Count; i++){
-                    m_MouseClickListeners[i].CallEvent();
+                    if(m_MouseClickListeners[i].onlyOnModels){ // Clicked on object event
+                        RaycastHit hit; 
+                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
+                        
+                        if ( Physics.Raycast(ray, out hit, 100.0f)) {
+                            Debug.Log("You selected the " + hit.transform.parent.name); // ensure you picked right object
+                            if(m_MouseClickListeners[i].targets.Length == 0){ // They didn't specify visuals, so call event because we hit something
+                                m_MouseClickListeners[i].CallEvent();
+                            }
+                            else{  // Make sure what we clicked on is in the list of visuals
+                                for(int j = 0; j < m_MouseClickListeners[i].targets.Length; j++){
+                                    if(m_MouseClickListeners[i].targets[j] == hit.transform.parent.gameObject){
+                                        m_MouseClickListeners[i].CallEvent();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else{ // Clicked on screen event
+                        m_MouseClickListeners[i].CallEvent();
+                    }
                 }
             }
         }
@@ -101,8 +120,21 @@ namespace Alice.Player.Unity {
             m_TimeListeners.Add(new TimeEventListenerProxy(inListener, frequency, eventPolicy));
         }
 
-        public void AddMouseClickListener(PAction inListener, OverlappingEventPolicy eventPolicy) {
-            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy));
+        public void AddMouseClickOnScreenListener(PAction inListener, OverlappingEventPolicy eventPolicy) {
+            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy, false, null));
+        }
+
+        public void AddMouseClickOnObjectListener(PAction inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
+            for(int i = 0; i < clickedObjects.Length; i++)
+            {
+                foreach(MeshRenderer renderer in clickedObjects[i].transform.GetComponentsInChildren<MeshRenderer>()){
+                    if(renderer.transform.GetComponent<MeshCollider>() == null){
+                        MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>(); 
+                        collider.convex = true; 
+                    }
+                }
+            }
+            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy, true, clickedObjects));
         }
 
         public void Activate() {
