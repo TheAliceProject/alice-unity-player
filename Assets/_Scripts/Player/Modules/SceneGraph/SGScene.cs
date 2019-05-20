@@ -134,10 +134,23 @@ namespace Alice.Player.Unity {
             }
 
             if(objectToMove == Camera.main.transform){ // Moving the camera
-                UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-                UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), 0, pos.y * (1f * dragSpeed));
-                objectToMove.position += move; 
-                dragOrigin = Input.mousePosition;
+            if(Input.GetKey(KeyCode.LeftShift)){
+                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
+                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), dragSpeed * pos.y, pos.y * (1f * dragSpeed));
+                    objectToMove.position += move; 
+                    shiftOrigin = Input.mousePosition;
+                }
+                else if(Input.GetKey(KeyCode.LeftControl)){
+                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
+                    objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 20f);
+                    rotateOrigin = Input.mousePosition;
+                }
+                else{
+                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
+                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), 0, pos.y * (1f * dragSpeed));
+                    objectToMove.position += move; 
+                    dragOrigin = Input.mousePosition;
+                }
             }
             else{ // Moving an object
                 
