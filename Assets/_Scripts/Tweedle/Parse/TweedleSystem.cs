@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Alice.Tweedle.File;
 using Alice.Tweedle.Interop;
@@ -51,27 +51,33 @@ namespace Alice.Tweedle.Parse
         public void AddLibrary(LibraryManifest libAsset)
         {
             LoadedFiles.Add(libAsset.Identifier);
-            Libraries.Add(libAsset.Identifier.id, libAsset);
+            Libraries.Add(libAsset.Identifier.name, libAsset);
         }
 
         public void AddProgram(ProgramDescription programAsset)
         {
             LoadedFiles.Add(programAsset.Identifier);
-            Programs.Add(programAsset.Identifier.id, programAsset);
+            Programs.Add(programAsset.Identifier.name, programAsset);
         }
 
         public void AddModel(ModelManifest modelAsset)
         {
+            Debug.LogWarningFormat("Adding Model Asset {0} ", modelAsset);
+            Debug.LogWarningFormat("   With Identifier {0} ", modelAsset.Identifier);
+            Debug.LogWarningFormat("             Named {0} ", modelAsset.Identifier.name);
             LoadedFiles.Add(modelAsset.Identifier);
-            Models.Add(modelAsset.Identifier.id, modelAsset);
+            Models.Add(modelAsset.Identifier.name, modelAsset);
         }
 
         public void AddResource(ResourceReference resourceAsset)
         {
-            ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.id, resourceAsset.ContentType, resourceAsset.FormatType);
-            if (Resources.ContainsKey(identifier))  {
+            ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.name, resourceAsset.ContentType, resourceAsset.FormatType);
+            if (Resources.ContainsKey(identifier))
+            {
                 Debug.LogWarningFormat("Resources with identifier {0} already exists", identifier.ToString());
-            } else {
+            }
+            else
+            {
                 Resources.Add(identifier, resourceAsset);
             }
         }
