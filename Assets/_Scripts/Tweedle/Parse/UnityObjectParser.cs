@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using UnityEngine;
 
 using ICSharpCode.SharpZipLib.Zip;
@@ -9,7 +9,7 @@ namespace Alice.Tweedle.Parse
 {
     public class UnityObjectParser : MonoBehaviour
     {
-        static string project_ext = "a3p";
+        static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
 
         private TweedleSystem m_System;
