@@ -3,7 +3,7 @@
     [System.Serializable]
     public class ProjectIdentifier
     {
-        public string id;
+        public string name;
         public string version;
         public string type;
 
@@ -15,9 +15,9 @@
             }
         }
 
-        public ProjectIdentifier(string id, string version, string type)
+        public ProjectIdentifier(string name, string version, string type)
         {
-            this.id = id;
+            this.name = name;
             this.version = version;
             this.type = type;
         }
@@ -32,12 +32,12 @@
 
         public bool Equals(ProjectIdentifier other)
         {
-            return id.Equals(id) && version.Equals(other.version) && type.Equals(other.type);
+            return name.Equals(other.name) && version.Equals(other.version) && type.Equals(other.type);
         }
 
         public override int GetHashCode()
         {
-            return new { A = id, B = version, C = type }.GetHashCode();
+            return new { A = name, B = version, C = type }.GetHashCode();
         }
     }
 }
