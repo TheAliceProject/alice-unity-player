@@ -476,6 +476,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
       objectReference: {fileID: 616136224}
+    - target: {fileID: 1310748562332556, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
+      propertyPath: m_Name
+      value: From a3w
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114332211912072098, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
