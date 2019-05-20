@@ -34,6 +34,12 @@ namespace Alice.Player.Unity {
         private Light m_BelowLight;
         private const float k_BelowLightIntensity = 1f;
         private const float k_BelowLightPitch = -90f;
+        private float dragSpeed = 8f;
+        private UnityEngine.Vector3 dragOrigin;
+        private Transform objectToMove = null;
+        private Plane movementPlane = new Plane(UnityEngine.Vector3.up, UnityEngine.Vector3.zero);
+        private UnityEngine.Vector3 objectOriginPoint = UnityEngine.Vector3.zero;
+        private UnityEngine.Vector3 planeOriginPoint = UnityEngine.Vector3.zero;
 
         protected override void Awake() {
             base.Awake();
@@ -69,6 +75,13 @@ namespace Alice.Player.Unity {
                         
                         if ( Physics.Raycast(ray, out hit, 100.0f)) {
                             Debug.Log("You selected the " + hit.transform.parent.name); // ensure you picked right object
+                            objectToMove = hit.transform.parent;
+                            objectOriginPoint = hit.transform.position;
+                            Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                            float distance;
+                            if (movementPlane.Raycast(planeRay, out distance))
+                                planeOriginPoint = planeRay.origin + (planeRay.direction * distance);
+                            
                             if(m_MouseClickListeners[i].targets.Length == 0){ // They didn't specify visuals, so call event because we hit something
                                 m_MouseClickListeners[i].CallEvent();
                             }
@@ -83,7 +96,40 @@ namespace Alice.Player.Unity {
                     }
                     else{ // Clicked on screen event
                         m_MouseClickListeners[i].CallEvent();
-                    }
+                    }      
+                }
+            }
+            if(Input.GetKeyUp(KeyCode.Mouse0))
+                objectToMove = null;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                dragOrigin = Input.mousePosition;
+                return;
+            }
+    
+            if (!Input.GetMouseButton(0)) 
+                return;
+    
+            
+            if(objectToMove == null){
+                objectToMove = Camera.main.transform;
+            }
+
+            if(objectToMove == Camera.main.transform){ // Moving the camera
+                UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
+                UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), 0, pos.y * (1f * dragSpeed));
+                objectToMove.position += move; 
+                dragOrigin = Input.mousePosition;
+            }
+            else{ // Moving an object
+                Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                float distance;
+                if (movementPlane.Raycast(planeRay, out distance))
+                {
+                    UnityEngine.Vector3 pointalongplane = planeRay.origin + (planeRay.direction * distance);
+                    UnityEngine.Vector3 moveAmount = planeOriginPoint - pointalongplane;
+                    objectToMove.position = new UnityEngine.Vector3(objectOriginPoint.x - moveAmount.x, objectToMove.position.y, objectOriginPoint.z - moveAmount.z);
                 }
             }
         }
