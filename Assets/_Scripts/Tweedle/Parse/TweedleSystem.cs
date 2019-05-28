@@ -200,7 +200,12 @@ namespace Alice.Tweedle.Parse
             if (m_TypeMap.TryGetValue("Program", out prog))
             {
                 TValue progVal = TBuiltInTypes.TYPE_REF.Instantiate(prog);
-                NamedArgument[] arguments = NamedArgument.EMPTY_ARGS;
+
+                NamedArgument[] arguments = new NamedArgument[1];
+                TArrayType arrayMemberType = TGenerics.GetArrayType(TBuiltInTypes.TEXT_STRING, null);
+                ArrayInitializer args = new ArrayInitializer(arrayMemberType, new ITweedleExpression[0]);
+                arguments[0] = new NamedArgument("args", args);
+
                 vm.Queue(new MethodCallExpression(progVal, "main", arguments));
             }
         }
