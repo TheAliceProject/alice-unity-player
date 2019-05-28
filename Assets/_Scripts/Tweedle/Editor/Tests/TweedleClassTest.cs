@@ -1,4 +1,4 @@
-﻿using Alice.Tweedle.VM;
+using Alice.Tweedle.VM;
 using NUnit.Framework;
 
 namespace Alice.Tweedle.Parse
@@ -53,7 +53,7 @@ namespace Alice.Tweedle.Parse
             + "  ClassToHave mySpecialThing <- new ClassToHave(start: 100 - 3);"
             + "  ClassToHave myConstructedThing;"
             + "  ClassToHave myReplacedThing <- new ClassToHave(start: 100);"
-            + "static void main(TextString args) {" // + "static void main(TextString[] args) {"
+            + "static void main(TextString[] args) {"
             + "            Program story<-new Program();"
             + "            story.initializeInFrame(args: args);"
             + "            story.setActiveScene(scene: story.getMyScene());\n }"
