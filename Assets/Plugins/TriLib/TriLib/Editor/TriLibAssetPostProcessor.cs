@@ -47,7 +47,7 @@ namespace TriLibEditor
             {
                 TriLibAssetImporter.Import(str);
 #if ASSIMP_OUTPUT_MESSAGES
-                Debug.Log("Asset imported: " + str);
+                UnityEngine.Debug.Log("Asset imported: " + str);
 #endif
             }
         }

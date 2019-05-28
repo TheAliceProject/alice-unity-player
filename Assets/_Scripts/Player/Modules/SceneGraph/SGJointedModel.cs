@@ -2,6 +2,8 @@ using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using Alice.Player.Primitives;
+using BeauRoutine;
+using System.Collections;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
@@ -12,6 +14,7 @@ namespace Alice.Player.Unity {
         private MaterialPropertyBlock[] m_PropertyBlocks;
 
         private int m_BoundsRendererIndex = -1;
+        private Routine materialTestRoutine;
 
         public void SetResource(string inIdentifier) {
 
@@ -49,9 +52,6 @@ namespace Alice.Player.Unity {
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     m_Renderers[i] = m_Filters[i].GetComponent<Renderer>();
 
-                    GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
-                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
-                    
                     UnityEngine.Vector3 size;
                     if (m_Renderers[i] is SkinnedMeshRenderer) {
                         // make sure the skinned mesh renderers local bounds get updated
@@ -68,6 +68,14 @@ namespace Alice.Player.Unity {
                         largetVolume = volume;
                         m_BoundsRendererIndex = i;
                     }
+
+
+                    //materialTestRoutine.Replace(this, testRout(inIdentifier));
+
+                    GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
+                    Material mat = m_Renderers[i].sharedMaterial;
+                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, mat.mainTexture);
+
                 }
                 CacheMeshBounds();
             } else {
@@ -76,6 +84,28 @@ namespace Alice.Player.Unity {
             }
         }
 
+        private void WTFMate(string inIdentifier)
+        {
+            for (int i = 0; i < m_Renderers.Length; ++i)
+            {
+                m_Renderers[i] = m_Filters[i].GetComponent<Renderer>();
+
+                GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
+                Material mat = m_Renderers[i].sharedMaterial;
+                if(mat.mainTexture != null)
+                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, mat.mainTexture);
+            }
+
+        }
+        private IEnumerator testRout(string inIdentifier)
+        {
+            while(true)
+            {
+                WTFMate(inIdentifier);
+                yield return 1f;
+            }
+
+        }
         protected override Bounds GetMeshBounds() {
             if (m_Filters == null) {
                 return new Bounds(UnityEngine.Vector3.zero, UnityEngine.Vector3.zero);

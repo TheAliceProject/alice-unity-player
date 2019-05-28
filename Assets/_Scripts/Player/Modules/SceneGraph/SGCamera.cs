@@ -10,14 +10,22 @@ namespace Alice.Player.Unity {
         protected override void Awake() {
             base.Awake();
             Camera = Camera.main;
-            Camera.transform.SetParent(cachedTransform, false);
-            Camera.transform.localPosition = UnityEngine.Vector3.zero;
-            Camera.transform.localRotation = UnityEngine.Quaternion.identity;
+            if(CameraType.CamType == 1)
+            {
+                Camera.transform.SetParent(cachedTransform, false);
+                Camera.transform.localPosition = UnityEngine.Vector3.zero;
+                Camera.transform.localRotation = UnityEngine.Quaternion.identity;
+            }
+
         }
 
         public override void CleanUp() {
-            Camera.transform.SetParent(null, true);
-            Camera = null;
+            if(Camera != null)
+            {
+                Camera.transform.SetParent(null, true);
+                Camera = null;
+            }
+
         }
     }
 }

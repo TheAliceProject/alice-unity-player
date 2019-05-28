@@ -222,7 +222,7 @@ namespace Alice.Player.Unity {
         public void Clear() {
             for (int i = 0; i < m_Entities.Count; ++i) {
                 m_Entities[i].CleanUp();
-                Destroy(m_Entities[i].gameObject);
+                //Destroy(m_Entities[i].gameObject);
             }
             m_Entities.Clear();
 
@@ -231,6 +231,7 @@ namespace Alice.Player.Unity {
             TextureCache.Clear();
             TextureCache = null;
             Scene = null;
+            Destroy();
         }
 
         private void Destroy() {

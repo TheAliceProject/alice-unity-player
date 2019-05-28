@@ -11,16 +11,20 @@ namespace Alice.Tweedle.Parse
     {
         static string project_ext = "a3p";
         public bool dumpTypeOutlines = false;
+        public GameObject canvas;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
         private Coroutine m_QueueProcessor;
 
-        public void Select(GameObject canvas)
+        public void SetCameraType(int type)
         {
-            string zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
-            if (System.IO.File.Exists(zipPath) == false)
-                return;
+            CameraType.SetCameraType(type);
+        }
+
+        public void Select(string path)
+        {
+            string zipPath = path;
 
             Camera.main.backgroundColor = Color.clear;
             canvas.SetActive(false);
