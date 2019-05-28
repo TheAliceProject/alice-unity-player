@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BuiltInLibraries:
   - path:
-      relativePath: SceneGraphLibrary.a3p
+      relativePath: SceneGraphLibrary.a3w
     identifier:
-      id: 970a310f-90a7-4d29-8380-5b2a742e3ee4
+      name: SceneGraphLibrary
       version: 1.0
       type: Library
