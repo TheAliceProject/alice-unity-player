@@ -8,6 +8,7 @@ public class SimpleMove : MonoBehaviour
     public Transform camRig;
     public GameObject objToFollowForward;
     public SteamVR_TrackedObject trackedObj;
+    public GameObject model;
 
     void Awake()
     {
@@ -16,24 +17,19 @@ public class SimpleMove : MonoBehaviour
 
     void FixedUpdate()
     {
+        model.SetActive(CameraType.CamType == 0);
+        if(CameraType.CamType == 1)
+        {
+            return;
+        }
+            
+
         var device = SteamVR_Controller.Input((int)trackedObj.index);
 
         float xPos = device.GetAxis().x;
         float yPos = device.GetAxis().y;
 
         Vector2 touchPosition = device.GetAxis();
-
-        /* 
-        if (touchPosition.y > 0.01f)
-            camRig.transform.position += new Vector3(objToFollowForward.transform.forward.x * 0.01f, 0f, objToFollowForward.transform.forward.z * 0.03f);
-        else if(touchPosition.y < -0.01f)
-            camRig.transform.position -= new Vector3(objToFollowForward.transform.forward.x * 0.01f, 0f, objToFollowForward.transform.forward.z * 0.03f);
-
-        if (touchPosition.x > 0.1f)
-            camRig.transform.position += new Vector3(objToFollowForward.transform.right.x * 0.01f, 0f, objToFollowForward.transform.right.z * 0.03f);
-        else if (touchPosition.x < -0.1f)
-            camRig.transform.position -= new Vector3(objToFollowForward.transform.right.x * 0.01f, 0f, objToFollowForward.transform.right.z * 0.03f);
-        */
 
         if (touchPosition.y != 0f)
             camRig.transform.position += new Vector3(objToFollowForward.transform.forward.x * touchPosition.y * 0.02f, 0f, objToFollowForward.transform.forward.z * touchPosition.y * 0.02f);

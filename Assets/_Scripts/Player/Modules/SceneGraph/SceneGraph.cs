@@ -108,6 +108,7 @@ namespace Alice.Player.Unity {
         public PlayerResources InternalResources {get; private set;}
         public TextureCache TextureCache {get; private set;}
         public ModelCache ModelCache {get; private set;}
+        public Dictionary<string, Texture> ModelTextureCache = new Dictionary<string, Texture>();
 
         private List<SGEntity> m_Entities = new List<SGEntity>();
         private Transform m_ModelCacheRoot;

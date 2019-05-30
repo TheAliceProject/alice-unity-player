@@ -231,10 +231,35 @@ namespace Alice.Tweedle.Parse
                             var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
                             var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
                             options.TexturesPathOverride = System.IO.Path.GetDirectoryName(cachePath);
+                            options.DontLoadMaterials = false;
+
+                            // From Rob: Generate texture here, because Trilib doesn't seem to correctly... or something.
+                            Texture2D tex = null;
+                            byte[] fileData;
+
+                            DirectoryInfo dir = new DirectoryInfo(options.TexturesPathOverride);
+                            FileInfo[] info = dir.GetFiles("*.png");
+                            string textureFilePath = "";
+                            foreach (FileInfo f in info)
+                            {
+                                if(f.Name.Contains("exture") || f.Name.Contains("EXTURE"))
+                                {
+                                    textureFilePath = f.FullName;
+                                    break;
+                                }
+                            }
+
+                            if (System.IO.File.Exists(textureFilePath))
+                            {
+                                fileData = System.IO.File.ReadAllBytes(textureFilePath);
+                                tex = new Texture2D(2, 2);
+                                tex.LoadImage(fileData);
+                            }
 
                             GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.file, options);
-
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
+
+                            SceneGraph.Current.ModelTextureCache[cacheID] = tex;
                             SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
                         }
                     }

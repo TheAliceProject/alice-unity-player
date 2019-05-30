@@ -14,7 +14,6 @@ namespace Alice.Player.Unity {
         private MaterialPropertyBlock[] m_PropertyBlocks;
 
         private int m_BoundsRendererIndex = -1;
-        private Routine materialTestRoutine;
 
         public void SetResource(string inIdentifier) {
 
@@ -30,6 +29,7 @@ namespace Alice.Player.Unity {
             }
 
             var prefab = SceneGraph.Current.ModelCache.Get(inIdentifier);
+            Texture myTexture = SceneGraph.Current.ModelTextureCache[inIdentifier];
 
             if (prefab) {
                 var model = Instantiate(prefab, cachedTransform, false);
@@ -48,7 +48,7 @@ namespace Alice.Player.Unity {
 
                 float largetVolume = 0;
                 m_BoundsRendererIndex = -1;
-
+                
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     m_Renderers[i] = m_Filters[i].GetComponent<Renderer>();
 
@@ -70,11 +70,9 @@ namespace Alice.Player.Unity {
                     }
 
 
-                    //materialTestRoutine.Replace(this, testRout(inIdentifier));
-
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
                     Material mat = m_Renderers[i].sharedMaterial;
-                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, mat.mainTexture);
+                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, myTexture);
 
                 }
                 CacheMeshBounds();
@@ -84,28 +82,6 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private void WTFMate(string inIdentifier)
-        {
-            for (int i = 0; i < m_Renderers.Length; ++i)
-            {
-                m_Renderers[i] = m_Filters[i].GetComponent<Renderer>();
-
-                GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
-                Material mat = m_Renderers[i].sharedMaterial;
-                if(mat.mainTexture != null)
-                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, mat.mainTexture);
-            }
-
-        }
-        private IEnumerator testRout(string inIdentifier)
-        {
-            while(true)
-            {
-                WTFMate(inIdentifier);
-                yield return 1f;
-            }
-
-        }
         protected override Bounds GetMeshBounds() {
             if (m_Filters == null) {
                 return new Bounds(UnityEngine.Vector3.zero, UnityEngine.Vector3.zero);
@@ -121,7 +97,7 @@ namespace Alice.Player.Unity {
 
         protected override void OnPaintChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
+                //ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }
 

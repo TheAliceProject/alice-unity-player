@@ -24,7 +24,7 @@ namespace Alice.Tweedle.Parse
 
         public void Select(string path)
         {
-            string zipPath = path;
+            string zipPath = Application.streamingAssetsPath + "/" + path;
 
             Camera.main.backgroundColor = Color.clear;
             canvas.SetActive(false);
