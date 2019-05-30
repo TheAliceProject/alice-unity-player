@@ -115,7 +115,7 @@ MonoBehaviour:
   camRig: {fileID: 420908}
   objToFollowForward: {fileID: 155680}
   trackedObj: {fileID: 11411726}
-  model: {fileID: 147176}
+  model: {fileID: 11417306}
 --- !u!1 &146900
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,7 +464,7 @@ MonoBehaviour:
   camRig: {fileID: 420908}
   objToFollowForward: {fileID: 155680}
   trackedObj: {fileID: 11463128}
-  model: {fileID: 192944}
+  model: {fileID: 11417168}
 --- !u!1 &189822
 GameObject:
   m_ObjectHideFlags: 0

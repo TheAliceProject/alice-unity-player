@@ -8,7 +8,7 @@ public class SimpleMove : MonoBehaviour
     public Transform camRig;
     public GameObject objToFollowForward;
     public SteamVR_TrackedObject trackedObj;
-    public GameObject model;
+    public SteamVR_RenderModel model;
 
     void Awake()
     {
@@ -17,7 +17,7 @@ public class SimpleMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        model.SetActive(CameraType.CamType == 0);
+        model.transform.localScale = (CameraType.CamType == 1) ? Vector3.zero : Vector3.one;
         if(CameraType.CamType == 1)
         {
             return;
