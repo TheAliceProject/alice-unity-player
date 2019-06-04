@@ -4,12 +4,12 @@ using System.IO;
 
 namespace Alice.Tweedle.File {
     public static class ZipFileExt {
-        public static string ReadEntry(this ZipFile zipFile, string location)
-        {
+        public static string ReadEntry(this ZipFile zipFile, string location) {
             ZipEntry entry = zipFile.GetEntry(location);
             if (entry == null)
             {
                 Debug.Log("Did not find entry for: " + location);
+                return null;
             }
             return ReadEntry(zipFile, entry);
         }

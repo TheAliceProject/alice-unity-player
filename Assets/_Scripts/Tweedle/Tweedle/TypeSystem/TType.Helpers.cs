@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -42,7 +42,12 @@ namespace Alice.Tweedle
                     return method;
             }
 
-            return null;
+            string errorMessage = "Unable to locate method with signature " + inName + "( ";
+            for (int i = 0; i < inArguments.Length; ++i) {
+                errorMessage += inArguments[i].Name + " ";
+            }
+            errorMessage += " }";
+            throw new TweedleRuntimeException(errorMessage);
         }
 
         /// <summary>

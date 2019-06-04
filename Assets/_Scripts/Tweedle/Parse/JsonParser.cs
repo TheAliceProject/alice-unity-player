@@ -1,4 +1,4 @@
-﻿using Alice.Tweedle.File;
+using Alice.Tweedle.File;
 using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
@@ -52,7 +52,7 @@ namespace Alice.Tweedle.Parse
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
             ParsePrerequisites(asset.prerequisites);
-            
+
             ProjectType t = asset.Identifier.Type;
             switch (t)
             {
@@ -86,13 +86,13 @@ namespace Alice.Tweedle.Parse
         {
             for (int i = 0; i < prerequisites.Count; i++)
             {
-                if  (!m_System.LoadedFiles.Contains(prerequisites[i])) {
+                if (!m_System.LoadedFiles.Contains(prerequisites[i])) {
 
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
                         ParseZipFile(m_System, libRef.path.fullPath);
                     } else {
-                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].id);
+                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].name);
                     }
                 }
             }
@@ -118,28 +118,27 @@ namespace Alice.Tweedle.Parse
             ResourceReference strictRef = null;
             string zipPath = workingDir + resourceRef.file;
 
-
             switch (resourceRef.ContentType)
             {
                 case ContentType.Audio:
-                    strictRef =  UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+                    strictRef = UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
                     break;
                 case ContentType.Class:
                     ParseTweedleTypeResource(resourceRef, workingDir);
-                    strictRef =  JsonUtility.FromJson<ClassReference>(refJson);
+                    strictRef = JsonUtility.FromJson<ClassReference>(refJson);
                     break;
                 case ContentType.Enum:
                     ParseTweedleTypeResource(resourceRef, workingDir);
-                    strictRef =  JsonUtility.FromJson<EnumReference>(refJson);
+                    strictRef = JsonUtility.FromJson<EnumReference>(refJson);
                     break;
                 case ContentType.Image:
                     if (manifest is ModelManifest) {
                         CacheToDisk(resourceRef, workingDir);
-                        resourceRef.id = manifest.description.name + "/" + resourceRef.id;
+                        resourceRef.name = manifest.description.name + "/" + resourceRef.name;
                         strictRef = resourceRef;
                     } else {
                         LoadTexture(resourceRef, workingDir);
-                        strictRef =  JsonUtility.FromJson<ImageReference>(refJson);
+                        strictRef = JsonUtility.FromJson<ImageReference>(refJson);
                     }
                     break;
                 case ContentType.Model:
@@ -182,9 +181,9 @@ namespace Alice.Tweedle.Parse
         private void LoadTexture(ResourceReference resourceRef, string workingDir) {
             if (Application.isPlaying) {
                 byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-                var texture = new Texture2D(0,0);
+                var texture = new Texture2D(0, 0);
                 if (ImageConversion.LoadImage(texture, data, true)) {
-                    SceneGraph.Current.TextureCache.Add(resourceRef.id, texture);
+                    SceneGraph.Current.TextureCache.Add(resourceRef.name, texture);
                 }
             }
         }
@@ -197,7 +196,7 @@ namespace Alice.Tweedle.Parse
 
                     // find struct resource
                     for (int j = 0; j < inManifest.resources.Count; ++j) {
-                        if (inManifest.resources[j].id == inManifest.models[i].structure) {
+                        if (inManifest.resources[j].name == inManifest.models[i].structure) {
                             meshRef = inManifest.resources[j];
                             break;
                         }
@@ -211,7 +210,7 @@ namespace Alice.Tweedle.Parse
                             var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
                             var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
                             options.TexturesPathOverride = System.IO.Path.GetDirectoryName(cachePath);
-                            
+
                             GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.file, options);
 
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;

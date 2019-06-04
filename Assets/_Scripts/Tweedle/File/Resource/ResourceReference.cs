@@ -28,7 +28,7 @@ namespace Alice.Tweedle.File
         }
 
 
-        public string id;
+        public string name;
         public string type;
         public string format;
         public string file;
