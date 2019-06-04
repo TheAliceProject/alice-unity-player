@@ -20,6 +20,10 @@
 
         private void IdentifyTargetMethod()
         {
+            if (thisValue == null || thisValue == TValue.NULL)
+            {
+                throw new TweedleRuntimeException("Can not invoke " + callStackEntry + " on null.");
+            }
             TType type;
             if (invokeSuper)
             {
@@ -31,7 +35,7 @@
             }
 
             method = type.Method(callingScope, ref thisValue, callStackEntry);
-            
+
             if (method == null)//|| !method.ExpectsArgs(callExpression.arguments))
             {
                 throw new TweedleRuntimeException("No method matching " + thisValue + "." + callStackEntry + "()");
