@@ -1,36 +1,28 @@
 ﻿namespace Alice.Tweedle.VM
 {
-    class MethodScope : InvocationScope
-    {
+    class MethodScope : InvocationScope {
         bool invokeSuper;
 
         public MethodScope(ExecutionScope scope, string methodName, bool invokeSuper)
-            : base(scope)
-        {
+            : base(scope) {
             callStackEntry = methodName;
             this.invokeSuper = invokeSuper;
         }
 
-        internal void SetThis(TValue target)
-        {
+        internal void SetThis(TValue target) {
             // target may be an instance (object or enumValue) or type (class or enum)
             thisValue = target;
             IdentifyTargetMethod();
         }
 
-        private void IdentifyTargetMethod()
-        {
-            if (thisValue == null || thisValue == TValue.NULL)
-            {
+        private void IdentifyTargetMethod() {
+            if (thisValue == null || thisValue == TValue.NULL) {
                 throw new TweedleRuntimeException("Can not invoke " + callStackEntry + " on null.");
             }
             TType type;
-            if (invokeSuper)
-            {
+            if (invokeSuper) {
                 type = thisValue.Type.SuperType.Get(this);
-            }
-            else
-            {
+            } else {
                 type = thisValue.Type;
             }
 
