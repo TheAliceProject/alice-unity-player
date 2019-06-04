@@ -115,7 +115,7 @@ namespace Alice.Tweedle.Parse
                 });
 
                 TEnumType tweedleEnum = new TEnumType(assembly, enumName, enumValues.ToArray(), body.properties.ToArray(), body.methods.ToArray(), body.constructors.ToArray());
-                return tweedleEnum;;
+                return tweedleEnum;
             }
         }
 
@@ -186,7 +186,7 @@ namespace Alice.Tweedle.Parse
             public override ITypeMember VisitMethodDeclaration([NotNull] Tweedle.TweedleParser.MethodDeclarationContext context)
             {
                 TTMethod method = new TTMethod(
-                        context.IDENTIFIER().GetText(), 
+                        context.IDENTIFIER().GetText(),
                         modifiers,
                         GetTypeOrVoid(context.typeTypeOrVoid(), assembly),
                         RequiredParameters(context.formalParameters()),
@@ -272,7 +272,7 @@ namespace Alice.Tweedle.Parse
                     && expectedType.IsResolved() && expression.Type.IsResolved()
                     && !expression.Type.Get().CanCast(expectedType.Get()))
                 {
-                    throw new System.Exception("Had been expecting expression of type " + expectedType.Name + ", but it is typed as " + expression.Type.Name);
+                    throw new System.Exception("In " + expression + " the parser had been expecting type " + expectedType.Name + ", but it is typed as " + expression.Type.Name);
                 }
                 return expression;
             }
@@ -482,7 +482,7 @@ namespace Alice.Tweedle.Parse
                     memberType = memberType ?? GetTypeRef(typeName);
 
                     TArrayType arrayMemberType = TGenerics.GetArrayType(memberType, assembly);
-                    
+
                     if (arrayCreator.arrayInitializer() != null)
                     {
                         ITweedleExpression[] elements = null;
@@ -570,7 +570,7 @@ namespace Alice.Tweedle.Parse
             {
                 ITweedleExpression[] expressions = TypedExpression(context, childType);
                 BinaryExpression expression = (BinaryExpression)System.Activator.CreateInstance(typeof(T), new object[] { expressions[0], expressions[1] });
-                
+
                 // TODO(Alex): Optimization - if expressions 0 and 1 are both literal, evaluate now and return result?
                 // ex. 3 + 4 should just return a value of 7 instead of a addition expression
                 // if (expressions[0] is TValue && expressions[1] is TValue)
@@ -788,7 +788,7 @@ namespace Alice.Tweedle.Parse
             TTypeRef[] paramTypes = new TTypeRef[inParameters.Length];
             for (int i = 0; i < paramTypes.Length; ++i)
                 paramTypes[i] = inParameters[i].Type;
-            
+
             TLambdaSignature signature = new TLambdaSignature(paramTypes, returnType);
             return TGenerics.GetLambdaType(signature, assembly);
         }
@@ -831,7 +831,7 @@ namespace Alice.Tweedle.Parse
             for (int i = 0; i < inModifiers.Length; ++i)
             {
                 string modifierStr = inModifiers[i];
-                switch(modifierStr)
+                switch (modifierStr)
                 {
                     case "readonly":
                         flags |= MemberFlags.Readonly;

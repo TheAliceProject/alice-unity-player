@@ -189,7 +189,7 @@ namespace Alice.Tweedle
         {
             ExecutionStep argStep = inExpression.AsStep(inScope.callingScope);
             ExecutionStep storeStep = new ValueComputationStep(
-                "Arg",
+                Name + " Arg " + inArgDeclaration.Name,
                 inScope.callingScope,
                 arg => inScope.SetLocalValue(inArgDeclaration, arg)
             );
@@ -201,7 +201,7 @@ namespace Alice.Tweedle
         {
             ExecutionStep argStep = inExpression.AsStep(inScope);
             ExecutionStep storeStep = new ValueComputationStep(
-                "Arg",
+                Name + " Default for Arg " + inArgDeclaration.Name,
                 inScope,
                 arg => inScope.SetLocalValue(inArgDeclaration, arg)
             );
