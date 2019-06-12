@@ -62,9 +62,7 @@ namespace Alice.Tweedle.Parse
 
         public void AddModel(ModelManifest modelAsset)
         {
-            Debug.LogWarningFormat("Adding Model Asset {0} ", modelAsset);
-            Debug.LogWarningFormat("   With Identifier {0} ", modelAsset.Identifier);
-            Debug.LogWarningFormat("             Named {0} ", modelAsset.Identifier.name);
+            // Debug.LogFormat("Loading Model Asset {0} ", modelAsset.Identifier.name);
             LoadedFiles.Add(modelAsset.Identifier);
             Models.Add(modelAsset.Identifier.name, modelAsset);
         }
