@@ -45,7 +45,7 @@ namespace Alice.Player.Unity {
             m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
 
             m_SceneCanvas = CreateCanvas();
-            RenderSettings.fogMode = FogMode.Exponential;
+            RenderSettings.fogMode = FogMode.Linear;
 
             RegisterPropertyDelegate(FOG_DENSITY_PROPERTY_NAME, OnUpdateFogDensity);
             RegisterPropertyDelegate(ATMOSPHERE_COLOR_PROPERTY_NAME, OnUpdateAtmosphereColor);
