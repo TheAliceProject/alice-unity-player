@@ -15,5 +15,10 @@ namespace Alice.Tweedle
         {
             return Expression.AsStep(scope).OnCompletionNotify(next);
         }
+
+        public override string ToString()
+        {
+            return Expression.ToTweedle();
+        }
     }
 }

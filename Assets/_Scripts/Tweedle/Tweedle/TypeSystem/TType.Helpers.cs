@@ -31,7 +31,7 @@ namespace Alice.Tweedle
         /// <summary>
         /// Finds a method with the given name, arguments, and flags.
         /// </summary>
-        static protected T FindMethodWithArgs<T>(T[] inMembers, string inName, NamedArgument[] inArguments, MemberFlags inFlags) where T : TMethod
+        protected T FindMethodWithArgs<T>(T[] inMembers, string inName, NamedArgument[] inArguments, MemberFlags inFlags) where T : TMethod
         {
             for (int i = 0; i < inMembers.Length; ++i)
             {
@@ -42,11 +42,11 @@ namespace Alice.Tweedle
                     return method;
             }
 
-            string errorMessage = "Unable to locate method with signature " + inName + "( ";
+            string errorMessage = "Unable to locate method " + Name + "." + inName + "(";
             for (int i = 0; i < inArguments.Length; ++i) {
                 errorMessage += inArguments[i].Name + " ";
             }
-            errorMessage += " }";
+            errorMessage += ")";
             throw new TweedleRuntimeException(errorMessage);
         }
 

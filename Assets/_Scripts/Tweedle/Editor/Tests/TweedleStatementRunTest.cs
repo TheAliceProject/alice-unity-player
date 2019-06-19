@@ -64,6 +64,42 @@ namespace Alice.Tweedle.Parse
             return new ExecutionScope("Test", new TestVirtualMachine(system));
         }
 
+        private static ExecutionScope GetTestScopeWithStaticsOnClass()
+        {
+            const string childClassSrc =
+                "class ChildClass {\n" +
+                "  ChildClass(TextString inside){ \n" +
+                "    this.insider <- inside;\n" +
+                "  }\n" +
+                "  TextString insider;\n" +
+                "  }";
+
+            const string valueClassSrc =
+                "class ValueClass {\n" +
+                "  ValueClass(TextString nom, WholeNumber num){ \n" +
+                "    name <- nom;\n" +
+                "    number <- num;\n" +
+                "  }\n" +
+                "  TextString name;\n" +
+                "  WholeNumber number;\n" +
+                "  static TextString sharedName <- \"valuable\";\n" +
+                "  static WholeNumber sharedNumber <- 22;\n" +
+                "  static ChildClass sharedChild <- new ChildClass(inside: \"secret\");\n" +
+
+                "  TextString getChildValue() {\n" +
+                "    return ValueClass.sharedChild.insider;\n" +
+                "  }\n" +
+                "}";
+
+            TweedleSystem system = new TweedleSystem();
+            TClassType childClass = (TClassType)new TweedleParser().ParseType(childClassSrc);
+            system.GetRuntimeAssembly().Add(childClass);
+            TClassType valueClass = (TClassType)new TweedleParser().ParseType(valueClassSrc);
+            system.GetRuntimeAssembly().Add(valueClass);
+            system.Link();
+            return new ExecutionScope("Test", new TestVirtualMachine(system));
+        }
+
         [Test]
         public void LocalDeclarationShouldUpdateTheScope()
         {
@@ -310,6 +346,107 @@ namespace Alice.Tweedle.Parse
             ExecutionScope scope = GetTestScope();
             ExecuteStatement("eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) { WholeNumber x <- c; }", scope);
             Assert.Throws<TweedleRuntimeException>(() => scope.GetValue("x"));
+        }
+
+        [Test]
+        public void ShouldReadInstanceString()
+        {
+            ExecutionScope scope = GetTestScopeWithStaticsOnClass();
+            ExecuteStatement("ValueClass val <- new ValueClass(nom: \"Fred\", num: 44);", scope);
+            ExecuteStatement("TextString x <- val.name;", scope);
+
+            Assert.AreEqual("\"Fred\"", scope.GetValue("x").ToString(), "Should be Fred");
+        }
+
+        [Test]
+        public void ShouldReadInstanceNumber()
+        {
+            ExecutionScope scope = GetTestScopeWithStaticsOnClass();
+            ExecuteStatement("ValueClass val <- new ValueClass(nom: \"Fred\", num: 44);", scope);
+            ExecuteStatement("WholeNumber x <- val.number;", scope);
+
+            Assert.AreEqual(44, scope.GetValue("x").ToInt(), "Should be 44");
+        }
+
+        [Test]
+        public void ShouldReadStaticString()
+        {
+            ExecutionScope scope = GetTestScopeWithStaticsOnClass();
+            ExecuteStatement("ValueClass val <- new ValueClass(nom: \"Fred\", num: 44);", scope);
+            ExecuteStatement("TextString x <- ValueClass.sharedName;", scope);
+
+            Assert.AreEqual("\"valuable\"", scope.GetValue("x").ToString(), "Should be valuable");
+        }
+
+        [Test]
+        public void ShouldReadStaticNumber()
+        {
+            ExecutionScope scope = GetTestScopeWithStaticsOnClass();
+            ExecuteStatement("ValueClass val <- new ValueClass(nom: \"Fred\", num: 44);", scope);
+            ExecuteStatement("WholeNumber x <- ValueClass.sharedNumber;", scope);
+
+            Assert.AreEqual(22, scope.GetValue("x").ToInt(), "Should be 22");
+        }
+
+        [Test]
+        public void ShouldReadStaticChildFromExpression()
+        {
+            ExecutionScope scope = GetTestScopeWithStaticsOnClass();
+            ExecuteStatement("TextString x <- ValueClass.sharedChild.insider;", scope);
+
+            Assert.AreEqual("\"secret\"", scope.GetValue("x").ToString(), "Should be secret");
+        }
+
+        [Test]
+        public void ShouldReadStaticChildInMethod()
+        {
+            ExecutionScope scope = GetTestScopeWithStaticsOnClass();
+            ExecuteStatement("ValueClass val <- new ValueClass(nom: \"Fred\", num: 44);", scope);
+            ExecuteStatement("TextString x <- val.getChildValue();", scope);
+
+            Assert.AreEqual("\"secret\"", scope.GetValue("x").ToString(), "Should be secret");
+        }
+
+        private static ExecutionScope GetTestScopeWithDisabledStatements()
+        {
+            const string classSrc =
+                "class SomeClass {\n" +
+                "  SomeClass(){}\n" +
+                "  TextString getValueAfterComment() {\n" +
+                "    // return \"why\";\n" +
+                "    return \"why not\";\n" +
+                "  }\n" +
+                "  TextString getValueAfterDisabledStatement() {\n" +
+                "    *< return \"why\"; >*\n" +
+                "    return \"why not\";\n" +
+                "  }\n" +
+                "}";
+
+            TweedleSystem system = new TweedleSystem();
+            TClassType someClass = (TClassType)new TweedleParser().ParseType(classSrc);
+            system.GetRuntimeAssembly().Add(someClass);
+            system.Link();
+            return new ExecutionScope("Test", new TestVirtualMachine(system));
+        }
+
+        [Test]
+        public void ShouldContinueAfterComment()
+        {
+            ExecutionScope scope = GetTestScopeWithDisabledStatements();
+            ExecuteStatement("SomeClass val <- new SomeClass();", scope);
+            ExecuteStatement("TextString x <- val.getValueAfterComment();", scope);
+
+            Assert.AreEqual("\"why not\"", scope.GetValue("x").ToString(), "Should be \"why not\"");
+        }
+
+        [Test]
+        public void ShouldContinueAfterDisabledStatement()
+        {
+            ExecutionScope scope = GetTestScopeWithDisabledStatements();
+            ExecuteStatement("SomeClass val <- new SomeClass();", scope);
+            ExecuteStatement("TextString x <- val.getValueAfterDisabledStatement();", scope);
+
+            Assert.AreEqual("\"why not\"", scope.GetValue("x").ToString(), "Should be \"why not\"");
         }
     }
 }
