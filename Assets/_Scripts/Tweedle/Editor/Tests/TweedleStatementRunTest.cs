@@ -406,5 +406,47 @@ namespace Alice.Tweedle.Parse
 
             Assert.AreEqual("\"secret\"", scope.GetValue("x").ToString(), "Should be secret");
         }
+
+        private static ExecutionScope GetTestScopeWithDisabledStatements()
+        {
+            const string classSrc =
+                "class SomeClass {\n" +
+                "  SomeClass(){}\n" +
+                "  TextString getValueAfterComment() {\n" +
+                "    // return \"why\";\n" +
+                "    return \"why not\";\n" +
+                "  }\n" +
+                "  TextString getValueAfterDisabledStatement() {\n" +
+                "    *< return \"why\"; >*\n" +
+                "    return \"why not\";\n" +
+                "  }\n" +
+                "}";
+
+            TweedleSystem system = new TweedleSystem();
+            TClassType someClass = (TClassType)new TweedleParser().ParseType(classSrc);
+            system.GetRuntimeAssembly().Add(someClass);
+            system.Link();
+            return new ExecutionScope("Test", new TestVirtualMachine(system));
+        }
+
+        [Test]
+        public void ShouldContinueAfterComment()
+        {
+            ExecutionScope scope = GetTestScopeWithDisabledStatements();
+            ExecuteStatement("SomeClass val <- new SomeClass();", scope);
+            ExecuteStatement("TextString x <- val.getValueAfterComment();", scope);
+
+            Assert.AreEqual("\"why not\"", scope.GetValue("x").ToString(), "Should be \"why not\"");
+        }
+
+        [Test]
+        public void ShouldContinueAfterDisabledStatement()
+        {
+            ExecutionScope scope = GetTestScopeWithDisabledStatements();
+            ExecuteStatement("SomeClass val <- new SomeClass();", scope);
+            ExecuteStatement("TextString x <- val.getValueAfterDisabledStatement();", scope);
+
+            Assert.AreEqual("\"why not\"", scope.GetValue("x").ToString(), "Should be \"why not\"");
+        }
     }
 }
