@@ -65,26 +65,16 @@ namespace Alice.Tweedle.VM
 
         void BeginProcessing()
         {
-            // loop count is temporary hack to prevent run away code
-            var loopCount = 0;
             while (IsTimeLeftInFrame() && (stepsForThisFrame.Count > 0))
             {
-                loopCount++;
-                if (loopCount > 100000)
-                {
-                    throw new System.Exception("Exceeded loop count limit");
-                }
                 ProcessStep(stepsForThisFrame.Dequeue());
             }
             PrepForNextFrame();
-            if (loopCount > 1000)
-            {
-                UnityEngine.Debug.Log("Loop count " + loopCount);
-            }
         }
 
         bool IsTimeLeftInFrame()
         {
+            // TODO check Unity engine for frame timing
             // Ever hopeful for now
             return true;
         }
