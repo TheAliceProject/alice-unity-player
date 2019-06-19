@@ -63,5 +63,11 @@ namespace Alice.Tweedle
                 () => methodScope.QueueInvocationStep(main, arguments)));
             return main;
         }
+
+        public override string ToTweedle()
+        {
+            // TODO expand to include parameter labels and arguments
+            return string.Format("{0}.{1}(…)", Target.ToTweedle(), MethodName);
+        }
     }
 }
