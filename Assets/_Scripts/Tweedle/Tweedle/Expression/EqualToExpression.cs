@@ -1,4 +1,4 @@
-﻿namespace Alice.Tweedle
+namespace Alice.Tweedle
 {
     class EqualToExpression : BinaryExpression
     {
@@ -15,7 +15,7 @@
 
         internal override string Operator()
         {
-            return "=";
+            return "==";
         }
     }
 }
