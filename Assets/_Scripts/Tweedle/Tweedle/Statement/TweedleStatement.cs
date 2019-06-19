@@ -20,6 +20,8 @@ namespace Alice.Tweedle
             if (enabled)
             {
                 AsStepToNotify(scope, next).Queue();
+            } else if (next != null) {
+                next.Queue();
             }
         }
 
