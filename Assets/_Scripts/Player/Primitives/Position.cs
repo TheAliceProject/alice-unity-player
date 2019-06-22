@@ -15,11 +15,11 @@ namespace Alice.Player.Primitives
 
         #region Unity Conversion
         public static Position FromUnity(UnityEngine.Vector3 pos) {
-            return new Position(pos.x, pos.y, -pos.z);
+            return new Position(-pos.x, pos.y, pos.z);
         }
 
         public UnityEngine.Vector3 UnityPosition() {
-            return new UnityEngine.Vector3((float)Value.X, (float)Value.Y, -(float)Value.Z);
+            return new UnityEngine.Vector3(-(float)Value.X, (float)Value.Y, (float)Value.Z);
         }
         #endregion // Unity Conversion
 
