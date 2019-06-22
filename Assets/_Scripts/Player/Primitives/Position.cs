@@ -93,7 +93,7 @@ namespace Alice.Player.Primitives
         }
 
         public override string ToString() {
-            return string.Format("Position({0:0.##},{1:0.##},{2:0.##})", Value.X, Value.Y, Value.Z);
+            return string.Format("Position({0:0.##}, {1:0.##}, {2:0.##})", Value.X, Value.Y, Value.Z);
         }
 
         public override bool Equals(object obj) {

@@ -138,7 +138,7 @@ namespace Alice.Player.Primitives
         #endregion // interop interfaces
 
         public override string ToString() {
-            return string.Format("VantagePoint({0},{1})", TranslationValue.ToString(), RotationValue.ToString());
+            return string.Format("VantagePoint({0}, {1})", TranslationValue.ToString(), RotationValue.ToString());
         }
 
         public override bool Equals(object obj) {

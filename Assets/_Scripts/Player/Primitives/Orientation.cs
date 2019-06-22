@@ -87,7 +87,7 @@ namespace Alice.Player.Primitives
         #endregion // Interop Interfaces
 
         public override string ToString() {
-            return string.Format("Orientation({0:0.##},{1:0.##},{2:0.##},{3:0.##})", Value.X, Value.Y, Value.Z, Value.W);
+            return string.Format("Orientation({0:0.##}, {1:0.##}, {2:0.##}, {3:0.##})", Value.X, Value.Y, Value.Z, Value.W);
         }
 
         public override bool Equals(object obj) {
