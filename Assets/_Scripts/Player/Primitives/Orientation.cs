@@ -16,11 +16,11 @@ namespace Alice.Player.Primitives
 
         #region Unity Conversion
         public static Orientation FromUnity(UnityEngine.Quaternion rot) {
-            return new Orientation(rot.x, rot.y, -rot.z, -rot.w);
+            return new Orientation(-rot.x, rot.y, rot.z, -rot.w);
         }
 
         public UnityEngine.Quaternion UnityRotation() {
-            return new UnityEngine.Quaternion((float)Value.X, (float)Value.Y, -(float)Value.Z, -(float)Value.W);
+            return new UnityEngine.Quaternion(-(float)Value.X, (float)Value.Y, (float)Value.Z, -(float)Value.W);
         }
         #endregion // Unity Conversion
 
