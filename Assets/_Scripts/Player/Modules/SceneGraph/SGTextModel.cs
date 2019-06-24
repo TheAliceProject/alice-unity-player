@@ -19,14 +19,17 @@ namespace Alice.Player.Unity {
         protected override string PaintTextureName { get { return MAIN_TEXTURE_SHADER_NAME; } }
 
         protected override Bounds GetMeshBounds() {
-            if(m_MeshFilter.sharedMesh.bounds.size.x == 0.0)
+            const float epsilon = 1e-4f;
+            if(System.Math.Abs(m_MeshFilter.sharedMesh.bounds.size.x) < epsilon)
                 return defaultBounds;
             else
                 return m_MeshFilter.sharedMesh.bounds;
         }
 
         protected override void SetSize(UnityEngine.Vector3 inSize) {
-            inSize *= 0.585f; // Scale the text to match alice size
+            // Scale the text to match alice size and proportions
+            inSize.y *= 0.585f;
+            inSize.x *= 0.25f;
             m_ModelTransform.localScale = inSize;
         }
 
@@ -58,7 +61,7 @@ namespace Alice.Player.Unity {
         {
             currTextStr = "";
             textStrObj = FlyingText.GetObject(currTextStr);
-            textStrObj.transform.SetPosition(-0.5f, Axis.Y, Space.Self);
+            textStrObj.transform.SetPosition(-0.25f, Axis.Y, Space.Self);
             textStrObj.transform.parent = this.transform;
             m_Renderer = textStrObj.GetComponent<MeshRenderer>();
             m_MeshFilter = textStrObj.GetComponent<MeshFilter>();
