@@ -60,7 +60,6 @@ namespace Alice.Player.Unity {
             textStrObj = FlyingText.GetObject(currTextStr);
             textStrObj.transform.SetPosition(-0.5f, Axis.Y, Space.Self);
             textStrObj.transform.parent = this.transform;
-            textStrObj.transform.localRotation = UnityEngine.Quaternion.Euler(0,180f,0);
             m_Renderer = textStrObj.GetComponent<MeshRenderer>();
             m_MeshFilter = textStrObj.GetComponent<MeshFilter>();
             m_ModelTransform = textStrObj.transform;
