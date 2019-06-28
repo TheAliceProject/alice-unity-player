@@ -19,7 +19,7 @@ namespace Alice.Player.Unity {
             m_Model = Instantiate(SceneGraph.Current.InternalResources.AxesModel, cachedTransform, false);
             m_ModelTransform = m_Model.transform;
             m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
-            m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
+            m_ModelTransform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
 
             CacheMeshBounds();
         }
