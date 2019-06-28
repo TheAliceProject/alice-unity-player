@@ -16,11 +16,11 @@ namespace Alice.Player.Primitives
 
         #region Unity Conversion
         public static Orientation FromUnity(UnityEngine.Quaternion rot) {
-            return new Orientation(rot.x, rot.y, -rot.z, -rot.w);
+            return new Orientation(-rot.x, rot.y, rot.z, -rot.w);
         }
 
         public UnityEngine.Quaternion UnityRotation() {
-            return new UnityEngine.Quaternion((float)Value.X, (float)Value.Y, -(float)Value.Z, -(float)Value.W);
+            return new UnityEngine.Quaternion(-(float)Value.X, (float)Value.Y, (float)Value.Z, -(float)Value.W);
         }
         #endregion // Unity Conversion
 
@@ -87,7 +87,7 @@ namespace Alice.Player.Primitives
         #endregion // Interop Interfaces
 
         public override string ToString() {
-            return string.Format("Orientation({0:0.##},{1:0.##},{2:0.##},{3:0.##})", Value.X, Value.Y, Value.Z, Value.W);
+            return string.Format("Orientation({0:0.##}, {1:0.##}, {2:0.##}, {3:0.##})", Value.X, Value.Y, Value.Z, Value.W);
         }
 
         public override bool Equals(object obj) {
