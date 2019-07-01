@@ -14,7 +14,6 @@ namespace Alice.Player.Unity {
             {
                 Camera.transform.SetParent(cachedTransform, false);
                 Camera.transform.localPosition = UnityEngine.Vector3.zero;
-                Camera.transform.localRotation = UnityEngine.Quaternion.identity;
             }
 
         }

@@ -33,15 +33,15 @@ namespace Alice.Player.Primitives
         /// Convert from Unity's left-hand coord system to Alice's right-hand coord system
         /// </summary>
         public static VantagePoint FromUnity(UnityEngine.Vector3 pos, UnityEngine.Quaternion rot) {
-            return new VantagePoint(new Primitives.Vector3(pos.x, pos.y, -pos.z), new Primitives.Quaternion(rot.x, rot.y, -rot.z, -rot.w));
+            return new VantagePoint(new Primitives.Vector3(-pos.x, pos.y, pos.z), new Primitives.Quaternion(-rot.x, rot.y, rot.z, -rot.w));
         }
 
         public UnityEngine.Vector3 UnityPosition() {
-            return new UnityEngine.Vector3((float)TranslationValue.X, (float)TranslationValue.Y, -(float)TranslationValue.Z);
+            return new UnityEngine.Vector3(-(float)TranslationValue.X, (float)TranslationValue.Y, (float)TranslationValue.Z);
         }
 
         public UnityEngine.Quaternion UnityRotation() {
-            return new UnityEngine.Quaternion((float)RotationValue.X, (float)RotationValue.Y, -(float)RotationValue.Z, -(float)RotationValue.W);
+            return new UnityEngine.Quaternion(-(float)RotationValue.X, (float)RotationValue.Y, (float)RotationValue.Z, -(float)RotationValue.W);
         }
         #endregion // Unity Conversions
         
@@ -138,7 +138,7 @@ namespace Alice.Player.Primitives
         #endregion // interop interfaces
 
         public override string ToString() {
-            return string.Format("VantagePoint({0},{1})", TranslationValue.ToString(), RotationValue.ToString());
+            return string.Format("VantagePoint({0}, {1})", TranslationValue.ToString(), RotationValue.ToString());
         }
 
         public override bool Equals(object obj) {
