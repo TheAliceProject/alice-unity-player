@@ -68,6 +68,7 @@ namespace Alice.Player.Unity {
                         largestVolume = volume;
                         m_BoundsRendererIndex = i;
                     }
+                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
                 }
                 CacheMeshBounds();
             } else {

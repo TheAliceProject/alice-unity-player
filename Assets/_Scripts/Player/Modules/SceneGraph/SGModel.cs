@@ -126,11 +126,16 @@ namespace Alice.Player.Unity {
         protected abstract void OnOpacityChanged();
 
         protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
-            ApplyPaintAndOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, m_CachedOpacity);
+            ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlock);
         }
 
-        protected void ApplyPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, float inOpacity) {
-            if (inOpacity < 0.004f) {
+        protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock)
+        {
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint);
+        }
+
+        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint) {
+            if (m_CachedOpacity < 0.004f) {
                 if (inRenderer.enabled) {
                     inRenderer.enabled = false;
                 }
@@ -139,15 +144,15 @@ namespace Alice.Player.Unity {
                 inRenderer.enabled = true;
             }
 
-            if (inOpacity < 0.996f && inRenderer.sharedMaterial != TransparentMaterial) {
+            if (m_CachedOpacity < 0.996f && inRenderer.sharedMaterial != TransparentMaterial) {
                 inRenderer.sharedMaterial = TransparentMaterial;
-            } else if (inOpacity >= 0.996f && inRenderer.sharedMaterial != OpaqueMaterial) {
+            } else if (m_CachedOpacity >= 0.996f && inRenderer.sharedMaterial != OpaqueMaterial) {
                 inRenderer.sharedMaterial = OpaqueMaterial;
             }
 
             GetPropertyBlock(inRenderer, ref ioPropertyBlock);
 
-            inPaint.Apply(ioPropertyBlock, inOpacity, PaintTextureName);
+            inPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName);
             inRenderer.SetPropertyBlock(ioPropertyBlock);
         }
 
