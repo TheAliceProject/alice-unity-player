@@ -18,9 +18,15 @@ public class ReloadApp : MonoBehaviour
         {
             Destroy(GameObject.Find("SceneGraph"));
             introCanvas.gameObject.SetActive(true);
-            if(currRigPrefab != null)
+            float currYValue = 0f;
+            if (currRigPrefab != null)
+            {
+                currYValue = currRigPrefab.transform.position.y;
                 Destroy(currRigPrefab);
+            }
             currRigPrefab = Instantiate(CameraRigPrefab);
+            Vector3 currRigPosition = currRigPrefab.transform.position;
+            currRigPrefab.transform.position = new Vector3(currRigPosition.x, currYValue, currRigPosition.z);
         });
     }
 }
