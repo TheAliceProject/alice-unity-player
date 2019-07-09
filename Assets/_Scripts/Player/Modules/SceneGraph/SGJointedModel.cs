@@ -52,7 +52,6 @@ namespace Alice.Player.Unity {
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     m_Renderers[i] = m_Filters[i].GetComponent<Renderer>();
 
-
                     UnityEngine.Vector3 size;
                     if (m_Renderers[i] is SkinnedMeshRenderer) {
                         // make sure the skinned mesh renderers local bounds get updated
@@ -69,6 +68,10 @@ namespace Alice.Player.Unity {
                         largestVolume = volume;
                         m_BoundsRendererIndex = i;
                     }
+
+                    GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
+                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, myTexture);
+
                     ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
                 }
                 CacheMeshBounds();
