@@ -23,7 +23,7 @@ namespace Alice.Player.Primitives
         public double degrees 
         { 
             get {
-                return MathModule.RAD2DEG*Value; 
+                return AngleModule.RAD2DEG*Value; 
             }
         }
 
@@ -31,14 +31,14 @@ namespace Alice.Player.Primitives
         public double revolutions 
         {
             get {
-                return Value*MathModule.RAD2REV;
+                return Value*AngleModule.RAD2REV;
             }
         }
 
         [PInteropConstructor]
         public Angle(double revolutions)
         {
-            this.Value = revolutions*MathModule.REV2RAD;
+            this.Value = revolutions*AngleModule.REV2RAD;
         }
 
         [PInteropMethod]
