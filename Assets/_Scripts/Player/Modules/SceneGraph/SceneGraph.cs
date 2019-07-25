@@ -202,6 +202,16 @@ namespace Alice.Player.Unity {
             return null;
         }
 
+        internal List<T> FindAllEntities<T>() where T : SGEntity {
+            List<T> entities = new List<T>();
+            for (int i = 0, count = m_Entities.Count; i < count; ++i) {
+                if ((m_Entities[i] as T) != null) {
+                    entities.Add((T)m_Entities[i]);
+                }
+            }
+            return entities;
+        }
+
         internal void BindProperty(string inName, TValue inOwner, TValue inProperty, TValue inInitValue) {
             var entity = FindEntity(inOwner);
             if (entity) {
