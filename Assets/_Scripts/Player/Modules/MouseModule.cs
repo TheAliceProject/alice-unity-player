@@ -46,7 +46,7 @@ namespace Alice.Player.Modules
 
         [PInteropMethod]
         public static void addDragAdapter() {
-
+            SGScene.defaultModelManipulationActive = true;
         }
     }
 }
