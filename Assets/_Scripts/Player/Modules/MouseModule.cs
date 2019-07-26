@@ -18,7 +18,7 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        public static void addMouseClickOnObjectEventListener(PAction listener, TValue[] targets, int eventPolicy, TValue scene) {
+        public static void addMouseClickOnObjectListener(PAction listener, TValue[] targets, int eventPolicy, TValue scene) {
             var sceneEntity = SceneGraph.Current.FindEntity<SGScene>(scene);
             SGModel[] models = null;
             if(targets != null && targets.Length > 0){
