@@ -465,6 +465,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 900067688660607127}
+  - component: {fileID: 7966229941131597301}
   m_Layer: 5
   m_Name: StringInput
   m_TagString: Untagged
@@ -492,6 +493,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7966229941131597301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4761171393770823067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ca4fce5f9d0eb644946d7dfde1f91b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  label: {fileID: 3754606767596030181}
+  inputField: {fileID: 5556377539936690009}
+  doneButton: {fileID: 8586963159184242800}
 --- !u!1 &5705262017667557727
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,7 +521,7 @@ GameObject:
   - component: {fileID: 3754606767596030181}
   - component: {fileID: 1128437797729707341}
   m_Layer: 5
-  m_Name: TextMeshPro Text
+  m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
