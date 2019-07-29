@@ -54,9 +54,13 @@
 
         private void CheckType(TType inType, ref TValue ioValue)
         {
-            if (ioValue.Type == null || !ioValue.Type.CanCast(inType))
+            if (ioValue.Type == null)
             {
-                throw new TweedleRuntimeException("Unable to treat type " + ioValue.Type + " as type " + inType);
+                throw new TweedleRuntimeException("Unable to treat value {0} with null type as type {1}", ioValue, inType);
+            }
+            if (!ioValue.Type.CanCast(inType))
+            {
+                throw new TweedleRuntimeException("Unable to treat value {0} of type {1} as type {2}", ioValue, ioValue.Type, inType);
             }
 
             ioValue = ioValue.Type.Cast(ref ioValue, inType);
