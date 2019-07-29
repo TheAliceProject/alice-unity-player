@@ -92,6 +92,23 @@ namespace Alice.Tweedle
         }
 
         /// <summary>
+        /// Creates a new field querying the type for an initial value.
+        /// </summary>
+        public void Set(string inFieldName, TType inType)
+        {
+            ValueHolder holder;
+            if (!m_Attributes.TryGetValue(inFieldName, out holder))
+            {
+                holder = new ValueHolder(inType);
+                m_Attributes.Add(inFieldName, holder);
+            }
+            else
+            {
+                throw new TweedleRuntimeException("Shadowing existing field {0}", inFieldName);
+            }
+        }
+
+        /// <summary>
         /// Gets/sets the value for the given field.
         /// </summary>
         public TValue this[string inFieldName]
