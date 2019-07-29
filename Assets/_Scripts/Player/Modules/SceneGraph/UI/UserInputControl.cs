@@ -13,6 +13,8 @@ namespace Alice.Player.Unity {
         private UserInput stringInputPrefab;
         [SerializeField]
         private BooleanInput booleanInputPrefab;
+        [SerializeField]
+        private NumericInput doubleInputPrefab;
 
         public AsyncReturn<string> spawnStringInput(string message)
         {
@@ -30,7 +32,13 @@ namespace Alice.Player.Unity {
             return boolReturn;
         }
 
-
+        public AsyncReturn<double> spawnDoubleInput(string message)
+        {
+            AsyncReturn<double> doubleReturn = new AsyncReturn<double>();
+            NumericInput input = GameObject.Instantiate(doubleInputPrefab, this.transform.parent);
+            input.Spawn(message, doubleReturn);
+            return doubleReturn;
+        }
     }
 
 }

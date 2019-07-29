@@ -21,6 +21,10 @@ namespace Alice.Player.Modules
             return canvas.UserInputControl.spawnBooleanInput(message);
         }
 
-        
+        [PInteropMethod]
+        public static AsyncReturn<double> getDoubleFromUser(string message) {
+            SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+            return canvas.UserInputControl.spawnDoubleInput(message);
+        }
     }
 }
