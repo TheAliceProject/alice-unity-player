@@ -14,5 +14,13 @@ namespace Alice.Player.Modules
             SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
             return canvas.UserInputControl.spawnStringInput(message);
         }
+
+        [PInteropMethod]
+        public static AsyncReturn<bool> getBooleanFromUser(string message) {
+            SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+            return canvas.UserInputControl.spawnBooleanInput(message);
+        }
+
+        
     }
 }
