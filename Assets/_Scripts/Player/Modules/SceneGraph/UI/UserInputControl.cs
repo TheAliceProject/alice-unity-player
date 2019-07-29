@@ -1,21 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Alice.Tweedle.Interop;
+using Alice.Player.Unity;
+using BeauRoutine;
 
-public class UserInputControl : MonoBehaviour
-{
-    [SerializeField]
-    private StringInput stringInputPrefab;
-    
-    // Start is called before the first frame update
-    void Start()
+namespace Alice.Player.Unity {
+
+    public class UserInputControl : MonoBehaviour
     {
-        
+        [SerializeField]
+        private UserInput stringInputPrefab;
+        public AsyncReturn<string> spawnStringInput(string message)
+        {
+            AsyncReturn<string> stringReturn = new AsyncReturn<string>();
+            UserInput input = GameObject.Instantiate(stringInputPrefab, this.transform.parent);
+            input.Spawn(message, stringReturn);
+            return stringReturn;
+        }
+
+
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
