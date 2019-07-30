@@ -34,21 +34,11 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public MouseEventListenerProxy(PAction<Portion, Portion> listener, OverlappingEventPolicy policy, bool isModelClick, SGModel[] triggerTargets)
+        public MouseEventListenerProxy(PAction<Portion, Portion> listener, OverlappingEventPolicy policy)
         {
             this.screenListener = listener;
             this.objectListener = null;
             this.policy = policy;
-            this.onlyOnModels = isModelClick;
-            // Specify which objects we are looking for clicks on
-            if (isModelClick)
-            {
-                targets = new GameObject[triggerTargets.Length];
-                for (int i = 0; i < triggerTargets.Length; i++)
-                {
-                    targets[i] = triggerTargets[i].gameObject;
-                }
-            }
         }
 
         public void CallEvent(Portion x, Portion y){
