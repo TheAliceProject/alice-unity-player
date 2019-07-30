@@ -14,8 +14,8 @@ namespace Alice.Player.Modules
     {
         [PInteropMethod]
         public static void addClickOnScreenListener(PAction<Portion, Portion> listener, int eventPolicy, TValue scene) {
-            var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
-            entity.AddMouseClickOnScreenListener(listener, (OverlappingEventPolicy)eventPolicy);
+            var sceneEntity = SceneGraph.Current.Scene;
+            sceneEntity.AddMouseClickOnScreenListener(listener, (OverlappingEventPolicy)eventPolicy);
         }
 
         [PInteropMethod]
@@ -23,6 +23,9 @@ namespace Alice.Player.Modules
             var sceneEntity = SceneGraph.Current.Scene;
             SGModel[] models = null;
             
+            //
+            // Uncomment this if we want to only put colliders on certain models. Will need to be passed in an array of SThings that we should attach colliders to
+            //
             /*
             if(setOfVisuals != null && setOfVisuals.Length > 0){
                 models = new SGModel[setOfVisuals.Length];
@@ -33,24 +36,32 @@ namespace Alice.Player.Modules
             else
             {
                 */
-                // Get all models, but ignore ground and room
-                List<SGModel> allModels = SceneGraph.Current.FindAllEntities<SGModel>();
-                List<SGModel> toRemove = new List<SGModel>();
-                foreach(SGModel model in allModels){
-                    if((model as SGGround != null) || (model as SGRoom != null))
-                        toRemove.Add(model);
-                }
-                for(int i = 0; i < toRemove.Count; i++){
-                    allModels.Remove(toRemove[i]);
-                }
-                models = allModels.ToArray();
+
+                models = GetAllModelsBesidesGround().ToArray();
             //}
             sceneEntity.AddMouseClickOnObjectListener(listener, (OverlappingEventPolicy)eventPolicy, models);
         }
 
         [PInteropMethod]
         public static void addDragAdapter() {
+            var sceneEntity = SceneGraph.Current.Scene;
+            sceneEntity.AddMouseColliders(GetAllModelsBesidesGround().ToArray());
             SGScene.defaultModelManipulationActive = true;
+        }
+
+        private static List<SGModel> GetAllModelsBesidesGround()
+        {
+            // Get all models, but ignore ground and room
+            List<SGModel> allModels = SceneGraph.Current.FindAllEntities<SGModel>();
+            List<SGModel> toRemove = new List<SGModel>();
+            foreach (SGModel model in allModels){
+                if ((model as SGGround != null) || (model as SGRoom != null))
+                    toRemove.Add(model);
+            }
+            for (int i = 0; i < toRemove.Count; i++){
+                allModels.Remove(toRemove[i]);
+            }
+            return allModels;
         }
     }
 }
