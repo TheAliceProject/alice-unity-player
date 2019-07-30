@@ -3,6 +3,7 @@ using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using UnityEngine;
 using Alice.Player.Unity;
+using Alice.Player.Primitives;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,23 +13,25 @@ namespace Alice.Player.Modules
     static public class MouseModule
     {
         [PInteropMethod]
-        public static void addMouseEventListener(PAction listener, int eventPolicy, TValue scene) {
+        public static void addClickOnScreenListener(PAction<Portion, Portion> listener, int eventPolicy, TValue scene) {
             var entity = SceneGraph.Current.FindEntity<SGScene>(scene);
             entity.AddMouseClickOnScreenListener(listener, (OverlappingEventPolicy)eventPolicy);
         }
 
         [PInteropMethod]
-        public static void addMouseClickOnObjectListener(PAction listener, TValue[] targets, int eventPolicy, TValue scene) {
-            var sceneEntity = SceneGraph.Current.FindEntity<SGScene>(scene);
+        public static void addClickOnObjectListener(PAction<Portion, Portion, TValue> listener, TValue[] setOfVisuals, int eventPolicy, TValue scene) {
+            var sceneEntity = SceneGraph.Current.Scene;
             SGModel[] models = null;
-            if(targets != null && targets.Length > 0){
-                models = new SGModel[targets.Length];
-                for(int i = 0; i < targets.Length; i++){
-                    models[i] = SceneGraph.Current.FindEntity<SGModel>(targets[i]);
+            
+            if(setOfVisuals != null && setOfVisuals.Length > 0){
+                models = new SGModel[setOfVisuals.Length];
+                for(int i = 0; i < setOfVisuals.Length; i++){
+                    models[i] = SceneGraph.Current.FindEntity<SGModel>(setOfVisuals[i]);
                 }
             }
             else
             {
+                
                 // Get all models, but ignore ground and room
                 List<SGModel> allModels = SceneGraph.Current.FindAllEntities<SGModel>();
                 List<SGModel> toRemove = new List<SGModel>();
