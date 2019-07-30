@@ -27,22 +27,24 @@ public class NumericInput : MonoBehaviour
             ClickedOkayButton();
         });
 
-        for(int i = 0; i < numericButtons.Length; i++)
-        {
-            numericButtons[i].onClick.AddListener(()=>{
-                ClickedNumberButton(i);
+        for(int i = 0; i < numericButtons.Length; i++){
+            int x = i; // This looks silly but must be here.
+            numericButtons[x].onClick.AddListener(()=>{
+                ClickedNumberButton(x);
             });
         }
         decimalButton.onClick.AddListener(()=>{
-            if(!inputField.text.Contains("."))
-            {
+            if(!inputField.text.Contains(".")){
                 string inputText = inputField.text;
                 inputField.text = inputText + ".";
             }
         });
         plusMinusButton.onClick.AddListener(()=>{
             string inputText = inputField.text;
-            if(inputText[0] == '-'){
+            if(inputText.Length == 0){
+                inputField.text = "-";
+            }
+            if(inputText.Length > 0 && inputText[0] == '-'){
                 inputField.text = inputText.Substring(1);
             }
             else{
@@ -50,8 +52,7 @@ public class NumericInput : MonoBehaviour
             }
         });
         backspaceButton.onClick.AddListener(()=>{
-            if(inputField.text.Length > 0)
-            {
+            if(inputField.text.Length > 0){
                 string inputText = inputField.text;
                 inputField.text = inputText.Substring(0, inputText.Length-1);
             }
@@ -62,6 +63,12 @@ public class NumericInput : MonoBehaviour
     {
         SetLabel(label);
         m_Routine.Replace(this, WaitForUserToPopulate(returnDouble));
+    }
+
+    public void Spawn(string label, AsyncReturn<int> returnInt)
+    {
+        SetLabel(label);
+        m_Routine.Replace(this, WaitForUserToPopulate(returnInt));
     }
 
     public void SetLabel(string inputLabel)
@@ -85,12 +92,35 @@ public class NumericInput : MonoBehaviour
         userInputDone = true;
     }
 
+    private IEnumerator WaitForUserToPopulate(AsyncReturn<int> returnInt)
+    {
+        yield return DoneWithValidInput();
+        returnInt.Return(Convert.ToInt32(GetUserInput()));
+        Destroy(this.gameObject);
+    }
+
     private IEnumerator WaitForUserToPopulate(AsyncReturn<double> returnDouble)
     {
-        while(!userInputDone){
-            yield return null;
-        }
+        yield return DoneWithValidInput();
         returnDouble.Return(Convert.ToDouble(GetUserInput()));
         Destroy(this.gameObject);
+    }
+
+    private IEnumerator DoneWithValidInput()
+    {
+        bool validInput = false;
+        while(!validInput){
+            while(!userInputDone){
+                yield return null;
+            }
+            string userInput = GetUserInput();
+            if(userInput.Length == 0 || userInput == "-" || userInput == "." || userInput == "-."){
+                userInputDone = false;
+                continue;
+            }
+            else{
+                validInput = true;
+            }
+        }
     }
 }
