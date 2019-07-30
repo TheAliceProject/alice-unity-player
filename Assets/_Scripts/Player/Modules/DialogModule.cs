@@ -26,5 +26,11 @@ namespace Alice.Player.Modules
             SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
             return canvas.UserInputControl.spawnDoubleInput(message);
         }
+
+                [PInteropMethod]
+        public static AsyncReturn<int> getIntegerFromUser(string message) {
+            SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+            return canvas.UserInputControl.spawnIntegerInput(message);
+        }
     }
 }
