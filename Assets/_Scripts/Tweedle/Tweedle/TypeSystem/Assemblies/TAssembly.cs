@@ -85,8 +85,6 @@ namespace Alice.Tweedle
                 {
                     m_TypeList[i].PostLink(linkingContext);
                 }
-
-                m_TypeList.Sort();
             }
             m_Status = Status.FinishedLinking;
         }
