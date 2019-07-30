@@ -19,8 +19,17 @@ namespace Alice.Tweedle
         {
             if (enabled)
             {
-                AsStepToNotify(scope, next).Queue();
-            } else if (next != null) {
+                try
+                {
+                    AsStepToNotify(scope, next).Queue();
+                }
+                catch (TweedleRuntimeException tre)
+                {
+                    UnityEngine.Debug.LogErrorFormat("Executing {0} triggered error {1}", this, tre);
+                }
+            }
+            else if (next != null)
+            {
                 next.Queue();
             }
         }

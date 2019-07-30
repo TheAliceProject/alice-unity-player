@@ -105,26 +105,26 @@ namespace Alice.Player.Unity {
                         if (m_MouseClickListeners[i].onlyOnModels){ // Clicked on object event
                             if (Physics.Raycast(ray, out hit, 100.0f)){
                                 if (m_MouseClickListeners[i].targets.Length == 0){ // They didn't specify visuals, so call event because we hit something
-                                    m_MouseClickListeners[i].CallEvent();
+                                    m_MouseClickListeners[i].CallEvent(new Primitives.Portion(0f), new Primitives.Portion(0f), hit.transform.GetComponentInParent<SGModel>().owner);
                                 }
                                 else{  // Make sure what we clicked on is in the list of visuals
                                     for (int j = 0; j < m_MouseClickListeners[i].targets.Length; j++){
                                         if (m_MouseClickListeners[i].targets[j] == hit.transform.GetComponentInParent<SGModel>().transform.gameObject){
-                                            m_MouseClickListeners[i].CallEvent();
+                                            m_MouseClickListeners[i].CallEvent(new Primitives.Portion(0f), new Primitives.Portion(0f), hit.transform.GetComponentInParent<SGModel>().owner);
                                         }
                                     }
                                 }
                             }
                         }
                         else{ // Clicked on screen event
-                            m_MouseClickListeners[i].CallEvent();
+                            m_MouseClickListeners[i].CallEvent(new Primitives.Portion(0f), new Primitives.Portion(0f));
                         }
                     }
                 }
             }
                 
 
-            if(defaultModelManipulationActive && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.LeftControl))){
+            if(defaultModelManipulationActive && (objectToMove != null) && (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.LeftControl))){
                 objectOriginPoint = objectToMove.position;
                 Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 float distance;
@@ -224,11 +224,11 @@ namespace Alice.Player.Unity {
             m_TimeListeners.Add(new TimeEventListenerProxy(inListener, frequency, eventPolicy));
         }
 
-        public void AddMouseClickOnScreenListener(PAction inListener, OverlappingEventPolicy eventPolicy) {
+        public void AddMouseClickOnScreenListener(PAction<Primitives.Portion, Primitives.Portion> inListener, OverlappingEventPolicy eventPolicy) {
             m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy, false, null));
         }
 
-        public void AddMouseClickOnObjectListener(PAction inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
+        public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             for(int i = 0; i < clickedObjects.Length; i++)
             {
                 foreach(MeshRenderer renderer in clickedObjects[i].transform.GetComponentsInChildren<MeshRenderer>()){
