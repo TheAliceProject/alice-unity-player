@@ -19,10 +19,11 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        public static void addClickOnObjectListener(PAction<Portion, Portion, TValue> listener, TValue[] setOfVisuals, int eventPolicy, TValue scene) {
+        public static void addClickOnObjectListener(PAction<Portion, Portion, TValue> listener, /*TValue[] setOfVisuals, */ int eventPolicy, TValue scene) {
             var sceneEntity = SceneGraph.Current.Scene;
             SGModel[] models = null;
             
+            /*
             if(setOfVisuals != null && setOfVisuals.Length > 0){
                 models = new SGModel[setOfVisuals.Length];
                 for(int i = 0; i < setOfVisuals.Length; i++){
@@ -31,7 +32,7 @@ namespace Alice.Player.Modules
             }
             else
             {
-                
+                */
                 // Get all models, but ignore ground and room
                 List<SGModel> allModels = SceneGraph.Current.FindAllEntities<SGModel>();
                 List<SGModel> toRemove = new List<SGModel>();
@@ -43,7 +44,7 @@ namespace Alice.Player.Modules
                     allModels.Remove(toRemove[i]);
                 }
                 models = allModels.ToArray();
-            }
+            //}
             sceneEntity.AddMouseClickOnObjectListener(listener, (OverlappingEventPolicy)eventPolicy, models);
         }
 
