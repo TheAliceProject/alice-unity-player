@@ -8,5 +8,11 @@ namespace Alice.Tweedle
             :base(message)
         {
         }
+
+        public TweedleRuntimeException(string messageFormat, params object[] args)
+            : base(String.Format(messageFormat, args))
+        {
+        }
+
     }
 }

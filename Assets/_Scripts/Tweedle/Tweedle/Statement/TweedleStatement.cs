@@ -1,5 +1,5 @@
-﻿using Alice.Tweedle.Parse;
-using Alice.Tweedle.VM;
+﻿using Alice.Tweedle.VM;
+using Alice.Utils;
 
 namespace Alice.Tweedle
 {
@@ -19,8 +19,21 @@ namespace Alice.Tweedle
         {
             if (enabled)
             {
-                AsStepToNotify(scope, next).Queue();
-            } else if (next != null) {
+                try
+                {
+                    AsStepToNotify(scope, next).Queue();
+                }
+                catch (TweedleRuntimeException tre)
+                {
+                    using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc())
+                    {
+                        scope.StackWith(stackBuilder.Builder);
+                        UnityEngine.Debug.LogErrorFormat("Statement {0} triggered error {1}\nTweedle stack:{2}\n", this, tre, stackBuilder.ToString());
+                    }
+                }
+            }
+            else if (next != null)
+            {
                 next.Queue();
             }
         }
