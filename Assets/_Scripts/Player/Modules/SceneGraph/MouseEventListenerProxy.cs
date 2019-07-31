@@ -19,18 +19,15 @@ namespace Alice.Player.Unity {
         private float lastCheckedTime = 0f;
         private int queuedCalls = 0;
 
-        public MouseEventListenerProxy(PAction<Portion, Portion, TValue> listener, OverlappingEventPolicy policy, bool isModelClick, SGModel[] triggerTargets){
+        public MouseEventListenerProxy(PAction<Portion, Portion, TValue> listener, OverlappingEventPolicy policy, SGModel[] triggerTargets){
             this.objectListener = listener;
             this.screenListener = null;
             this.policy = policy;
-            this.onlyOnModels = isModelClick;
+            this.onlyOnModels = true;
             // Specify which objects we are looking for clicks on
-            if(isModelClick)
-            {
-                targets = new GameObject[triggerTargets.Length];
-                for(int i = 0; i < triggerTargets.Length; i++){
-                    targets[i] = triggerTargets[i].gameObject;
-                }
+            targets = new GameObject[triggerTargets.Length];
+            for(int i = 0; i < triggerTargets.Length; i++){
+                targets[i] = triggerTargets[i].gameObject;
             }
         }
 

@@ -86,17 +86,13 @@ namespace Alice.Player.Unity {
                 lastMouseDownTime = Time.time;
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
-                for (int i = 0; i < m_MouseClickListeners.Count; i++){
-                    if (Physics.Raycast(ray, out hit, 100.0f)){
-                        Debug.Log("You selected the " + hit.transform.parent.name); // ensure you picked right object
-                        if (defaultModelManipulationActive){
-                            objectToMove = hit.transform.GetComponentInParent<SGModel>().transform;  // transform.parent;
-                            objectOriginPoint = hit.transform.position;
-                            Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                            float distance;
-                            if (movementPlane.Raycast(planeRay, out distance))
-                                planeOriginPoint = planeRay.origin + (planeRay.direction * distance);
-                        }
+                if (Physics.Raycast(ray, out hit, 100.0f)){
+                    if (defaultModelManipulationActive){
+                        objectToMove = hit.transform.GetComponentInParent<SGModel>().transform;  // transform.parent;
+                        objectOriginPoint = hit.transform.position;
+                        float distance;
+                        if (movementPlane.Raycast(ray, out distance))
+                            planeOriginPoint = ray.origin + (ray.direction * distance);
                     }
                 }
             }
@@ -247,7 +243,7 @@ namespace Alice.Player.Unity {
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             AddMouseColliders(clickedObjects);
-            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy, true, clickedObjects));
+            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
 
         public void AddMouseColliders(SGModel[] models)
