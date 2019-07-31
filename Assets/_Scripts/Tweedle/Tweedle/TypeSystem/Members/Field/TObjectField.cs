@@ -45,7 +45,7 @@ namespace Alice.Tweedle
                     );
             } else {
                 TObject obj = inValue.Object();
-                obj.Set(Name, Type.Get(), Type.Get().DefaultValue());
+                obj.Set(Name, Type.Get());
             }
 
             return null;

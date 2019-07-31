@@ -21,6 +21,7 @@ namespace Alice.Tweedle.Interop
         static private readonly IntPtr TYPEPTR_DOUBLE = GetTypePtr<double>();
         static private readonly IntPtr TYPEPTR_STRING = GetTypePtr<string>();
         static private readonly IntPtr TYPEPTR_BOOLEAN = GetTypePtr<bool>();
+        static private readonly IntPtr TYPEPTR_OBJECT = GetTypePtr<object>();
 
         // Additional types
         static private readonly Type TYPE_IASYNCRETURN = typeof(IAsyncReturn);
@@ -229,6 +230,10 @@ namespace Alice.Tweedle.Interop
             {
                 return TBuiltInTypes.VOID;
             }
+            if (typePtr == TYPEPTR_OBJECT)
+            {
+                return null;
+            }
             if (typePtr == TYPEPTR_INT)
             {
                 return TBuiltInTypes.WHOLE_NUMBER;
@@ -302,7 +307,7 @@ namespace Alice.Tweedle.Interop
                     return new TTypeRef(typeName);
                 }
 
-                return null;
+                throw new TweedleLinkException("Cannot find TType for C# type " + inType.Name);
             }
         }
 
