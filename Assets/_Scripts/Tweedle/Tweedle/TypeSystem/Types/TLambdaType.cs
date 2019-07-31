@@ -102,7 +102,7 @@ namespace Alice.Tweedle
             TLambdaType lambdaType = inType as TLambdaType;
             if (lambdaType != null)
             {
-                if (lambdaType.Signature.ParametersMatch(Signature))
+                if (lambdaType.Signature.ParametersMatchLoose(Signature))
                 {
                     // TODO: Re-enable this once lambda expressions have better-defined return types
                     // return Signature.ReturnType.Get().CanCast(lambdaType.Signature.ReturnType.Get());
@@ -221,6 +221,26 @@ namespace Alice.Tweedle
 
             for (int i = 0; i < Parameters.Length; ++i)
             {
+                if (Parameters[i] != other.Parameters[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        // This was added to make SThing types work as lambdas from tweedle.
+        // Basically because they are only defined on the tweedle side
+        // The better future solution would be to see if they can be casted only upwards
+        public bool ParametersMatchLoose(TLambdaSignature other)
+        {
+            if (other == null || other.Parameters.Length != Parameters.Length)
+                return false;
+
+            for (int i = 0; i < Parameters.Length; ++i)
+            {
+                if (Parameters[i] == TBuiltInTypes.ANY || other.Parameters[i] == TBuiltInTypes.ANY)
+                    continue;
+
                 if (Parameters[i] != other.Parameters[i])
                     return false;
             }

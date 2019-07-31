@@ -277,7 +277,7 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static AsyncReturn say(TValue entity, string bubbleText, int position, 
+        public static AsyncReturn say(TValue entity, string bubbleText, int bubblePosition, 
                                     int fontType, int textStyle, double textScale, TValue bubbleColor, 
                                     TValue outlineColor, TValue textColor, Duration duration) {
             var bubbleColorRaw = bubbleColor.RawObject<Primitives.Color>().Value;
@@ -295,7 +295,7 @@ namespace Alice.Player.Modules {
             var entityXform = SceneGraph.Current.FindEntity(entity);
             var p = entityXform.cachedTransform.localPosition;
             canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, true, 
-                                                (BubblePosition)position, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
+                                                (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
                                                 bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
         
             
@@ -303,7 +303,7 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static AsyncReturn think(TValue entity, string bubbleText, int position, 
+        public static AsyncReturn think(TValue entity, string bubbleText, int bubblePosition, 
                                     int fontType, int textStyle, double textScale, TValue bubbleColor, 
                                     TValue outlineColor, TValue textColor, Duration duration) {
             var bubbleColorRaw = bubbleColor.RawObject<Primitives.Color>().Value;
@@ -321,7 +321,7 @@ namespace Alice.Player.Modules {
             var entityXform = SceneGraph.Current.FindEntity(entity);
             var p = entityXform.cachedTransform.localPosition;
             canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, false, 
-                                                (BubblePosition)position, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
+                                                (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
                                                 bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
         
             
