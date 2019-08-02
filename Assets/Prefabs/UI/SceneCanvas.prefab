@@ -167,6 +167,7 @@ RectTransform:
   m_Children:
   - {fileID: 943637632460733068}
   - {fileID: 8913333850209340313}
+  - {fileID: 4050784522220464911}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -192,7 +193,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -248,6 +249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SayThinkControl: {fileID: 5098118956679870594}
+  m_UserInputControl: {fileID: 8720652921336222488}
 --- !u!1 &3989034207566266218
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,3 +436,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!1 &7530472637889259244
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4050784522220464911}
+  - component: {fileID: 8720652921336222488}
+  m_Layer: 0
+  m_Name: UserInput
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4050784522220464911
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7530472637889259244}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 158.50153, y: 332.5401, z: -2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4829426822745881996}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8720652921336222488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7530472637889259244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a0051ffb4ef45419471bf705ab686f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stringInputPrefab: {fileID: 7966229941131597301, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
+    type: 3}
+  booleanInputPrefab: {fileID: 4866761451143194220, guid: aae2223327abe1e479e51061cecf95f6,
+    type: 3}
+  doubleInputPrefab: {fileID: 2927328005028497503, guid: 01a7fe73692d57446861f03d3c886fd2,
+    type: 3}
+  intReturnPrefab: {fileID: 2927328005028497503, guid: a6cb85f2d84892140a0db6244b1ca138,
+    type: 3}

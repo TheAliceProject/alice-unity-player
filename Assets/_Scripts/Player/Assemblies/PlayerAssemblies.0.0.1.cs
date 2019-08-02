@@ -19,6 +19,7 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(SceneGraphModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(ClockModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(MouseModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DialogModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(KeyboardModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(WholeNumberModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(DecimalNumberModule)));
