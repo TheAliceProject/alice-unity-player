@@ -335,11 +335,13 @@ namespace Alice.Player.Modules {
         {
             AsyncReturn asyncReturn = new AsyncReturn();
             var entityXform = SceneGraph.Current.FindEntity(entity);
-            AudioSource audio = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.TweedleAudioSource, entityXform.transform);
+            AudioSource audio = entityXform.transform.GetComponentInChildren<AudioSource>();
+            if(audio == null)
+                audio = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.TweedleAudioSource, entityXform.transform);
             AudioClip clip = SceneGraph.Current.AudioCache.Get(sound);
             audio.clip = clip;
             audio.PlayOneShot(clip);
-            Routine.Start(DelayReturnRoutine(asyncReturn, clip.length));
+            Routine.Start(DelayReturnRoutine(asyncReturn, clip.length / clip.channels));
             return asyncReturn;
         }
 

@@ -30,7 +30,7 @@ namespace Alice.Tweedle.Parse
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
-
+        public static int audioFiles = 0;
 
         public TweedleSystem StoredSystem
         {
@@ -215,18 +215,22 @@ namespace Alice.Tweedle.Parse
                     // Must be an MP3
                     // This is a bit silly, but it seems like you must save the file as an mp3, then load it in with AudioFileReader
                     // I have tried to convert the mp3 byte array to a wav byte array without much luck. NAudio might be able to do it though?
-                    string tempFile = Application.persistentDataPath + "/bytes.mp3";
+                    string tempFile = Application.persistentDataPath + "/bytes" + audioFiles++.ToString() + ".mp3";
                     System.IO.File.WriteAllBytes(tempFile, data);
                     //Parse the file with NAudio
                     AudioFileReader afr = new AudioFileReader(tempFile);
                     //Create an empty float to fill with song data
-                    float[] floatData = new float[afr.Length];
+                    float[] maxData = new float[afr.Length];
                     //Read the file and fill the float
-                    afr.Read(floatData, 0, (int)afr.Length);
+                    int dataSize = afr.Read(maxData, 0, (int)afr.Length);
+                    // New array because the first will have tons of empty 0's at the end.
+                    float[] actualSizeData = new float[dataSize];
+                    Array.Copy(maxData, actualSizeData, dataSize);
                     //Create a clip file the size needed to collect the sound data
-                    AudioClip audioClip = AudioClip.Create("mp3", (int)afr.Length, afr.WaveFormat.Channels, afr.WaveFormat.SampleRate, false);
+                    AudioClip audioClip = AudioClip.Create("mp3", (int)actualSizeData.Length, afr.WaveFormat.Channels, afr.WaveFormat.SampleRate, false);
                     //Fill the file with the sound data
-                    audioClip.SetData(floatData, 0);
+                    afr.Dispose();
+                    audioClip.SetData(actualSizeData, 0);
                     // Add the clip to the cache
                     SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
                     //System.IO.File.Delete(tempFile);
