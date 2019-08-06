@@ -75,6 +75,10 @@ namespace Alice.Player.Unity {
         private SceneCanvas m_SceneCanvas = null;
         public SceneCanvas SceneCanvas { get { return m_SceneCanvas; } }
 
+        [Header("Audio")]
+        [SerializeField]
+        private AudioSource m_TweedleAudioSource = null;
+        public AudioSource TweedleAudioSource { get { return m_TweedleAudioSource; } }
 
         [Header("TriLib Loader Options")]
         AssetLoaderOptions m_ModelLoaderOptions;

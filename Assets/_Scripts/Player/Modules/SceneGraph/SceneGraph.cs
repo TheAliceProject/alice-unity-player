@@ -107,6 +107,7 @@ namespace Alice.Player.Unity {
 
         public PlayerResources InternalResources {get; private set;}
         public TextureCache TextureCache {get; private set;}
+        public AudioCache AudioCache { get; private set; }
         public ModelCache ModelCache {get; private set;}
 
         private List<SGEntity> m_Entities = new List<SGEntity>();
@@ -132,6 +133,7 @@ namespace Alice.Player.Unity {
 
             InternalResources = Resources.Load<PlayerResources>("PlayerResources");
             TextureCache = new TextureCache();
+            AudioCache = new AudioCache();
             ModelCache = new ModelCache(m_ModelCacheRoot);
         }
 
@@ -239,7 +241,9 @@ namespace Alice.Player.Unity {
             Destroy(m_ModelCacheRoot);
             
             TextureCache.Clear();
+            AudioCache.Clear();
             TextureCache = null;
+            AudioCache = null;
             Scene = null;
         }
 
