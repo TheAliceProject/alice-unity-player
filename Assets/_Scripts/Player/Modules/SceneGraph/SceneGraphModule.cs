@@ -3,6 +3,8 @@ using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
 using Alice.Player.Primitives;
 using UnityEngine;
+using System.Collections;
+using BeauRoutine;
 using FlyingText3D;
 
 namespace Alice.Player.Modules {
@@ -326,6 +328,25 @@ namespace Alice.Player.Modules {
         
             
             return asyncReturn;
+        }
+
+        [PInteropMethod]
+        public static AsyncReturn playAudio(TValue entity, string sound)
+        {
+            AsyncReturn asyncReturn = new AsyncReturn();
+            var entityXform = SceneGraph.Current.FindEntity(entity);
+            AudioSource audio = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.TweedleAudioSource, entityXform.transform);
+            AudioClip clip = SceneGraph.Current.AudioCache.Get(sound);
+            audio.clip = clip;
+            audio.PlayOneShot(clip);
+            Routine.Start(DelayReturnRoutine(asyncReturn, clip.length));
+            return asyncReturn;
+        }
+
+        private static IEnumerator DelayReturnRoutine(AsyncReturn asyncReturn, float delay)
+        {
+            yield return delay;
+            asyncReturn.Return();
         }
 
         #endregion // Other
