@@ -133,6 +133,11 @@ namespace Alice.Player.Unity {
             m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy));
         }
 
+        public void AddArrowKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
+        {
+            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy));
+        }
+        
         public void AddMouseColliders(SGModel[] models)
         {
             for (int i = 0; i < models.Length; i++)
