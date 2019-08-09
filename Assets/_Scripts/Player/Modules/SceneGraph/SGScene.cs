@@ -20,7 +20,8 @@ namespace Alice.Player.Unity {
         public static bool defaultModelManipulationActive = false;
         private List<PAction> m_ActivationListeners = new List<PAction>();
         private List<TimeEventListenerProxy> m_TimeListeners = new List<TimeEventListenerProxy>();
-        private List<MouseEventListenerProxy> m_MouseClickListeners = new List<MouseEventListenerProxy>();
+        private KeyboardEventHandler m_KeyboardEventHandler = new KeyboardEventHandler();
+        private MouseEventHandler m_MouseEventHandler = new MouseEventHandler();
 
         private UnityEngine.Color m_AmbientLightColor = new UnityEngine.Color(0.25f, 0.25f, 0.25f, 1f);
         private UnityEngine.Color m_AtmosphereColor = UnityEngine.Color.white;
@@ -35,6 +36,7 @@ namespace Alice.Player.Unity {
         private Light m_BelowLight;
         private const float k_BelowLightIntensity = 1f;
         private const float k_BelowLightPitch = -90f;
+
         private float dragSpeed = 10f;
         private UnityEngine.Vector3 dragOrigin;
         private UnityEngine.Vector3 shiftOrigin;
@@ -69,8 +71,8 @@ namespace Alice.Player.Unity {
         // Time, Mouse, and Keyboard intercepting
         void Update(){
             CheckTimeListeners();
-            CheckMouseListeners();
-            CheckKeyboardListeners();
+            m_MouseEventHandler.HandleMouseEvents(); 
+            m_KeyboardEventHandler.HandleKeyboardEvents();
         }
 
         private void CheckTimeListeners()
@@ -80,130 +82,10 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private void CheckMouseListeners()
+        public void SetDefaultModelManipulationActive(bool active)
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0)){ // Left mouse click
-                lastMouseDownTime = Time.time;
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
-                if (Physics.Raycast(ray, out hit, 100.0f)){
-                    if (defaultModelManipulationActive){
-                        objectToMove = hit.transform.GetComponentInParent<SGModel>().transform;  // transform.parent;
-                        objectOriginPoint = hit.transform.position;
-                        float distance;
-                        if (movementPlane.Raycast(ray, out distance))
-                            planeOriginPoint = ray.origin + (ray.direction * distance);
-                    }
-                }
-            }
-
-            if (GetShiftDown())
-                shiftOrigin = Input.mousePosition;
-            if (GetCtrlDown())
-                rotateOrigin = Input.mousePosition;
-            if (Input.GetKeyUp(KeyCode.Mouse0)){
-                objectToMove = null;
-                if (Time.time - lastMouseDownTime < 0.25f){ // Considered a click and not a hold
-                    RaycastHit hit;
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
-                    Portion distanceFromLeft = new Portion((float)Input.mousePosition.x / (float)Screen.width);
-                    Portion distanceFromBottom = new Portion((float)Input.mousePosition.y / (float)Screen.height);
-                    for (int i = 0; i < m_MouseClickListeners.Count; i++){
-                        if (m_MouseClickListeners[i].onlyOnModels){ // Clicked on object event
-                            if (Physics.Raycast(ray, out hit, 100.0f)){
-                                if (m_MouseClickListeners[i].targets.Length == 0){ // They didn't specify visuals, so call event because we hit something
-                                    m_MouseClickListeners[i].CallEvent(distanceFromBottom, distanceFromLeft, hit.transform.GetComponentInParent<SGModel>().owner);
-                                }
-                                else{  // Make sure what we clicked on is in the list of visuals
-                                    for (int j = 0; j < m_MouseClickListeners[i].targets.Length; j++){
-                                        if (m_MouseClickListeners[i].targets[j] == hit.transform.GetComponentInParent<SGModel>().transform.gameObject){
-                                            m_MouseClickListeners[i].CallEvent(distanceFromBottom, distanceFromLeft, hit.transform.GetComponentInParent<SGModel>().owner);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else{ // Clicked on screen event
-                            m_MouseClickListeners[i].CallEvent(distanceFromBottom, distanceFromLeft);
-                        }
-                    }
-                }
-            }
-
-
-            if (defaultModelManipulationActive && (objectToMove != null) && (GetShiftUp() || GetCtrlUp())){
-                objectOriginPoint = objectToMove.position;
-                Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                float distance;
-                if (movementPlane.Raycast(planeRay, out distance))
-                    planeOriginPoint = planeRay.origin + (planeRay.direction * distance);
-            }
-
-            if (Input.GetMouseButtonDown(0)){
-                dragOrigin = Input.mousePosition;
-                return;
-            }
-
-            // After this point do nothing if mouse button is not held
-            if (!Input.GetMouseButton(0))
-                return;
-
-
-            if (objectToMove == null && defaultModelManipulationActive){
-                objectToMove = Camera.main.transform;
-            }
-
-            if (objectToMove == Camera.main.transform){ // Moving the camera
-                if (GetShiftDown(true)){    // Up down
-                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
-                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), dragSpeed * pos.y, pos.y * (1f * dragSpeed));
-                    objectToMove.position += move;
-                    shiftOrigin = Input.mousePosition;
-                }
-                else if (GetCtrlDown(true)){ // Rotate
-                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
-                    objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 20f);
-                    rotateOrigin = Input.mousePosition;
-                }
-                else{   // Scroll
-                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), 0, pos.y * (1f * dragSpeed));
-                    objectToMove.position += move;
-                    dragOrigin = Input.mousePosition;
-                }
-            }
-            else if (objectToMove != null){ // Moving an object
-                // If holding shift, move object up and down
-                if (GetShiftDown(true)){
-                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
-                    UnityEngine.Vector3 move = new UnityEngine.Vector3(0f, dragSpeed * pos.y, 0f);
-                    objectToMove.position += move;
-                    shiftOrigin = Input.mousePosition;
-                }
-                else if (GetCtrlDown(true)){ // If holding control, rotate object
-                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
-                    objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 200f);
-                    rotateOrigin = Input.mousePosition;
-                }
-                else{ // move object along plane
-                    Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    float distance;
-                    if (movementPlane.Raycast(planeRay, out distance)){
-                        UnityEngine.Vector3 pointalongplane = planeRay.origin + (planeRay.direction * distance);
-                        UnityEngine.Vector3 moveAmount = planeOriginPoint - pointalongplane;
-                        objectToMove.position = new UnityEngine.Vector3(objectOriginPoint.x - moveAmount.x, objectToMove.position.y, objectOriginPoint.z - moveAmount.z);
-                    }
-                }
-
-            }
+            m_MouseEventHandler.SetModelManipulation(active);
         }
-
-        private void CheckKeyboardListeners()
-        {
-            // ToDo
-            return;
-        }
-
     
         private Light CreateLight(float inPitch, float inHeading, float intensity, bool useShadows) {
             var light = new GameObject("Light").AddComponent<Light>();
@@ -238,12 +120,17 @@ namespace Alice.Player.Unity {
         }
 
         public void AddMouseClickOnScreenListener(PAction<Primitives.Portion, Primitives.Portion> inListener, OverlappingEventPolicy eventPolicy) {
-            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy));
+            m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy));
         }
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             AddMouseColliders(clickedObjects);
-            m_MouseClickListeners.Add(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
+            m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
+        }
+
+        public void AddKeyListener(PAction<bool, bool, int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
+        {
+            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy));
         }
 
         public void AddMouseColliders(SGModel[] models)
