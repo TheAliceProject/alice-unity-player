@@ -192,6 +192,12 @@ namespace Alice.Player.Unity
                 case KeyCode.KeypadEnter:
                 case KeyCode.Return: NotifyKeyboardEvents(false, false, (int)Key.ENTER, checkDown); break;
 
+                // Arrow keys
+                case KeyCode.LeftArrow: NotifyKeyboardEvents(false, false, (int)Key.LEFT, checkDown); break;
+                case KeyCode.RightArrow: NotifyKeyboardEvents(false, false, (int)Key.RIGHT, checkDown); break;
+                case KeyCode.UpArrow: NotifyKeyboardEvents(false, false, (int)Key.UP, checkDown); break;
+                case KeyCode.DownArrow: NotifyKeyboardEvents(false, false, (int)Key.DOWN, checkDown); break;
+
             }
         }
     }
