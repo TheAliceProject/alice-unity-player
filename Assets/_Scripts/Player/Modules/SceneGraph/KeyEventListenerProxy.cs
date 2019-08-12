@@ -17,7 +17,7 @@ namespace Alice.Player.Unity {
         }
 
         public PAction<bool, bool, int> keyListener;
-        public PAction<int> arrowKeyListener;
+        public PAction<int> specialKeyListener;
         public OverlappingEventPolicy overlappingEventPolicy;
         public HeldKeyPolicy heldKeyPolicy;
         public KeyPressType keyType;
@@ -27,27 +27,33 @@ namespace Alice.Player.Unity {
         private int queuedCalls = 0;
         private Routine m_routine;
         private List<Key> arrowKeys = new List<Key> {Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.W, Key.A, Key.S, Key.D};
+        private List<Key> numpadKeys = new List<Key> { Key.NUMPAD0, Key.NUMPAD1, Key.NUMPAD2, Key.NUMPAD3, Key.NUMPAD4, Key.NUMPAD5, Key.NUMPAD6, Key.NUMPAD7, Key.NUMPAD8, Key.NUMPAD9 };
+
 
         public KeyEventListnerProxy(PAction<bool, bool, int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy){
             this.keyListener = listener;
-            this.arrowKeyListener = null;
+            this.specialKeyListener = null;
             this.overlappingEventPolicy = overlappingEventPolicy;
             this.heldKeyPolicy = heldKeyPolicy;
             this.keyType = KeyPressType.Normal;
         }
 
-        public KeyEventListnerProxy(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy){
+        public KeyEventListnerProxy(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy, KeyPressType keyPressType){
             this.keyListener = null;
-            this.arrowKeyListener = listener;
+            this.specialKeyListener = listener;
             this.overlappingEventPolicy = overlappingEventPolicy;
             this.heldKeyPolicy = heldKeyPolicy;
-            this.keyType = KeyPressType.ArrowKey;
+            this.keyType = keyPressType;
         }
 
         public void NotifyEvent(bool isDigit, bool isLetter, int theKey, bool keyDown)
         {
             if(keyType == KeyPressType.ArrowKey){
                 if(!arrowKeys.Contains((Key)theKey))
+                    return;
+            }
+            else if(keyType == KeyPressType.NumPadKey){
+                if(!numpadKeys.Contains((Key)theKey))
                     return;
             }
 
@@ -92,7 +98,7 @@ namespace Alice.Player.Unity {
         {
             CheckPolicies();
             AsyncReturn callReturn;
-            callReturn = arrowKeyListener.Call(theKey);
+            callReturn = specialKeyListener.Call(theKey);
             callActive = true;
             callReturn.OnReturn(() => {
                 returnedCall(theKey);

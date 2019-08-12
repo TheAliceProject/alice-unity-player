@@ -61,44 +61,44 @@ namespace Alice.Player.Unity
             switch(key)
             {
                 // 0
-                case KeyCode.Alpha0:
-                case KeyCode.Keypad0: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_0, checkDown); break;
+                case KeyCode.Alpha0:  NotifyKeyboardEvents(true, false, (int)Key.DIGIT_0, checkDown); break;
+                case KeyCode.Keypad0: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD0, checkDown); break;
 
                 // 1
-                case KeyCode.Alpha1:
-                case KeyCode.Keypad1: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Alpha1: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad1: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD1, checkDown); break;
 
                 // 2
-                case KeyCode.Alpha2:
-                case KeyCode.Keypad2: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_2, checkDown); break;
+                case KeyCode.Alpha2: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad2: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD2, checkDown); break;
 
                 // 3
-                case KeyCode.Alpha3:
-                case KeyCode.Keypad3: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_3, checkDown); break;
+                case KeyCode.Alpha3: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad3: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD3, checkDown); break;
 
                 // 4
-                case KeyCode.Alpha4:
-                case KeyCode.Keypad4: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_4, checkDown); break;
+                case KeyCode.Alpha4: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad4: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD4, checkDown); break;
 
                 // 5
-                case KeyCode.Alpha5:
-                case KeyCode.Keypad5: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_5, checkDown); break;
+                case KeyCode.Alpha5: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad5: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD5, checkDown); break;
 
                 // 6
-                case KeyCode.Alpha6:
-                case KeyCode.Keypad6: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_6, checkDown); break;
+                case KeyCode.Alpha6: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad6: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD6, checkDown); break;
 
                 // 7
-                case KeyCode.Alpha7:
-                case KeyCode.Keypad7: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_7, checkDown); break;
+                case KeyCode.Alpha7: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad7: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD7, checkDown); break;
 
                 // 8
-                case KeyCode.Alpha8:
-                case KeyCode.Keypad8: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_8, checkDown); break;
+                case KeyCode.Alpha8: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad8: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD8, checkDown); break;
 
                 // 9
-                case KeyCode.Alpha9:
-                case KeyCode.Keypad9: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_9, checkDown); break;
+                case KeyCode.Alpha9: NotifyKeyboardEvents(true, false, (int)Key.DIGIT_1, checkDown); break;
+                case KeyCode.Keypad9: NotifyKeyboardEvents(true, false, (int)Key.NUMPAD9, checkDown); break;
 
                 // A
                 case KeyCode.A: NotifyKeyboardEvents(false, true, (int)Key.A, checkDown); break;
