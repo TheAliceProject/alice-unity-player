@@ -128,9 +128,9 @@ namespace Alice.Player.Unity {
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
 
-        public void AddKeyListener(PAction<bool, bool, int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
+        public void AddKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
         {
-            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy));
+            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListnerProxy.KeyPressType.Normal));
         }
 
         public void AddArrowKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
@@ -230,32 +230,6 @@ namespace Alice.Player.Unity {
 
         public override void CleanUp() {
 
-        }
-
-        private bool GetShiftDown(bool hold=false)
-        {
-            if(hold)
-                return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            else
-                return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
-        }
-
-        private bool GetCtrlDown(bool hold=false)
-        {
-            if(hold)
-                return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-            else
-                return Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
-        }
-
-        private bool GetShiftUp()
-        {
-            return Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift);
-        }
-
-        private bool GetCtrlUp()
-        {
-            return Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Alice.Player.Modules
     static public class KeyboardModule
     {
         [PInteropMethod]
-        public static void addKeyListener(PAction<bool, bool, int> listener, int overlappingEventPolicy, int heldKeyPolicy) {
+        public static void addKeyListener(PAction<int> listener, int overlappingEventPolicy, int heldKeyPolicy) {
             var sceneEntity = SceneGraph.Current.Scene;
             sceneEntity.AddKeyListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, (HeldKeyPolicy)heldKeyPolicy);
         }

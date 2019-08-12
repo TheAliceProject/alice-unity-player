@@ -105,13 +105,13 @@ namespace Alice.Player.Unity
             }
 
             if (objectToMove == Camera.main.transform){ // Moving the camera
-                if (GetShiftDown(true)){    // Up down
+                if (GetShiftHeld()){    // Up down
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
                     UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), dragSpeed * pos.y, pos.y * (1f * dragSpeed));
                     objectToMove.position += move;
                     shiftOrigin = Input.mousePosition;
                 }
-                else if (GetCtrlDown(true)){ // Rotate
+                else if (GetCtrlHeld()){ // Rotate
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
                     objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 20f);
                     rotateOrigin = Input.mousePosition;
@@ -125,13 +125,13 @@ namespace Alice.Player.Unity
             }
             else if (objectToMove != null){ // Moving an object
                 // If holding shift, move object up and down
-                if (GetShiftDown(true)){
+                if (GetShiftHeld()){
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
                     UnityEngine.Vector3 move = new UnityEngine.Vector3(0f, dragSpeed * pos.y, 0f);
                     objectToMove.position += move;
                     shiftOrigin = Input.mousePosition;
                 }
-                else if (GetCtrlDown(true)){ // If holding control, rotate object
+                else if (GetCtrlHeld()){ // If holding control, rotate object
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
                     objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 200f);
                     rotateOrigin = Input.mousePosition;
@@ -149,27 +149,26 @@ namespace Alice.Player.Unity
             }
         }
 
-        private bool GetShiftDown(bool hold=false)
+        private bool GetShiftHeld()
         {
-            if(hold)
-                return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            else
-                return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
+            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
-
-        private bool GetCtrlDown(bool hold=false)
+        private bool GetShiftDown()
         {
-            if(hold)
-                return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-            else
-                return Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
+            return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
         }
-
+        private bool GetCtrlHeld()
+        {
+            return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+        }
+        private bool GetCtrlDown()
+        {
+            return Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
+        }
         private bool GetShiftUp()
         {
             return Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift);
         }
-
         private bool GetCtrlUp()
         {
             return Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl);

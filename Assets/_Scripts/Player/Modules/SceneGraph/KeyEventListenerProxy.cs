@@ -16,8 +16,7 @@ namespace Alice.Player.Unity {
             NumPadKey
         }
 
-        public PAction<bool, bool, int> keyListener;
-        public PAction<int> specialKeyListener;
+        public PAction<int> keyListener;
         public OverlappingEventPolicy overlappingEventPolicy;
         public HeldKeyPolicy heldKeyPolicy;
         public KeyPressType keyType;
@@ -27,26 +26,18 @@ namespace Alice.Player.Unity {
         private int queuedCalls = 0;
         private Routine m_routine;
         private List<Key> arrowKeys = new List<Key> {Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.W, Key.A, Key.S, Key.D};
-        private List<Key> numpadKeys = new List<Key> { Key.NUMPAD0, Key.NUMPAD1, Key.NUMPAD2, Key.NUMPAD3, Key.NUMPAD4, Key.NUMPAD5, Key.NUMPAD6, Key.NUMPAD7, Key.NUMPAD8, Key.NUMPAD9 };
+        private List<Key> numpadKeys = new List<Key> { Key.NUMPAD0, Key.NUMPAD1, Key.NUMPAD2, Key.NUMPAD3, Key.NUMPAD4, Key.NUMPAD5, Key.NUMPAD6, Key.NUMPAD7, Key.NUMPAD8, Key.NUMPAD9,
+                                                        Key.DIGIT_0, Key.DIGIT_1, Key.DIGIT_2, Key.DIGIT_3, Key.DIGIT_4, Key.DIGIT_5, Key.DIGIT_6, Key.DIGIT_7, Key.DIGIT_8, Key.DIGIT_9,  };
 
 
-        public KeyEventListnerProxy(PAction<bool, bool, int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy){
+        public KeyEventListnerProxy(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy, KeyPressType keyType){
             this.keyListener = listener;
-            this.specialKeyListener = null;
             this.overlappingEventPolicy = overlappingEventPolicy;
             this.heldKeyPolicy = heldKeyPolicy;
-            this.keyType = KeyPressType.Normal;
+            this.keyType = keyType;
         }
 
-        public KeyEventListnerProxy(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy, KeyPressType keyPressType){
-            this.keyListener = null;
-            this.specialKeyListener = listener;
-            this.overlappingEventPolicy = overlappingEventPolicy;
-            this.heldKeyPolicy = heldKeyPolicy;
-            this.keyType = keyPressType;
-        }
-
-        public void NotifyEvent(bool isDigit, bool isLetter, int theKey, bool keyDown)
+        public void NotifyEvent(int theKey, bool keyDown)
         {
             if(keyType == KeyPressType.ArrowKey){
                 if(!arrowKeys.Contains((Key)theKey))
@@ -60,23 +51,17 @@ namespace Alice.Player.Unity {
             // Manage key downs and key ups in regards to the held key policy
             if(keyDown){
                 if(heldKeyPolicy == HeldKeyPolicy.FireOnceOnPress){
-                    if(keyListener != null)
-                        CallEvent(isDigit, isLetter, theKey);
-                    else
-                        CallEvent(theKey);
+                    CallEvent(theKey);
                 }
                 else if(heldKeyPolicy == HeldKeyPolicy.FireMultiple){
                     if(!m_routine){
-                        m_routine = Routine.Start(FireMultipleRoutine(isDigit, isLetter, theKey));
+                        m_routine = Routine.Start(FireMultipleRoutine(theKey));
                     }
                 }
             }
             else{ // key up
                 if(heldKeyPolicy == HeldKeyPolicy.FireOnceOnRelease){
-                    if(keyListener != null)
-                        CallEvent(isDigit, isLetter, theKey);
-                    else
-                        CallEvent(theKey);
+                    CallEvent(theKey);
                 }
                 else if(m_routine){
                     m_routine.Stop();
@@ -84,21 +69,12 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public void CallEvent(bool isDigit, bool isLetter, int theKey){
-            CheckPolicies();
-            AsyncReturn callReturn;
-            callReturn = keyListener.Call(isDigit, isLetter, theKey);
-            callActive = true;
-            callReturn.OnReturn(() => {
-                returnedCall(isDigit, isLetter, theKey);
-            });
-        }
 
         public void CallEvent(int theKey)
         {
             CheckPolicies();
             AsyncReturn callReturn;
-            callReturn = specialKeyListener.Call(theKey);
+            callReturn = keyListener.Call(theKey);
             callActive = true;
             callReturn.OnReturn(() => {
                 returnedCall(theKey);
@@ -119,17 +95,6 @@ namespace Alice.Player.Unity {
         }
 
         // For queued events
-        public void returnedCall(bool isDigit, bool isLetter, int theKey)
-        {
-            callActive = false;
-            if(queuedCalls > 0)
-            {
-                queuedCalls--;
-                CallEvent(isDigit, isLetter, theKey);
-            }
-        }
-
-        // For queued events
         public void returnedCall(int theKey)
         {
             callActive = false;
@@ -140,11 +105,11 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private IEnumerator FireMultipleRoutine(bool isDigit, bool isLetter, int theKey)
+        private IEnumerator FireMultipleRoutine(int theKey)
         {
             while(true)
             {
-                CallEvent(isDigit, isLetter, theKey);
+                CallEvent(theKey);
                 yield return 0.033f;
             }
         }
