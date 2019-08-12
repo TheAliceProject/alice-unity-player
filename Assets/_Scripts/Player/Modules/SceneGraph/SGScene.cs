@@ -135,7 +135,12 @@ namespace Alice.Player.Unity {
 
         public void AddArrowKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
         {
-            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy));
+            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListnerProxy.KeyPressType.ArrowKey));
+        }
+
+        public void AddNumberKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
+        {
+            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListnerProxy.KeyPressType.NumPadKey));
         }
         
         public void AddMouseColliders(SGModel[] models)

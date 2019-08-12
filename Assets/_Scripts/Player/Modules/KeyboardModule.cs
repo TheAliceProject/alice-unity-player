@@ -23,12 +23,15 @@ namespace Alice.Player.Modules
             sceneEntity.AddArrowKeyListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, (HeldKeyPolicy)heldKeyPolicy);
         }
 
-         /*       
+        
         [PInteropMethod]
-        public static void addNumberKeyListener(PAction listener, int eventPolicy, TValue scene) {
+        public static void addNumberKeyPressListener(PAction<int> listener, int overlappingEventPolicy, int heldKeyPolicy){
             var sceneEntity = SceneGraph.Current.Scene;
+            sceneEntity.AddNumberKeyListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, (HeldKeyPolicy)heldKeyPolicy);
         }
 
+
+        /*
         [PInteropMethod]
         public static void addObjectMoverFor(TValue entity) {
             
