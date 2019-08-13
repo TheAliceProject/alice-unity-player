@@ -331,7 +331,7 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static AsyncReturn playAudio(TValue entity, string sound)
+        public static AsyncReturn playAudio(TValue entity, string sound, float volume, float startTime, float stopTime)
         {
             AsyncReturn asyncReturn = new AsyncReturn();
             var entityXform = SceneGraph.Current.FindEntity(entity);
