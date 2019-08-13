@@ -30,12 +30,14 @@ namespace Alice.Player.Modules
             sceneEntity.AddNumberKeyListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, (HeldKeyPolicy)heldKeyPolicy);
         }
 
-
-        /*
         [PInteropMethod]
-        public static void addObjectMoverFor(TValue entity) {
-            
+        public static void moveWithArrows(TValue thing, float speed) {
+            // Speed is ignored for now.
+            var sceneEntity = SceneGraph.Current.Scene;
+            var entityXform = SceneGraph.Current.FindEntity(thing);
+            Transform objectTransform = entityXform.cachedTransform;
+            sceneEntity.AddKeyMover(objectTransform);
+
         }
-        */
     }
 }
