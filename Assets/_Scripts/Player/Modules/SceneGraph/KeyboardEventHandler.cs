@@ -9,15 +9,27 @@ namespace Alice.Player.Unity
     {
         private List<KeyEventListnerProxy> m_KeyPressListeners = new List<KeyEventListnerProxy>();
         private List<KeyCode> m_heldKeys = new List<KeyCode>();
+        private ObjectKeyboardMover m_objectMover = new ObjectKeyboardMover();
 
         public void AddListener(KeyEventListnerProxy listener)
         {
             m_KeyPressListeners.Add(listener);
         }
 
+        public void AddObjectMover(Transform objectToMove)
+        {
+            m_objectMover.AddMover(objectToMove);
+        }
+
+        public void RemoveAllKeys()
+        {
+            m_heldKeys.Clear();
+            m_objectMover.ClearHeldKeys();
+        }
+
         public void HandleKeyboardEvents()
         {
-            if(m_KeyPressListeners.Count > 0)
+            if(m_KeyPressListeners.Count > 0 || m_objectMover.GetNumMovers() > 0)
             {
                 // Check for key down
                 if(Input.anyKeyDown)
@@ -28,7 +40,7 @@ namespace Alice.Player.Unity
                         {
                             m_heldKeys.Add(vKey);
                             CheckNotifyKey(vKey, true);
-                            break;
+                            //break;
                         }
                     }
                 }
@@ -41,7 +53,7 @@ namespace Alice.Player.Unity
                         if(Input.GetKeyUp(vKey))
                         {
                             CheckNotifyKey(vKey, false);
-                            break;
+                            //break;
                         }
                     }
                 }
@@ -50,10 +62,15 @@ namespace Alice.Player.Unity
 
         private void NotifyKeyboardEvents(int theKey, bool keyDown)
         {
-            for(int i = 0; i < m_KeyPressListeners.Count; i++)
-            {
+            // Notify keypress listeners
+            for(int i = 0; i < m_KeyPressListeners.Count; i++){
                 m_KeyPressListeners[i].NotifyEvent(theKey, keyDown);
             }
+            // Notify object movers
+            for (int i = 0; i < m_objectMover.GetNumMovers(); i++){
+                m_objectMover.NotifyEvent(theKey, keyDown);
+            }
+
         }
 
         private void CheckNotifyKey(KeyCode key, bool checkDown)
@@ -63,119 +80,59 @@ namespace Alice.Player.Unity
                 // 0
                 case KeyCode.Alpha0:  NotifyKeyboardEvents((int)Key.DIGIT_0, checkDown); break;
                 case KeyCode.Keypad0: NotifyKeyboardEvents((int)Key.NUMPAD0, checkDown); break;
-
                 // 1
                 case KeyCode.Alpha1: NotifyKeyboardEvents((int)Key.DIGIT_1, checkDown); break;
                 case KeyCode.Keypad1: NotifyKeyboardEvents((int)Key.NUMPAD1, checkDown); break;
-
                 // 2
                 case KeyCode.Alpha2: NotifyKeyboardEvents((int)Key.DIGIT_2, checkDown); break;
                 case KeyCode.Keypad2: NotifyKeyboardEvents((int)Key.NUMPAD2, checkDown); break;
-
                 // 3
                 case KeyCode.Alpha3: NotifyKeyboardEvents((int)Key.DIGIT_3, checkDown); break;
                 case KeyCode.Keypad3: NotifyKeyboardEvents((int)Key.NUMPAD3, checkDown); break;
-
                 // 4
                 case KeyCode.Alpha4: NotifyKeyboardEvents((int)Key.DIGIT_4, checkDown); break;
                 case KeyCode.Keypad4: NotifyKeyboardEvents((int)Key.NUMPAD4, checkDown); break;
-
                 // 5
                 case KeyCode.Alpha5: NotifyKeyboardEvents((int)Key.DIGIT_5, checkDown); break;
                 case KeyCode.Keypad5: NotifyKeyboardEvents((int)Key.NUMPAD5, checkDown); break;
-
                 // 6
                 case KeyCode.Alpha6: NotifyKeyboardEvents((int)Key.DIGIT_6, checkDown); break;
                 case KeyCode.Keypad6: NotifyKeyboardEvents((int)Key.NUMPAD6, checkDown); break;
-
                 // 7
                 case KeyCode.Alpha7: NotifyKeyboardEvents((int)Key.DIGIT_7, checkDown); break;
                 case KeyCode.Keypad7: NotifyKeyboardEvents((int)Key.NUMPAD7, checkDown); break;
-
                 // 8
                 case KeyCode.Alpha8: NotifyKeyboardEvents((int)Key.DIGIT_8, checkDown); break;
                 case KeyCode.Keypad8: NotifyKeyboardEvents((int)Key.NUMPAD8, checkDown); break;
-
                 // 9
                 case KeyCode.Alpha9: NotifyKeyboardEvents((int)Key.DIGIT_9, checkDown); break;
                 case KeyCode.Keypad9: NotifyKeyboardEvents((int)Key.NUMPAD9, checkDown); break;
 
-                // A
                 case KeyCode.A: NotifyKeyboardEvents((int)Key.A, checkDown); break;
-
-                // B
                 case KeyCode.B: NotifyKeyboardEvents((int)Key.B, checkDown); break;
-
-                // C
                 case KeyCode.C: NotifyKeyboardEvents((int)Key.C, checkDown); break;
-
-                // D
                 case KeyCode.D: NotifyKeyboardEvents((int)Key.D, checkDown); break;
-
-                // E
                 case KeyCode.E: NotifyKeyboardEvents((int)Key.E, checkDown); break;
-
-                // F
                 case KeyCode.F: NotifyKeyboardEvents((int)Key.F, checkDown); break;
-
-                // G
                 case KeyCode.G: NotifyKeyboardEvents((int)Key.G, checkDown); break;
-
-                // H
                 case KeyCode.H: NotifyKeyboardEvents((int)Key.H, checkDown); break;
-
-                // I
                 case KeyCode.I: NotifyKeyboardEvents((int)Key.I, checkDown); break;
-
-                // J
                 case KeyCode.J: NotifyKeyboardEvents((int)Key.J, checkDown); break;
-
-                // K
                 case KeyCode.K: NotifyKeyboardEvents((int)Key.K, checkDown); break;
-
-                // L
                 case KeyCode.L: NotifyKeyboardEvents((int)Key.L, checkDown); break;
-
-                // M
                 case KeyCode.M: NotifyKeyboardEvents((int)Key.M, checkDown); break;
-
-                // N
                 case KeyCode.N: NotifyKeyboardEvents((int)Key.N, checkDown); break;
-
-                // O
                 case KeyCode.O: NotifyKeyboardEvents((int)Key.O, checkDown); break;
-
-                // P
                 case KeyCode.P: NotifyKeyboardEvents((int)Key.P, checkDown); break;
-
-                // Q
                 case KeyCode.Q: NotifyKeyboardEvents((int)Key.Q, checkDown); break;
-
-                // R
                 case KeyCode.R: NotifyKeyboardEvents((int)Key.R, checkDown); break;
-
-                // S
                 case KeyCode.S: NotifyKeyboardEvents((int)Key.S, checkDown); break;
-
-                // T
                 case KeyCode.T: NotifyKeyboardEvents((int)Key.T, checkDown); break;
-
-                // U
                 case KeyCode.U: NotifyKeyboardEvents((int)Key.U, checkDown); break;
-
-                // V
                 case KeyCode.V: NotifyKeyboardEvents((int)Key.V, checkDown); break;
-
-                // W
                 case KeyCode.W: NotifyKeyboardEvents((int)Key.W, checkDown); break;
-
-                // X
                 case KeyCode.X: NotifyKeyboardEvents((int)Key.X, checkDown); break;
-
-                // Y
                 case KeyCode.Y: NotifyKeyboardEvents((int)Key.Y, checkDown); break;
-
-                // Z
                 case KeyCode.Z: NotifyKeyboardEvents((int)Key.Z, checkDown); break;
 
                 case KeyCode.Space: NotifyKeyboardEvents((int)Key.SPACE, checkDown); break;
@@ -202,20 +159,28 @@ namespace Alice.Player.Unity
                 case KeyCode.KeypadMinus: NotifyKeyboardEvents((int)Key.MINUS, checkDown); break;
                 case KeyCode.KeypadPlus: NotifyKeyboardEvents((int)Key.PLUS, checkDown); break;
                 case KeyCode.KeypadPeriod: NotifyKeyboardEvents((int)Key.PERIOD, checkDown); break;
+                case KeyCode.F1: NotifyKeyboardEvents((int)Key.F1, checkDown); break;
+                case KeyCode.F2: NotifyKeyboardEvents((int)Key.F2, checkDown); break;
+                case KeyCode.F3: NotifyKeyboardEvents((int)Key.F3, checkDown); break;
+                case KeyCode.F4: NotifyKeyboardEvents((int)Key.F4, checkDown); break;
+                case KeyCode.F5: NotifyKeyboardEvents((int)Key.F5, checkDown); break;
+                case KeyCode.F6: NotifyKeyboardEvents((int)Key.F6, checkDown); break;
+                case KeyCode.F7: NotifyKeyboardEvents((int)Key.F7, checkDown); break;
+                case KeyCode.F8: NotifyKeyboardEvents((int)Key.F8, checkDown); break;
+                case KeyCode.F9: NotifyKeyboardEvents((int)Key.F9, checkDown); break;
+                case KeyCode.F10: NotifyKeyboardEvents((int)Key.F10, checkDown); break;
+                case KeyCode.F11: NotifyKeyboardEvents((int)Key.F11, checkDown); break;
+                case KeyCode.F12: NotifyKeyboardEvents((int)Key.F12, checkDown); break;
 
                 case KeyCode.LeftShift:
                 case KeyCode.RightShift: NotifyKeyboardEvents((int)Key.SHIFT, checkDown); break;
-
                 case KeyCode.LeftAlt:
                 case KeyCode.RightAlt: NotifyKeyboardEvents((int)Key.ALT, checkDown); break;
-
                 case KeyCode.LeftControl:
                 case KeyCode.RightControl: NotifyKeyboardEvents((int)Key.CONTROL, checkDown); break;
-
                 case KeyCode.KeypadEnter:
                 case KeyCode.Return: NotifyKeyboardEvents((int)Key.ENTER, checkDown); break;
 
-                // Arrow keys
                 case KeyCode.LeftArrow: NotifyKeyboardEvents((int)Key.LEFT, checkDown); break;
                 case KeyCode.RightArrow: NotifyKeyboardEvents((int)Key.RIGHT, checkDown); break;
                 case KeyCode.UpArrow: NotifyKeyboardEvents((int)Key.UP, checkDown); break;

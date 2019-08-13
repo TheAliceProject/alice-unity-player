@@ -68,6 +68,12 @@ namespace Alice.Player.Unity {
             RegisterPropertyDelegate(BELOW_LIGHT_COLOR_PROPERTY_NAME, OnUpdateBelowLightColor);
         }
 
+        void OnApplicationFocus(bool hasFocus)
+        {
+            if(!hasFocus)
+                m_KeyboardEventHandler.RemoveAllKeys();
+        }
+
         // Time, Mouse, and Keyboard intercepting
         void Update(){
             CheckTimeListeners();
@@ -141,6 +147,11 @@ namespace Alice.Player.Unity {
         public void AddNumberKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
         {
             m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListnerProxy.KeyPressType.NumPadKey));
+        }
+
+        public void AddKeyMover(Transform entity)
+        {
+            m_KeyboardEventHandler.AddObjectMover(entity);
         }
         
         public void AddMouseColliders(SGModel[] models)
