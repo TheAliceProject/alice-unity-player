@@ -204,15 +204,19 @@ namespace Alice.Tweedle.Parse
             if (Application.isPlaying)
             {
                 byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-                string waveTest = Encoding.ASCII.GetString (data, 8, 4);
-                if(waveTest == "WAVE")
-                {
-                    AudioClip audioClip = WavUtility.ToAudioClip(data);
+                
+                AudioClip audioClip = null;
+                string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
+                if(fileSuffix == ".wav"){
+                    string waveTest = Encoding.ASCII.GetString(data, 8, 4);
+                    if(waveTest != "WAVE")
+                        Debug.LogError("Detected wav file but header incorrect.");
+                    audioClip = WavUtility.ToAudioClip(data);
                     SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
                 }
-                else
-                {
-                    // Must be an MP3
+                else if(fileSuffix == ".mp3"){
+                    // Hopefully an mp3 file (maybe in the future check some bytes? Probably unnecessary though)
+
                     // This is a bit silly, but it seems like you must save the file as an mp3, then load it in with AudioFileReader
                     // I have tried to convert the mp3 byte array to a wav byte array without much luck. NAudio might be able to do it though?
                     string tempFile = Application.persistentDataPath + "/bytes" + audioFiles++.ToString() + ".mp3";
@@ -222,19 +226,22 @@ namespace Alice.Tweedle.Parse
                     //Create an empty float to fill with song data
                     float[] maxData = new float[afr.Length];
                     //Read the file and fill the float
-                    int dataSize = afr.Read(maxData, 0, (int)afr.Length);
+                    int dataSize = afr.Read(maxData, 0, (int)afr.Length); // afr.length is a Long type
                     // New array because the first will have tons of empty 0's at the end.
                     float[] actualSizeData = new float[dataSize];
                     Array.Copy(maxData, actualSizeData, dataSize);
                     //Create a clip file the size needed to collect the sound data
-                    AudioClip audioClip = AudioClip.Create("mp3", (int)actualSizeData.Length, afr.WaveFormat.Channels, afr.WaveFormat.SampleRate, false);
+                    audioClip = AudioClip.Create("mp3", actualSizeData.Length, afr.WaveFormat.Channels, afr.WaveFormat.SampleRate, false);
                     //Fill the file with the sound data
                     afr.Dispose();
                     audioClip.SetData(actualSizeData, 0);
-                    // Add the clip to the cache
-                    SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
                     //System.IO.File.Delete(tempFile);
                 }
+                else{
+                    Debug.LogError(fileSuffix + " files are not supported at this time.");
+                }
+                if(audioClip != null)
+                    SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
             }
         }
 
