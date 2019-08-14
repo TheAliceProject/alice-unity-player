@@ -77,8 +77,8 @@ namespace Alice.Player.Unity {
 
         [Header("Audio")]
         [SerializeField]
-        private AudioSource m_TweedleAudioSource = null;
-        public AudioSource TweedleAudioSource { get { return m_TweedleAudioSource; } }
+        private TweedleAudioPlayer m_TweedleAudioSource = null;
+        public TweedleAudioPlayer TweedleAudioSource { get { return m_TweedleAudioSource; } }
 
         [Header("TriLib Loader Options")]
         AssetLoaderOptions m_ModelLoaderOptions;
