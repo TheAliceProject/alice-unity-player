@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9055569872925963176}
   - component: {fileID: 8943552073122184639}
+  - component: {fileID: 6945351565470147520}
   m_Layer: 0
   m_Name: TweedleAudioSource
   m_TagString: Untagged
@@ -127,3 +128,16 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6945351565470147520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2254385011546458476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a660612456da8c44a864eeba3526795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 8943552073122184639}
