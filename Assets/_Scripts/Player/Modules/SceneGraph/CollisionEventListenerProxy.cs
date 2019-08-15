@@ -15,6 +15,7 @@ namespace Alice.Player.Unity {
 
         private bool onEnter = false;
         private bool callActive = false;
+        private List<OverlappingPair> overlapCounts = new List<OverlappingPair>();
         private int queuedCalls = 0;
 
         public CollisionEventListenerProxy(PAction<TValue, TValue> listener, OverlappingEventPolicy policy, SGEntity[] setA, SGEntity[] setB, InteractionModule.CollisionType collisionType)
@@ -27,12 +28,30 @@ namespace Alice.Player.Unity {
 
         public void NotifyEvent(SGEntity object1, SGEntity object2, bool entered)
         {
+            OverlappingPair overlappingPair = null;
+            for (int i = 0; i < overlapCounts.Count; i++)
+            {
+                if(overlapCounts[i].ContainsBoth(object1, object2))
+                {
+                    overlapCounts[i].numOverlaps += entered ? 1 : -1;
+                    overlappingPair = overlapCounts[i];
+                    break;
+                }
+            }
+
+            if(overlappingPair == null)
+            {
+                overlappingPair = new OverlappingPair(object1, object2);
+                overlapCounts.Add(overlappingPair);
+            }
+
             if(onEnter != entered)
                 return;
 
             if(interactingObjects.IsThereOverlap(object1, object2))
             {
-                CallEvent(object1.owner, object2.owner);
+                if((entered && overlappingPair.numOverlaps == 1) || (!entered && overlappingPair.numOverlaps == 0))
+                    CallEvent(object1.owner, object2.owner);
             }
         }
         
@@ -63,6 +82,31 @@ namespace Alice.Player.Unity {
                 queuedCalls--;
                 CallEvent(x, y);
             }
+        }
+    }
+
+    public class OverlappingPair
+    {
+        public SGEntity entity1;
+        public SGEntity entity2;
+        public int numOverlaps;
+
+        public OverlappingPair(SGEntity ent1, SGEntity ent2)
+        {
+            entity1 = ent1;
+            entity2 = ent2;
+            numOverlaps = 0;
+        }
+
+        public bool ContainsBoth(SGEntity ent1, SGEntity ent2)
+        {
+            if(ent1 != entity1 && ent1 != entity2)
+                return false;
+
+            if(ent2 != entity1 && ent2 != entity2)
+                return false;
+
+            return true;
         }
     }
 
