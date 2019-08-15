@@ -235,6 +235,8 @@ namespace Alice.Tweedle.Parse
                     //Fill the file with the sound data
                     afr.Dispose();
                     audioClip.SetData(actualSizeData, 0);
+                    
+                    // Should probably delete the temp file after, getting some file access errors though.
                     //System.IO.File.Delete(tempFile);
                 }
                 else{
