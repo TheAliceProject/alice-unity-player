@@ -3,6 +3,8 @@ using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
 using Alice.Player.Primitives;
 using UnityEngine;
+using System.Collections;
+using BeauRoutine;
 using FlyingText3D;
 
 namespace Alice.Player.Modules {
@@ -326,6 +328,28 @@ namespace Alice.Player.Modules {
         
             
             return asyncReturn;
+        }
+
+        [PInteropMethod]
+        public static AsyncReturn playAudio(TValue entity, string sound, float volume, float startTime, float stopTime)
+        {
+            AsyncReturn asyncReturn = new AsyncReturn();
+            var entityXform = SceneGraph.Current.FindEntity(entity);
+
+            // Create a new audio source every time, because we need to use the start time and stop time, so PlayOneShot will not work. We will destroy the audioclip when it's finished playing.
+            TweedleAudioPlayer audio = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.TweedleAudioSource, entityXform.transform);
+            AudioClip clip = SceneGraph.Current.AudioCache.Get(sound);
+            float waitTime = stopTime < 0f ? (clip.length / clip.channels) : (stopTime - startTime);
+            audio.SetData(clip, volume, startTime);
+            audio.Play(waitTime);
+            Routine.Start(DelayReturnRoutine(asyncReturn, waitTime));
+            return asyncReturn;
+        }
+
+        private static IEnumerator DelayReturnRoutine(AsyncReturn asyncReturn, float delay)
+        {
+            yield return delay;
+            asyncReturn.Return();
         }
 
         #endregion // Other
