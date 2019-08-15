@@ -3,7 +3,14 @@ using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.IO;
+using System;
 using UnityEngine;
+using System.Text;
+using UnityEngine.Networking;
+using System.Collections;
+using BeauRoutine;
+using NAudio;
+using NAudio.Wave;
 
 namespace Alice.Tweedle.Parse
 {
@@ -23,7 +30,7 @@ namespace Alice.Tweedle.Parse
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
-
+        public static int audioFiles = 0;
 
         public TweedleSystem StoredSystem
         {
@@ -122,6 +129,7 @@ namespace Alice.Tweedle.Parse
             {
                 case ContentType.Audio:
                     strictRef = UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+                    LoadAudio(resourceRef, workingDir);
                     break;
                 case ContentType.Class:
                     ParseTweedleTypeResource(resourceRef, workingDir);
@@ -185,6 +193,57 @@ namespace Alice.Tweedle.Parse
                 if (ImageConversion.LoadImage(texture, data, true)) {
                     SceneGraph.Current.TextureCache.Add(resourceRef.name, texture);
                 }
+            }
+        }
+
+        private void LoadAudio(ResourceReference resourceRef, string workingDir){
+            // Save file as either wav or mp3 depending on type.
+            // If mp3 and we're on desktop, must convert to wav first using NAudio
+            // Then load audioclip with unitywebrequest
+
+            if (Application.isPlaying)
+            {
+                byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
+                
+                AudioClip audioClip = null;
+                string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
+                if(fileSuffix == ".wav"){
+                    string waveTest = Encoding.ASCII.GetString(data, 8, 4);
+                    if(waveTest != "WAVE")
+                        Debug.LogError("Detected wav file but header incorrect.");
+                    audioClip = WavUtility.ToAudioClip(data);
+                    SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
+                }
+                else if(fileSuffix == ".mp3"){
+                    // Hopefully an mp3 file (maybe in the future check some bytes? Probably unnecessary though)
+
+                    // This is a bit silly, but it seems like you must save the file as an mp3, then load it in with AudioFileReader
+                    // I have tried to convert the mp3 byte array to a wav byte array without much luck. NAudio might be able to do it though?
+                    string tempFile = Application.persistentDataPath + "/bytes" + audioFiles++.ToString() + ".mp3";
+                    System.IO.File.WriteAllBytes(tempFile, data);
+                    //Parse the file with NAudio
+                    AudioFileReader afr = new AudioFileReader(tempFile);
+                    //Create an empty float to fill with song data
+                    float[] maxData = new float[afr.Length];
+                    //Read the file and fill the float
+                    int dataSize = afr.Read(maxData, 0, (int)afr.Length); // afr.length is a Long type
+                    // New array because the first will have tons of empty 0's at the end.
+                    float[] actualSizeData = new float[dataSize];
+                    Array.Copy(maxData, actualSizeData, dataSize);
+                    //Create a clip file the size needed to collect the sound data
+                    audioClip = AudioClip.Create("mp3", actualSizeData.Length, afr.WaveFormat.Channels, afr.WaveFormat.SampleRate, false);
+                    //Fill the file with the sound data
+                    afr.Dispose();
+                    audioClip.SetData(actualSizeData, 0);
+                    
+                    // Should probably delete the temp file after, getting some file access errors though.
+                    //System.IO.File.Delete(tempFile);
+                }
+                else{
+                    Debug.LogError(fileSuffix + " files are not supported at this time.");
+                }
+                if(audioClip != null)
+                    SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
             }
         }
 
