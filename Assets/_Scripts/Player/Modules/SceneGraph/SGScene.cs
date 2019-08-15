@@ -22,6 +22,7 @@ namespace Alice.Player.Unity {
         private List<TimeEventListenerProxy> m_TimeListeners = new List<TimeEventListenerProxy>();
         private KeyboardEventHandler m_KeyboardEventHandler = new KeyboardEventHandler();
         private MouseEventHandler m_MouseEventHandler = new MouseEventHandler();
+        private InteractionEventHandler m_InteractionHandler = new InteractionEventHandler();
 
         private UnityEngine.Color m_AmbientLightColor = new UnityEngine.Color(0.25f, 0.25f, 0.25f, 1f);
         private UnityEngine.Color m_AtmosphereColor = UnityEngine.Color.white;
@@ -130,7 +131,7 @@ namespace Alice.Player.Unity {
         }
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
-            AddMouseColliders(clickedObjects);
+            AddColliders(clickedObjects);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
 
@@ -153,28 +154,60 @@ namespace Alice.Player.Unity {
         {
             m_KeyboardEventHandler.AddObjectMover(entity);
         }
+
+        public void AddCollisionListener(PAction<TValue, TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGEntity[] a, SGEntity[] b, InteractionModule.CollisionType collisionType)
+        {
+            m_InteractionHandler.AddListener(new CollisionEventListenerProxy(listener, overlappingEventPolicy, a, b, collisionType));
+        }
         
-        public void AddMouseColliders(SGModel[] models)
+        public void AddColliders(SGEntity[] models)
         {
             for (int i = 0; i < models.Length; i++)
             {
-                foreach (MeshRenderer renderer in models[i].transform.GetComponentsInChildren<MeshRenderer>())
+                MeshRenderer[] meshRenderers = models[i].transform.GetComponentsInChildren<MeshRenderer>();
+                SkinnedMeshRenderer[] skinnedMeshRenderers = models[i].transform.GetComponentsInChildren<SkinnedMeshRenderer>();
+                
+                if(meshRenderers != null || skinnedMeshRenderers != null)
                 {
-                    if (renderer.transform.GetComponent<MeshCollider>() == null)
+                    foreach (MeshRenderer renderer in meshRenderers)
                     {
-                        MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
-                        collider.convex = true;
+                        if (renderer.transform.GetComponent<MeshCollider>() == null)
+                        {
+                            Rigidbody rigidBody = renderer.gameObject.AddComponent<Rigidbody>();
+                            rigidBody.isKinematic = true;
+                            MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
+                            collider.convex = true;
+                            collider.isTrigger = true;
+                            renderer.gameObject.AddComponent<CollisionBroadcaster>();
+                        }
+                    }
+                    foreach (SkinnedMeshRenderer renderer in skinnedMeshRenderers)
+                    {
+                        if (renderer.transform.GetComponent<MeshCollider>() == null)
+                        {
+                            MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
+                            Rigidbody rigidBody = renderer.gameObject.AddComponent<Rigidbody>();
+                            rigidBody.isKinematic = true;
+                            collider.convex = true;
+                            collider.isTrigger = true;
+                            renderer.gameObject.AddComponent<CollisionBroadcaster>();
+                        }
                     }
                 }
-                foreach (SkinnedMeshRenderer renderer in models[i].transform.GetComponentsInChildren<SkinnedMeshRenderer>())
+                else // Add box collider if no renderer exists
                 {
-                    if (renderer.transform.GetComponent<MeshCollider>() == null)
-                    {
-                        MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
-                        collider.convex = true;
-                    }
+                    Rigidbody rigidBody = models[i].gameObject.AddComponent<Rigidbody>();
+                    rigidBody.isKinematic = true;
+                    BoxCollider collider = models[i].gameObject.AddComponent<BoxCollider>();
+                    collider.isTrigger = true;
+                    models[i].gameObject.AddComponent<CollisionBroadcaster>();
                 }
             }
+        }
+
+        public void ObjectsCollided(SGEntity firstObject, SGEntity secondObject, bool enter)
+        {
+            m_InteractionHandler.NotifyObjectsCollided(firstObject, secondObject, enter);
         }
 
         public void Activate() {
