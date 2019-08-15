@@ -45,7 +45,7 @@ namespace Alice.Player.Modules
         [PInteropMethod]
         public static void addDragAdapter() {
             var sceneEntity = SceneGraph.Current.Scene;
-            sceneEntity.AddMouseColliders(GetAllModelsBesidesGround().ToArray());
+            sceneEntity.AddColliders(GetAllModelsBesidesGround().ToArray());
             SGScene.defaultModelManipulationActive = true;
         }
 
