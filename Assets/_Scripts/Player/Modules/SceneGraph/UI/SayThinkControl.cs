@@ -66,7 +66,7 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public void SpawnSayThink(AsyncReturn asyncReturn, Transform parent, UnityEngine.Vector3 target, string text, bool isSay, BubblePosition bubblePosition,
+        public void SpawnSayThink(AsyncReturn asyncReturn, Transform parent, SGEntity target, string text, bool isSay, BubblePosition bubblePosition,
                         FontType fontType, TextStyle textStyle, float textScale, UnityEngine.Color bubbleColor, 
                         UnityEngine.Color outlineColor, UnityEngine.Color textColor, double duration)
         {
@@ -88,7 +88,7 @@ namespace Alice.Player.Unity {
             bubbleReturns.Add(sayThink, asyncReturn);
         }
 
-        public GameObject InstantiateBubble(GameObject prefab, BubblePosition pos, UnityEngine.Vector3 target){
+        public GameObject InstantiateBubble(GameObject prefab, BubblePosition pos, SGEntity target){
             Transform parent = null;
             if(pos == BubblePosition.Left){
                 parent = leftBubbles;
@@ -100,7 +100,7 @@ namespace Alice.Player.Unity {
                 parent = rightBubbles;
             }
             else if(pos == BubblePosition.Automatic){
-                UnityEngine.Vector3 screenPoint = Camera.main.WorldToScreenPoint(target); 
+                UnityEngine.Vector3 screenPoint = Camera.main.WorldToScreenPoint(target.cachedTransform.localPosition); 
                 if(screenPoint.x < Camera.main.pixelWidth / 3)
                     parent = leftBubbles;
                 else if(screenPoint.x < ((2 * Camera.main.pixelWidth) / 3))
