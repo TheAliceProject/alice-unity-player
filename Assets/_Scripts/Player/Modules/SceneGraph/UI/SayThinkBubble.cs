@@ -72,22 +72,23 @@ namespace Alice.Player.Unity {
         }
 
 
-        public void Spawn(UnityEngine.Vector3 objectPos, float duration, SayThinkControl sayThink){
+        public void Spawn(SGEntity entity, float duration, SayThinkControl sayThink){
             sayThinkControlRef = sayThink;
-            spawnRoutine.Replace(this, SayThinkRoutine(gameObject.transform as RectTransform, objectPos, duration));
+            spawnRoutine.Replace(this, SayThinkRoutine(gameObject.transform as RectTransform, entity, duration));
         }
 
-        private IEnumerator SayThinkRoutine(RectTransform trans, UnityEngine.Vector3 objectPos, float duration){
+        private IEnumerator SayThinkRoutine(RectTransform trans, SGEntity entity, float duration){
             bubbleText.transform.SetScale(1f, Axis.X);
-            tailRoutine.Replace(this, AlignTailRoutine(objectPos));
+            tailRoutine.Replace(this, AlignTailRoutine(entity));
             yield return trans.ScaleTo(new Vector2(1f, 1f), 0.25f, Axis.XYZ);
             yield return duration;
             yield return trans.ScaleTo(0f, 0.25f, Axis.XYZ);
             sayThinkControlRef.DestroyBubble(this);
         }
 
-        private IEnumerator AlignTailRoutine(UnityEngine.Vector3 objectPos){
+        private IEnumerator AlignTailRoutine(SGEntity entity){
             while(true){
+                UnityEngine.Vector3 objectPos = entity.cachedTransform.localPosition;
                 var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
         
                 float tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 50f; // -50f for some buffer 

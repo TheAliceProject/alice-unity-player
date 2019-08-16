@@ -46,7 +46,7 @@ namespace Alice.Player.Modules
         public static void addDragAdapter() {
             var sceneEntity = SceneGraph.Current.Scene;
             sceneEntity.AddColliders(GetAllModelsBesidesGround().ToArray());
-            SGScene.defaultModelManipulationActive = true;
+            sceneEntity.SetDefaultModelManipulationActive(true);
         }
 
         private static List<SGModel> GetAllModelsBesidesGround()

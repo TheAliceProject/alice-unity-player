@@ -155,9 +155,14 @@ namespace Alice.Player.Unity {
             m_KeyboardEventHandler.AddObjectMover(entity);
         }
 
-        public void AddCollisionListener(PAction<TValue, TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGEntity[] a, SGEntity[] b, InteractionModule.CollisionType collisionType)
+        public void AddCollisionListener(PAction<TValue, TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGEntity[] a, SGEntity[] b, InteractionModule.InteractionType interactionType)
         {
-            m_InteractionHandler.AddListener(new CollisionEventListenerProxy(listener, overlappingEventPolicy, a, b, collisionType));
+            m_InteractionHandler.AddCollisionListener(new CollisionEventListenerProxy(listener, overlappingEventPolicy, a, b, interactionType));
+        }
+
+        public void AddViewListener(PAction<TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGModel[] set, InteractionModule.InteractionType interactionType)
+        {
+            m_InteractionHandler.AddViewListener(new ViewEventListenerProxy(listener, overlappingEventPolicy, set, interactionType));
         }
         
         public void AddColliders(SGEntity[] models)
@@ -173,9 +178,9 @@ namespace Alice.Player.Unity {
                     {
                         if (renderer.transform.GetComponent<MeshCollider>() == null)
                         {
-                            Rigidbody rigidBody = renderer.gameObject.AddComponent<Rigidbody>();
-                            rigidBody.isKinematic = true;
                             MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
+                            Rigidbody rigidBody = renderer.gameObject.AddComponent<Rigidbody>();    // Rigidbody is required for collision detection
+                            rigidBody.isKinematic = true;
                             collider.convex = true;
                             collider.isTrigger = true;
                             renderer.gameObject.AddComponent<CollisionBroadcaster>();
@@ -205,9 +210,34 @@ namespace Alice.Player.Unity {
             }
         }
 
+        public void AddViewEnterBroadcasters(SGModel[] models)
+        {
+            for (int i = 0; i < models.Length; i++){
+                MeshRenderer[] meshRenderers = models[i].transform.GetComponentsInChildren<MeshRenderer>();
+                SkinnedMeshRenderer[] skinnedMeshRenderers = models[i].transform.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+                foreach (MeshRenderer renderer in meshRenderers){
+                    if (renderer.transform.GetComponent<ViewEnterBroadcaster>() == null){
+                        renderer.gameObject.AddComponent<ViewEnterBroadcaster>();
+                    }
+                }
+                foreach (SkinnedMeshRenderer renderer in skinnedMeshRenderers){
+                    if (renderer.transform.GetComponent<ViewEnterBroadcaster>() == null){
+                        renderer.gameObject.AddComponent<ViewEnterBroadcaster>();
+                    }
+                }
+            }
+
+        }
+
         public void ObjectsCollided(SGEntity firstObject, SGEntity secondObject, bool enter)
         {
             m_InteractionHandler.NotifyObjectsCollided(firstObject, secondObject, enter);
+        }
+
+        public void ObjectInView(SGModel model, bool enteredView)
+        {
+            m_InteractionHandler.NotifyModelInView(model, enteredView);
         }
 
         public void Activate() {

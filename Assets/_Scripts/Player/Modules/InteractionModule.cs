@@ -10,24 +10,42 @@ namespace Alice.Player.Modules
     [PInteropType("Interaction")]
     static public class InteractionModule
     {
-        public enum CollisionType
+        public enum InteractionType
         {
-            OnStart,
-            OnEnd
+            OnCollisionStart,
+            OnCollisionEnd,
+            OnViewEnter,
+            OnViewExit
         }
 
         [PInteropMethod]
         public static void addCollisionStartListener(PAction<TValue, TValue> listener, TValue[] a, TValue[] b, int overlappingEventPolicy) {
             var sceneEntity = SceneGraph.Current.Scene;
             AddEntityColliders(a, b);
-            sceneEntity.AddCollisionListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToEntityArray(a), ConvertToEntityArray(b), CollisionType.OnStart);
+            sceneEntity.AddCollisionListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToEntityArray(a), ConvertToEntityArray(b), InteractionType.OnCollisionStart);
         }
 
         [PInteropMethod]
         public static void addCollisionEndListener(PAction<TValue, TValue> listener, TValue[] a, TValue[] b, int overlappingEventPolicy) {
             var sceneEntity = SceneGraph.Current.Scene;
             AddEntityColliders(a, b);
-            sceneEntity.AddCollisionListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToEntityArray(a), ConvertToEntityArray(b), CollisionType.OnEnd);
+            sceneEntity.AddCollisionListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToEntityArray(a), ConvertToEntityArray(b), InteractionType.OnCollisionEnd);
+        }
+
+        [PInteropMethod]
+        public static void addViewEnterListener(PAction<TValue> listener, TValue[] set, int overlappingEventPolicy)
+        {
+            var sceneEntity = SceneGraph.Current.Scene;
+            sceneEntity.AddViewEnterBroadcasters(ConvertToModelArray(set));
+            sceneEntity.AddViewListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToModelArray(set), InteractionType.OnViewEnter);
+        }
+
+        [PInteropMethod]
+        public static void addViewExitListener(PAction<TValue> listener, TValue[] set, int overlappingEventPolicy)
+        {
+            var sceneEntity = SceneGraph.Current.Scene;
+            sceneEntity.AddViewEnterBroadcasters(ConvertToModelArray(set));
+            sceneEntity.AddViewListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToModelArray(set), InteractionType.OnViewExit);
         }
 
         private static void AddEntityColliders(TValue[] a, TValue[] b)
@@ -51,8 +69,16 @@ namespace Alice.Player.Modules
             for(int i = 0; i < tvalues.Length; i++){
                 entities[i] = SceneGraph.Current.FindEntity(tvalues[i]);
             }
-
             return entities;
+        }
+
+        private static SGModel[] ConvertToModelArray(TValue[] tvalues)
+        {
+            SGModel[] models = new SGModel[tvalues.Length];
+            for (int i = 0; i < tvalues.Length; i++){
+                models[i] = SceneGraph.Current.FindEntity<SGModel>(tvalues[i]);
+            }
+            return models;
         }
     }
 }

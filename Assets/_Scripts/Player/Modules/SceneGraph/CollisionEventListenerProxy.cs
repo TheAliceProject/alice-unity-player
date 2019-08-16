@@ -18,12 +18,18 @@ namespace Alice.Player.Unity {
         private List<OverlappingPair> overlapCounts = new List<OverlappingPair>();
         private int queuedCalls = 0;
 
-        public CollisionEventListenerProxy(PAction<TValue, TValue> listener, OverlappingEventPolicy policy, SGEntity[] setA, SGEntity[] setB, InteractionModule.CollisionType collisionType)
+        public CollisionEventListenerProxy(PAction<TValue, TValue> listener, OverlappingEventPolicy policy, SGEntity[] setA, SGEntity[] setB, InteractionModule.InteractionType interactionType)
         {
             this.listener = listener;
             this.policy = policy;
             this.interactingObjects = new InteractionSet(new List<SGEntity>(setA), new List<SGEntity>(setB));
-            this.onEnter = collisionType == InteractionModule.CollisionType.OnStart ? true : false;
+
+            if (interactionType == InteractionModule.InteractionType.OnCollisionStart)
+                this.onEnter = true;
+            else if (interactionType == InteractionModule.InteractionType.OnCollisionEnd)
+                this.onEnter = false;
+            else
+                Debug.LogError("Invalid interaction type in CollisionEventListenerProxy");
         }
 
         public void NotifyEvent(SGEntity object1, SGEntity object2, bool entered)
