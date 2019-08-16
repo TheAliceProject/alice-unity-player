@@ -21,18 +21,15 @@ namespace Alice.Player.Unity
         private UnityEngine.Vector3 rotateOrigin;
         private bool defaultModelManipulationActive = false;
 
-        public void SetModelManipulation(bool active)
-        {
+        public void SetModelManipulation(bool active){
             defaultModelManipulationActive = active;
         }
 
-        public void AddMouseListener(MouseEventListenerProxy listener)
-        {
+        public void AddMouseListener(MouseEventListenerProxy listener){
             m_MouseClickListeners.Add(listener);
         }
         
-        public void HandleMouseEvents()
-        {
+        public void HandleMouseEvents(){
             if (Input.GetKeyDown(KeyCode.Mouse0)){ // Left mouse click
                 lastMouseDownTime = Time.time;
                 RaycastHit hit;
@@ -48,9 +45,9 @@ namespace Alice.Player.Unity
                 }
             }
 
-            if (GetShiftDown())
+            if (IsShiftDown())
                 shiftOrigin = Input.mousePosition;
-            if (GetCtrlDown())
+            if (IsCtrlDown())
                 rotateOrigin = Input.mousePosition;
             if (Input.GetKeyUp(KeyCode.Mouse0)){
                 objectToMove = null;
@@ -82,7 +79,7 @@ namespace Alice.Player.Unity
             }
 
 
-            if (defaultModelManipulationActive && (objectToMove != null) && (GetShiftUp() || GetCtrlUp())){
+            if (defaultModelManipulationActive && (objectToMove != null) && (IsShiftUp() || IsCtrlUp())){
                 objectOriginPoint = objectToMove.position;
                 Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 float distance;
@@ -105,33 +102,33 @@ namespace Alice.Player.Unity
             }
 
             if (objectToMove == Camera.main.transform){ // Moving the camera
-                if (GetShiftHeld()){    // Up down
+                if (IsShiftHeld()){    // Up down
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
-                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), dragSpeed * pos.y, pos.y * (1f * dragSpeed));
+                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * dragSpeed, dragSpeed * pos.y, pos.y * dragSpeed);
                     objectToMove.position += move;
                     shiftOrigin = Input.mousePosition;
                 }
-                else if (GetCtrlHeld()){ // Rotate
+                else if (IsCtrlHeld()){ // Rotate
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
                     objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 20f);
                     rotateOrigin = Input.mousePosition;
                 }
                 else{   // Scroll
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * (1f * dragSpeed), 0, pos.y * (1f * dragSpeed));
+                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * dragSpeed, 0, pos.y * dragSpeed);
                     objectToMove.position += move;
                     dragOrigin = Input.mousePosition;
                 }
             }
             else if (objectToMove != null){ // Moving an object
                 // If holding shift, move object up and down
-                if (GetShiftHeld()){
+                if (IsShiftHeld()){
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
                     UnityEngine.Vector3 move = new UnityEngine.Vector3(0f, dragSpeed * pos.y, 0f);
                     objectToMove.position += move;
                     shiftOrigin = Input.mousePosition;
                 }
-                else if (GetCtrlHeld()){ // If holding control, rotate object
+                else if (IsCtrlHeld()){ // If holding control, rotate object
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
                     objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 200f);
                     rotateOrigin = Input.mousePosition;
@@ -149,28 +146,22 @@ namespace Alice.Player.Unity
             }
         }
 
-        private bool GetShiftHeld()
-        {
+        private bool IsShiftHeld(){
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
-        private bool GetShiftDown()
-        {
+        private bool IsShiftDown(){
             return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
         }
-        private bool GetCtrlHeld()
-        {
+        private bool IsCtrlHeld(){
             return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
         }
-        private bool GetCtrlDown()
-        {
+        private bool IsCtrlDown(){
             return Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
         }
-        private bool GetShiftUp()
-        {
+        private bool IsShiftUp(){
             return Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift);
         }
-        private bool GetCtrlUp()
-        {
+        private bool IsCtrlUp(){
             return Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl);
         }
     }
