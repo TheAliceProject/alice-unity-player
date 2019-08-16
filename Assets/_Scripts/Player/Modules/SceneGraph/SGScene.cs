@@ -136,17 +136,17 @@ namespace Alice.Player.Unity {
 
         public void AddKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
         {
-            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListnerProxy.KeyPressType.Normal));
+            m_KeyboardEventHandler.AddListener(new KeyEventListenerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListenerProxy.KeyPressType.Normal));
         }
 
         public void AddArrowKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
         {
-            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListnerProxy.KeyPressType.ArrowKey));
+            m_KeyboardEventHandler.AddListener(new KeyEventListenerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListenerProxy.KeyPressType.ArrowKey));
         }
 
         public void AddNumberKeyListener(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy)
         {
-            m_KeyboardEventHandler.AddListener(new KeyEventListnerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListnerProxy.KeyPressType.NumPadKey));
+            m_KeyboardEventHandler.AddListener(new KeyEventListenerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListenerProxy.KeyPressType.NumPadKey));
         }
 
         public void AddKeyMover(Transform entity)
