@@ -80,6 +80,7 @@ namespace Alice.Player.Unity {
             CheckTimeListeners();
             m_MouseEventHandler.HandleMouseEvents(); 
             m_KeyboardEventHandler.HandleKeyboardEvents();
+            m_InteractionHandler.HandleInteractionEvents();
         }
 
         private void CheckTimeListeners()
@@ -163,6 +164,11 @@ namespace Alice.Player.Unity {
         public void AddViewListener(PAction<TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGModel[] set, InteractionModule.InteractionType interactionType)
         {
             m_InteractionHandler.AddViewListener(new ViewEventListenerProxy(listener, overlappingEventPolicy, set, interactionType));
+        }
+
+        public void AddProximityListener(PAction<TValue, TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGEntity[] a, SGEntity[] b, float distance, InteractionModule.InteractionType interactionType)
+        {
+            m_InteractionHandler.AddProximityListener(new ProximityEventListenerProxy(listener, overlappingEventPolicy, a, b, distance, interactionType));
         }
         
         public void AddColliders(SGEntity[] models)

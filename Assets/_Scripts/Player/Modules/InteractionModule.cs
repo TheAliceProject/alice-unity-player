@@ -15,7 +15,9 @@ namespace Alice.Player.Modules
             OnCollisionStart,
             OnCollisionEnd,
             OnViewEnter,
-            OnViewExit
+            OnViewExit,
+            OnProximityEnter,
+            OnProximityExit
         }
 
         [PInteropMethod]
@@ -46,6 +48,20 @@ namespace Alice.Player.Modules
             var sceneEntity = SceneGraph.Current.Scene;
             sceneEntity.AddViewEnterBroadcasters(ConvertToModelArray(set));
             sceneEntity.AddViewListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToModelArray(set), InteractionType.OnViewExit);
+        }
+
+        [PInteropMethod]
+        public static void addProximityEnterListener(PAction<TValue, TValue> listener, TValue[] a, TValue[] b, int overlappingEventPolicy, float distance)
+        {
+            var sceneEntity = SceneGraph.Current.Scene;
+            sceneEntity.AddProximityListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToEntityArray(a), ConvertToEntityArray(b), distance, InteractionType.OnProximityEnter);
+        }
+
+        [PInteropMethod]
+        public static void addProximityExitListener(PAction<TValue, TValue> listener, TValue[] a, TValue[] b, int overlappingEventPolicy, float distance)
+        {
+            var sceneEntity = SceneGraph.Current.Scene;
+            sceneEntity.AddProximityListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToEntityArray(a), ConvertToEntityArray(b), distance, InteractionType.OnProximityExit);
         }
 
         private static void AddEntityColliders(TValue[] a, TValue[] b)

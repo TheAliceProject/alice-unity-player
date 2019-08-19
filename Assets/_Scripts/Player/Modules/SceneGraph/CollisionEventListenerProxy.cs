@@ -8,11 +8,10 @@ using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public class CollisionEventListenerProxy{
-        
-        public PAction<TValue, TValue> listener;
-        public OverlappingEventPolicy policy;
-        private InteractionSet interactingObjects;
 
+        private PAction<TValue, TValue> listener;
+        private OverlappingEventPolicy policy;
+        private InteractionSet interactingObjects;
         private bool onEnter = false;
         private bool callActive = false;
         private List<OverlappingPair> overlapCounts = new List<OverlappingPair>();
@@ -97,11 +96,29 @@ namespace Alice.Player.Unity {
         public SGEntity entity2;
         public int numOverlaps;
 
+        private bool entity1HasBounds = false;
+        private bool entity2HasBounds = false;
+        private Bounds bounds1;
+        private Bounds bounds2;
         public OverlappingPair(SGEntity ent1, SGEntity ent2)
         {
             entity1 = ent1;
             entity2 = ent2;
             numOverlaps = 0;
+
+            if (entity1 is SGModel)
+            {
+                var sgModel = (SGModel)entity1;
+                bounds1 = sgModel.GetBounds(true);
+                entity1HasBounds = true;
+            }
+
+            if (entity2 is SGModel)
+            {
+                var sgModel = (SGModel)entity2;
+                bounds2 = sgModel.GetBounds(true);
+                entity2HasBounds = true;
+            }
         }
 
         public bool ContainsBoth(SGEntity ent1, SGEntity ent2)
@@ -113,6 +130,36 @@ namespace Alice.Player.Unity {
                 return false;
 
             return true;
+        }
+
+        public float GetDistance()
+        {
+            //return UnityEngine.Vector3.Distance(entity1.transform.position, entity2.transform.position);
+            UnityEngine.Vector3 point1, point2;
+            if(entity1HasBounds){
+                var sgModel = (SGModel)entity1;
+                bounds1 = sgModel.GetBounds(true);
+                bounds1.center = entity1.cachedTransform.position;
+                point1 = bounds1.ClosestPoint(entity2.transform.position);
+            }
+            else{
+                point1 = entity1.transform.position;
+            }
+                
+
+            if (entity2HasBounds){
+                var sgModel = (SGModel)entity2;
+                bounds2 = sgModel.GetBounds(true);
+                bounds2.center = entity2.cachedTransform.position;
+                point2 = bounds2.ClosestPoint(entity1.transform.position);
+            }
+            else{
+                point2 = entity2.transform.position;
+            }
+
+            // Uncomment to see distance visualized
+            //Debug.DrawLine(point1, point2, UnityEngine.Color.red, 0.5f);
+            return UnityEngine.Vector3.Distance(point1, point2);
         }
     }
 

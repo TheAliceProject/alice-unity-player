@@ -30,7 +30,8 @@ namespace Alice.Player.Unity
         {
             m_MouseClickListeners.Add(listener);
         }
-        
+
+        // Called from Update()
         public void HandleMouseEvents()
         {
             if (Input.GetKeyDown(KeyCode.Mouse0)){ // Left mouse click

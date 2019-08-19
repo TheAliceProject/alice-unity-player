@@ -27,6 +27,7 @@ namespace Alice.Player.Unity
             m_objectMover.ClearHeldKeys();
         }
 
+        // Called from Update()
         public void HandleKeyboardEvents()
         {
             if(m_KeyPressListeners.Count > 0 || m_objectMover.GetNumMovers() > 0)
