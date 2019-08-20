@@ -166,6 +166,11 @@ namespace Alice.Player.Unity {
             m_InteractionHandler.AddViewListener(new ViewEventListenerProxy(listener, overlappingEventPolicy, set, interactionType));
         }
 
+        public void AddPointOfViewChangeListener(PAction<TValue> listener, SGEntity[] set)
+        {
+            m_InteractionHandler.AddPointOfViewChangeListener(new PointOfViewChangeEventListenerProxy(listener, set));
+        }
+
         public void AddProximityListener(PAction<TValue, TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGEntity[] a, SGEntity[] b, float distance, InteractionModule.InteractionType interactionType)
         {
             m_InteractionHandler.AddProximityListener(new ProximityEventListenerProxy(listener, overlappingEventPolicy, a, b, distance, interactionType));

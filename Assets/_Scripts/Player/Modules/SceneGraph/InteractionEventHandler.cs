@@ -11,16 +11,22 @@ namespace Alice.Player.Unity
         private List<CollisionEventListenerProxy> m_CollisionListeners = new List<CollisionEventListenerProxy>();
         private List<ViewEventListenerProxy> m_ViewListeners = new List<ViewEventListenerProxy>();
         private List<ProximityEventListenerProxy> m_ProximityListeners = new List<ProximityEventListenerProxy>();
+        private List<PointOfViewChangeEventListenerProxy> m_PovListeners = new List<PointOfViewChangeEventListenerProxy>();
 
         // Called from Update()
         public void HandleInteractionEvents()
         {
             // Check proximity listeners
-            if(m_ProximityListeners.Count > 0)
-            {
-                for (int i = 0; i < m_ProximityListeners.Count; i++)
-                {
+            if(m_ProximityListeners.Count > 0){
+                for (int i = 0; i < m_ProximityListeners.Count; i++){
                     m_ProximityListeners[i].CheckDistances();
+                }
+            }
+
+            // Check POV change listeners
+            if(m_PovListeners.Count > 0){
+                for (int i = 0; i < m_PovListeners.Count; i++){
+                    m_PovListeners[i].CheckChanges();
                 }
             }
         }
@@ -36,6 +42,11 @@ namespace Alice.Player.Unity
         public void AddProximityListener(ProximityEventListenerProxy listener)
         {
             m_ProximityListeners.Add(listener);
+        }
+
+        public void AddPointOfViewChangeListener(PointOfViewChangeEventListenerProxy listener)
+        {
+            m_PovListeners.Add(listener);
         }
         
         public void NotifyObjectsCollided(SGEntity object1, SGEntity object2, bool enter)
