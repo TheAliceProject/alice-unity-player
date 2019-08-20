@@ -12,7 +12,7 @@ namespace Alice.Player.Unity {
         public PAction<TValue> listener;
 
         private List<SGEntity> targetEntities = new List<SGEntity>();
-        private List<UnityEngine.Vector3> targetPositions = new List<UnityEngine.Vector3>();
+        private List<Transform> targetTransforms = new List<Transform>();
         private bool callActive = false;
 
         public PointOfViewChangeEventListenerProxy(PAction<TValue> listener, SGEntity[] targets)
@@ -20,7 +20,8 @@ namespace Alice.Player.Unity {
             this.listener = listener;
             for (int i = 0; i < targets.Length; i++){
                 targetEntities.Add(targets[i]);
-                targetPositions.Add(targets[i].cachedTransform.position);
+                targetTransforms.Add(targets[i].cachedTransform);
+                targets[i].cachedTransform.hasChanged = false;
             }
         }
 
@@ -28,8 +29,8 @@ namespace Alice.Player.Unity {
         {
             for (int i = 0; i < targetEntities.Count; i++)
             {
-                if(targetPositions[i] != targetEntities[i].cachedTransform.position){
-                    targetPositions[i] = targetEntities[i].cachedTransform.position;
+                if(targetTransforms[i].hasChanged){
+                    targetTransforms[i].hasChanged = false;
                     CallEvent(targetEntities[i].owner);
                 }
             }
