@@ -1,16 +1,9 @@
-﻿using System;
-
-namespace Alice.Tweedle
+﻿namespace Alice.Tweedle
 {
-    public class TweedleNoMembersException : SystemException
+    public class TweedleNoMembersException : TweedleRuntimeException
     {
-        public TweedleNoMembersException(string message)
-            :base(message)
-        {
-        }
-
-        public TweedleNoMembersException(TType type, string memberType)
-            :base("No members of type " + memberType + " on " + type.Name)
+        public TweedleNoMembersException(string name, TType type, string memberType)
+            :base("No members of type " + memberType + " on " + type.Name + ". Cannot access " + memberType + " " + name + ".")
         {
         }
     }
