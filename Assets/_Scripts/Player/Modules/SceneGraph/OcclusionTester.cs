@@ -65,63 +65,85 @@ namespace Alice.Player.Unity
                 planePoints.Add(thisPoints);
             }
 
-           // DrawPlane(castPlane, planePoints);
+            //DrawPlane(castPlane, planePoints);
             CheckPointIntersections();
         }
 
         void CheckPointIntersections(){
-
-            GK.ConvexHullCalculator calculator = new GK.ConvexHullCalculator();
-            for (int i = 0; i < planePoints.Count; i++)
+            // For every object
+            for(int i = 0; i < planePoints.Count; i++)
             {
-                List<Vector3> verts = new List<Vector3>();
-                List<int> tris = new List<int>();
-                List<Vector3> normals = new List<Vector3>();
-                calculator.GenerateHull(planePoints[i].points, true, ref verts, ref tris, ref normals);
-
-                for (int j = 0; j < verts.Count; j++)
+                // Compare to every other object
+                for(int j = 0; j < planePoints.Count; j++)
                 {
-                    if(j < verts.Count - 1)
-                        Debug.DrawLine(verts[j], verts[j + 1], Color.red);
-                    else
-                        Debug.DrawLine(verts[j], verts[0], Color.yellow);
+                    if(j <= i)  // We've already compared these
+                        continue;
+                    
+                    // For every point / line segment in object 1
+                    for(int k = 0; k < planePoints[i].points.Count; k++) // Always 8
+                    {
+                        for(int l = 0; l < planePoints[i].points.Count; l++)
+                        {
+                            if(k == l)
+                                continue;
+
+                            // For every point in object 2
+                            for(int m = 0; m < planePoints[j].points.Count; m++)
+                            {
+                                for(int n = 0; n < planePoints[j].points.Count; n++)
+                                {
+                                    if(m == n)
+                                        continue;
+                                    
+                                    Vector3 intersection;
+                                    LineLineIntersection(out intersection, planePoints[i].points[k], planePoints[i].points[l],
+                                                                    planePoints[j].points[m], planePoints[j].points[n]);
+                                    if((SqDistancePtSegment(planePoints[i].points[k], planePoints[i].points[l], intersection) < 0.01f) && 
+                                        (SqDistancePtSegment(planePoints[j].points[m], planePoints[j].points[n], intersection) < 0.01f)) 
+                                    {
+                                        Debug.DrawLine(planePoints[i].points[k], planePoints[i].points[l], Color.red);
+                                        Debug.DrawLine(planePoints[j].points[m], planePoints[j].points[n], Color.red);
+                                    }
+                                    //else
+                                   // {
+                                    //    Debug.DrawLine(planePoints[i].points[k], planePoints[i].points[l], Color.yellow);
+                                    //    Debug.DrawLine(planePoints[j].points[m], planePoints[j].points[n], Color.yellow);
+                                    //}
+                                    
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
-    
 
-/*
-            for (int i = 0; i < planePoints.Count; i++)
-            {
-                GameObject colliderHolder;
-                Mesh mesh;
-                MeshCollider collider;
-                if(planeColliderObjects.Count >= i+1)
-                {
-                    colliderHolder = planeColliderObjects[i];
-                    mesh = colliderHolder.GetComponent<MeshFilter>().mesh;
-                    collider = colliderHolder.GetComponent<MeshCollider>();
-                }
-                else{
-                    colliderHolder = new GameObject();
-                    colliderHolder.name = "ColliderHolder " + i;
-                    MeshFilter meshFilter = colliderHolder.AddComponent<MeshFilter>();
-                    mesh = meshFilter.mesh;
-                    //MeshRenderer mr = colliderHolder.AddComponent<MeshRenderer>();
-                    Rigidbody rb = colliderHolder.AddComponent<Rigidbody>();
-                    rb.isKinematic = true;
-                    collider = colliderHolder.AddComponent<MeshCollider>();
-                    planeColliderObjects.Add(colliderHolder);
-                }
-                mesh.vertices = planePoints[i].points.ToArray();
-                mesh.triangles = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 4, 7, 2, 3, 6 };
-                collider.sharedMesh = mesh;
-                collider.convex = true;
-                collider.isTrigger = true;
-            }
-*/
         }
 
-        public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 linePoint1b, Vector3 linePoint2, Vector3 linePoint2b)
+float SqDistancePtSegment( Vector3 a, Vector3 b, Vector3 p )
+{
+    Vector3 n = b - a;
+    Vector3 pa = a - p;
+ 
+    float c = Vector3.Dot( n, pa );
+ 
+    // Closest point is a
+    if ( c > 0.0f )
+        return Vector3.Dot( pa, pa );
+ 
+    Vector3 bp = p - b;
+ 
+    // Closest point is b
+    if ( Vector3.Dot( n, bp ) > 0.0f )
+        return Vector3.Dot( bp, bp );
+ 
+    // Closest point is between a and b
+    Vector3 e = pa - n * (c / Vector3.Dot( n, n ));
+ 
+    return Vector3.Dot( e, e );
+}
+
+        public static bool LineLineIntersection(out Vector3 intersection, Vector3 linePoint1, Vector3 linePoint1b, Vector3 linePoint2, Vector3 linePoint2b, bool stop = false)
         {
 
             Vector3 lineVec1 = linePoint1 - linePoint1b;
@@ -141,8 +163,13 @@ namespace Alice.Player.Unity
             }
             else
             {
-                intersection = Vector3.zero;
-                return false;
+                if(stop){
+                    intersection = Vector3.zero;
+                    return false;
+                }
+                else{
+                    return LineLineIntersection(out intersection, linePoint1b, linePoint1, linePoint2b, linePoint2, true);
+                }
             }
         }
 
@@ -211,5 +238,6 @@ namespace Alice.Player.Unity
                 points.Add(point);
             }
         }
+
     } 
 }
