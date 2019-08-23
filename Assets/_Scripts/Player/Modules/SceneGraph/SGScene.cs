@@ -175,6 +175,11 @@ namespace Alice.Player.Unity {
         {
             m_InteractionHandler.AddProximityListener(new ProximityEventListenerProxy(listener, overlappingEventPolicy, a, b, distance, interactionType));
         }
+
+        public void AddOcclusionListener(PAction<TValue, TValue> listener, OverlappingEventPolicy overlappingEventPolicy, SGModel[] setA, SGModel[] setB, InteractionModule.InteractionType interactionType)
+        {
+            m_InteractionHandler.AddOcclusionListener(new OcclusionEventListenerProxy(listener, overlappingEventPolicy, setA, setB, interactionType));
+        }
         
         public void AddColliders(SGEntity[] models)
         {
@@ -244,6 +249,11 @@ namespace Alice.Player.Unity {
         public void ObjectsCollided(SGEntity firstObject, SGEntity secondObject, bool enter)
         {
             m_InteractionHandler.NotifyObjectsCollided(firstObject, secondObject, enter);
+        }
+
+        public void ObjectsOccluded(SGModel foregroundObject, SGModel backgroundObject)
+        {
+            m_InteractionHandler.NotifyObjectsOccluded(foregroundObject, backgroundObject);
         }
 
         public void ObjectInView(SGModel model, bool enteredView)
