@@ -28,8 +28,8 @@ namespace Alice.Player.Unity {
 
         protected override void SetSize(UnityEngine.Vector3 inSize) {
             // Scale the text to match alice size and proportions
-            inSize.y *= 0.585f;
-            inSize.x *= 0.25f;
+            inSize.y *= .678f; // Constant to match 3D Text plugin with Alice text
+            inSize.x = inSize.y;
             m_ModelTransform.localScale = inSize;
         }
 
@@ -61,11 +61,14 @@ namespace Alice.Player.Unity {
         {
             currTextStr = "";
             textStrObj = FlyingText.GetObject(currTextStr);
-            textStrObj.transform.SetPosition(-0.25f, Axis.Y, Space.Self);
-            textStrObj.transform.parent = this.transform;
+            GameObject textPivot = new GameObject();
+            textPivot.name = "TextPivot";
+            textPivot.transform.parent = this.transform;
+            textStrObj.transform.parent = textPivot.transform;
+            textStrObj.transform.SetPosition(-0.654f, Axis.Y, Space.Self);
             m_Renderer = textStrObj.GetComponent<MeshRenderer>();
             m_MeshFilter = textStrObj.GetComponent<MeshFilter>();
-            m_ModelTransform = textStrObj.transform;
+            m_ModelTransform = textPivot.transform;
         }
 
         private void OnTextPropertyChanged(TValue inValue) {
