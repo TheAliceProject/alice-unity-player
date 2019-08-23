@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Reflection;
 using Alice.Tweedle.Parse;
 using Alice.Tweedle.VM;
@@ -22,13 +22,12 @@ namespace Alice.Tweedle
         public virtual void Link(TAssemblyLinkContext inContext, TType inOwnerType)
         {
             Type.Resolve(inContext);
-            ReturnType.Resolve(inContext);
 
             // Interop methods don't go through the same type checks
             bool bIsInterop = this.HasModifiers(MemberFlags.PInterop);
             
-            if (!bIsInterop && !ReturnType.Get().IsValidReturnType())
-                throw new TweedleLinkException("Return type " + ReturnType.Name + " is not a valid return type");
+            if (!bIsInterop && !Type.Get().IsValidReturnType())
+                throw new TweedleLinkException("Return type " + Type.Name + " is not a valid return type");
 
             for (int i = 0; i < RequiredParams.Length; ++i)
             {
@@ -46,7 +45,6 @@ namespace Alice.Tweedle
 
         #endregion // ITypeMember
 
-        public TTypeRef ReturnType { get; private set; }
         public TParameter[] RequiredParams { get; private set; }
         public TParameter[] OptionalParams { get; private set; }
 
@@ -79,9 +77,8 @@ namespace Alice.Tweedle
             Flags = inFlags | MemberFlags.Method;
         }
 
-        protected void SetupSignature(TTypeRef inReturnType, TParameter[] inRequired = null, TParameter[] inOptional = null)
+        protected void SetupParameters(TParameter[] inRequired = null, TParameter[] inOptional = null)
         {
-            ReturnType = inReturnType;
             RequiredParams = inRequired ?? TParameter.EMPTY_PARAMS;
             OptionalParams = inOptional ?? TParameter.EMPTY_PARAMS;
 
