@@ -53,12 +53,15 @@ namespace Alice.Tweedle.Parse
             + "  ClassToHave mySpecialThing <- new ClassToHave(start: 100 - 3);"
             + "  ClassToHave myConstructedThing;"
             + "  ClassToHave myReplacedThing <- new ClassToHave(start: 100);"
+            + "  WholeNumber myInnerValue <-  100;"
             + "static void main(TextString[] args) {"
             + "            Program story<-new Program();"
             + "            story.initializeInFrame(args: args);"
             + "            story.setActiveScene(scene: story.getMyScene());\n }"
             + "ClassToHave getMyThing() {\n"
             + "  return this.myThing;\n }\n"
+            + "void doMyThing(WholeNumber value) {\n"
+            + "  myInnerValue <- 4 + value;\n }\n"
             + "ClassToHave getMySpecialThing() {\n"
             + "  return mySpecialThing;\n }\n}";
 
@@ -70,6 +73,13 @@ namespace Alice.Tweedle.Parse
             + "  ClassToHave par <- super.getMyThing();\n"
             + "  par.x <- par.x + 10;\n"
             + "  return par;\n }\n"
+            + "void doMyThing(WholeNumber value) {\n"
+            + "  super.doMyThing(value: value + 1;\n }\n"
+            + "\n}";
+
+        static string grandchildClass =
+            "class Grandchild extends Child {\n"
+            + "  Grandchild()\n{ super();}\n"
             + "\n}";
 
         static string sibClass =
@@ -84,6 +94,7 @@ namespace Alice.Tweedle.Parse
             assembly.Add(ParseClass(classToHave, assembly));
             assembly.Add(ParseClass(parentClass, assembly));
             assembly.Add(ParseClass(childClass, assembly));
+            assembly.Add(ParseClass(grandchildClass, assembly));
             assembly.Add(ParseClass(sibClass, assembly));
             system.Link();
             return system;
@@ -121,6 +132,13 @@ namespace Alice.Tweedle.Parse
         public void AClassShouldBeCreatedForChildClass()
         {
             TClassType tested = ParseClass(childClass);
+            Assert.NotNull(tested, "The parser should have returned something.");
+        }
+
+        [Test]
+        public void AClassShouldBeCreatedForGrandchildClass()
+        {
+            TClassType tested = ParseClass(grandchildClass);
             Assert.NotNull(tested, "The parser should have returned something.");
         }
 
@@ -425,6 +443,28 @@ namespace Alice.Tweedle.Parse
             TObject tested = scope.GetValue("obj").Object();
 
             Assert.AreEqual(15, tested.Get("x").ToInt());
+        }
+
+        [Test]
+        public void ChildShouldCallSuperWithArgumentInMethod()
+        {
+            Init();
+            ExecuteStatement("Child child <- new Child();");
+            ExecuteStatement("child.doMyThing(value: 2);");
+            TObject tested = scope.GetValue("child").Object();
+
+            Assert.AreEqual(7, tested.Get("myInnerValue").ToInt());
+        }
+
+        [Test]
+        public void GrandchildShouldCallSuperWithArgumentInMethod()
+        {
+            Init();
+            ExecuteStatement("Grandchild g <- new Grandchild();");
+            ExecuteStatement("g.doMyThing(value: 3);");
+            TObject tested = scope.GetValue("g").Object();
+
+            Assert.AreEqual(8, tested.Get("myInnerValue").ToInt());
         }
 
         [Test]
