@@ -30,6 +30,7 @@ namespace Alice.Tweedle
                         scope.StackWith(stackBuilder.Builder);
                         UnityEngine.Debug.LogErrorFormat("Statement {0} triggered error {1}\nTweedle stack:{2}\n", this, tre, stackBuilder.ToString());
                     }
+                    throw tre;
                 }
             }
             else if (next != null)
