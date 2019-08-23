@@ -12,6 +12,7 @@ namespace Alice.Player.Unity
         private List<ViewEventListenerProxy> m_ViewListeners = new List<ViewEventListenerProxy>();
         private List<ProximityEventListenerProxy> m_ProximityListeners = new List<ProximityEventListenerProxy>();
         private List<PointOfViewChangeEventListenerProxy> m_PovListeners = new List<PointOfViewChangeEventListenerProxy>();
+        private List<OcclusionEventListenerProxy> m_OcclusionListeners = new List<OcclusionEventListenerProxy>();
 
         // Called from Update()
         public void HandleInteractionEvents()
@@ -43,10 +44,13 @@ namespace Alice.Player.Unity
         {
             m_ProximityListeners.Add(listener);
         }
-
         public void AddPointOfViewChangeListener(PointOfViewChangeEventListenerProxy listener)
         {
             m_PovListeners.Add(listener);
+        }
+        public void AddOcclusionListener(OcclusionEventListenerProxy listener)
+        {
+            m_OcclusionListeners.Add(listener);
         }
         
         public void NotifyObjectsCollided(SGEntity object1, SGEntity object2, bool enter)
@@ -54,6 +58,14 @@ namespace Alice.Player.Unity
             for(int i = 0; i < m_CollisionListeners.Count; i++)
             {
                 m_CollisionListeners[i].NotifyEvent(object1,  object2, enter);
+            }
+        }
+
+        public void NotifyObjectsOccluded(SGModel foregroundObject, SGModel backgroundObject)
+        {
+            for (int i = 0; i < m_OcclusionListeners.Count; i++)
+            {
+                m_OcclusionListeners[i].NotifyEvent(foregroundObject, backgroundObject);
             }
         }
 

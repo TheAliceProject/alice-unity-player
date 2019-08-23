@@ -74,6 +74,28 @@ namespace Alice.Player.Modules
             sceneEntity.AddPointOfViewChangeListener(listener, ConvertToEntityArray(targets));
         }
 
+        [PInteropMethod]
+        public static void addOcclusionStartListener(PAction<TValue, TValue> listener, TValue[] a, TValue[] b, int overlappingEventPolicy)
+        {
+            var sceneEntity = SceneGraph.Current.Scene;
+            // Should probably specify camera we are talking about here
+            OcclusionCalculator occlusionFinder = Camera.main.gameObject.AddComponent<OcclusionCalculator>();
+            occlusionFinder.AddOcclusionModels(ConvertToModelArray(a));
+            occlusionFinder.AddOcclusionModels(ConvertToModelArray(b));
+            sceneEntity.AddOcclusionListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToModelArray(a), ConvertToModelArray(b), InteractionType.OnOcclusionStart);
+        }
+
+        [PInteropMethod]
+        public static void addOcclusionEndListener(PAction<TValue, TValue> listener, TValue[] a, TValue[] b, int overlappingEventPolicy)
+        {
+            var sceneEntity = SceneGraph.Current.Scene;
+            // Should probably specify camera we are talking about here
+            OcclusionCalculator occlusionFinder = Camera.main.gameObject.AddComponent<OcclusionCalculator>();
+            occlusionFinder.AddOcclusionModels(ConvertToModelArray(a));
+            occlusionFinder.AddOcclusionModels(ConvertToModelArray(b));
+            sceneEntity.AddOcclusionListener(listener, (OverlappingEventPolicy)overlappingEventPolicy, ConvertToModelArray(a), ConvertToModelArray(b), InteractionType.OnOcclusionEnd);
+        }
+
         private static void AddEntityColliders(TValue[] a, TValue[] b)
         {
             var sceneEntity = SceneGraph.Current.Scene;
