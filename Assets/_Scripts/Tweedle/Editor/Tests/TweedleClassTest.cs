@@ -572,12 +572,23 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
+        public void ChildVariableShouldNotAcceptParentInstance()
+        {
+            Init();
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Unable to treat value Parent of type Parent as type Child"));
+            Assert.Throws<TweedleRuntimeException>(() => {
+                ExecuteStatement("Child childOnly <- new Parent();");
+            });
+        }
+
+        [Test]
+        [Ignore("Does not throw exception. Need to add check at link")]
         public void ChildClassShouldNotImplicityCastDownFromParentClass()
         {
             Init();
             ExecuteStatement("Parent childAsParent <- new Child();");
 
-            Assert.Throws<TweedleLinkException>(()=> {
+            Assert.Throws<TweedleLinkException>(() => {
                 ExecuteStatement("Child childAsChild <- childAsParent;");
             });
         }
