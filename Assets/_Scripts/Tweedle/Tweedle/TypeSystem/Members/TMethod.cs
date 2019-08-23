@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using Alice.Tweedle.Parse;
 using Alice.Tweedle.VM;
@@ -13,6 +13,9 @@ namespace Alice.Tweedle
     {
         static public readonly string ConstructorName = ConstructorInfo.ConstructorName;
 
+        // Used to determine super invocations. Could be promoted to ITypeMember.
+        public TTypeRef ContainingType { get; private set; }
+
         #region ITypeMember
 
         public string Name { get; private set; }
@@ -21,6 +24,7 @@ namespace Alice.Tweedle
 
         public virtual void Link(TAssemblyLinkContext inContext, TType inOwnerType)
         {
+            ContainingType = inOwnerType;
             Type.Resolve(inContext);
 
             // Interop methods don't go through the same type checks

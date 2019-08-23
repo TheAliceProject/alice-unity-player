@@ -2,6 +2,7 @@
 {
     class MethodScope : InvocationScope {
         bool invokeSuper;
+        TType invokedType;
 
         public MethodScope(ExecutionScope scope, string methodName, bool invokeSuper)
             : base(scope) {
@@ -12,26 +13,38 @@
         internal void SetThis(TValue target) {
             // target may be an instance (object or enumValue) or type (class or enum)
             thisValue = target;
-            IdentifyTargetMethod();
+            IdentifyTargetTypeAndMethod();
         }
 
-        private void IdentifyTargetMethod() {
+        private void IdentifyTargetTypeAndMethod() {
             if (thisValue == null || thisValue == TValue.NULL) {
                 throw new TweedleRuntimeException("Can not invoke " + callStackEntry + " on null.");
             }
-            TType type;
-            if (invokeSuper) {
-                type = thisValue.Type.SuperType.Get(this);
+
+            TType startingType;
+            if (invokeSuper)
+            {
+                startingType = callingScope.CallingType(callStackEntry);
+                if (startingType == null)
+                {
+                    throw new TweedleRuntimeException("Call to super." + callStackEntry + "() outside of method context on " + thisValue);
+                }
+                startingType = startingType.SuperType.Get(this);
             } else {
-                type = thisValue.Type;
+                startingType = thisValue.Type;
             }
 
-            method = type.Method(callingScope, ref thisValue, callStackEntry);
+            method = startingType.Method(callingScope, ref thisValue, callStackEntry);
 
             if (method == null)//|| !method.ExpectsArgs(callExpression.arguments))
             {
                 throw new TweedleRuntimeException("No method matching " + thisValue + "." + callStackEntry + "()");
             }
+            invokedType = method.ContainingType.Get(this);
+        }
+
+        internal override TType CallingType(string methodName) {
+            return callStackEntry.Equals(methodName) ? invokedType : base.CallingType(methodName);
         }
     }
 }
