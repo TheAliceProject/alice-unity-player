@@ -1,5 +1,7 @@
+using System.Text.RegularExpressions;
 using Alice.Tweedle.VM;
 using NUnit.Framework;
+using UnityEngine.TestTools;
 
 namespace Alice.Tweedle.Parse
 {
@@ -585,6 +587,7 @@ namespace Alice.Tweedle.Parse
         {
             Init();
             ExecuteStatement("Child child <- new Child();");
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Unable to treat value Child of type Child as type Sibling"));
             Assert.Throws<TweedleRuntimeException>(()=> {
                 ExecuteStatement("Sibling childAsSibling <- child;");
             });
@@ -605,6 +608,7 @@ namespace Alice.Tweedle.Parse
         {
             Init();
             ExecuteStatement("Child child <- new Child();");
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Cannot cast type Child to type Sibling"));
             Assert.Throws<TweedleRuntimeException>(()=> {
                 ExecuteStatement("Sibling childAsSibling <- child as Sibling;");
             });
