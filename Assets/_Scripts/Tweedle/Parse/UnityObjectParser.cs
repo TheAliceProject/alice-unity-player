@@ -11,19 +11,26 @@ namespace Alice.Tweedle.Parse
     {
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
+        public Canvas uiCanvas;
+        public WorldLoaderControl worldLoader;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
         private Coroutine m_QueueProcessor;
 
-        public void Select(GameObject canvas)
+        public void Select(string fileName = "")
         {
-            string zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
+            string zipPath = fileName;
+            if(zipPath == "")
+                zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
+
             if (System.IO.File.Exists(zipPath) == false)
                 return;
 
+            worldLoader.AddWorldToRecents(zipPath);
+
             Camera.main.backgroundColor = Color.clear;
-            canvas.SetActive(false);
+            uiCanvas.gameObject.SetActive(false);
 
             if (Player.Unity.SceneGraph.Exists) {
                 Player.Unity.SceneGraph.Current.Clear();
