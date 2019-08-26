@@ -67,6 +67,9 @@ public class WorldLoaderControl : MonoBehaviour
         ClearButtons();
         for (int i = 0; i < worldFiles.Count; i++)
         {
+            if(i > 9)
+                break;
+                
             if (File.Exists(worldFiles[i]))
             {
                 RecentWorldButton worldButton = Instantiate(recentWorldButtonPrefab, contentBox);

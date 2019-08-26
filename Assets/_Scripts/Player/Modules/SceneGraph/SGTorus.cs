@@ -65,10 +65,10 @@ namespace Alice.Player.Unity {
         
 
         public override void CleanUp() {
-            if (m_MeshWasCopied) {
-                Destroy(m_MeshFilter.mesh);
-                m_MeshFilter.mesh = null;
-            }
+            //if (m_MeshWasCopied) {
+            //    Destroy(m_MeshFilter.mesh);
+            //    m_MeshFilter.mesh = null;
+            //}
 
             base.CleanUp();
 
