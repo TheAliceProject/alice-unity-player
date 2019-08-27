@@ -177,7 +177,7 @@ namespace Alice.Tweedle
         {
             if (inMethod.IsStatic())
                 inBuilder.Append("static ");
-            inBuilder.Append(inMethod.ReturnType).Append(" ").Append(inMethod.Name).Append('(');
+            inBuilder.Append(inMethod.Type).Append(" ").Append(inMethod.Name).Append('(');
             int paramCount = 0;
             foreach(var requiredParam in inMethod.RequiredParams)
             {
