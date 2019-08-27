@@ -66,7 +66,7 @@ namespace Alice.Tweedle
                 }
             }
 
-            SetupSignature(inReturnType, requiredParams.ToArray(), optionalParams.ToArray());
+            SetupParameters(requiredParams.ToArray(), optionalParams.ToArray());
         }
 
         protected override void AddBodyStep(InvocationScope inScope, StepSequence ioMain)

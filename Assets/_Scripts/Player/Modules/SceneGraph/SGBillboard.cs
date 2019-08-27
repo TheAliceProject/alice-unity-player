@@ -23,8 +23,6 @@ namespace Alice.Player.Unity {
             Transform  backTransform;
             MeshFilter  backFilter;
             CreateModelObject(ShapeMesh, OpaqueMaterial, m_ModelTransform, out backTransform, out m_BackRenderer, out backFilter);
-            backTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
-            m_ModelTransform.localRotation = UnityEngine.Quaternion.Euler(0,180,0);
         }
 
         protected override void SetSize(UnityEngine.Vector3 size) {
