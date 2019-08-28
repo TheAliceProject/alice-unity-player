@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using Alice.Tweedle.Parse;
+using TMPro;
 
 public class WorldLoaderControl : MonoBehaviour
 {
     public RecentWorldButton recentWorldButtonPrefab;
     public Transform contentBox;
     public UnityObjectParser parser;
+    public TextMeshProUGUI versionString;
 
     private List<GameObject> activeButtons = new List<GameObject>();
     private List<string> recentWorlds = new List<string>();
@@ -18,6 +20,7 @@ public class WorldLoaderControl : MonoBehaviour
     void Start()
     {
         PopulateLevels();
+        versionString.text = string.Format("Player Ver {0} - Library Ver {1}", "1.0", PlayerLibraryManifest.Instance.GetLibraryVersion());
     }
 
     public void AddWorldToRecents(string file)
