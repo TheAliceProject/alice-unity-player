@@ -211,6 +211,7 @@ MonoBehaviour:
     type: 3}
   contentBox: {fileID: 7612658897906668719}
   parser: {fileID: 0}
+  versionString: {fileID: 4170412154501291896}
 --- !u!1 &1565839083502646
 GameObject:
   m_ObjectHideFlags: 0
