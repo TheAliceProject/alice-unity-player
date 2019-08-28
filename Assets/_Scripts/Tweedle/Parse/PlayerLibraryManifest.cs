@@ -18,6 +18,7 @@ namespace Alice.Tweedle.Parse {
 
         public string GetLibraryVersion()
         {
+            // Currently we only use one built in library
             if(m_BuiltInLibraries.Length > 0)
                 return m_BuiltInLibraries[0].identifier.version;
             else 
