@@ -30,6 +30,11 @@ namespace Alice.Player.Unity
                     m_PovListeners[i].CheckChanges();
                 }
             }
+
+            for (int i = 0; i < m_OcclusionListeners.Count; i++)
+            {
+                m_OcclusionListeners[i].UpdateOcclusions();
+            }
         }
 
         public void AddCollisionListener(CollisionEventListenerProxy listener)
