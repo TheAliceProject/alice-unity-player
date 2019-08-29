@@ -40,7 +40,7 @@ namespace Alice.Player.Unity
             projectedOnPlane.Clear();
             for (int i = 0; i < objectsToWatch.Count; i++){
                 Bounds bounds = objectsToWatch[i].GetBounds(true);
-                bounds.center = objectsToWatch[i].transform.position + new Vector3(0f, 0.5f, 0f);
+                bounds.center = objectsToWatch[i].transform.position + new UnityEngine.Vector3(0f, objectsToWatch[i].GetSize(false).y/2f, 0f);
 
                 boundingBoxPoints.points[0] = bounds.min;
                 boundingBoxPoints.points[1] = bounds.max;
@@ -56,6 +56,7 @@ namespace Alice.Player.Unity
                 thisPoints.SetModel(objectsToWatch[i]);
 
                 for (int j = 0; j < boundingBoxPoints.points.Count; j++){
+                    boundingBoxPoints.points[j] = RotatePointAroundPivot(boundingBoxPoints.points[j], objectsToWatch[i].transform.position, new Vector3(0f, objectsToWatch[i].transform.eulerAngles.y, 0f));
                     Ray ray = new Ray(transform.position, transform.position - boundingBoxPoints.points[j]);
                     float enter = 0;
                     castPlane.Raycast(ray, out enter);
@@ -141,6 +142,10 @@ namespace Alice.Player.Unity
                         break;
                 }
             }
+        }
+
+        public Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles) {
+            return Quaternion.Euler(angles) * (point - pivot) + pivot;
         }
 
         float SqDistancePtSegment( Vector3 a, Vector3 b, Vector3 p )
