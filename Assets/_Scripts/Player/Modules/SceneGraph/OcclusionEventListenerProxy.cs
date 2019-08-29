@@ -31,6 +31,20 @@ namespace Alice.Player.Unity {
                 Debug.LogError("Invalid interaction type in OcclusionEventListenerProxy");
         }
 
+        public void UpdateOcclusions()
+        {
+            for (int i = occludingPairs.Count - 1; i >= 0; i--){
+                occludingPairs[i].occluddingFrame--;
+                if(occludingPairs[i].occluddingFrame == 0){
+                    if(!onEnter && interactingObjects.IsThereOverlap(occludingPairs[i].model1, occludingPairs[i].model2)){
+                        CallEvent(occludingPairs[i].model1.owner, occludingPairs[i].model2.owner);
+                    }
+                    occludingPairs.Remove(occludingPairs[i]);
+                }
+            }
+            
+        }
+
         public void NotifyEvent(SGModel foregroundModel, SGModel backgroundModel)
         {
             OccludingPair occludingPair = null;
@@ -39,6 +53,7 @@ namespace Alice.Player.Unity {
                 if(occludingPairs[i].ContainsBoth(foregroundModel, backgroundModel))
                 {
                     occludingPair = occludingPairs[i];
+                    occludingPair.occluddingFrame = 2; // Reset frame count
                     break;
                 }
             }
@@ -47,11 +62,10 @@ namespace Alice.Player.Unity {
             {
                 occludingPair = new OccludingPair(foregroundModel, backgroundModel);
                 occludingPairs.Add(occludingPair);
-            }
 
-            if(interactingObjects.IsThereOverlap(foregroundModel, backgroundModel))
-            {
-                CallEvent(foregroundModel.owner, backgroundModel.owner);
+                if(onEnter && interactingObjects.IsThereOverlap(foregroundModel, backgroundModel)){
+                    CallEvent(foregroundModel.owner, backgroundModel.owner);
+                }
             }
         }
         
@@ -89,6 +103,7 @@ namespace Alice.Player.Unity {
     {
         public SGModel model1;
         public SGModel model2;
+        public int occluddingFrame = 2;
 
         public OccludingPair(SGModel mod1, SGModel mod2)
         {

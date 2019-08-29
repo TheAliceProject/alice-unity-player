@@ -38,8 +38,7 @@ namespace Alice.Player.Unity
 
             // Get our bounding box points
             projectedOnPlane.Clear();
-            for (int i = 0; i < objectsToWatch.Count; i++)
-            {
+            for (int i = 0; i < objectsToWatch.Count; i++){
                 Bounds bounds = objectsToWatch[i].GetBounds(true);
                 bounds.center = objectsToWatch[i].transform.position + new Vector3(0f, 0.5f, 0f);
 
@@ -56,8 +55,7 @@ namespace Alice.Player.Unity
                 BBPoints thisPoints = new BBPoints();
                 thisPoints.SetModel(objectsToWatch[i]);
 
-                for (int j = 0; j < boundingBoxPoints.points.Count; j++)
-                {
+                for (int j = 0; j < boundingBoxPoints.points.Count; j++){
                     Ray ray = new Ray(transform.position, transform.position - boundingBoxPoints.points[j]);
                     float enter = 0;
                     castPlane.Raycast(ray, out enter);
@@ -67,7 +65,6 @@ namespace Alice.Player.Unity
             }
 
             // Calculate if any line segments intersect
-            DrawPlane(castPlane, projectedOnPlane);
             CheckPointIntersections(projectedOnPlane);
         }
 
@@ -79,28 +76,32 @@ namespace Alice.Player.Unity
         }
 
         void CheckPointIntersections(List<BBPoints> planePoints){
+            // The whole goal of this is to check if one object is occluding another in relation to the camera. I am doing this by
+            // projecting the bounding box of the objects onto a plane, and checking if any line from one object intersects a line from
+            // any other object in the list. 
+            //
+            // Ways we could improve detecting occlusion:
+            // - Figure out some other way to do it in general (using raycasting? having the graphics card check which one is closer?)
+            // - Only check the 'outline' of the object on the plane instead of every point. But we'd need to run a convex hull algorithm first
+            // - Maybe we can break out early?
+
             // For every object
-            for(int i = 0; i < planePoints.Count; i++) 
-            {
+            for(int i = 0; i < planePoints.Count; i++){ // Hopefully they don't have TOO many checks for occluding objects.
                 // Compare to every other object
-                for(int j = 0; j < planePoints.Count; j++)
-                {
+                for(int j = 0; j < planePoints.Count; j++){
+                    bool breakOut = false; // We want to break out of the loop and move on to the next object asap if we found occlusion
                     if(j <= i)  // We've already compared these
                         continue;
                     
                     // For every point / line segment in object 1
-                    for(int k = 0; k < planePoints[i].points.Count; k++) // Maximum of 8 points using bounding box
-                    {
-                        for(int l = 0; l < planePoints[i].points.Count; l++) // Average of 4 iterations
-                        {
+                    for(int k = 0; k < planePoints[i].points.Count; k++){ // Maximum of 8 points using bounding box
+                        for(int l = 0; l < planePoints[i].points.Count; l++){ // Average of 4 iterations
                             if(k == l)
                                 continue;
 
                             // For every point / line segment in object 2
-                            for(int m = 0; m < planePoints[j].points.Count; m++) // Maximum of 8 points using bounding box
-                            {
-                                for(int n = 0; n < planePoints[j].points.Count; n++) // Average of 4 iterations
-                                {
+                            for(int m = 0; m < planePoints[j].points.Count; m++){ // Maximum of 8 points using bounding box
+                                for(int n = 0; n < planePoints[j].points.Count; n++){ // Average of 4 iterations
                                     if(m == n)
                                         continue;
                                     
@@ -110,29 +111,34 @@ namespace Alice.Player.Unity
                                     if((SqDistancePtSegment(planePoints[i].points[k], planePoints[i].points[l], intersection) < 0.01f) && 
                                         (SqDistancePtSegment(planePoints[j].points[m], planePoints[j].points[n], intersection) < 0.01f)) 
                                     {
-                                        // Found occlusion! 
-                                        Debug.DrawLine(planePoints[i].points[k], planePoints[i].points[l], Color.red);
-                                        Debug.DrawLine(planePoints[j].points[m], planePoints[j].points[n], Color.red);
-                                        SGModel foregroundModel, backgroundModel;
-                                        if(Vector3.Distance(transform.position, planePoints[j].associatedModel.transform.position) > Vector3.Distance(transform.position, planePoints[i].associatedModel.transform.position))
-                                        {
-                                            foregroundModel = planePoints[i].associatedModel;
-                                            backgroundModel = planePoints[j].associatedModel;
+                                        // Keep these in for future debuggings
+                                        //Debug.DrawLine(planePoints[i].points[k], planePoints[i].points[l], Color.red);
+                                        //Debug.DrawLine(planePoints[j].points[m], planePoints[j].points[n], Color.red);
+
+                                        // Found occlusion! See which is in front
+                                        if(Vector3.Distance(transform.position, planePoints[j].associatedModel.transform.position) > Vector3.Distance(transform.position, planePoints[i].associatedModel.transform.position)){
+                                            SceneGraph.Current.Scene.ObjectsOccluded(planePoints[i].associatedModel, planePoints[j].associatedModel);
                                         }
-                                        else
-                                        {
-                                            foregroundModel = planePoints[j].associatedModel;
-                                            backgroundModel = planePoints[i].associatedModel;
+                                        else{
+                                            SceneGraph.Current.Scene.ObjectsOccluded(planePoints[j].associatedModel, planePoints[i].associatedModel);
                                         }
-                                             
-                                        SceneGraph.Current.Scene.ObjectsOccluded(foregroundModel, backgroundModel);
+                                        // We know we've occluded, so stop comparing these objects
+                                        breakOut = true;
                                         break;
                                     }
                                     
                                 }
+                                if(breakOut)
+                                    break;
                             }
+                            if(breakOut)
+                                break;
                         }
+                        if(breakOut)
+                            break;
                     }
+                    if(breakOut)
+                        break;
                 }
             }
         }
@@ -172,14 +178,12 @@ namespace Alice.Player.Unity
             float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
 
             //is coplanar, and not parallel
-            if (Mathf.Abs(planarFactor) < 0.0001f && crossVec1and2.sqrMagnitude > 0.0001f)
-            {
+            if (Mathf.Abs(planarFactor) < 0.0001f && crossVec1and2.sqrMagnitude > 0.0001f){
                 float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
                 intersection = linePoint1 + (lineVec1 * s);
                 return true;
             }
-            else
-            {
+            else{
                 if(stop){
                     intersection = Vector3.zero;
                     return false;
@@ -190,72 +194,20 @@ namespace Alice.Player.Unity
             }
         }
 
-/*
-        void OnDrawGizmos()
-        {
-            Gizmos.DrawSphere(planePos, 0.5f);
-            Gizmos.color = Color.blue;
-            for (int i = 0; i < bbPoints.Count; i++){
-                for (int j = 0; j < bbPoints[i].points.Count; j++){
-                    Gizmos.DrawCube(bbPoints[i].points[j], new Vector3(0.1f, 0.1f, 0.1f));
-                }
-            }
-        }
-*/
-
-        void DrawPlane(Plane p, List<BBPoints> planePoints)
-        {
-            UnityEngine.Vector3 v3;
-            UnityEngine.Vector3 position = planePos;
-            if (p.normal.normalized != Vector3.forward)
-                v3 = Vector3.Cross(p.normal, Vector3.forward).normalized * p.normal.magnitude * 5f;
-            else
-                v3 = Vector3.Cross(p.normal, Vector3.up).normalized * p.normal.magnitude * 5f;
-
-            var corner0 = position + v3;
-            var corner2 = position - v3;
-            var q = Quaternion.AngleAxis(90.0f, p.normal);
-            v3 = q * v3;
-            var corner1 = position + v3;
-            var corner3 = position - v3;
-
-            Debug.DrawLine(corner0, corner2, Color.green);
-            Debug.DrawLine(corner1, corner3, Color.green);
-            Debug.DrawLine(corner0, corner1, Color.green);
-            Debug.DrawLine(corner1, corner2, Color.green);
-            Debug.DrawLine(corner2, corner3, Color.green);
-            Debug.DrawLine(corner3, corner0, Color.green);
-            Debug.DrawRay(position, p.normal, Color.red);
-
-            for (int i = 0; i < planePoints.Count; i++)
-            {
-                for (int j = 0; j < planePoints[i].points.Count; j++)
-                {
-                    for (int k = 0; k < planePoints[i].points.Count; k++){
-                        Debug.DrawLine(planePoints[i].points[j], planePoints[i].points[k], Color.yellow);
-                    }
-                }
-            }
-        }
-
         // Bounding box points, simply a list of 8 points.
         class BBPoints
         {
             public List<UnityEngine.Vector3> points;
             public SGModel associatedModel;
-            public BBPoints()
-            {
+            public BBPoints(){
                 points = new List<UnityEngine.Vector3>();
-                for (int i = 0; i < 8; i++)
-                {
+                for (int i = 0; i < 8; i++){
                     points.Add(Vector3.zero);
                 }
             }
-            public void SetModel(SGModel model)
-            {
+            public void SetModel(SGModel model){
                 associatedModel = model;
             }
         }
-
     } 
 }
