@@ -260,6 +260,11 @@ namespace Alice.Tweedle.VM
             return new MethodScope(this, methodName, invokeSuper);
         }
 
+        internal virtual TType CallingType(string methodName)
+        {
+            return parent != null ? parent.CallingType(methodName) : null;
+        }
+
         internal LambdaScope LambdaScope()
         {
             return new LambdaScope(this);

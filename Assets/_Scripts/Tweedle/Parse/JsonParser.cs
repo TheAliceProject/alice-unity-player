@@ -67,11 +67,13 @@ namespace Alice.Tweedle.Parse
                     LibraryManifest libAsset = new LibraryManifest(asset);
                     m_System.AddLibrary(libAsset);
                     asset = libAsset;
+                    Debug.Log("Loaded Library " + asset.Identifier.name + " version " + asset.Identifier.version);
                     break;
                 case ProjectType.World:
                     ProgramDescription worldAsset = new ProgramDescription(asset);
                     m_System.AddProgram(worldAsset);
                     asset = worldAsset;
+                    Debug.Log("Loaded Project produced in Alice version " + asset.provenance.aliceVersion);
                     break;
                 case ProjectType.Model:
                     ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);

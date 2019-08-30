@@ -13,6 +13,9 @@ namespace Alice.Tweedle
     {
         static public readonly string ConstructorName = ConstructorInfo.ConstructorName;
 
+        // Used to determine super invocations. Could be promoted to ITypeMember.
+        public TTypeRef ContainingType { get; private set; }
+
         #region ITypeMember
 
         public string Name { get; private set; }
@@ -21,14 +24,14 @@ namespace Alice.Tweedle
 
         public virtual void Link(TAssemblyLinkContext inContext, TType inOwnerType)
         {
+            ContainingType = inOwnerType;
             Type.Resolve(inContext);
-            ReturnType.Resolve(inContext);
 
             // Interop methods don't go through the same type checks
             bool bIsInterop = this.HasModifiers(MemberFlags.PInterop);
             
-            if (!bIsInterop && !ReturnType.Get().IsValidReturnType())
-                throw new TweedleLinkException("Return type " + ReturnType.Name + " is not a valid return type");
+            if (!bIsInterop && !Type.Get().IsValidReturnType())
+                throw new TweedleLinkException("Return type " + Type.Name + " is not a valid return type");
 
             for (int i = 0; i < RequiredParams.Length; ++i)
             {
@@ -46,7 +49,6 @@ namespace Alice.Tweedle
 
         #endregion // ITypeMember
 
-        public TTypeRef ReturnType { get; private set; }
         public TParameter[] RequiredParams { get; private set; }
         public TParameter[] OptionalParams { get; private set; }
 
@@ -79,9 +81,8 @@ namespace Alice.Tweedle
             Flags = inFlags | MemberFlags.Method;
         }
 
-        protected void SetupSignature(TTypeRef inReturnType, TParameter[] inRequired = null, TParameter[] inOptional = null)
+        protected void SetupParameters(TParameter[] inRequired = null, TParameter[] inOptional = null)
         {
-            ReturnType = inReturnType;
             RequiredParams = inRequired ?? TParameter.EMPTY_PARAMS;
             OptionalParams = inOptional ?? TParameter.EMPTY_PARAMS;
 

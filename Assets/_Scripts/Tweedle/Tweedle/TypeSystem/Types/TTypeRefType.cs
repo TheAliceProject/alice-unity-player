@@ -41,7 +41,7 @@ namespace Alice.Tweedle
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            throw new TweedleNoMembersException(this, "Constructor");
+            throw new TweedleConstructorUnsupportedException(this);
         }
 
         public override bool IsReferenceType()

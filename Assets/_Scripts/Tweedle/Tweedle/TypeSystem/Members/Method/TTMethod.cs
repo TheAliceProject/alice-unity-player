@@ -19,7 +19,7 @@ namespace Alice.Tweedle
                 inFlags |= MemberFlags.Instance;
 
             SetupMember(inName, inResultType, inFlags);
-            SetupSignature(inResultType, inRequiredParams, inOptionalParams);
+            SetupParameters(inRequiredParams, inOptionalParams);
         }
 
         protected override void AddBodyStep(InvocationScope inScope, StepSequence ioMain)
