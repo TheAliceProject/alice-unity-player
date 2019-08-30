@@ -1,5 +1,7 @@
-﻿using Alice.Tweedle.VM;
+﻿using System.Text.RegularExpressions;
+using Alice.Tweedle.VM;
 using NUnit.Framework;
+using UnityEngine.TestTools;
 
 namespace Alice.Tweedle.Parse
 {
@@ -100,12 +102,13 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        public void DecimalNumberNotShouldImplicitlyCastToWholeNumber()
+        public void DecimalNumberShouldNotImplicitlyCastToWholeNumber()
         {
             Init();
             RunStatement("DecimalNumber x <- 3.0;", scope);
-            
-            Assert.Throws<TweedleRuntimeException>(()=> {
+
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Unable to treat value 3 of type DecimalNumber as type WholeNumber"));
+            Assert.Throws<TweedleRuntimeException>(() => {
                 RunStatement("WholeNumber y <- x;", scope);
             });
         }
@@ -123,7 +126,8 @@ namespace Alice.Tweedle.Parse
         public void DecimalNumberShouldNotExplicitlyCastToTextString()
         {
             Init();
-            Assert.Throws<TweedleRuntimeException>(()=> {
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Cannot cast type DecimalNumber to type TextString"));
+            Assert.Throws<TweedleRuntimeException>(() => {
                 RunStatement("Any x <- 3.5555 as TextString;", scope);
             });
         }
