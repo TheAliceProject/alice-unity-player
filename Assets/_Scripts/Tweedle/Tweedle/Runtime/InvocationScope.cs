@@ -50,5 +50,10 @@ namespace Alice.Tweedle
             Result = result;
             m_Returned = true;
         }
+
+        internal override TType CallingType(string methodName)
+        {
+            return callingScope != null ? callingScope.CallingType(methodName) : base.CallingType(methodName);
+        }
     }
 }
