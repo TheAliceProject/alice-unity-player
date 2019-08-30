@@ -194,6 +194,7 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
+        [Ignore("APUVR-108 Fix early return in doTogether blocks")]
         public void DoTogetherSequenceShouldReturnAfterAllStatementsHaveExecuted()
         {
             ExecutionScope scope = GetTestScopeWithReturnTestClass();

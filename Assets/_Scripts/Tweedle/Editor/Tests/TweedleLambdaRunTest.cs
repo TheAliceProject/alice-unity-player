@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using Alice.Tweedle.VM;
+using System.Text.RegularExpressions;
+using UnityEngine.TestTools;
 
 namespace Alice.Tweedle.Parse
 {
@@ -112,6 +114,7 @@ namespace Alice.Tweedle.Parse
         [Test]
         public void SingleParamLambdaShouldBeRejectedAsMultiParamLambda()
         {
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Unable to treat value Alice.Tweedle.TLambda of type <WholeNumber->Number> as type <WholeNumber,WholeNumber->WholeNumber>"));
             Assert.Throws<TweedleRuntimeException>(
                 () => ExecuteStatement("WholeNumber x <- lam.sendSingleLambdaToDoubleEval();"));
         }

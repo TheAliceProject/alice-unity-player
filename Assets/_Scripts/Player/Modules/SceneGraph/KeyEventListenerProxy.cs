@@ -8,7 +8,7 @@ using Alice.Player.Primitives;
 using BeauRoutine;
 
 namespace Alice.Player.Unity {
-    public class KeyEventListnerProxy{
+    public class KeyEventListenerProxy{
         
         public enum KeyPressType{
             Normal,
@@ -30,7 +30,7 @@ namespace Alice.Player.Unity {
                                                         Key.DIGIT_0, Key.DIGIT_1, Key.DIGIT_2, Key.DIGIT_3, Key.DIGIT_4, Key.DIGIT_5, Key.DIGIT_6, Key.DIGIT_7, Key.DIGIT_8, Key.DIGIT_9,  };
 
 
-        public KeyEventListnerProxy(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy, KeyPressType keyType){
+        public KeyEventListenerProxy(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy, KeyPressType keyType){
             this.keyListener = listener;
             this.overlappingEventPolicy = overlappingEventPolicy;
             this.heldKeyPolicy = heldKeyPolicy;
@@ -72,17 +72,6 @@ namespace Alice.Player.Unity {
 
         public void CallEvent(int theKey)
         {
-            CheckPolicies();
-            AsyncReturn callReturn;
-            callReturn = keyListener.Call(theKey);
-            callActive = true;
-            callReturn.OnReturn(() => {
-                returnedCall(theKey);
-            });
-        }
-
-        private void CheckPolicies()
-        {
             if(callActive){
                 if(overlappingEventPolicy == OverlappingEventPolicy.Ignore){
                     return;
@@ -92,6 +81,13 @@ namespace Alice.Player.Unity {
                     return;
                 }
             }
+
+            AsyncReturn callReturn;
+            callReturn = keyListener.Call(theKey);
+            callActive = true;
+            callReturn.OnReturn(() => {
+                returnedCall(theKey);
+            });
         }
 
         // For queued events
