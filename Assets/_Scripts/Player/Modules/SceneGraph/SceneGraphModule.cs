@@ -294,9 +294,8 @@ namespace Alice.Player.Modules {
             AsyncReturn asyncReturn = new AsyncReturn();
 
             SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
-            var entityXform = SceneGraph.Current.FindEntity(entity);
-            var p = entityXform.cachedTransform.localPosition;
-            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, true, 
+            var sgEntity = SceneGraph.Current.FindEntity(entity);
+            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, true, 
                                                 (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
                                                 bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
         
@@ -320,9 +319,8 @@ namespace Alice.Player.Modules {
             AsyncReturn asyncReturn = new AsyncReturn();
 
             SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
-            var entityXform = SceneGraph.Current.FindEntity(entity);
-            var p = entityXform.cachedTransform.localPosition;
-            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, p, bubbleText, false, 
+            var sgEntity = SceneGraph.Current.FindEntity(entity);
+            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, false, 
                                                 (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
                                                 bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
         

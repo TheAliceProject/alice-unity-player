@@ -28,7 +28,7 @@ namespace Alice.Player.Unity
         public void AddMouseListener(MouseEventListenerProxy listener){
             m_MouseClickListeners.Add(listener);
         }
-        
+
         public void HandleMouseEvents(){
             if (Input.GetKeyDown(KeyCode.Mouse0)){ // Left mouse click
                 lastMouseDownTime = Time.time;
