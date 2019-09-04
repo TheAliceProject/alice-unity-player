@@ -16,8 +16,11 @@ namespace Alice.Player.Unity {
         }
 
         public override void CleanUp() {
-            Camera.transform.SetParent(null, true);
-            Camera = null;
+            if (Camera != null)
+            {
+                Camera.transform.SetParent(null, true);
+                Camera = null;
+            }
         }
     }
 }

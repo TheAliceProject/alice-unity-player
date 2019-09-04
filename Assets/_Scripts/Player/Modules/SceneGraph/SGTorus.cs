@@ -62,19 +62,6 @@ namespace Alice.Player.Unity {
             CacheMeshBounds();
         }
 
-        
-
-        public override void CleanUp() {
-            if (m_MeshWasCopied) {
-                Destroy(m_MeshFilter.mesh);
-                m_MeshFilter.mesh = null;
-            }
-
-            base.CleanUp();
-
-
-        }
-
         private void OnDrawGizmosSelected() {
             Gizmos.matrix = m_ModelTransform.localToWorldMatrix;
             Gizmos.DrawWireCube(UnityEngine.Vector3.zero, MeshBounds.size);
