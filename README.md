@@ -1,2 +1,2 @@
 # alice-unity-player
-Build using Unity Version 2017.3.0f3
+Build using Unity Version 2018.3.7f1
