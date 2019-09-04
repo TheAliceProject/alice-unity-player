@@ -31,6 +31,7 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(FontTypeModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(KeyModule)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(HeldKeyPolicyModule)));
+            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(InteractionModule)));
             
             // interop primitives
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Portion)));
