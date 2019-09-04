@@ -11,13 +11,11 @@ namespace Alice.Player.Modules
         
         void OnBecameVisible()
         {
-            Debug.Log(name + " became visible!");
             SendObjectInView(this.gameObject, true);
         }
 
         void OnBecameInvisible()
         {
-            Debug.Log(name + " became invisible!");
             SendObjectInView(this.gameObject, false);
         }
 
