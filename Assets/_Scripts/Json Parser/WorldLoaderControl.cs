@@ -20,7 +20,7 @@ public class WorldLoaderControl : MonoBehaviour
     void Start()
     {
         PopulateLevels();
-        versionString.text = string.Format("Player Ver {0} - Library Ver {1}", "1.0", PlayerLibraryManifest.Instance.GetLibraryVersion());
+        versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
     }
 
     public void AddWorldToRecents(string file)
@@ -46,7 +46,7 @@ public class WorldLoaderControl : MonoBehaviour
             line = fs.ReadLine();
             if (line == null)
                 break;
-            else if (string.IsNullOrEmpty(line) || string.IsNullOrWhiteSpace(line))
+            else if (line.Trim() == "") // Really looking for \n or \r or some combination here. Should never happen in theory unless someone purposefully messes with this file
                 continue;
 
             recentWorlds.Add(line);
