@@ -48,7 +48,7 @@ namespace Alice.Tweedle.Parse
             {
                 ModalWindow modalWindow = Instantiate(modalWindowPrefab, uiCanvas.transform);
                 string message = "This world is not compatible with this player.\n<b>Player:</b>\n   " + exception.ExpectedVersion + "\n<b>World:</b>\n   " + exception.DiscoveredVersion;
-                modalWindow.SetData("Info", message);
+                modalWindow.SetData("Oops!", message);
                 return;
             }
 
