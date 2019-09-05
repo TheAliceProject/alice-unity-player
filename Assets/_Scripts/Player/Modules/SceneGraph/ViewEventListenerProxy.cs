@@ -41,7 +41,6 @@ namespace Alice.Player.Unity {
             if(onEnter != entered)
                 return;
 
-            Debug.Log(inViewCounts[obj]);
             if(validModels.Contains(obj))
             {
                 if(entered && inViewCounts[obj] == 1 || !entered && inViewCounts[obj] == 0)
