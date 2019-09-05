@@ -33,7 +33,7 @@ namespace Alice.Tweedle.Parse {
         public bool TryGetLibrary(ProjectIdentifier inIdentifier, out PlayerLibraryReference outLibRef) {
 
             foreach (var libRef in m_BuiltInLibraries) {
-                if (libRef.identifier .Equals(inIdentifier)) {
+                if (libRef.identifier .EqualsVersionMatch(inIdentifier)) {
                     outLibRef = libRef;
                     return true;
                 }
