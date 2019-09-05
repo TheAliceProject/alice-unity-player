@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine.SceneManagement;
@@ -37,7 +38,7 @@ namespace TriLib.Extras
         /// <summary>
         /// Available avatar files list.
         /// </summary>
-        private string[] _files;
+        private string[] _files = null;
 
         /// <summary>
         /// UI Window area.
@@ -132,7 +133,7 @@ namespace TriLib.Extras
             _avatarLoader = FindObjectOfType<AvatarLoader>();
             if (_avatarLoader == null)
             {
-#if ASSIMP_OUTPUT_MESSAGES
+#if TRILIB_OUTPUT_MESSAGES
                 Debug.LogError("Could not find any Avatar Loader script instance.");
 #endif
                 return;
@@ -140,10 +141,10 @@ namespace TriLib.Extras
 #if UNITY_EDITOR
             var modelsPath = Path.Combine(Path.GetFullPath("./Assets/TriLib/TriLibExtras/Samples"), ModelsDirectory);
 #else
-            var modelsPath = Path.Combine(Path.GetFullPath("."), ModelsDirectory); 
+                        var modelsPath = Path.Combine(Path.GetFullPath("."), ModelsDirectory); 
 #endif
-            var supportedExtensions = AssetLoader.GetSupportedFileExtensions();
-            _files = Directory.GetFiles(modelsPath, "*.*").Where(x => supportedExtensions.Contains(Path.GetExtension(x).ToLower())).ToArray();
+            var supportedExtensions = AssetLoaderBase.GetSupportedFileExtensions();
+            _files = Directory.GetFiles(modelsPath, "*.*").Where(x => supportedExtensions.Contains("*" + FileUtils.GetFileExtension(x) + ";")).ToArray();
             _windowRect = new Rect(20, 20, 240, Screen.height - 40);
         }
 
@@ -171,20 +172,55 @@ namespace TriLib.Extras
             {
                 if (GUILayout.Button(Path.GetFileName(file)))
                 {
-                    var thirdPersonController = Instantiate(ThirdPersonControllerPrefab);
-                    thirdPersonController.transform.DestroyChildren(true);
-                    if (_avatarLoader.LoadAvatar(file, thirdPersonController))
-                    {
-                        if (ActiveCameraGameObject != null)
-                        {
-                            Destroy(ActiveCameraGameObject.gameObject);
-                        }
-                        ActiveCameraGameObject = Instantiate(FreeLookCamPrefab);
-                    }
+                    LoadFile(file);
                 }
             }
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
+        }
+
+        private void LoadFromMemory(byte[] data, string fileExtension)
+        {
+            var thirdPersonController = Instantiate(ThirdPersonControllerPrefab);
+            thirdPersonController.transform.DestroyChildren(true);
+            if (_avatarLoader.LoadAvatarFromMemory(data, fileExtension, thirdPersonController))
+            {
+                if (ActiveCameraGameObject != null)
+                {
+                    Destroy(ActiveCameraGameObject.gameObject);
+                }
+                ActiveCameraGameObject = Instantiate(FreeLookCamPrefab);
+            }
+            else
+            {
+                if (ActiveCameraGameObject != null)
+                {
+                    Destroy(ActiveCameraGameObject.gameObject);
+                }
+                Destroy(thirdPersonController);
+            }
+        }
+
+        private void LoadFile(string file)
+        {
+            var thirdPersonController = Instantiate(ThirdPersonControllerPrefab);
+            thirdPersonController.transform.DestroyChildren(true);
+            if (_avatarLoader.LoadAvatar(file, thirdPersonController))
+            {
+                if (ActiveCameraGameObject != null)
+                {
+                    Destroy(ActiveCameraGameObject.gameObject);
+                }
+                ActiveCameraGameObject = Instantiate(FreeLookCamPrefab);
+            }
+            else
+            {
+                if (ActiveCameraGameObject != null)
+                {
+                    Destroy(ActiveCameraGameObject.gameObject);
+                }
+                Destroy(thirdPersonController);
+            }
         }
     }
 }

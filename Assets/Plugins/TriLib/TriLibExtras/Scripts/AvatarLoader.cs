@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace TriLib.Extras {
+namespace TriLib.Extras
+{
     /// <summary>
     /// Represents an avatar loader behaviour. The main class used to load avatars.
     /// </summary>
-    public class AvatarLoader : MonoBehaviour {
+    public class AvatarLoader : MonoBehaviour
+    {
         /// <summary>
         /// Current Avatar reference.
         /// </summary>
@@ -51,7 +53,7 @@ namespace TriLib.Extras {
         /// <summary>
         /// Defines how the lower arm's roll/twisting is distributed between the shoulder and elbow joints.
         /// </summary>
-        public float UpperArmTwist = 0.5f; 
+        public float UpperArmTwist = 0.5f;
 
         /// <summary>
         /// Defines how the upper leg's roll/twisting is distributed between the thigh and knee joints.
@@ -122,7 +124,7 @@ namespace TriLib.Extras {
 
             {"Left Little Proximal", "L Finger4", true},
             {"Left Little Intermediate", "L Finger41", true},
-            {"Left Little Distal", "L Finger42", true},       
+            {"Left Little Distal", "L Finger42", true},
 
             {"Right Thumb Proximal", "R Finger0", true},
             {"Right Thumb Intermediate", "R Finger01", true},
@@ -194,7 +196,7 @@ namespace TriLib.Extras {
 
             {"Left Little Proximal", "LeftHandPinky1", true},
             {"Left Little Intermediate", "LeftHandPinky2", true},
-            {"Left Little Distal", "LeftHandPinky3", true},       
+            {"Left Little Distal", "LeftHandPinky3", true},
 
             {"Right Thumb Proximal", "RightHandThumb1", true},
             {"Right Thumb Intermediate", "RightHandThumb2", true},
@@ -225,10 +227,68 @@ namespace TriLib.Extras {
         /// <summary>
         /// Setups the Avatar Loader.
         /// </summary>
-        protected void Start() {
+        protected void Start()
+        {
             _loaderOptions = AssetLoaderOptions.CreateInstance();
             _loaderOptions.UseLegacyAnimations = false;
+            _loaderOptions.DontGenerateAvatar = true;
             _loaderOptions.AnimatorController = RuntimeAnimatorController;
+        }
+
+        /// <summary>
+        /// Loads the avatar from specified filename.
+        /// </summary>
+        /// <param name="data">Avatar file data.</param>
+        /// <param name="extension">File extension.</param>
+        /// <param name="templateAvatar">Template <see cref="UnityEngine.GameObject"/>.</param>  
+        /// <returns><c>true</c>, if avatar was loaded, <c>false</c> otherwise.</returns>
+        public bool LoadAvatarFromMemory(byte[] data, string extension, GameObject templateAvatar)
+        {
+            GameObject loadedObject;
+            if (CurrentAvatar != null)
+            {
+                Destroy(CurrentAvatar);
+            }
+            try
+            {
+                using (var assetLoader = new AssetLoader())
+                {
+                    loadedObject = assetLoader.LoadFromMemoryWithTextures(data, extension, _loaderOptions, templateAvatar);
+                }
+            }
+#if TRILIB_OUTPUT_MESSAGES
+            catch (Exception exception)
+            {
+                Debug.LogError(exception.ToString());
+                return false;
+            }
+#else
+            catch
+            {
+                if (CurrentAvatar != null)
+                {
+                    Destroy(CurrentAvatar);
+                }
+                return false;
+            }
+#endif
+            if (loadedObject != null)
+            {
+                if (templateAvatar != null)
+                {
+                    loadedObject.transform.parent = templateAvatar.transform;
+                    CurrentAvatar = templateAvatar;
+                }
+                else
+                {
+                    CurrentAvatar = loadedObject;
+                }
+                CurrentAvatar.transform.localScale = Vector3.one * Scale;
+                CurrentAvatar.tag = "Player";
+                SetupCapsuleCollider();
+                return BuildAvatar();
+            }
+            return false;
         }
 
         /// <summary>
@@ -239,6 +299,7 @@ namespace TriLib.Extras {
         /// <returns><c>true</c>, if avatar was loaded, <c>false</c> otherwise.</returns>
         public bool LoadAvatar(string filename, GameObject templateAvatar)
         {
+
             GameObject loadedObject;
             if (CurrentAvatar != null)
             {
@@ -251,25 +312,31 @@ namespace TriLib.Extras {
                     loadedObject = assetLoader.LoadFromFile(filename, _loaderOptions, templateAvatar);
                 }
             }
-            #if ASSIMP_OUTPUT_MESSAGES
+#if TRILIB_OUTPUT_MESSAGES
             catch (Exception exception)
             {
-               
                 Debug.LogError(exception.ToString());
                 return false;
             }
-            #else
-            catch {
+#else
+            catch
+            {
+                if (CurrentAvatar != null)
+                {
+                    Destroy(CurrentAvatar);
+                }
                 return false;
             }
-            #endif
+#endif
             if (loadedObject != null)
-            {  
+            {
                 if (templateAvatar != null)
                 {
                     loadedObject.transform.parent = templateAvatar.transform;
                     CurrentAvatar = templateAvatar;
-                } else  {
+                }
+                else
+                {
                     CurrentAvatar = loadedObject;
                 }
                 CurrentAvatar.transform.localScale = Vector3.one * Scale;
@@ -284,28 +351,32 @@ namespace TriLib.Extras {
         /// Builds the object avatar, based on pre-defined templates (Mixamo, Biped), or based on the <see cref="TriLib.Extras.AvatarLoader.CustomBoneNames"></see>, if it's not null or empty.
         /// </summary>
         /// <returns><c>true</c> if avatar was built, <c>false</c> otherwise.</returns>
-        private bool BuildAvatar() {
+        private bool BuildAvatar()
+        {
             var animator = CurrentAvatar.GetComponent<Animator>();
-            if (animator == null) {
-                #if ASSIMP_OUTPUT_MESSAGES
-                Debug.LogError("No Animator Component found on current Avatar.");
-                #endif                
+            if (animator == null)
+            {
+#if TRILIB_OUTPUT_MESSAGES
+                Debug.LogError("No animator component found on current avatar");
+#endif
                 return false;
             }
             var skeletonBones = new List<SkeletonBone>();
             var humanBones = new List<HumanBone>();
             var boneTransforms = FindOutBoneTransforms(CurrentAvatar);
-            if (boneTransforms.Count == 0) {
-#if ASSIMP_OUTPUT_MESSAGES
+            if (boneTransforms.Count == 0)
+            {
+#if TRILIB_OUTPUT_MESSAGES
                 Debug.LogError("No suitable bones format found");
 #endif
                 return false;
             }
-            foreach (var boneTransform in boneTransforms) {
+            foreach (var boneTransform in boneTransforms)
+            {
                 humanBones.Add(CreateHumanBone(boneTransform.Key, boneTransform.Value.name));
             }
             var transforms = CurrentAvatar.GetComponentsInChildren<Transform>();
-            var rootTransform = transforms[1]; 
+            var rootTransform = transforms[1];
             skeletonBones.Add(CreateSkeletonBone(rootTransform));
             rootTransform.localEulerAngles = Vector3.zero;
             for (var i = 0; i < transforms.Length; i++)
@@ -336,6 +407,7 @@ namespace TriLib.Extras {
             humanDescription.human = humanBones.ToArray();
             animator.avatar = AvatarBuilder.BuildHumanAvatar(CurrentAvatar, humanDescription);
             return true;
+
         }
 
         /// <summary>
@@ -343,25 +415,31 @@ namespace TriLib.Extras {
         /// </summary>
         /// <returns>The bone hierarchy.</returns>
         /// <param name="loadedObject">Previously loaded object.</param>
-        private Dictionary<string, Transform> FindOutBoneTransforms(GameObject loadedObject) {
+        private Dictionary<string, Transform> FindOutBoneTransforms(GameObject loadedObject)
+        {
             var boneTransforms = new Dictionary<string, Transform>();
             var boneRelationshipLists = new List<BoneRelationshipList>();
             boneRelationshipLists.Add(BipedBoneNames);
             boneRelationshipLists.Add(MixamoBoneNames);
-            if (CustomBoneNames != null) {
+            if (CustomBoneNames != null)
+            {
                 boneRelationshipLists.Add(CustomBoneNames);
             }
             var lastBonesValid = false;
-            foreach (var boneRelationshipList in boneRelationshipLists) {
-                if (lastBonesValid) {
+            foreach (var boneRelationshipList in boneRelationshipLists)
+            {
+                if (lastBonesValid)
+                {
                     break;
                 }
                 lastBonesValid = true;
-                foreach (var boneRelationship in boneRelationshipList) {
+                foreach (var boneRelationship in boneRelationshipList)
+                {
                     var boneTransform = loadedObject.transform.FindDeepChild(boneRelationship.BoneName, true);
                     if (boneTransform == null)
                     {
-                        if (!boneRelationship.Optional) {
+                        if (!boneRelationship.Optional)
+                        {
                             boneTransforms.Clear();
                             lastBonesValid = false;
                             break;
@@ -369,7 +447,7 @@ namespace TriLib.Extras {
                         continue;
                     }
                     boneTransforms.Add(boneRelationship.HumanBone, boneTransform);
-                }    
+                }
             }
             return boneTransforms;
         }
@@ -377,9 +455,11 @@ namespace TriLib.Extras {
         /// <summary>
         /// Setups the avatar Capsule Collider to encapsulate the loaded object.
         /// </summary>
-        private void SetupCapsuleCollider() {
+        private void SetupCapsuleCollider()
+        {
             var capsuleCollider = CurrentAvatar.GetComponent<CapsuleCollider>();
-            if (capsuleCollider == null) {
+            if (capsuleCollider == null)
+            {
                 return;
             }
             var bounds = CurrentAvatar.transform.EncapsulateBounds();
@@ -426,7 +506,8 @@ namespace TriLib.Extras {
     /// <summary>
     /// Represents a human bone to Unity bone relationship.
     /// </summary>
-    public class BoneRelationship {
+    public class BoneRelationship
+    {
         public string HumanBone; //Human Bone name.
         public string BoneName; //Unity Bone name.
         public bool Optional; //Is this bone optional?

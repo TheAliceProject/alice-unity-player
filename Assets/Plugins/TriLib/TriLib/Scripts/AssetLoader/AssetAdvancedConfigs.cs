@@ -47,10 +47,10 @@ namespace TriLib
         /// </summary>
         AiUVTransform,
 
-		/// <summary>
-		/// AiMatrix config type.
-		/// </summary>
-		AiMatrix
+        /// <summary>
+        /// AiMatrix config type.
+        /// </summary>
+        AiMatrix
     }
 
     /// <summary>
@@ -213,7 +213,14 @@ namespace TriLib
         ColladaImportIgnoreUpDirection,
 
         /// <summary>
-        /// Threshold used to determine if a bone is kept or removed during the <see cref="TriLib.TriLibPostProcessSteps.Debone"/> step.
+        /// If this property is set to true, the Collada names will be used as the
+        /// * node name. The default is to use the id tag (resp. sid tag, if no id tag is present)
+        /// * instead.
+        /// </summary>
+        ColladaImportUseColladaNames,
+
+        /// <summary>
+        /// Threshold used to determine if a bone is kept or removed during the <see cref="TriLib.AssimpPostProcessSteps.Debone"/> step.
         /// </summary>
         DeboneThreshold,
 
@@ -237,6 +244,11 @@ namespace TriLib
 		/// Specifies whether the FBX importer will use legacy embedded texture naming
         /// </summary>
 		FBXImportEmbeddedTextureLegacyNaming,
+
+        /// <summary>
+        /// Specifies whether the FBX importer will disable materials color factor
+        /// </summary>
+        FBXImportDisableDiffuseFactor,
 
         /// <summary>
         /// Specifies whether the FBX importer will act in strict mode in which only the FBX 2013<br/>format 
@@ -282,7 +294,7 @@ namespace TriLib
         FBXImportReadAnimations,
 
         /// <summary>
-        /// Configures the <see cref="TriLib.TriLibPostProcessSteps.FindDegenerates"/> step
+        /// Configures the <see cref="TriLib.AssimpPostProcessSteps.FindDegenerates"/> step
         /// to remove degenerated primitives from the import immediately.
         /// <para>The default behavior converts degenerated triangles to lines and
         /// degenerated lines to points.</para>
@@ -290,7 +302,7 @@ namespace TriLib
         FindDegeneratesRemove,
 
         /// <summary>
-        /// Input parameter to the <see cref="TriLib.TriLibPostProcessSteps.FindInvalidData"/> step.
+        /// Input parameter to the <see cref="TriLib.AssimpPostProcessSteps.FindInvalidData"/> step.
         /// It specifies the floating point accuracy for animation values, specifically the epsilon
         /// during the comparison. The step checks for animation tracks where all frame values are absolutely equal
         /// and removes them. Two floats are considered equal if the invariant <c>abs(n0-n1) > epislon</c> holds
@@ -346,9 +358,14 @@ namespace TriLib
         /// </summary>
         ImportGlobalKeyframe,
 
+        ///<summary>
+        ///Specifies a global key factor for scale, float value
+        /// </summary>
+        GlobalScaleFactor,
+
         /// <summary>
         /// Sets the size of the post-transform vertex cache to optimize vertices for. This is
-        /// for the <see cref="TriLib.TriLibPostProcessSteps.ImproveCacheLocality"/> step. The size
+        /// for the <see cref="TriLib.AssimpPostProcessSteps.ImproveCacheLocality"/> step. The size
         /// is given in vertices. Of course you can't know how the vertex format will exactly look
         /// like after the import returns, but you can still guess what your meshes will
         /// probably have. The default value *has* resulted in slight performance improvements
@@ -365,7 +382,7 @@ namespace TriLib
 
         /// <summary>
         /// Sets the maximum number of bones that can affect a single vertex. This is used
-        /// by the <see cref="TriLib.TriLibPostProcessSteps.LimitBoneWeights"/> step.
+        /// by the <see cref="TriLib.AssimpPostProcessSteps.LimitBoneWeights"/> step.
         /// </summary>
         LimitBoneWeightsMaxWeights,
 
@@ -467,17 +484,17 @@ namespace TriLib
         /// </summary>
         OgreImportMaterialFile,
 
-		///<summary>
-		///	The Ogre importer will detect the texture usage from the filename. Normally a texture is loaded as a color map, if no target is specified
-		///	in the material file. If this is enabled, then TriLib will try to detect the type from the texture filename postfix:
-		///	<list type="bullet"><item><description>Normal Maps: _n, _nrm, _nrml, _normal, _normals, _normalmap</description></item><item><description>Specular Maps: _s, _spec, _specular, _specularmap</description></item><item><description>Light Maps: _l, _light, _lightmap, _occ, _occlusion</description></item><item><description>Displacement Maps: _dis, _displacement</description></item></list>The matching is case insensitive. Postfix is taken between the last "_" and last ".". The default behavior is to detect type from lower cased
-		///	texture unit name by matching against: normalmap, specular-map, lightmap, and displacement-map. For both cases if no match is found then,
-		///	<see cref="TextureType.Diffuse"/> is used.
-		///</summary>
+        ///<summary>
+        ///	The Ogre importer will detect the texture usage from the filename. Normally a texture is loaded as a color map, if no target is specified
+        ///	in the material file. If this is enabled, then TriLib will try to detect the type from the texture filename postfix:
+        ///	<list type="bullet"><item><description>Normal Maps: _n, _nrm, _nrml, _normal, _normals, _normalmap</description></item><item><description>Specular Maps: _s, _spec, _specular, _specularmap</description></item><item><description>Light Maps: _l, _light, _lightmap, _occ, _occlusion</description></item><item><description>Displacement Maps: _dis, _displacement</description></item></list>The matching is case insensitive. Postfix is taken between the last "_" and last ".". The default behavior is to detect type from lower cased
+        ///	texture unit name by matching against: normalmap, specular-map, lightmap, and displacement-map. For both cases if no match is found then,
+        ///	diffuse texture type is used.
+        ///</summary>
         OgreImportTextureTypeFromFilename,
 
         /// <summary>
-        /// Configures the <see cref="TriLib.TriLibPostProcessSteps.OptimizeGraph"/> step
+        /// Configures the <see cref="TriLib.AssimpPostProcessSteps.OptimizeGraph"/> step
         /// to preserve nodes matching a name in a given list. This is a list of 1 to n strings, whitespace ' ' serves as a delimter character.
         /// Identifiers containing whitespaces must be enclosed in *single* quotation marks. Carriage returns
         /// and tabs are treated as white space.
@@ -493,7 +510,7 @@ namespace TriLib
         PreTransformVerticesNormalize,
 
         /// <summary>
-        /// Configures the <see cref="TriLib.TriLibPostProcessSteps.PreTransformVertices"/> step
+        /// Configures the <see cref="TriLib.AssimpPostProcessSteps.PreTransformVertices"/> step
         /// to keep the scene hierarchy. Meshes are moved to world-space, but no optimization
         /// is performed where meshes with the same materials are not joined.
         /// <para>This option could be of used if you have a scene hierarchy that contains
@@ -502,19 +519,19 @@ namespace TriLib
         PreTransformVerticesKeepHierarchy,
 
         /// <summary>
-        /// Configures the <see cref="TriLib.TriLibPostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node transformation
+        /// Configures the <see cref="TriLib.AssimpPostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node transformation
         /// before transforming vertices.
         /// </summary>
         PreTransformVerticesRootTransformation,
 
         /// <summary>
-        /// Configures the <see cref="TriLib.TriLibPostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node
+        /// Configures the <see cref="TriLib.AssimpPostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node
         /// transformation before transforming vertices.
         /// </summary>
         PreTransformVerticesAddRootTransformation,
 
         /// <summary>
-        /// Input parameter to the <see cref="TriLib.TriLibPostProcessSteps.RemoveComponent"/> step.
+        /// Input parameter to the <see cref="TriLib.AssimpPostProcessSteps.RemoveComponent"/> step.
         /// It specifies the parts of the data structure to be removed.
         /// <para>This is a bitwise combination of the <see cref="TriLib.AiComponent"/> flag. If no valid mesh is remaining after
         /// the step is executed, the import FAILS.</para>
@@ -522,7 +539,7 @@ namespace TriLib
         RemoveComponentFlags,
 
         /// <summary>
-        /// Configures the <see cref="TriLib.TriLibPostProcessSteps.RemoveRedundantMaterials"/> step to
+        /// Configures the <see cref="TriLib.AssimpPostProcessSteps.RemoveRedundantMaterials"/> step to
         /// keep materials matching a name in a given list. This is a list of
         /// 1 to n strings where whitespace ' ' serves as a delimiter character. Identifiers
         /// containing whitespaces must be enclosed in *single* quotation marks. Tabs or
@@ -539,7 +556,12 @@ namespace TriLib
         SMDImportKeyframe,
 
         /// <summary>
-        /// Input parameter to the <see cref="TriLib.TriLibPostProcessSteps.SortByPrimitiveType"/> step.
+        ///Smd load multiple animations
+        /// </summary>
+        SmdLoadAnimationList,
+
+        /// <summary>
+        /// Input parameter to the <see cref="TriLib.AssimpPostProcessSteps.SortByPrimitiveType"/> step.
         /// It specifies which primitive types are to be removed by the step.
         /// <para>This is a bitwise combination of the <see cref="TriLib.AiPrimitiveType"/> flag.
         /// Specifying ALL types is illegal.</para>
@@ -547,20 +569,20 @@ namespace TriLib
         SortByPrimitiveTypeRemove,
 
         /// <summary>
-        /// Maximum bone cone per mesh for the <see cref="TriLib.TriLibPostProcessSteps.SplitByBoneCount"/> step.
+        /// Maximum bone cone per mesh for the <see cref="TriLib.AssimpPostProcessSteps.SplitByBoneCount"/> step.
         /// </summary>
         SplitByBoneCountMaxBones,
 
         /// <summary>
         /// Sets the maximum number of triangles a mesh can contain. This is used by the
-        /// <see cref="TriLib.TriLibPostProcessSteps.SplitLargeMeshes"/> step to determine
+        /// <see cref="TriLib.AssimpPostProcessSteps.SplitLargeMeshes"/> step to determine
         /// whether a mesh must be split or not.
         /// </summary>
         SplitLargeMeshesTriangleLimit,
 
         /// <summary>
         /// Sets the maximum number of vertices in a mesh. This is used by the
-        /// <see cref="TriLib.TriLibPostProcessSteps.SplitLargeMeshes"/> step to determine
+        /// <see cref="TriLib.AssimpPostProcessSteps.SplitLargeMeshes"/> step to determine
         /// whether a mesh must be split or not.
         /// </summary>
         SplitLargeMeshesVertexLimit,
@@ -575,7 +597,7 @@ namespace TriLib
         TerImportMakeUVs,
 
         /// <summary>
-        /// Input parameter to the <see cref="TriLib.TriLibPostProcessSteps.TransformUVCoords"/> step.
+        /// Input parameter to the <see cref="TriLib.AssimpPostProcessSteps.TransformUVCoords"/> step.
         /// It specifies which UV transformations are to be evaluated.
         /// <para>This is bitwise combination of the <see cref="TriLib.AiUVTransform"/> flag.</para>
         /// </summary>
@@ -600,7 +622,7 @@ namespace TriLib
         /// <summary>
         /// Asset advanced configs total group count.
         /// </summary>
-        public const int GroupCount = 34;
+        public const int GroupCount = 35;
 
         /// <summary>
         /// Asset advanced config keys.
@@ -614,11 +636,13 @@ namespace TriLib
             "PP_CT_MAX_SMOOTHING_ANGLE",
             "PP_CT_TEXTURE_CHANNEL_INDEX",
             "IMPORT_COLLADA_IGNORE_UP_DIRECTION",
+            "IMPORT_COLLADA_USE_COLLADA_NAMES",
             "PP_DB_THRESHOLD",
             "PP_DB_ALL_OR_NONE",
             "IMPORT_FBX_READ_ALL_MATERIALS",
             "IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES",
-			"IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING",
+            "IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING",
+            "IMPORT_FBX_DISABLE_DIFFUSE_FACTOR",
             "IMPORT_FBX_STRICT_MODE",
             "IMPORT_FBX_READ_LIGHTS",
             "IMPORT_FBX_READ_MATERIALS",
@@ -636,6 +660,7 @@ namespace TriLib
             "IMPORT_NO_SKELETON_MESHES",
             "FAVOUR_SPEED",
             "IMPORT_GLOBAL_KEYFRAME",
+            "GLOBAL_SCALE_FACTOR",
             "PP_ICL_PTCACHE_SIZE",
             "IMPORT_IRR_ANIM_FPS",
             "PP_LBW_MAX_WEIGHTS",
@@ -661,6 +686,7 @@ namespace TriLib
             "PP_RVC_FLAGS",
             "PP_RRM_EXCLUDE_LIST",
             "IMPORT_SMD_KEYFRAME",
+            "IMPORT_SMD_LOAD_ANIMATION_LIST",
             "PP_SBP_REMOVE",
             "PP_SBBC_MAX_BONES",
             "PP_SLM_TRIANGLE_LIMIT",
@@ -668,7 +694,7 @@ namespace TriLib
             "IMPORT_TER_MAKE_UVS",
             "PP_TUV_EVALUATE",
             "IMPORT_UNREAL_KEYFRAME",
-            "UNREAL_HANDLE_FLAGS",
+            "UNREAL_HANDLE_FLAGS"
         };
 
         /// <summary>
@@ -784,10 +810,22 @@ namespace TriLib
                     minValue = null;
                     maxValue = null;
                     break;
+                case "IMPORT_COLLADA_USE_COLLADA_NAMES":
+                    assetAdvancedConfigType = AssetAdvancedConfigType.Bool;
+                    className = "ColladaImportUseColladaNames";
+                    description = "Specifies whether the Collada loader should use Collada names as node names.\n\n\nIf this property is set to true, the Collada names will be used as the\nnode name. The default is to use the id tag (resp. sid tag, if no id tag is present)\ninstead.";
+                    group = "ColladaImport";
+                    hasDefaultValue = true;
+                    hasMinValue = false;
+                    hasMaxValue = false;
+                    defaultValue = false;
+                    minValue = null;
+                    maxValue = null;
+                    break;
                 case "PP_DB_THRESHOLD":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Float;
                     className = "DeboneThreshold";
-                    description = "Threshold used to determine if a bone is kept or removed during the TriLib.TriLibPostProcessSteps.Debone step.";
+                    description = "Threshold used to determine if a bone is kept or removed during the TriLib.AssimpPostProcessSteps.Debone step.";
                     group = "Debone";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -832,10 +870,22 @@ namespace TriLib
                     minValue = null;
                     maxValue = null;
                     break;
-				case "IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING":
+                case "IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Bool;
                     className = "FBXImportEmbeddedTextureLegacyNaming";
                     description = "Specifies whether the FBX importer will use legacy embedded texture naming.";
+                    group = "FBXImport";
+                    hasDefaultValue = true;
+                    hasMinValue = false;
+                    hasMaxValue = false;
+                    defaultValue = false;
+                    minValue = null;
+                    maxValue = null;
+                    break;
+                case "IMPORT_FBX_DISABLE_DIFFUSE_FACTOR":
+                    assetAdvancedConfigType = AssetAdvancedConfigType.Bool;
+                    className = "FBXImportDisableMaterialsFactor";
+                    description = "Specifies whether the FBX importer will disable materials color factor.";
                     group = "FBXImport";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -943,7 +993,7 @@ namespace TriLib
                 case "PP_FD_REMOVE":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Bool;
                     className = "FindDegeneratesRemove";
-                    description = "Configures the TriLib.TriLibPostProcessSteps.FindDegenerates step\nto remove degenerated primitives from the import immediately.\nThe default behavior converts degenerated triangles to lines and\ndegenerated lines to points.";
+                    description = "Configures the TriLib.AssimpPostProcessSteps.FindDegenerates step\nto remove degenerated primitives from the import immediately.\nThe default behavior converts degenerated triangles to lines and\ndegenerated lines to points.";
                     group = "FindDegenerates";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -955,7 +1005,7 @@ namespace TriLib
                 case "PP_FID_ANIM_ACCURACY":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Float;
                     className = "FindInvalidDataAnimAccuracy";
-                    description = "Input parameter to the TriLib.TriLibPostProcessSteps.FindInvalidData step.\nIt specifies the floating point accuracy for animation values, specifically the epislon\nduring the comparison. The step checks for animation tracks where all frame values are absolutely equal\nand removes them. Two floats are considered equal if the invariant abs(n0-n1) > epislon holds\ntrue for all vector/quaternion components.";
+                    description = "Input parameter to the TriLib.AssimpPostProcessSteps.FindInvalidData step.\nIt specifies the floating point accuracy for animation values, specifically the epislon\nduring the comparison. The step checks for animation tracks where all frame values are absolutely equal\nand removes them. Two floats are considered equal if the invariant abs(n0-n1) > epislon holds\ntrue for all vector/quaternion components.";
                     group = "FindInvalidData";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1048,10 +1098,22 @@ namespace TriLib
                     minValue = null;
                     maxValue = null;
                     break;
+                case "GLOBAL_SCALE_FACTOR":
+                    assetAdvancedConfigType = AssetAdvancedConfigType.Float;
+                    className = "GlobalScaleFactor";
+                    description = "Global key factor for scale, float value.";
+                    group = "Import";
+                    hasDefaultValue = true;
+                    hasMinValue = false;
+                    hasMaxValue = false;
+                    defaultValue = 1.0f;
+                    minValue = null;
+                    maxValue = null;
+                    break;
                 case "PP_ICL_PTCACHE_SIZE":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Integer;
                     className = "ImproveCacheLocalityPostTransformCacheSize";
-                    description = "Sets the size of the post-transform vertex cache to optimize vertices for. This is\nfor the TriLib.TriLibPostProcessSteps.ImproveCacheLocality step. The size\nis given in vertices. Of course you can't know how the vertex format will exactly look\nlike after the import returns, but you can still guess what your meshes will\nprobably have. The default value *has* resulted in slight performance improvements\nfor most Nvidia/AMD cards since 2002.";
+                    description = "Sets the size of the post-transform vertex cache to optimize vertices for. This is\nfor the TriLib.AssimpPostProcessSteps.ImproveCacheLocality step. The size\nis given in vertices. Of course you can't know how the vertex format will exactly look\nlike after the import returns, but you can still guess what your meshes will\nprobably have. The default value *has* resulted in slight performance improvements\nfor most Nvidia/AMD cards since 2002.";
                     group = "ImproveCacheLocality";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1075,7 +1137,7 @@ namespace TriLib
                 case "PP_LBW_MAX_WEIGHTS":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Integer;
                     className = "LimitBoneWeightsMaxWeights";
-                    description = "Sets the maximum number of bones that can affect a single vertex. This is used\nby the TriLib.TriLibPostProcessSteps.LimitBoneWeights step.";
+                    description = "Sets the maximum number of bones that can affect a single vertex. This is used\nby the TriLib.AssimpPostProcessSteps.LimitBoneWeights step.";
                     group = "LimitBoneWeights";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1255,7 +1317,7 @@ namespace TriLib
                 case "PP_OG_EXCLUDE_LIST":
                     assetAdvancedConfigType = AssetAdvancedConfigType.String;
                     className = "OptimizeGraphExcludeList";
-                    description = "Configures the TriLib.TriLibPostProcessSteps.OptimizeGraph step\nto preserve nodes matching a name in a given list. This is a list of 1 to n strings, whitespace ' ' serves as a delimter character.\nIdentifiers containing whitespaces must be enclosed in *single* quotation marks. Carriage returns\nand tabs are treated as white space.\nIf a node matches one of these names, it will not be modified or removed by the\npostprocessing step.";
+                    description = "Configures the TriLib.AssimpPostProcessSteps.OptimizeGraph step\nto preserve nodes matching a name in a given list. This is a list of 1 to n strings, whitespace ' ' serves as a delimter character.\nIdentifiers containing whitespaces must be enclosed in *single* quotation marks. Carriage returns\nand tabs are treated as white space.\nIf a node matches one of these names, it will not be modified or removed by the\npostprocessing step.";
                     group = "OptimizeGraph";
                     hasDefaultValue = false;
                     hasMinValue = false;
@@ -1279,7 +1341,7 @@ namespace TriLib
                 case "PP_PTV_KEEP_HIERARCHY":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Bool;
                     className = "PreTransformVerticesKeepHierarchy";
-                    description = "Configures the TriLib.TriLibPostProcessSteps.PreTransformVertices step\nto keep the scene hierarchy. Meshes are moved to worldspace, but no optimization\nis performed where meshes with the same materials are not joined.\nThis option could be of used if you have a scene hierarchy that contains\nimportant additional information which you intend to parse.";
+                    description = "Configures the TriLib.AssimpPostProcessSteps.PreTransformVertices step\nto keep the scene hierarchy. Meshes are moved to worldspace, but no optimization\nis performed where meshes with the same materials are not joined.\nThis option could be of used if you have a scene hierarchy that contains\nimportant additional information which you intend to parse.";
                     group = "PreTransformVertices";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1288,10 +1350,10 @@ namespace TriLib
                     minValue = null;
                     maxValue = null;
                     break;
-                case "PP_PTV_ROOT_TRANSFORMATION": 
+                case "PP_PTV_ROOT_TRANSFORMATION":
                     assetAdvancedConfigType = AssetAdvancedConfigType.AiMatrix;
                     className = "PreTransformVerticesRootTransformation";
-                    description = "Configures the TriLib.TriLibPostProcessSteps.PreTransformVertices step to use a user defined matrix as the scene root node transformation\nbefore transforming vertices.";
+                    description = "Configures the TriLib.AssimpPostProcessSteps.PreTransformVertices step to use a user defined matrix as the scene root node transformation\nbefore transforming vertices.";
                     group = "PreTransformVertices";
                     hasDefaultValue = false;
                     hasMinValue = false;
@@ -1303,7 +1365,7 @@ namespace TriLib
                 case "PP_PTV_ADD_ROOT_TRANSFORMATION":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Bool;
                     className = "PreTransformVerticesAddRootTransformation";
-                    description = "Configures the TriLib.TriLibPostProcessSteps.PreTransformVertices step to use a user defined matrix as the scene root node\ntransformation before transforming vertices.";
+                    description = "Configures the TriLib.AssimpPostProcessSteps.PreTransformVertices step to use a user defined matrix as the scene root node\ntransformation before transforming vertices.";
                     group = "PreTransformVertices";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1315,7 +1377,7 @@ namespace TriLib
                 case "PP_RVC_FLAGS":
                     assetAdvancedConfigType = AssetAdvancedConfigType.AiComponent;
                     className = "RemoveComponentFlags";
-                    description = "Input parameter to the TriLib.TriLibPostProcessSteps.RemoveComponent step.\nIt specifies the parts of the data structure to be removed.\nThis is a bitwise combination of the TriLib.AiComponent flag. If no valid mesh is remaining after\nthe step is executed, the import FAILS.";
+                    description = "Input parameter to the TriLib.AssimpPostProcessSteps.RemoveComponent step.\nIt specifies the parts of the data structure to be removed.\nThis is a bitwise combination of the TriLib.AiComponent flag. If no valid mesh is remaining after\nthe step is executed, the import FAILS.";
                     group = "RemoveComponent";
                     hasDefaultValue = false;
                     hasMinValue = false;
@@ -1327,7 +1389,7 @@ namespace TriLib
                 case "PP_RRM_EXCLUDE_LIST":
                     assetAdvancedConfigType = AssetAdvancedConfigType.String;
                     className = "RemoveRedundantMaterialsExcludeList";
-                    description = "Configures the TriLib.TriLibPostProcessSteps.RemoveRedundantMaterials step to\nkeep materials matching a name in a given list. This is a list of\n1 to n strings where whitespace ' ' serves as a delimiter character. Identifiers\ncontaining whitespaces must be enclosed in *single* quotation marks. Tabs or\ncarriage returns are treated as whitespace.\nIf a material matches one of these names, it will not be modified\nor removed by the post processing step nor will other materials be replaced\nby a reference to it.";
+                    description = "Configures the TriLib.AssimpPostProcessSteps.RemoveRedundantMaterials step to\nkeep materials matching a name in a given list. This is a list of\n1 to n strings where whitespace ' ' serves as a delimiter character. Identifiers\ncontaining whitespaces must be enclosed in *single* quotation marks. Tabs or\ncarriage returns are treated as whitespace.\nIf a material matches one of these names, it will not be modified\nor removed by the post processing step nor will other materials be replaced\nby a reference to it.";
                     group = "RemoveRedundantMaterials";
                     hasDefaultValue = false;
                     hasMinValue = false;
@@ -1348,10 +1410,22 @@ namespace TriLib
                     minValue = null;
                     maxValue = null;
                     break;
+                case "IMPORT_SMD_LOAD_ANIMATION_LIST":
+                    assetAdvancedConfigType = AssetAdvancedConfigType.Bool;
+                    className = "SMDLoadAnimationList";
+                    description = "Smd load multiple animations.";
+                    group = "SMDImport";
+                    hasDefaultValue = true;
+                    hasMinValue = false;
+                    hasMaxValue = false;
+                    defaultValue = true;
+                    minValue = null;
+                    maxValue = null;
+                    break;
                 case "PP_SBP_REMOVE":
                     assetAdvancedConfigType = AssetAdvancedConfigType.AiPrimitiveType;
                     className = "SortByPrimitiveTypeRemove";
-                    description = "Input parameter to the TriLib.TriLibPostProcessSteps.SortByPrimitiveType step.\nIt specifies which primitive types are to be removed by the step.\nThis is a bitwise combination of the TriLib.AiPrimitiveType flag.\nSpecifying ALL types is illegal.";
+                    description = "Input parameter to the TriLib.AssimpPostProcessSteps.SortByPrimitiveType step.\nIt specifies which primitive types are to be removed by the step.\nThis is a bitwise combination of the TriLib.AiPrimitiveType flag.\nSpecifying ALL types is illegal.";
                     group = "SortByPrimitiveType";
                     hasDefaultValue = false;
                     hasMinValue = false;
@@ -1363,7 +1437,7 @@ namespace TriLib
                 case "PP_SBBC_MAX_BONES":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Integer;
                     className = "SplitByBoneCountMaxBones";
-                    description = "Maximum bone cone per mesh for the TriLib.TriLibPostProcessSteps.SplitByBoneCount step.";
+                    description = "Maximum bone cone per mesh for the TriLib.AssimpPostProcessSteps.SplitByBoneCount step.";
                     group = "SplitByBoneCount";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1375,7 +1449,7 @@ namespace TriLib
                 case "PP_SLM_TRIANGLE_LIMIT":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Integer;
                     className = "SplitLargeMeshesTriangleLimit";
-                    description = "Sets the maximum number of triangles a mesh can contain. This is used by the\nTriLib.TriLibPostProcessSteps.SplitLargeMeshes step to determine\nwhether a mesh must be split or not.";
+                    description = "Sets the maximum number of triangles a mesh can contain. This is used by the\nTriLib.AssimpPostProcessSteps.SplitLargeMeshes step to determine\nwhether a mesh must be split or not.";
                     group = "SplitLargeMeshes";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1387,7 +1461,7 @@ namespace TriLib
                 case "PP_SLM_VERTEX_LIMIT":
                     assetAdvancedConfigType = AssetAdvancedConfigType.Integer;
                     className = "SplitLargeMeshesVertexLimit";
-                    description = "Sets the maximum number of vertices in a mesh. This is used by the\nTriLib.TriLibPostProcessSteps.SplitLargeMeshes step to determine\nwhether a mesh must be split or not.";
+                    description = "Sets the maximum number of vertices in a mesh. This is used by the\nTriLib.AssimpPostProcessSteps.SplitLargeMeshes step to determine\nwhether a mesh must be split or not.";
                     group = "SplitLargeMeshes";
                     hasDefaultValue = true;
                     hasMinValue = false;
@@ -1411,7 +1485,7 @@ namespace TriLib
                 case "PP_TUV_EVALUATE":
                     assetAdvancedConfigType = AssetAdvancedConfigType.AiUVTransform;
                     className = "TransformUVCoordsEvaluate";
-                    description = "Input parameter to the TriLib.TriLibPostProcessSteps.TransformUVCoords step.\nIt specifies which UV transformations are to be evaluated.\nThis is bitwise combination of the TriLib.AiUVTransform flag.";
+                    description = "Input parameter to the TriLib.AssimpPostProcessSteps.TransformUVCoords step.\nIt specifies which UV transformations are to be evaluated.\nThis is bitwise combination of the TriLib.AiUVTransform flag.";
                     group = "TransformUVCoords";
                     hasDefaultValue = false;
                     hasMinValue = false;
@@ -1456,7 +1530,7 @@ namespace TriLib
                     minValue = null;
                     maxValue = null;
                     break;
-                #endregion
+                    #endregion
             }
         }
     }
@@ -1492,20 +1566,110 @@ namespace TriLib
         /// </summary>
         public string StringValue;
 
-		/// <summary>
-		/// Config Translation value.
-		/// </summary>
-		public UnityEngine.Vector3 TranslationValue;
+        /// <summary>
+        /// Config Translation value.
+        /// </summary>
+        public UnityEngine.Vector3 TranslationValue;
 
-		/// <summary>
-		/// Config Rotation value.
-		/// </summary>
-		public UnityEngine.Vector3 RotationValue;
+        /// <summary>
+        /// Config Rotation value.
+        /// </summary>
+        public UnityEngine.Vector3 RotationValue;
 
-		/// <summary>
-		/// Config Scale value.
-		/// </summary>
-		public UnityEngine.Vector3 ScaleValue;
+        /// <summary>
+        /// Config Scale value.
+        /// </summary>
+        public UnityEngine.Vector3 ScaleValue;
+
+        /// <summary>
+        /// Creates a new integer advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="value">Config value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, int value)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), value);
+        }
+
+        /// <summary>
+        /// Creates a new float advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="value">Config value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, float value)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), value);
+        }
+
+        /// <summary>
+        /// Creates a new bool advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="value">Config value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, bool value)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), value);
+        }
+
+        /// <summary>
+        /// Creates a new string advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="value">Config value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, string value)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), value);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="AiComponent"/> advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="value">Config value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, AiComponent value)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), value);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="AiPrimitiveType"/> advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="value">Config value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, AiPrimitiveType value)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), value);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="AiUVTransform"/> advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="value">Config value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, AiUVTransform value)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), value);
+        }
+
+        /// <summary>
+        /// Creates a new matrix advanced config.
+        /// </summary>
+        /// <returns>The config.</returns>
+        /// <param name="className">Config class name.</param>
+        /// <param name="translation">Translation value.</param>
+        /// <param name="rotation">Rotation value.</param>
+        /// <param name="scale">Scale value.</param>
+        public static AssetAdvancedConfig CreateConfig(AssetAdvancedPropertyClassNames className, UnityEngine.Vector3 translation, UnityEngine.Vector3 rotation, UnityEngine.Vector3 scale)
+        {
+            return new AssetAdvancedConfig(AssetAdvancedPropertyMetadata.GetConfigKey(className), translation, rotation, scale);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TriLib.AssetAdvancedConfig"/> class.
@@ -1576,7 +1740,7 @@ namespace TriLib
         public AssetAdvancedConfig(string key, AiComponent defaultValue)
         {
             Key = key;
-            IntValue = (int)defaultValue;
+            IntValue = (int)defaultValue >> 1;
         }
 
         /// <summary>
@@ -1587,7 +1751,7 @@ namespace TriLib
         public AssetAdvancedConfig(string key, AiPrimitiveType defaultValue)
         {
             Key = key;
-            IntValue = (int)defaultValue;
+            IntValue = (int)defaultValue >> 1;
         }
 
         /// <summary>
@@ -1598,7 +1762,7 @@ namespace TriLib
         public AssetAdvancedConfig(string key, AiUVTransform defaultValue)
         {
             Key = key;
-            IntValue = (int)defaultValue;
+            IntValue = (int)defaultValue >> 1;
         }
 
         /// <summary>
@@ -1606,14 +1770,14 @@ namespace TriLib
         /// </summary>
         /// <param name="key">Config Key.</param>
         /// <param name="translation">Translation default value.</param>
-        /// <param name="rotation">Rotation  default value.</param>
-        /// <param name="scale">Scale  default value.</param>
+        /// <param name="rotation">Rotation default value.</param>
+        /// <param name="scale">Scale default value.</param>
         public AssetAdvancedConfig(string key, UnityEngine.Vector3 translation, UnityEngine.Vector3 rotation, UnityEngine.Vector3 scale)
-		{
-			Key = key;
-			TranslationValue = translation;
-			RotationValue = rotation;
-			ScaleValue = scale;
-		}
+        {
+            Key = key;
+            TranslationValue = translation;
+            RotationValue = rotation;
+            ScaleValue = scale;
+        }
     }
 }

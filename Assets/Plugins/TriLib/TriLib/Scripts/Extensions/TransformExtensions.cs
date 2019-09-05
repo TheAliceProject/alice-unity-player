@@ -67,14 +67,19 @@ namespace TriLib
         /// </example>
         public static Bounds EncapsulateBounds(this Transform transform)
         {
-            var bounds = new Bounds();
+            Bounds bounds;
             var renderers = transform.GetComponentsInChildren<Renderer>();
-            if (renderers != null)
+            if (renderers != null && renderers.Length > 0)
             {
-                foreach (var renderer in renderers)
+                bounds = renderers[0].bounds;
+                for (var i = 1; i < renderers.Length; i++)
                 {
+                    var renderer = renderers[i];
                     bounds.Encapsulate(renderer.bounds);
                 }
+            } else
+            {
+                bounds = new Bounds();
             }
             return bounds;
         }

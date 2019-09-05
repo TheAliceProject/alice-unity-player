@@ -3,29 +3,79 @@ using System.IO;
 
 namespace TriLib {
     /// <summary>
-    /// Contains IO helper functions.
+    /// Contains file helper functions.
     /// </summary>
 	public static class FileUtils
     {
+        /// <summary>
+        /// Gets the short filename from a full filename.
+        /// </summary>
+        /// <returns>The short filename.</returns>
+        /// <param name="filename">Full filename.</param>
+        public static string GetShortFilename(string filename)
+        {
+            var indexOfBackslash = filename.LastIndexOf ("\\");
+            if (indexOfBackslash >= 0) {
+                return filename.Substring (indexOfBackslash + 1);
+            }
+            var indexOfSlash = filename.LastIndexOf ("/");
+            if (indexOfSlash >= 0) {
+                return filename.Substring (indexOfSlash + 1);
+            }
+            return filename;
+        }
+
 		/// <summary>
 		/// Gets the file directory.
 		/// </summary>
 		/// <returns>The file directory.</returns>
-		/// <param name="filename">Filename.</param>
+		/// <param name="filename">Full filename.</param>
         public static string GetFileDirectory(string filename) {
-            var lastDash = filename.LastIndexOf('/');
-            return filename.Substring(0, lastDash);
+            var indexOfBackslash = filename.LastIndexOf ("\\");
+            if (indexOfBackslash >= 0) {
+                return filename.Substring (0, indexOfBackslash);
+            }
+            var indexOfSlash = filename.LastIndexOf ("/");
+            if (indexOfSlash >= 0) {
+                return filename.Substring (0, indexOfSlash);
+            }
+            return null;
         }
 
 		/// <summary>
 		/// Gets the filename without extension.
 		/// </summary>
 		/// <returns>The filename without extension.</returns>
-		/// <param name="filename">Filename.</param>
-        public static string GetFilenameWithoutExtension(string filename) {
-            var lastDash = filename.LastIndexOf('/');
+		/// <param name="filename">Full filename.</param>
+		public static string GetFilenameWithoutExtension(string filename) {
+            var indexOfDot = filename.LastIndexOf('.');
+            if (indexOfDot < 0)
+            {
+                return null;
+            }
+            var indexOfBackslash = filename.LastIndexOf ("\\");
+            if (indexOfBackslash >= 0) {
+                return filename.Substring (indexOfBackslash + 1, indexOfDot - indexOfBackslash - 1);
+            }
+            var indexOfSlash = filename.LastIndexOf ("/");
+            if (indexOfSlash >= 0) {
+                return filename.Substring(indexOfSlash + 1, indexOfDot - indexOfSlash - 1);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the filename extension.
+        /// </summary>
+        /// <returns>The filename extension.</returns>
+        /// <param name="filename">Full filename.</param>
+        public static string GetFileExtension(string filename) {
             var lastDot = filename.LastIndexOf('.');
-            return filename.Substring(lastDash, lastDot);
+            if (lastDot < 0)
+            {
+                return null;
+            }
+            return filename.Substring(lastDot).ToLowerInvariant();
         }
 
 		/// <summary>
@@ -64,6 +114,28 @@ namespace TriLib {
 				return new byte[0];
 			}
 		}
+
+        /// <summary>
+        /// Creates a file stream for given filename.
+        /// </summary>
+        /// <returns>The created FileStream.</returns>
+        /// <param name="filename">Filename.</param>
+        public static FileStream LoadFileStream(string filename)
+        {
+            try
+            {
+                if (filename == null)
+                {
+                    return null;
+                }
+
+                return File.OpenRead(filename.Replace('\\', '/'));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }
 

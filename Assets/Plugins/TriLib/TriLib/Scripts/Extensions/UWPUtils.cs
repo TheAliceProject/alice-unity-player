@@ -1,4 +1,4 @@
-﻿#if (UNITY_WINRT && !UNITY_EDITOR_WIN)
+﻿#if !UNITY_EDITOR && UNITY_WINRT && (NET_4_6 || NETFX_CORE || NET_STANDARD_2_0)
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace TriLib {
     /// <summary>
-    /// Represents a series of Universal Windows Platform misc. functions.
+    /// Represents a series of Universal Windows Platform functions.
     /// </summary>
     public static class UWPUtils {
         /// <summary>
         /// Reads a StorageFile into a Byte array.
         /// </summary>
         /// <param name="storageFile">StorageFile to read.</param>
-        /// <returns></returns>
+        /// <returns>The storage file bytes.</returns>
         public static async Task<byte[]> ReadStorageFileIntoBuffer(Windows.Storage.StorageFile storageFile)
         {
             byte[] result;

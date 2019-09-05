@@ -8,40 +8,35 @@ namespace TriLib
     /// <summary>
     ///     Represents the internal Assimp library functions and helpers.
     ///     @warning Do not modify!
-    ///     @note Documentation to be done.
     /// </summary>
     public static class AssimpInterop
     {
         #region DllImport
-
-#if (UNITY_WINRT && !UNITY_EDITOR_WIN)
-		public const string DllPath = "assimp-uwp";
-#elif (!UNITY_WINRT && UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-        public const string DllPath = "assimp";
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_WINRT)
+        private const string DllPath = "assimp";
 #elif (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
-		public const string DllPath = "libassimp";
+		private const string DllPath = "libassimp";
+#elif (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
+		private const string DllPath = "assimp";
 #elif (UNITY_IOS && !UNITY_EDITOR)
-		public const string DllPath = "__Internal";
+		private const string DllPath = "__Internal";
 #elif (UNITY_WEBGL && !UNITY_EDITOR)
-		public const string DllPath = "__Internal";
-#elif (UNITY_STANDALONE_LINUX)
-		public const string DllPath = "assimp";
+		private const string DllPath = "__Internal";
 #else
-		public const string DllPath = "libassimp";
+		private const string DllPath = "libassimp";
 #endif
-
         #endregion
 
         #region Generated
 
         private const int MaxStringLength = 1024;
         private const int MaxInputStringLength = 2048;
-        private static readonly bool Is32Bits = IntPtr.Size == 4;
-        private static readonly int IntSize = Is32Bits ? 4 : 8;
+        public static readonly bool Is32Bits = IntPtr.Size == 4;
+        public static readonly int IntSize = Is32Bits ? 4 : 8;
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiCreatePropertyStore")]
-        public static extern IntPtr _aiCreatePropertyStore();
+        private static extern IntPtr _aiCreatePropertyStore();
 
         public static IntPtr ai_CreatePropertyStore()
         {
@@ -51,7 +46,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiReleasePropertyStore")]
-        public static extern void _aiReleasePropertyStore(IntPtr ptrPropertyStore);
+        private static extern void _aiReleasePropertyStore(IntPtr ptrPropertyStore);
 
         public static void ai_CreateReleasePropertyStore(IntPtr ptrPropertyStore)
         {
@@ -60,7 +55,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiSetImportPropertyInteger")]
-        public static extern IntPtr _aiSetImportPropertyInteger(IntPtr ptrStore, IntPtr name, int value);
+        private static extern IntPtr _aiSetImportPropertyInteger(IntPtr ptrStore, IntPtr name, int value);
 
         public static IntPtr ai_SetImportPropertyInteger(IntPtr ptrStore, string name, int value)
         {
@@ -72,7 +67,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiSetImportPropertyFloat")]
-        public static extern IntPtr _aiSetImportPropertyFloat(IntPtr ptrStore, IntPtr name, float value);
+        private static extern IntPtr _aiSetImportPropertyFloat(IntPtr ptrStore, IntPtr name, float value);
 
         public static IntPtr ai_SetImportPropertyFloat(IntPtr ptrStore, string name, float value)
         {
@@ -84,7 +79,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiSetImportPropertyString")]
-        public static extern IntPtr _aiSetImportPropertyString(IntPtr ptrStore, IntPtr name, IntPtr ptrValue);
+        private static extern IntPtr _aiSetImportPropertyString(IntPtr ptrStore, IntPtr name, IntPtr ptrValue);
 
         public static IntPtr ai_SetImportPropertyString(IntPtr ptrStore, string name, string value)
         {
@@ -96,28 +91,32 @@ namespace TriLib
             return result;
         }
 
-		[DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
-		EntryPoint = "aiSetImportPropertyMatrix")]
-		public static extern IntPtr _aiSetImportPropertyMatrix(IntPtr ptrStore, IntPtr name, IntPtr ptrValue);
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiSetImportPropertyMatrix")]
+        private static extern IntPtr _aiSetImportPropertyMatrix(IntPtr ptrStore, IntPtr name, IntPtr ptrValue);
 
-		public static IntPtr ai_SetImportPropertyMatrix(IntPtr ptrStore, string name, Vector3 translation, Vector3 rotation, Vector3 scale)
-		{
-			var stringBuffer = GetStringBuffer(name);
-			var buffer = Matrix4x4ToAssimp (translation, rotation, scale);
-			var result = _aiSetImportPropertyMatrix(ptrStore, stringBuffer.AddrOfPinnedObject(), buffer.AddrOfPinnedObject());
-			stringBuffer.Free();
-			buffer.Free ();
-			return result;
-		}
-        
+        public static IntPtr ai_SetImportPropertyMatrix(IntPtr ptrStore, string name, Vector3 translation, Vector3 rotation, Vector3 scale)
+        {
+            var stringBuffer = GetStringBuffer(name);
+            var buffer = Matrix4x4ToAssimp(translation, rotation, scale);
+            var result = _aiSetImportPropertyMatrix(ptrStore, stringBuffer.AddrOfPinnedObject(), buffer.AddrOfPinnedObject());
+            stringBuffer.Free();
+            buffer.Free();
+            return result;
+        }
+
+        public delegate IntPtr DataCallback(string pFile, int fileId, ref int fileSize);
+        public delegate bool ExistsCallback(string pFile, int fileId);
+        public delegate void ProgressCallback(float progress);
+
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiImportFileFromMemory")]
-        public static extern IntPtr _aiImportFileFromMemory(IntPtr ptrBuffer, uint uintLength, uint uintFlags, string strHint);
+        private static extern IntPtr _aiImportFileFromMemory(IntPtr ptrBuffer, uint uintLength, uint uintFlags, int fileId, string strHint, [MarshalAs(UnmanagedType.FunctionPtr)] DataCallback dataCallback, [MarshalAs(UnmanagedType.FunctionPtr)] ExistsCallback existsCallback, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback progressCallback);
 
-        public static IntPtr ai_ImportFileFromMemory(Byte[] fileBytes, uint uintFlags, string strHint)
+        public static IntPtr ai_ImportFileFromMemory(Byte[] fileBytes, uint uintFlags, string strHint, DataCallback dataCallback, ExistsCallback existsCallback, int fileId, ProgressCallback progressCallback)
         {
             var dataBuffer = LockGc(fileBytes);
-            var result = _aiImportFileFromMemory(dataBuffer.AddrOfPinnedObject(), (uint)fileBytes.Length, uintFlags, strHint);
+            var result = _aiImportFileFromMemory(dataBuffer.AddrOfPinnedObject(), (uint)fileBytes.Length, uintFlags, fileId, strHint, dataCallback, existsCallback, progressCallback);
             dataBuffer.Free();
             return result;
         }
@@ -125,52 +124,49 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiImportFileFromMemoryWithProperties")]
-        public static extern IntPtr _aiImportFileFromMemoryWithProperties(IntPtr ptrBuffer, uint uintLength, uint uintFlags, string strHint, IntPtr ptrProps);
+        private static extern IntPtr _aiImportFileFromMemoryWithProperties(IntPtr ptrBuffer, uint uintLength, uint uintFlags, int fileId, string strHint, IntPtr ptrProps, [MarshalAs(UnmanagedType.FunctionPtr)] DataCallback dataCallback, [MarshalAs(UnmanagedType.FunctionPtr)] ExistsCallback existsCallback, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback progressCallback);
 
-        public static IntPtr ai_ImportFileFromMemoryWithProperties(Byte[] fileBytes, uint uintFlags, string strHint, IntPtr ptrProps)
+        public static IntPtr ai_ImportFileFromMemoryWithProperties(Byte[] fileBytes, uint uintFlags, string strHint, IntPtr ptrProps, DataCallback dataCallback, ExistsCallback existsCallback, int fileId, ProgressCallback progressCallback)
         {
             var dataBuffer = LockGc(fileBytes);
-            var result = _aiImportFileFromMemoryWithProperties(dataBuffer.AddrOfPinnedObject(), (uint)fileBytes.Length, uintFlags, strHint, ptrProps);
+            var result = _aiImportFileFromMemoryWithProperties(dataBuffer.AddrOfPinnedObject(), (uint)fileBytes.Length, uintFlags, fileId, strHint, ptrProps, dataCallback, existsCallback, progressCallback);
             dataBuffer.Free();
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiImportFile")]
-        public static extern IntPtr _aiImportFile(string filename, uint flags);
+        private static extern IntPtr _aiImportFile(string filename, uint flags, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback progressCallback);
 
-        public static IntPtr ai_ImportFile(string filename, uint flags)
+        public static IntPtr ai_ImportFile(string filename, uint flags, ProgressCallback progressCallback)
         {
-            var result = _aiImportFile(filename, flags);
+            var result = _aiImportFile(filename, flags, progressCallback);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiImportFileExWithProperties")]
-        public static extern IntPtr _aiImportFileEx(string filename, uint flags, IntPtr ptrFS, IntPtr ptrProps);
+        private static extern IntPtr _aiImportFileEx(string filename, uint flags, IntPtr ptrFS, IntPtr ptrProps, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback progressCallback);
 
-        public static IntPtr ai_ImportFileEx(string filename, uint flags, IntPtr ptrFS, IntPtr ptrProp)
+        public static IntPtr ai_ImportFileEx(string filename, uint flags, IntPtr ptrFS, IntPtr ptrProp, ProgressCallback progressCallback)
         {
-            var result = _aiImportFileEx(filename, flags, ptrFS, ptrProp);
+            var result = _aiImportFileEx(filename, flags, ptrFS, ptrProp, progressCallback);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiReleaseImport")]
-        public static extern void _aiReleaseImport(IntPtr scene);
+        private static extern void _aiReleaseImport(IntPtr scene);
 
         public static void ai_ReleaseImport(IntPtr scene)
         {
-		//TODO: code crashing on WINRT, commented for now
-#if !UNITY_WINRT
-		_aiReleaseImport(scene);
-#endif
+            _aiReleaseImport(scene);
         }
 
         //TODO: New interface
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiGetExtensionList")]
-        public static extern void _aiGetExtensionList(IntPtr ptrExtensionList);
+        private static extern void _aiGetExtensionList(IntPtr ptrExtensionList);
 
         public static void ai_GetExtensionList(out string strExtensionList)
         {
@@ -179,12 +175,12 @@ namespace TriLib
             _aiGetExtensionList(stringBuffer.AddrOfPinnedObject());
             stringBuffer.Free();
             var length = Is32Bits ? BitConverter.ToInt32(byteArray, 0) : BitConverter.ToInt64(byteArray, 0);
-            strExtensionList = Encoding.UTF8.GetString(byteArray, IntSize, (int) length);
+            strExtensionList = Encoding.UTF8.GetString(byteArray, IntSize, (int)length);
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiGetErrorString")]
-        public static extern IntPtr _aiGetErrorString();
+        private static extern IntPtr _aiGetErrorString();
 
         public static string ai_GetErrorString()
         {
@@ -194,7 +190,8 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiIsExtensionSupported")]
-        public static extern bool _aiIsExtensionSupported(IntPtr strExtension);
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiIsExtensionSupported(IntPtr strExtension);
 
         public static bool ai_IsExtensionSupported(string strExtension)
         {
@@ -206,6 +203,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiScene_HasMaterials")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiScene_HasMaterials(IntPtr ptrScene);
 
         public static bool aiScene_HasMaterials(IntPtr ptrScene)
@@ -266,6 +264,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiScene_HasMeshes")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiScene_HasMeshes(IntPtr ptrScene);
 
         public static bool aiScene_HasMeshes(IntPtr ptrScene)
@@ -276,6 +275,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiScene_HasAnimation")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiScene_HasAnimation(IntPtr ptrScene);
 
         public static bool aiScene_HasAnimation(IntPtr ptrScene)
@@ -283,9 +283,10 @@ namespace TriLib
             var result = _aiScene_HasAnimation(ptrScene);
             return result;
         }
-        
+
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiScene_HasCameras")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiScene_HasCameras(IntPtr ptrScene);
 
         public static bool aiScene_HasCameras(IntPtr ptrScene)
@@ -296,6 +297,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiScene_HasLights")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiScene_HasLights(IntPtr ptrScene);
 
         public static bool aiScene_HasLights(IntPtr ptrScene)
@@ -433,54 +435,244 @@ namespace TriLib
         public static Matrix4x4 aiNode_GetTransformation(IntPtr ptrNode)
         {
             var result = _aiNode_GetTransformation(ptrNode);
-            var resultArray = GetNewFloat16Array(result);
-            var resultConverted = LoadMatrix4x4FromArray(resultArray);
+            var resultConverted = GetNewMatrix4x4(result);
+            return resultConverted;
+        }
+
+        //TODO
+        //[DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+        //    EntryPoint = "aiMaterial_GetMaterialColor")]
+        //private static extern bool _aiMaterial_GetColor(IntPtr ptrMat, string key, uint type, uint index, IntPtr colorOut);
+
+        //public static bool aiMaterial_GetColor(IntPtr ptrMat, string key, uint type, uint index, out Color colorOut)
+        //{
+        //    var colorOutBufferHandle = AllocHGlobal<Color>();
+        //    var result = _aiMaterial_GetColor(ptrMat, key, type, index, colorOutBufferHandle);
+        //    colorOut = ReadStruct<Color>(colorOutBufferHandle);
+        //    return result;
+        //}
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetMaterialFloat")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_GetFloat(IntPtr ptrMat, string key, uint type, uint index, IntPtr floatOut);
+
+        public static bool aiMaterial_GetFloat(IntPtr ptrMat, string key, uint type, uint index, out float floatOut)
+        {
+            floatOut = 0f;
+            var floatOutBufferHandle = LockGc(floatOut);
+            var result = _aiMaterial_GetFloat(ptrMat, key, type, index, floatOutBufferHandle.AddrOfPinnedObject());
+            floatOutBufferHandle.Free();
+            return result;
+        }
+
+        //TODO
+        //[DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+        //    EntryPoint = "aiMaterial_GetMaterialDouble")]
+        //[return: MarshalAs(UnmanagedType.I1)]
+        //private static extern bool _aiMaterial_GetDouble(IntPtr ptrMat, string key, uint type, uint index, IntPtr doubleOut);
+
+        //public static bool aiMaterial_GetDouble(IntPtr ptrMat, string key, uint type, uint index, out double doubleOut)
+        //{
+        //    doubleOut = 0f;
+        //    var doubleOutBufferHandle = LockGc(doubleOut);
+        //    var result = _aiMaterial_GetFloat(ptrMat, key, type, index, doubleOutBufferHandle.AddrOfPinnedObject());
+        //    doubleOutBufferHandle.Free();
+        //    return result;
+        //}
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetMaterialInteger")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_GetInteger(IntPtr ptrMat, string key, uint type, uint index, IntPtr intOut);
+
+        public static bool aiMaterial_GetInteger(IntPtr ptrMat, string key, uint type, uint index, out int intOut)
+        {
+            intOut = 0;
+            var intOutBufferHandle = LockGc(intOut);
+            var result = _aiMaterial_GetInteger(ptrMat, key, type, index, intOutBufferHandle.AddrOfPinnedObject());
+            intOutBufferHandle.Free();
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+          EntryPoint = "aiMaterial_GetMaterialString")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_GetString(IntPtr ptrMat, string strKey, uint uintType, uint uintIndex, IntPtr ptrValue);
+
+        public static bool aiMaterial_GetString(IntPtr ptrMat, string strKey, uint uintType, uint uintIndex, out string strValue)
+        {
+            byte[] strValueArray;
+            var strValueArrayBufferHandle = GetNewStringBuffer(out strValueArray);
+            var result = _aiMaterial_GetString(ptrMat, strKey, uintType, uintIndex, strValueArrayBufferHandle.AddrOfPinnedObject());
+            strValue = ByteArrayToString(strValueArray, true);
+            strValueArrayBufferHandle.Free();
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetNumProperties")]
+        private static extern uint _aiMaterial_GetNumProperties(IntPtr ptrMat);
+
+        public static uint aiMaterial_GetNumProperties(IntPtr ptrMat)
+        {
+            var result = _aiMaterial_GetNumProperties(ptrMat);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetProperty")]
+        private static extern IntPtr _aiMaterial_GetProperty(IntPtr ptrMaterial, uint uintIndex);
+
+        public static IntPtr aiMaterial_GetProperty(IntPtr ptrMaterial, uint uintIndex)
+        {
+            var result = _aiMaterial_GetProperty(ptrMaterial, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterialProperty_GetKey")]
+        private static extern IntPtr _aiMaterialProperty_GetKey(IntPtr ptrMatProp);
+
+        public static string aiMaterialProperty_GetKey(IntPtr ptrMatProp)
+        {
+            var result = _aiMaterialProperty_GetKey(ptrMatProp);
+            var resultConverted = ReadStringFromPointer(result);
             return resultConverted;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
-            EntryPoint = "aiMaterial_IsEmbeddedTextureCompressed")]
-		private static extern bool _aiMaterial_IsEmbeddedTextureCompressed(IntPtr ptrScene, IntPtr ptrTexture);
+            EntryPoint = "aiMaterialProperty_GetType")]
+        private static extern aiPropertyTypeInfo _aiMaterialProperty_GetType(IntPtr ptrPropMat);
 
-		public static bool aiMaterial_IsEmbeddedTextureCompressed(IntPtr ptrScene, IntPtr ptrTexture)
+        public static aiPropertyTypeInfo aiMaterialProperty_GetType(IntPtr ptrPropMat)
         {
-		var result = _aiMaterial_IsEmbeddedTextureCompressed(ptrScene, ptrTexture);
+            var result = _aiMaterialProperty_GetType(ptrPropMat);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterialProperty_GetIndex")]
+        private static extern uint _aiMaterialProperty_GetIndex(IntPtr ptrPropMat);
+
+        public static uint aiMaterialProperty_GetIndex(IntPtr ptrPropMat)
+        {
+            var result = _aiMaterialProperty_GetIndex(ptrPropMat);
+            return result;
+        }
+
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterialProperty_GetDataSize")]
+        private static extern uint _aiMaterialProperty_GetDataSize(IntPtr ptrPropMat);
+
+        public static uint aiMaterialProperty_GetDataSize(IntPtr ptrPropMat)
+        {
+            var result = _aiMaterialProperty_GetDataSize(ptrPropMat);
+            return result;
+        }
+
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterialProperty_GetDataPointer")]
+        private static extern IntPtr _aiMaterialProperty_GetDataPointer(IntPtr ptrPropMat);
+
+        public static IntPtr aiMaterialProperty_GetDataPointer(IntPtr ptrPropMat)
+        {
+            var result = _aiMaterialProperty_GetDataPointer(ptrPropMat);
+            return result;
+        }
+
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterialProperty_GetSemantic")]
+        private static extern uint _aiMaterialProperty_GetSemantic(IntPtr ptrPropMat);
+
+        public static uint aiMaterialProperty_GetSemantic(IntPtr ptrPropMat)
+        {
+            var result = _aiMaterialProperty_GetSemantic(ptrPropMat);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetEmbeddedTextureName")]
+        private static extern IntPtr _aiMaterial_GetEmbeddedTextureName(IntPtr ptrTexture);
+
+        public static string aiMaterial_GetEmbeddedTextureName(IntPtr ptrTexture)
+        {
+            var result = _aiMaterial_GetEmbeddedTextureName(ptrTexture);
+            var resultConverted = ReadStringFromPointer(result);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_ReleaseEmbeddedTexture")]
+
+        private static extern void _aiMaterial_ReleaseEmbeddedTexture(IntPtr ptrTexture);
+
+        public static void aiMaterial_ReleaseEmbeddedTexture(IntPtr ptrTexture)
+        {
+            _aiMaterial_ReleaseEmbeddedTexture(ptrTexture);
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_IsEmbeddedTextureCompressed")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_IsEmbeddedTextureCompressed(IntPtr ptrTexture);
+
+        public static bool aiMaterial_IsEmbeddedTextureCompressed(IntPtr ptrTexture)
+        {
+            var result = _aiMaterial_IsEmbeddedTextureCompressed(ptrTexture);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetEmbeddedTextureDataSize")]
-		private static extern uint _aiMaterial_GetEmbeddedTextureDataSize(IntPtr ptrScene, IntPtr ptrTexture,
-            bool boolCompressed);
+        private static extern uint _aiMaterial_GetEmbeddedTextureDataSize(IntPtr ptrTexture);
 
-		public static uint aiMaterial_GetEmbeddedTextureDataSize(IntPtr ptrScene, IntPtr ptrTexture, bool boolCompressed)
+        public static uint aiMaterial_GetEmbeddedTextureDataSize(IntPtr ptrTexture)
         {
-		var result = _aiMaterial_GetEmbeddedTextureDataSize(ptrScene, ptrTexture, boolCompressed);
+            var result = _aiMaterial_GetEmbeddedTextureDataSize(ptrTexture);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
-            EntryPoint = "aiMaterial_GetEmbeddedTextureData")]
-		private static extern void _aiMaterial_GetEmbeddedTextureData(IntPtr ptrScene, IntPtr ptrData, IntPtr ptrTexture,
-            uint uintSize);
+            EntryPoint = "aiMaterial_GetEmbeddedTextureDataPointer")]
+        private static extern IntPtr _aiMaterial_GetEmbeddedTextureDataPointer(IntPtr ptrTexture);
 
-		public static byte[] aiMaterial_GetEmbeddedTextureData(IntPtr ptrScene, IntPtr ptrTexture, uint uintSize)
+        public static IntPtr aiMaterial_GetEmbeddedTextureDataPointer(IntPtr ptrTexture)
         {
-            var data = new byte[uintSize];
-            var dataBuffer = LockGc(data);
-			_aiMaterial_GetEmbeddedTextureData(ptrScene, dataBuffer.AddrOfPinnedObject(), ptrTexture, uintSize);
-            dataBuffer.Free();
-            return data;
+            return _aiMaterial_GetEmbeddedTextureDataPointer(ptrTexture);
         }
 
-		[DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
-		EntryPoint = "aiScene_GetEmbeddedTexture")]
-		private static extern IntPtr _aiScene_GetEmbeddedTexture(IntPtr ptrScene, string strFilename);
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetEmbeddedTextureWidth")]
+        private static extern int _aiMaterial_GetEmbeddedTextureWidth(IntPtr ptrTexture);
 
-		public static IntPtr aiScene_GetEmbeddedTexture(IntPtr ptrScene, string strFilename)
-		{			
-			return _aiScene_GetEmbeddedTexture (ptrScene, strFilename);
-		}
+        public static int aiMaterial_GetEmbeddedTextureWidth(IntPtr ptrTexture)
+        {
+            var result = _aiMaterial_GetEmbeddedTextureWidth(ptrTexture);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetEmbeddedTextureHeight")]
+        private static extern int _aiMaterial_GetEmbeddedTextureHeight(IntPtr ptrTexture);
+
+        public static int aiMaterial_GetEmbeddedTextureHeight(IntPtr ptrTexture)
+        {
+            var result = _aiMaterial_GetEmbeddedTextureHeight(ptrTexture);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiScene_GetEmbeddedTexture")]
+        private static extern IntPtr _aiScene_GetEmbeddedTexture(IntPtr ptrScene, string strFilename);
+
+        public static IntPtr aiScene_GetEmbeddedTexture(IntPtr ptrScene, string strFilename)
+        {
+            return _aiScene_GetEmbeddedTexture(ptrScene, strFilename);
+        }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetTextureCount")]
@@ -494,6 +686,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasTextureDiffuse")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasTextureDiffuse(IntPtr ptrMat, uint uintType);
 
         public static bool aiMaterial_HasTextureDiffuse(IntPtr ptrMat, uint uintType)
@@ -504,26 +697,32 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetTextureDiffuse")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetTextureDiffuse(IntPtr ptrMat, uint uintType,
-            IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
-            IntPtr uintMapMode);
+                                                                 IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
+                                                                 IntPtr uintMapMode);
 
         public static bool aiMaterial_GetTextureDiffuse(IntPtr ptrMat, uint uintType,
-            out string strPath, out uint uintMapping, out uint uintUvIndex,
-            out float floatBlend, out uint uintOp, out uint uintMapMode)
+                                                        out string strPath, out uint uintMapping, out uint uintUvIndex,
+                                                        out float floatBlend, out uint uintOp, out uint uintMapMode)
         {
             byte[] strPathByteArray;
             var strPathBufferHandle = GetNewStringBuffer(out strPathByteArray);
-            var uintMappingBufferHandle = GetNewUIntBuffer(out uintMapping);
-            var uintUvIndexBufferHandle = GetNewUIntBuffer(out uintUvIndex);
-            var floatBlendBufferHandle = GetNewFloatBuffer(out floatBlend);
-            var uintOpBufferHandle = GetNewUIntBuffer(out uintOp);
-            var uintMapModeBufferHandle = GetNewUIntBuffer(out uintMapMode);
+            uintMapping = 0;
+            var uintMappingBufferHandle = LockGc(uintMapping);
+            uintUvIndex = 0;
+            var uintUvIndexBufferHandle = LockGc(uintUvIndex);
+            floatBlend = 0;
+            var floatBlendBufferHandle = LockGc(floatBlend);
+            uintOp = 0;
+            var uintOpBufferHandle = LockGc(uintOp);
+            uintMapMode = 0;
+            var uintMapModeBufferHandle = LockGc(uintMapMode);
             var result = _aiMaterial_GetTextureDiffuse(ptrMat, uintType, strPathBufferHandle.AddrOfPinnedObject(),
-                uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
-                floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
-                uintMapModeBufferHandle.AddrOfPinnedObject());
-            strPath = ByteArrayToString(strPathByteArray);
+                             uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
+                             floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
+                             uintMapModeBufferHandle.AddrOfPinnedObject());
+            strPath = ByteArrayToString(strPathByteArray, true);
             strPathBufferHandle.Free();
             uintMappingBufferHandle.Free();
             uintUvIndexBufferHandle.Free();
@@ -545,6 +744,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasTextureEmissive")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasTextureEmissive(IntPtr ptrMat, uint uintIndex);
 
         public static bool aiMaterial_HasTextureEmissive(IntPtr ptrMat, uint uintIndex)
@@ -555,26 +755,32 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetTextureEmissive")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetTextureEmissive(IntPtr ptrMat, uint uintIndex,
-            IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
-            IntPtr uintMapMode);
+                                                                  IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
+                                                                  IntPtr uintMapMode);
 
         public static bool aiMaterial_GetTextureEmissive(IntPtr ptrMat, uint uintIndex,
-            out string strPath, out uint uintMapping, out uint uintUvIndex,
-            out float floatBlend, out uint uintOp, out uint uintMapMode)
+                                                         out string strPath, out uint uintMapping, out uint uintUvIndex,
+                                                         out float floatBlend, out uint uintOp, out uint uintMapMode)
         {
             byte[] strPathByteArray;
             var strPathBufferHandle = GetNewStringBuffer(out strPathByteArray);
-            var uintMappingBufferHandle = GetNewUIntBuffer(out uintMapping);
-            var uintUvIndexBufferHandle = GetNewUIntBuffer(out uintUvIndex);
-            var floatBlendBufferHandle = GetNewFloatBuffer(out floatBlend);
-            var uintOpBufferHandle = GetNewUIntBuffer(out uintOp);
-            var uintMapModeBufferHandle = GetNewUIntBuffer(out uintMapMode);
+            uintMapping = 0;
+            var uintMappingBufferHandle = LockGc(uintMapping);
+            uintUvIndex = 0;
+            var uintUvIndexBufferHandle = LockGc(uintUvIndex);
+            floatBlend = 0;
+            var floatBlendBufferHandle = LockGc(floatBlend);
+            uintOp = 0;
+            var uintOpBufferHandle = LockGc(uintOp);
+            uintMapMode = 0;
+            var uintMapModeBufferHandle = LockGc(uintMapMode);
             var result = _aiMaterial_GetTextureEmissive(ptrMat, uintIndex, strPathBufferHandle.AddrOfPinnedObject(),
-                uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
-                floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
-                uintMapModeBufferHandle.AddrOfPinnedObject());
-            strPath = ByteArrayToString(strPathByteArray);
+                             uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
+                             floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
+                             uintMapModeBufferHandle.AddrOfPinnedObject());
+            strPath = ByteArrayToString(strPathByteArray, true);
             strPathBufferHandle.Free();
             uintMappingBufferHandle.Free();
             uintUvIndexBufferHandle.Free();
@@ -596,6 +802,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasTextureSpecular")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasTextureSpecular(IntPtr ptrMat, uint uintIndex);
 
         public static bool aiMaterial_HasTextureSpecular(IntPtr ptrMat, uint uintIndex)
@@ -606,26 +813,32 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetTextureSpecular")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetTextureSpecular(IntPtr ptrMat, uint uintIndex,
-            IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
-            IntPtr uintMapMode);
+                                                                  IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
+                                                                  IntPtr uintMapMode);
 
         public static bool aiMaterial_GetTextureSpecular(IntPtr ptrMat, uint uintIndex,
-            out string strPath, out uint uintMapping, out uint uintUvIndex,
-            out float floatBlend, out uint uintOp, out uint uintMapMode)
+                                                         out string strPath, out uint uintMapping, out uint uintUvIndex,
+                                                         out float floatBlend, out uint uintOp, out uint uintMapMode)
         {
             byte[] strPathByteArray;
             var strPathBufferHandle = GetNewStringBuffer(out strPathByteArray);
-            var uintMappingBufferHandle = GetNewUIntBuffer(out uintMapping);
-            var uintUvIndexBufferHandle = GetNewUIntBuffer(out uintUvIndex);
-            var floatBlendBufferHandle = GetNewFloatBuffer(out floatBlend);
-            var uintOpBufferHandle = GetNewUIntBuffer(out uintOp);
-            var uintMapModeBufferHandle = GetNewUIntBuffer(out uintMapMode);
+            uintMapping = 0;
+            var uintMappingBufferHandle = LockGc(uintMapping);
+            uintUvIndex = 0;
+            var uintUvIndexBufferHandle = LockGc(uintUvIndex);
+            floatBlend = 0;
+            var floatBlendBufferHandle = LockGc(floatBlend);
+            uintOp = 0;
+            var uintOpBufferHandle = LockGc(uintOp);
+            uintMapMode = 0;
+            var uintMapModeBufferHandle = LockGc(uintMapMode);
             var result = _aiMaterial_GetTextureSpecular(ptrMat, uintIndex, strPathBufferHandle.AddrOfPinnedObject(),
-                uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
-                floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
-                uintMapModeBufferHandle.AddrOfPinnedObject());
-            strPath = ByteArrayToString(strPathByteArray);
+                             uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
+                             floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
+                             uintMapModeBufferHandle.AddrOfPinnedObject());
+            strPath = ByteArrayToString(strPathByteArray, true);
             strPathBufferHandle.Free();
             uintMappingBufferHandle.Free();
             uintUvIndexBufferHandle.Free();
@@ -647,6 +860,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasTextureNormals")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasTextureNormals(IntPtr ptrMat, uint uintIndex);
 
         public static bool aiMaterial_HasTextureNormals(IntPtr ptrMat, uint uintIndex)
@@ -657,26 +871,32 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetTextureNormals")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetTextureNormals(IntPtr ptrMat, uint uintIndex,
-            IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
-            IntPtr uintMapMode);
+                                                                 IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
+                                                                 IntPtr uintMapMode);
 
         public static bool aiMaterial_GetTextureNormals(IntPtr ptrMat, uint uintIndex,
-            out string strPath, out uint uintMapping, out uint uintUvIndex,
-            out float floatBlend, out uint uintOp, out uint uintMapMode)
+                                                        out string strPath, out uint uintMapping, out uint uintUvIndex,
+                                                        out float floatBlend, out uint uintOp, out uint uintMapMode)
         {
             byte[] strPathByteArray;
             var strPathBufferHandle = GetNewStringBuffer(out strPathByteArray);
-            var uintMappingBufferHandle = GetNewUIntBuffer(out uintMapping);
-            var uintUvIndexBufferHandle = GetNewUIntBuffer(out uintUvIndex);
-            var floatBlendBufferHandle = GetNewFloatBuffer(out floatBlend);
-            var uintOpBufferHandle = GetNewUIntBuffer(out uintOp);
-            var uintMapModeBufferHandle = GetNewUIntBuffer(out uintMapMode);
+            uintMapping = 0;
+            var uintMappingBufferHandle = LockGc(uintMapping);
+            uintUvIndex = 0;
+            var uintUvIndexBufferHandle = LockGc(uintUvIndex);
+            floatBlend = 0;
+            var floatBlendBufferHandle = LockGc(floatBlend);
+            uintOp = 0;
+            var uintOpBufferHandle = LockGc(uintOp);
+            uintMapMode = 0;
+            var uintMapModeBufferHandle = LockGc(uintMapMode);
             var result = _aiMaterial_GetTextureNormals(ptrMat, uintIndex, strPathBufferHandle.AddrOfPinnedObject(),
-                uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
-                floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
-                uintMapModeBufferHandle.AddrOfPinnedObject());
-            strPath = ByteArrayToString(strPathByteArray);
+                             uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
+                             floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
+                             uintMapModeBufferHandle.AddrOfPinnedObject());
+            strPath = ByteArrayToString(strPathByteArray, true);
             strPathBufferHandle.Free();
             uintMappingBufferHandle.Free();
             uintUvIndexBufferHandle.Free();
@@ -698,6 +918,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasTextureHeight")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasTextureHeight(IntPtr ptrMat, uint uintIndex);
 
         public static bool aiMaterial_HasTextureHeight(IntPtr ptrMat, uint uintIndex)
@@ -708,26 +929,32 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetTextureHeight")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetTextureHeight(IntPtr ptrMat, uint uintIndex,
-            IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
-            IntPtr uintMapMode);
+                                                                IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
+                                                                IntPtr uintMapMode);
 
         public static bool aiMaterial_GetTextureHeight(IntPtr ptrMat, uint uintIndex,
-            out string strPath, out uint uintMapping, out uint uintUvIndex,
-            out float floatBlend, out uint uintOp, out uint uintMapMode)
+                                                       out string strPath, out uint uintMapping, out uint uintUvIndex,
+                                                       out float floatBlend, out uint uintOp, out uint uintMapMode)
         {
             byte[] strPathByteArray;
             var strPathBufferHandle = GetNewStringBuffer(out strPathByteArray);
-            var uintMappingBufferHandle = GetNewUIntBuffer(out uintMapping);
-            var uintUvIndexBufferHandle = GetNewUIntBuffer(out uintUvIndex);
-            var floatBlendBufferHandle = GetNewFloatBuffer(out floatBlend);
-            var uintOpBufferHandle = GetNewUIntBuffer(out uintOp);
-            var uintMapModeBufferHandle = GetNewUIntBuffer(out uintMapMode);
+            uintMapping = 0;
+            var uintMappingBufferHandle = LockGc(uintMapping);
+            uintUvIndex = 0;
+            var uintUvIndexBufferHandle = LockGc(uintUvIndex);
+            floatBlend = 0;
+            var floatBlendBufferHandle = LockGc(floatBlend);
+            uintOp = 0;
+            var uintOpBufferHandle = LockGc(uintOp);
+            uintMapMode = 0;
+            var uintMapModeBufferHandle = LockGc(uintMapMode);
             var result = _aiMaterial_GetTextureHeight(ptrMat, uintIndex, strPathBufferHandle.AddrOfPinnedObject(),
-                uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
-                floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
-                uintMapModeBufferHandle.AddrOfPinnedObject());
-            strPath = ByteArrayToString(strPathByteArray);
+                             uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
+                             floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
+                             uintMapModeBufferHandle.AddrOfPinnedObject());
+            strPath = ByteArrayToString(strPathByteArray, true);
             strPathBufferHandle.Free();
             uintMappingBufferHandle.Free();
             uintUvIndexBufferHandle.Free();
@@ -748,7 +975,127 @@ namespace TriLib
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+    EntryPoint = "aiMaterial_HasTextureOcclusion")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_HasTextureOcclusion(IntPtr ptrMat, uint uintIndex);
+
+        public static bool aiMaterial_HasTextureOcclusion(IntPtr ptrMat, uint uintIndex)
+        {
+            var result = _aiMaterial_HasTextureOcclusion(ptrMat, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetTextureOcclusion")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_GetTextureOcclusion(IntPtr ptrMat, uint uintIndex,
+                                                                IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
+                                                                IntPtr uintMapMode);
+
+        public static bool aiMaterial_GetTextureOcclusion(IntPtr ptrMat, uint uintIndex,
+                                                       out string strPath, out uint uintMapping, out uint uintUvIndex,
+                                                       out float floatBlend, out uint uintOp, out uint uintMapMode)
+        {
+            byte[] strPathByteArray;
+            var strPathBufferHandle = GetNewStringBuffer(out strPathByteArray);
+            uintMapping = 0;
+            var uintMappingBufferHandle = LockGc(uintMapping);
+            uintUvIndex = 0;
+            var uintUvIndexBufferHandle = LockGc(uintUvIndex);
+            floatBlend = 0;
+            var floatBlendBufferHandle = LockGc(floatBlend);
+            uintOp = 0;
+            var uintOpBufferHandle = LockGc(uintOp);
+            uintMapMode = 0;
+            var uintMapModeBufferHandle = LockGc(uintMapMode);
+            var result = _aiMaterial_GetTextureOcclusion(ptrMat, uintIndex, strPathBufferHandle.AddrOfPinnedObject(),
+                             uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
+                             floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
+                             uintMapModeBufferHandle.AddrOfPinnedObject());
+            strPath = ByteArrayToString(strPathByteArray, true);
+            strPathBufferHandle.Free();
+            uintMappingBufferHandle.Free();
+            uintUvIndexBufferHandle.Free();
+            floatBlendBufferHandle.Free();
+            uintOpBufferHandle.Free();
+            uintMapModeBufferHandle.Free();
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetNumTextureOcclusion")]
+        private static extern uint _aiMaterial_GetNumTextureOcclusion(IntPtr ptrMat);
+
+        public static uint aiMaterial_GetNumTextureOcclusion(IntPtr ptrMat)
+        {
+            var result = _aiMaterial_GetNumTextureOcclusion(ptrMat);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+    EntryPoint = "aiMaterial_HasTextureMetallic")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_HasTextureMetallic(IntPtr ptrMat, uint uintIndex);
+
+        public static bool aiMaterial_HasTextureMetallic(IntPtr ptrMat, uint uintIndex)
+        {
+            var result = _aiMaterial_HasTextureMetallic(ptrMat, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetTextureMetallic")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiMaterial_GetTextureMetallic(IntPtr ptrMat, uint uintIndex,
+                                                                IntPtr strPath, IntPtr uintMapping, IntPtr uintUvIndex, IntPtr floatBlend, IntPtr uintOp,
+                                                                IntPtr uintMapMode);
+
+        public static bool aiMaterial_GetTextureMetallic(IntPtr ptrMat, uint uintIndex,
+                                                       out string strPath, out uint uintMapping, out uint uintUvIndex,
+                                                       out float floatBlend, out uint uintOp, out uint uintMapMode)
+        {
+            byte[] strPathByteArray;
+            var strPathBufferHandle = GetNewStringBuffer(out strPathByteArray);
+            uintMapping = 0;
+            var uintMappingBufferHandle = LockGc(uintMapping);
+            uintUvIndex = 0;
+            var uintUvIndexBufferHandle = LockGc(uintUvIndex);
+            floatBlend = 0;
+            var floatBlendBufferHandle = LockGc(floatBlend);
+            uintOp = 0;
+            var uintOpBufferHandle = LockGc(uintOp);
+            uintMapMode = 0;
+            var uintMapModeBufferHandle = LockGc(uintMapMode);
+            var result = _aiMaterial_GetTextureMetallic(ptrMat, uintIndex, strPathBufferHandle.AddrOfPinnedObject(),
+                             uintMappingBufferHandle.AddrOfPinnedObject(), uintUvIndexBufferHandle.AddrOfPinnedObject(),
+                             floatBlendBufferHandle.AddrOfPinnedObject(), uintOpBufferHandle.AddrOfPinnedObject(),
+                             uintMapModeBufferHandle.AddrOfPinnedObject());
+            strPath = ByteArrayToString(strPathByteArray, true);
+            strPathBufferHandle.Free();
+            uintMappingBufferHandle.Free();
+            uintUvIndexBufferHandle.Free();
+            floatBlendBufferHandle.Free();
+            uintOpBufferHandle.Free();
+            uintMapModeBufferHandle.Free();
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMaterial_GetNumTextureMetallic")]
+        private static extern uint _aiMaterial_GetNumTextureMetallic(IntPtr ptrMat);
+
+        public static uint aiMaterial_GetNumTextureMetallic(IntPtr ptrMat)
+        {
+            var result = _aiMaterial_GetNumTextureMetallic(ptrMat);
+            return result;
+        }
+
+
+
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasAmbient")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasAmbient(IntPtr ptrMat);
 
         public static bool aiMaterial_HasAmbient(IntPtr ptrMat)
@@ -763,16 +1110,15 @@ namespace TriLib
 
         public static bool aiMaterial_GetAmbient(IntPtr ptrMat, out Color colorOut)
         {
-            float[] colorOutBuffer;
-            var colorOutBufferHandle = GetNewFloat4Buffer(out colorOutBuffer);
-            var result = _aiMaterial_GetAmbient(ptrMat, colorOutBufferHandle.AddrOfPinnedObject());
-            colorOut = LoadColorFromArray(colorOutBuffer);
-            colorOutBufferHandle.Free();
+            var colorOutBufferHandle = AllocHGlobal<Color>();
+            var result = _aiMaterial_GetAmbient(ptrMat, colorOutBufferHandle);
+            colorOut = ReadStruct<Color>(colorOutBufferHandle);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasDiffuse")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasDiffuse(IntPtr ptrMat);
 
         public static bool aiMaterial_HasDiffuse(IntPtr ptrMat)
@@ -783,20 +1129,20 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetDiffuse")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetDiffuse(IntPtr ptrMat, IntPtr colorOut);
 
         public static bool aiMaterial_GetDiffuse(IntPtr ptrMat, out Color colorOut)
         {
-            float[] colorOutBuffer;
-            var colorOutBufferHandle = GetNewFloat4Buffer(out colorOutBuffer);
-            var result = _aiMaterial_GetDiffuse(ptrMat, colorOutBufferHandle.AddrOfPinnedObject());
-            colorOut = LoadColorFromArray(colorOutBuffer);
-            colorOutBufferHandle.Free();
+            var colorOutBufferHandle = AllocHGlobal<Color>();
+            var result = _aiMaterial_GetDiffuse(ptrMat, colorOutBufferHandle);
+            colorOut = ReadStruct<Color>(colorOutBufferHandle);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasSpecular")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasSpecular(IntPtr ptrMat);
 
         public static bool aiMaterial_HasSpecular(IntPtr ptrMat)
@@ -807,20 +1153,20 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetSpecular")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetSpecular(IntPtr ptrMat, IntPtr colorOut);
 
         public static bool aiMaterial_GetSpecular(IntPtr ptrMat, out Color colorOut)
         {
-            float[] colorOutBuffer;
-            var colorOutBufferHandle = GetNewFloat4Buffer(out colorOutBuffer);
-            var result = _aiMaterial_GetSpecular(ptrMat, colorOutBufferHandle.AddrOfPinnedObject());
-            colorOut = LoadColorFromArray(colorOutBuffer);
-            colorOutBufferHandle.Free();
+            var colorOutBufferHandle = AllocHGlobal<Color>();
+            var result = _aiMaterial_GetSpecular(ptrMat, colorOutBufferHandle);
+            colorOut = ReadStruct<Color>(colorOutBufferHandle);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasEmissive")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasEmissive(IntPtr ptrMat);
 
         public static bool aiMaterial_HasEmissive(IntPtr ptrMat)
@@ -831,20 +1177,20 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetEmissive")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetEmissive(IntPtr ptrMat, IntPtr colorOut);
 
         public static bool aiMaterial_GetEmissive(IntPtr ptrMat, out Color colorOut)
         {
-            float[] colorOutBuffer;
-            var colorOutBufferHandle = GetNewFloat4Buffer(out colorOutBuffer);
-            var result = _aiMaterial_GetEmissive(ptrMat, colorOutBufferHandle.AddrOfPinnedObject());
-            colorOut = LoadColorFromArray(colorOutBuffer);
-            colorOutBufferHandle.Free();
+            var colorOutBufferHandle = AllocHGlobal<Color>();
+            var result = _aiMaterial_GetEmissive(ptrMat, colorOutBufferHandle);
+            colorOut = ReadStruct<Color>(colorOutBufferHandle);
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasName")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasName(IntPtr ptrMat);
 
         public static bool aiMaterial_HasName(IntPtr ptrMat)
@@ -855,6 +1201,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetName")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetName(IntPtr ptrMat, IntPtr strName);
 
         public static bool aiMaterial_GetName(IntPtr ptrMat, out string strName)
@@ -862,13 +1209,14 @@ namespace TriLib
             byte[] strNameByteArray;
             var strNameBufferHandle = GetNewStringBuffer(out strNameByteArray);
             var result = _aiMaterial_GetName(ptrMat, strNameBufferHandle.AddrOfPinnedObject());
-            strName = ByteArrayToString(strNameByteArray);
+            strName = ByteArrayToString(strNameByteArray, true);
             strNameBufferHandle.Free();
             return result;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasBumpScaling")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasBumpScaling(IntPtr ptrMat);
 
         public static bool aiMaterial_HasBumpScaling(IntPtr ptrMat)
@@ -879,11 +1227,13 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetBumpScaling")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetBumpScaling(IntPtr ptrMat, IntPtr floatOut);
 
         public static bool aiMaterial_GetBumpScaling(IntPtr ptrMat, out float floatOut)
         {
-            var floatOutBufferHandle = GetNewFloatBuffer(out floatOut);
+            floatOut = 1f;
+            var floatOutBufferHandle = LockGc(floatOut);
             var result = _aiMaterial_GetBumpScaling(ptrMat, floatOutBufferHandle.AddrOfPinnedObject());
             floatOutBufferHandle.Free();
             return result;
@@ -891,6 +1241,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasShininess")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasShininess(IntPtr ptrMat);
 
         public static bool aiMaterial_HasShininess(IntPtr ptrMat)
@@ -901,11 +1252,13 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetShininess")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetShininess(IntPtr ptrMat, IntPtr floatOut);
 
         public static bool aiMaterial_GetShininess(IntPtr ptrMat, out float floatOut)
         {
-            var floatOutBufferHandle = GetNewFloatBuffer(out floatOut);
+            floatOut = 0f;
+            var floatOutBufferHandle = LockGc(floatOut);
             var result = _aiMaterial_GetShininess(ptrMat, floatOutBufferHandle.AddrOfPinnedObject());
             floatOutBufferHandle.Free();
             return result;
@@ -913,6 +1266,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasShininessStrength")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasShininessStrength(IntPtr ptrMat);
 
         public static bool aiMaterial_HasShininessStrength(IntPtr ptrMat)
@@ -923,11 +1277,13 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetShininessStrength")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetShininessStrength(IntPtr ptrMat, IntPtr floatOut);
 
         public static bool aiMaterial_GetShininessStrength(IntPtr ptrMat, out float floatOut)
         {
-            var floatOutBufferHandle = GetNewFloatBuffer(out floatOut);
+            floatOut = 0f;
+            var floatOutBufferHandle = LockGc(floatOut);
             var result = _aiMaterial_GetShininessStrength(ptrMat, floatOutBufferHandle.AddrOfPinnedObject());
             floatOutBufferHandle.Free();
             return result;
@@ -935,6 +1291,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_HasOpacity")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_HasOpacity(IntPtr ptrMat);
 
         public static bool aiMaterial_HasOpacity(IntPtr ptrMat)
@@ -945,16 +1302,196 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMaterial_GetOpacity")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMaterial_GetOpacity(IntPtr ptrMat, IntPtr floatOut);
 
         public static bool aiMaterial_GetOpacity(IntPtr ptrMat, out float floatOut)
         {
-			var buffer = Marshal.AllocHGlobal (sizeof(float));
-			var result = _aiMaterial_GetOpacity(ptrMat, buffer);
-			var floatBuffer = new float[1];
-			Marshal.Copy(buffer, floatBuffer, 0, 1);
-			floatOut = floatBuffer[0];
-			Marshal.FreeHGlobal (buffer);
+            floatOut = 1f;
+            var buffer = LockGc(floatOut);
+            var result = _aiMaterial_GetOpacity(ptrMat, buffer.AddrOfPinnedObject());
+            var floatBuffer = new float[1];
+            Marshal.Copy(buffer.AddrOfPinnedObject(), floatBuffer, 0, 1);
+            floatOut = floatBuffer[0];
+            buffer.Free();
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMesh_GetAnimMesh")]
+        private static extern IntPtr _aiMesh_GetAnimMesh(IntPtr ptrMesh, uint uintIndex);
+
+        public static IntPtr aiMesh_GetAnimMesh(IntPtr ptrMesh, uint uintIndex)
+        {
+            var result = _aiMesh_GetAnimMesh(ptrMesh, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetName")]
+        private static extern IntPtr _aiAnimMesh_GetName(IntPtr ptrMesh);
+
+        public static string aiAnimMesh_GetName(IntPtr ptrMesh)
+        {
+            var result = _aiAnimMesh_GetName(ptrMesh);
+            var resultConverted = ReadStringFromPointer(result);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMesh_GetAnimMeshCount")]
+        private static extern uint _aiMesh_GetAnimMeshCount(IntPtr ptrMesh);
+
+        public static uint aiMesh_GetAnimMeshCount(IntPtr ptrMesh)
+        {
+            var result = _aiMesh_GetAnimMeshCount(ptrMesh);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetVerticesCount")]
+        private static extern uint _aiAnimMesh_GetVerticesCount(IntPtr ptrMesh);
+
+        public static uint aiAnimMesh_GetVerticesCount(IntPtr ptrMesh)
+        {
+            var result = _aiAnimMesh_GetVerticesCount(ptrMesh);
+            return result;
+        }
+
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_HasPositions")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiAnimMesh_HasPositions(IntPtr ptrMesh);
+
+        public static bool aiAnimMesh_HasPositions(IntPtr ptrMesh)
+        {
+            var result = _aiAnimMesh_HasPositions(ptrMesh);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_HasNormals")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiAnimMesh_HasNormals(IntPtr ptrMesh);
+
+        public static bool aiAnimMesh_HasNormals(IntPtr ptrMesh)
+        {
+            var result = _aiAnimMesh_HasNormals(ptrMesh);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_HasTangentsAndBitangents")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiAnimMesh_HasTangentsAndBitangents(IntPtr ptrMesh);
+
+        public static bool aiAnimMesh_HasTangentsAndBitangents(IntPtr ptrMesh)
+        {
+            var result = _aiAnimMesh_HasTangentsAndBitangents(ptrMesh);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_HasTextureCoords")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiAnimMesh_HasTextureCoords(IntPtr ptrMesh, uint uintIndex);
+
+        public static bool aiAnimMesh_HasTextureCoords(IntPtr ptrMesh, uint uintIndex)
+        {
+            var result = _aiAnimMesh_HasTextureCoords(ptrMesh, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_HasVertexColors")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static extern bool _aiAnimMesh_HasVertexColors(IntPtr ptrMesh, uint uintIndex);
+
+        public static bool aiAnimMesh_HasVertexColors(IntPtr ptrMesh, uint uintIndex)
+        {
+            var result = _aiAnimMesh_HasVertexColors(ptrMesh, uintIndex);
+            return result;
+        }
+
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+           EntryPoint = "aiAnimMesh_GetVertex")]
+        private static extern IntPtr _aiAnimMesh_GetVertex(IntPtr ptrMesh, uint uintIndex);
+
+        public static Vector3 aiAnimMesh_GetVertex(IntPtr ptrMesh, uint uintIndex)
+        {
+            var result = _aiAnimMesh_GetVertex(ptrMesh, uintIndex);
+            var resultConverted = ReadStruct<Vector3>(result, false);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetNormal")]
+        private static extern IntPtr _aiAnimMesh_GetNormal(IntPtr ptrMesh, uint uintIndex);
+
+        public static Vector3 aiAnimMesh_GetNormal(IntPtr ptrMesh, uint uintIndex)
+        {
+            var result = _aiAnimMesh_GetNormal(ptrMesh, uintIndex);
+            var resultConverted = ReadStruct<Vector3>(result, false);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetTangent")]
+        private static extern IntPtr _aiAnimMesh_GetTangent(IntPtr ptrMesh, uint uintIndex);
+
+        public static Vector3 aiAnimMesh_GetTangent(IntPtr ptrMesh, uint uintIndex)
+        {
+            var result = _aiAnimMesh_GetTangent(ptrMesh, uintIndex);
+            var resultConverted = ReadStruct<Vector3>(result, false);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetBitangent")]
+        private static extern IntPtr _aiAnimMesh_GetBitangent(IntPtr ptrMesh, uint uintIndex);
+
+        public static Vector3 aiAnimMesh_GetBitangent(IntPtr ptrMesh, uint uintIndex)
+        {
+            var result = _aiAnimMesh_GetBitangent(ptrMesh, uintIndex);
+            var resultConverted = ReadStruct<Vector3>(result, false);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetTextureCoord")]
+        private static extern IntPtr _aiAnimMesh_GetTextureCoord(IntPtr ptrMesh, uint uintChannel,
+                                                             uint uintIndex);
+
+        public static Vector2 aiAnimMesh_GetTextureCoord(IntPtr ptrMesh, uint uintChannel,
+                                                     uint uintIndex)
+        {
+            var result = _aiAnimMesh_GetTextureCoord(ptrMesh, uintChannel, uintIndex);
+            var resultConverted = ReadStruct<Vector2>(result, false);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetVertexColor")]
+        private static extern IntPtr _aiAnimMesh_GetVertexColor(IntPtr ptrMesh, uint uintChannel,
+                                                            uint uintIndex);
+
+        public static Color aiAnimMesh_GetVertexColor(IntPtr ptrMesh, uint uintChannel,
+                                                  uint uintIndex)
+        {
+            var result = _aiAnimMesh_GetVertexColor(ptrMesh, uintChannel, uintIndex);
+            var resultConverted = ReadStruct<Color>(result, false);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimMesh_GetWeight")]
+        private static extern float _aiAnimMesh_GetWeight(IntPtr ptrMesh);
+
+        public static float aiAnimMesh_GetWeight(IntPtr ptrMesh)
+        {
+            var result = _aiAnimMesh_GetWeight(ptrMesh);
             return result;
         }
 
@@ -970,6 +1507,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_HasNormals")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMesh_HasNormals(IntPtr ptrMesh);
 
         public static bool aiMesh_HasNormals(IntPtr ptrMesh)
@@ -980,6 +1518,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_HasTangentsAndBitangents")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMesh_HasTangentsAndBitangents(IntPtr ptrMesh);
 
         public static bool aiMesh_HasTangentsAndBitangents(IntPtr ptrMesh)
@@ -990,6 +1529,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_HasTextureCoords")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMesh_HasTextureCoords(IntPtr ptrMesh, uint uintIndex);
 
         public static bool aiMesh_HasTextureCoords(IntPtr ptrMesh, uint uintIndex)
@@ -1000,6 +1540,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_HasVertexColors")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMesh_HasVertexColors(IntPtr ptrMesh, uint uintIndex);
 
         public static bool aiMesh_HasVertexColors(IntPtr ptrMesh, uint uintIndex)
@@ -1015,8 +1556,7 @@ namespace TriLib
         public static Vector3 aiMesh_GetVertex(IntPtr ptrMesh, uint uintIndex)
         {
             var result = _aiMesh_GetVertex(ptrMesh, uintIndex);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
@@ -1027,8 +1567,7 @@ namespace TriLib
         public static Vector3 aiMesh_GetNormal(IntPtr ptrMesh, uint uintIndex)
         {
             var result = _aiMesh_GetNormal(ptrMesh, uintIndex);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
@@ -1039,8 +1578,7 @@ namespace TriLib
         public static Vector3 aiMesh_GetTangent(IntPtr ptrMesh, uint uintIndex)
         {
             var result = _aiMesh_GetTangent(ptrMesh, uintIndex);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
@@ -1051,36 +1589,33 @@ namespace TriLib
         public static Vector3 aiMesh_GetBitangent(IntPtr ptrMesh, uint uintIndex)
         {
             var result = _aiMesh_GetBitangent(ptrMesh, uintIndex);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_GetTextureCoord")]
         private static extern IntPtr _aiMesh_GetTextureCoord(IntPtr ptrMesh, uint uintChannel,
-            uint uintIndex);
+                                                             uint uintIndex);
 
         public static Vector2 aiMesh_GetTextureCoord(IntPtr ptrMesh, uint uintChannel,
-            uint uintIndex)
+                                                     uint uintIndex)
         {
             var result = _aiMesh_GetTextureCoord(ptrMesh, uintChannel, uintIndex);
-            var resultArray = GetNewFloat2Array(result);
-            var resultConverted = LoadVector2FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector2>(result, false);
             return resultConverted;
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_GetVertexColor")]
         private static extern IntPtr _aiMesh_GetVertexColor(IntPtr ptrMesh, uint uintChannel,
-            uint uintIndex);
+                                                            uint uintIndex);
 
         public static Color aiMesh_GetVertexColor(IntPtr ptrMesh, uint uintChannel,
-            uint uintIndex)
+                                                  uint uintIndex)
         {
             var result = _aiMesh_GetVertexColor(ptrMesh, uintChannel, uintIndex);
-            var resultArray = GetNewFloat4Array(result);
-            var resultConverted = LoadColorFromArray(resultArray);
+            var resultConverted = ReadStruct<Color>(result, false);
             return resultConverted;
         }
 
@@ -1107,6 +1642,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_HasFaces")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMesh_HasFaces(IntPtr ptrMesh);
 
         public static bool aiMesh_HasFaces(IntPtr ptrMesh)
@@ -1137,6 +1673,7 @@ namespace TriLib
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiMesh_HasBones")]
+        [return: MarshalAs(UnmanagedType.I1)]
         private static extern bool _aiMesh_HasBones(IntPtr ptrMesh);
 
         public static bool aiMesh_HasBones(IntPtr ptrMesh)
@@ -1223,8 +1760,7 @@ namespace TriLib
         public static Matrix4x4 aiBone_GetOffsetMatrix(IntPtr ptrBone)
         {
             var result = _aiBone_GetOffsetMatrix(ptrBone);
-            var resultArray = GetNewFloat16Array(result);
-            var resultConverted = LoadMatrix4x4FromArray(resultArray);
+            var resultConverted = GetNewMatrix4x4(result);
             return resultConverted;
         }
 
@@ -1300,6 +1836,16 @@ namespace TriLib
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiAnimation_GetMeshMorphAnim")]
+        private static extern IntPtr _aiAnimation_GetMeshMorphAnim(IntPtr ptrAnimation, uint uintIndex);
+
+        public static IntPtr aiAnimation_GetMeshMorphAnim(IntPtr ptrAnimation, uint uintIndex)
+        {
+            var result = _aiAnimation_GetMeshMorphAnim(ptrAnimation, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiAnimation_GetNumMeshChannels")]
         private static extern uint _aiAnimation_GetNumMeshChannels(IntPtr ptrAnimation);
 
@@ -1329,6 +1875,29 @@ namespace TriLib
             var resultConverted = ReadStringFromPointer(result);
             return resultConverted;
         }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMeshMorphAnim_GetName")]
+        private static extern IntPtr _aiMeshMorphAnim_GetName(IntPtr ptrNodeAnim);
+
+        public static string aiMeshMorphAnim_GetName(IntPtr ptrNodeAnim)
+        {
+            var result = _aiMeshMorphAnim_GetName(ptrNodeAnim);
+            var resultConverted = ReadStringFromPointer(result);
+            return resultConverted;
+        }
+
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMeshMorphAnim_GetNumKeys")]
+        private static extern uint _aiMeshMorphAnim_GetNumKeys(IntPtr ptrNodeAnim);
+
+        public static uint aiMeshMorphAnim_GetNumKeys(IntPtr ptrNodeAnim)
+        {
+            var result = _aiMeshMorphAnim_GetNumKeys(ptrNodeAnim);
+            return result;
+        }
+
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiNodeAnim_GetNumPositionKeys")]
@@ -1391,6 +1960,16 @@ namespace TriLib
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMeshMorphAnim_GetMeshMorphKey")]
+        private static extern IntPtr _aiMeshMorphAnim_GetMeshMorphKey(IntPtr ptrNodeAnim, uint uintIndex);
+
+        public static IntPtr aiMeshMorphAnim_GetMeshMorphKey(IntPtr ptrNodeAnim, uint uintIndex)
+        {
+            var result = _aiMeshMorphAnim_GetMeshMorphKey(ptrNodeAnim, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiNodeAnim_GetRotationKey")]
         private static extern IntPtr _aiNodeAnim_GetRotationKey(IntPtr ptrNodeAnim, uint uintIndex);
 
@@ -1411,6 +1990,46 @@ namespace TriLib
         }
 
         [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMeshMorphKey_GetTime")]
+        private static extern float _aiMeshMorphKey_GetTime(IntPtr ptrVectorKey);
+
+        public static float aiMeshMorphKey_GetTime(IntPtr ptrMeshMorphKey)
+        {
+            var result = _aiMeshMorphKey_GetTime(ptrMeshMorphKey);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMeshMorphKey_GetNumValues")]
+        private static extern uint _aiMeshMorphKey_GetNumValues(IntPtr ptrVectorKey);
+
+        public static uint aiMeshMorphKey_GetNumValues(IntPtr ptrMeshMorphKey)
+        {
+            var result = _aiMeshMorphKey_GetNumValues(ptrMeshMorphKey);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMeshMorphKey_GetValue")]
+        private static extern uint _aiMeshMorphKey_GetValue(IntPtr ptrVectorKey, uint uintIndex);
+
+        public static uint aiMeshMorphKey_GetValue(IntPtr ptrMeshMorphKey, uint uintIndex)
+        {
+            var result = _aiMeshMorphKey_GetValue(ptrMeshMorphKey, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
+            EntryPoint = "aiMeshMorphKey_GetWeight")]
+        private static extern float _aiMeshMorphKey_GetWeight(IntPtr ptrVectorKey, uint uintIndex);
+
+        public static float aiMeshMorphKey_GetWeight(IntPtr ptrMeshMorphKey, uint uintIndex)
+        {
+            var result = _aiMeshMorphKey_GetWeight(ptrMeshMorphKey, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall,
             EntryPoint = "aiVectorKey_GetTime")]
         private static extern float _aiVectorKey_GetTime(IntPtr ptrVectorKey);
 
@@ -1424,11 +2043,10 @@ namespace TriLib
             EntryPoint = "aiVectorKey_GetValue")]
         private static extern IntPtr _aiVectorKey_GetValue(IntPtr ptrVectorKey);
 
-        public static Vector3 aiVectorKey_GetValue(IntPtr ptrVectorKey)
+        public static float[] aiVectorKey_GetValue(IntPtr ptrVectorKey)
         {
             var result = _aiVectorKey_GetValue(ptrVectorKey);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadFloatArray(result, 3);
             return resultConverted;
         }
 
@@ -1446,11 +2064,10 @@ namespace TriLib
             EntryPoint = "aiQuatKey_GetValue")]
         private static extern IntPtr _aiQuatKey_GetValue(IntPtr ptrQuatKey);
 
-        public static Quaternion aiQuatKey_GetValue(IntPtr ptrQuatKey)
+        public static float[] aiQuatKey_GetValue(IntPtr ptrQuatKey)
         {
             var result = _aiQuatKey_GetValue(ptrQuatKey);
-            var resultArray = GetNewFloat4Array(result);
-            var resultConverted = LoadQuaternionFromArray(resultArray);
+            var resultConverted = ReadFloatArray(result, 4);
             return resultConverted;
         }
 
@@ -1502,8 +2119,7 @@ namespace TriLib
         public static Vector3 aiCamera_GetLookAt(IntPtr ptrCamera)
         {
             var result = _aiCamera_GetLookAt(ptrCamera);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
@@ -1525,8 +2141,7 @@ namespace TriLib
         public static Vector3 aiCamera_GetPosition(IntPtr ptrCamera)
         {
             var result = _aiCamera_GetPosition(ptrCamera);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
@@ -1537,8 +2152,7 @@ namespace TriLib
         public static Vector3 aiCamera_GetUp(IntPtr ptrCamera)
         {
             var result = _aiCamera_GetUp(ptrCamera);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
@@ -1600,8 +2214,7 @@ namespace TriLib
         public static Color aiLight_GetColorAmbient(IntPtr ptrLight)
         {
             var result = _aiLight_GetColorAmbient(ptrLight);
-            var resultArray = GetNewFloat4Array(result);
-            var resultConverted = LoadColorFromArray(resultArray);
+            var resultConverted = ReadStruct<Color>(result, false);
             return resultConverted;
         }
 
@@ -1612,8 +2225,7 @@ namespace TriLib
         public static Color aiLight_GetColorDiffuse(IntPtr ptrLight)
         {
             var result = _aiLight_GetColorDiffuse(ptrLight);
-            var resultArray = GetNewFloat4Array(result);
-            var resultConverted = LoadColorFromArray(resultArray);
+            var resultConverted = ReadStruct<Color>(result, false);
             return resultConverted;
         }
 
@@ -1624,8 +2236,7 @@ namespace TriLib
         public static Color aiLight_GetColorSpecular(IntPtr ptrLight)
         {
             var result = _aiLight_GetColorSpecular(ptrLight);
-            var resultArray = GetNewFloat4Array(result);
-            var resultConverted = LoadColorFromArray(resultArray);
+            var resultConverted = ReadStruct<Color>(result, false);
             return resultConverted;
         }
 
@@ -1636,8 +2247,7 @@ namespace TriLib
         public static Vector3 aiLight_GetDirection(IntPtr ptrLight)
         {
             var result = _aiLight_GetDirection(ptrLight);
-            var resultArray = GetNewFloat3Array(result);
-            var resultConverted = LoadVector3FromArray(resultArray);
+            var resultConverted = ReadStruct<Vector3>(result, false);
             return resultConverted;
         }
 
@@ -1652,31 +2262,207 @@ namespace TriLib
             return resultConverted;
         }
 
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiScene_GetMetadataCount")]
+        private static extern uint _aiScene_GetMetadataCount(IntPtr ptrScene);
+
+        public static uint aiScene_GetMetadataCount(IntPtr ptrScene)
+        {
+            var result = _aiScene_GetMetadataCount(ptrScene);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiScene_GetMetadataKey")]
+        private static extern IntPtr _aiScene_GetMetadataKey(IntPtr ptrScene, uint uintIndex);
+
+        public static string aiScene_GetMetadataKey(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataKey(ptrScene, uintIndex);
+            var resultConverted = ReadStringFromPointer(result);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiScene_GetMetadataType")]
+        private static extern int _aiScene_GetMetadataType(IntPtr ptrScene, uint uintIndex);
+
+        public static AssimpMetadataType aiScene_GetMetadataType(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = (AssimpMetadataType)_aiScene_GetMetadataType(ptrScene, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiScene_GetMetadataValue")]
+        private static extern IntPtr _aiScene_GetMetadataValue(IntPtr ptrScene, uint uintIndex);
+
+        public static bool aiScene_GetMetadataBoolValue(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataValue(ptrScene, uintIndex);
+            return GetNewBool(result);
+        }
+
+        public static int aiScene_GetMetadataInt32Value(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataValue(ptrScene, uintIndex);
+            return GetNewInt32(result);
+        }
+
+        public static long aiScene_GetMetadataInt64Value(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataValue(ptrScene, uintIndex);
+            return GetNewInt64(result);
+        }
+
+        public static float aiScene_GetMetadataFloatValue(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataValue(ptrScene, uintIndex);
+            return GetNewFloat(result);
+        }
+
+        public static double aiScene_GetMetadataDoubleValue(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataValue(ptrScene, uintIndex);
+            return GetNewDouble(result);
+        }
+
+        public static string aiScene_GetMetadataStringValue(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataValue(ptrScene, uintIndex);
+            return ReadStringFromPointer(result);
+        }
+
+        public static Vector3 aiScene_GetMetadataVectorValue(IntPtr ptrScene, uint uintIndex)
+        {
+            var result = _aiScene_GetMetadataValue(ptrScene, uintIndex);
+            var resultConverted = ReadStruct<Vector3>(result, false);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiNode_GetMetadataCount")]
+        private static extern uint _aiNode_GetMetadataCount(IntPtr ptrNode);
+
+        public static uint aiNode_GetMetadataCount(IntPtr ptrNode)
+        {
+            var result = _aiNode_GetMetadataCount(ptrNode);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiNode_GetMetadataKey")]
+        private static extern IntPtr _aiNode_GetMetadataKey(IntPtr ptrNode, uint uintIndex);
+
+        public static string aiNode_GetMetadataKey(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataKey(ptrNode, uintIndex);
+            var resultConverted = ReadStringFromPointer(result);
+            return resultConverted;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiNode_GetMetadataType")]
+        private static extern int _aiNode_GetMetadataType(IntPtr ptrNode, uint uintIndex);
+
+        public static AssimpMetadataType aiNode_GetMetadataType(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = (AssimpMetadataType)_aiNode_GetMetadataType(ptrNode, uintIndex);
+            return result;
+        }
+
+        [DllImport(DllPath, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "aiNode_GetMetadataValue")]
+        private static extern IntPtr _aiNode_GetMetadataValue(IntPtr ptrNode, uint uintIndex);
+
+        public static bool aiNode_GetMetadataBoolValue(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataValue(ptrNode, uintIndex);
+            return GetNewBool(result);
+        }
+
+        public static int aiNode_GetMetadataInt32Value(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataValue(ptrNode, uintIndex);
+            return GetNewInt32(result);
+        }
+
+        public static long aiNode_GetMetadataInt64Value(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataValue(ptrNode, uintIndex);
+            return GetNewInt64(result);
+        }
+
+        public static float aiNode_GetMetadataFloatValue(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataValue(ptrNode, uintIndex);
+            return GetNewFloat(result);
+        }
+
+        public static double aiNode_GetMetadataDoubleValue(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataValue(ptrNode, uintIndex);
+            return GetNewDouble(result);
+        }
+
+        public static string aiNode_GetMetadataStringValue(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataValue(ptrNode, uintIndex);
+            return ReadStringFromPointer(result);
+        }
+
+        public static Vector3 aiNode_GetMetadataVectorValue(IntPtr ptrNode, uint uintIndex)
+        {
+            var result = _aiNode_GetMetadataValue(ptrNode, uintIndex);
+            var resultConverted = ReadStruct<Vector3>(result, false);
+            return resultConverted;
+        }
+
         #endregion
 
         #region Helpers
-
-        public static byte[] StringToByteArray(string str, int length)
-        {
-            return Encoding.ASCII.GetBytes(str.PadRight(length, '\0'));
-        }
 
         public static GCHandle LockGc(object value)
         {
             return GCHandle.Alloc(value, GCHandleType.Pinned);
         }
 
+        public static IntPtr AllocHGlobal<T>()
+        {
+#if !UNITY_EDITOR && NETFX_CORE || NET_4_6 || NET_STANDARD_2_0
+            var locked = Marshal.AllocHGlobal(Marshal.SizeOf<T>());
+#else
+            var locked = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(T)));
+#endif
+            return locked;
+        }
+
+        public static T ReadStruct<T>(IntPtr pointer, bool dealloc = true)
+        {
+#if !UNITY_EDITOR && NETFX_CORE || NET_4_6 || NET_STANDARD_2_0
+            T structure = Marshal.PtrToStructure<T>(pointer);
+#else
+            T structure = (T)Marshal.PtrToStructure(pointer, typeof(T));
+#endif
+            if (dealloc)
+            {
+                Marshal.FreeHGlobal(pointer);
+            }
+            return structure;
+        }
+
+        public static byte[] StringToByteArray(string str, int length, bool utf8 = false)
+        {
+            str = str.PadRight(length, '\0');
+            return utf8 ? Encoding.UTF8.GetBytes(str) : Encoding.ASCII.GetBytes(str);
+        }
+
+        public static string ByteArrayToString(byte[] value, bool utf8 = false)
+        {
+            var count = Array.IndexOf<byte>(value, 0, 0);
+            if (count < 0)
+            {
+                count = value.Length;
+            }
+            return utf8 ? Encoding.UTF8.GetString(value, 0, count) : Encoding.ASCII.GetString(value, 0, count);
+        }
+
         public static GCHandle GetStringBuffer(string value)
         {
             var buffer = StringToByteArray(value, MaxStringLength);
             return LockGc(buffer);
-        }
-
-        public static string ByteArrayToString(byte[] value)
-        {
-            var count = Array.IndexOf<byte>(value, 0, 0);
-            if (count < 0) count = value.Length;
-            return Encoding.ASCII.GetString(value, 0, count);
         }
 
         public static IntPtr GetAssimpStringBuffer(string value)
@@ -1688,151 +2474,131 @@ namespace TriLib
             {
                 Marshal.WriteInt64(buffer, value.Length);
             }
+            //TODO: Supports UTF8?
             var bytes = Encoding.ASCII.GetBytes(value);
             Marshal.Copy(bytes, 0, new IntPtr(Is32Bits ? buffer.ToInt32() : buffer.ToInt64() + offset), value.Length);
             return buffer;
         }
 
-        private static GCHandle GetNewStringBuffer(out byte[] byteArray)
+        public static GCHandle GetNewStringBuffer(out byte[] byteArray)
         {
             byteArray = new byte[MaxInputStringLength];
             return LockGc(byteArray);
         }
 
-        private static GCHandle GetNewFloatBuffer(out float value)
-        {
-            value = new float();
-            return LockGc(value);
-        }
-
-        private static GCHandle GetNewFloat2Buffer(out float[] array)
-        {
-            array = new float[2];
-            return LockGc(array);
-        }
-
-        private static GCHandle GetNewFloat3Buffer(out float[] array)
-        {
-            array = new float[3];
-            return LockGc(array);
-        }
-
-        private static GCHandle GetNewFloat4Buffer(out float[] array)
-        {
-            array = new float[4];
-            return LockGc(array);
-        }
-
-        private static GCHandle GetNewFloat16Buffer(out float[] array)
-        {
-            array = new float[16];
-            return LockGc(array);
-        }
-
-        private static GCHandle GetNewUIntBuffer(out uint value)
-        {
-            value = new uint();
-            return LockGc(value);
-        }
-
-        private static float[] GetNewFloat2Array(IntPtr pointer)
-        {
-            var array = new float[2];
-            Marshal.Copy(pointer, array, 0, 2);
-            return array;
-        }
-
-        private static float[] GetNewFloat3Array(IntPtr pointer)
-        {
-            var array = new float[3];
-            Marshal.Copy(pointer, array, 0, 3);
-            return array;
-        }
-
-        private static float[] GetNewFloat4Array(IntPtr pointer)
-        {
-            var array = new float[4];
-            Marshal.Copy(pointer, array, 0, 4);
-            return array;
-        }
-
-        private static float[] GetNewFloat16Array(IntPtr pointer)
-        {
-            var array = new float[16];
-            Marshal.Copy(pointer, array, 0, 16);
-            return array;
-        }
-
-        private static string ReadStringFromPointer(IntPtr pointer)
+        public static string ReadStringFromPointer(IntPtr pointer)
         {
             return Marshal.PtrToStringAnsi(pointer);
         }
 
-        private static Vector2 LoadVector2FromArray(float[] array)
+        public static bool GetNewBool(IntPtr pointer)
         {
-            return new Vector2(array[0], array[1]);
+            return Marshal.ReadByte(pointer) == 1;
         }
 
-        private static Vector3 LoadVector3FromArray(float[] array)
+        public static byte GetNewByte(IntPtr pointer)
         {
-            return new Vector3(array[0], array[1], array[2]);
+            return Marshal.ReadByte(pointer);
         }
 
-        private static Color LoadColorFromArray(float[] array)
+        public static int GetNewInt32(IntPtr pointer)
         {
-            return new Color(array[0], array[1], array[2], array[3]);
+            return Marshal.ReadInt32(pointer);
         }
 
-        private static Quaternion LoadQuaternionFromArray(float[] array)
+        public static long GetNewInt64(IntPtr pointer)
         {
-            return new Quaternion(array[1], array[2], array[3], array[0]);
+            return Marshal.ReadInt64(pointer);
         }
 
-        private static Matrix4x4 LoadMatrix4x4FromArray(float[] array)
+        public static float GetNewFloat(IntPtr pointer)
+        {
+            var result = new float[1];
+            Marshal.Copy(pointer, result, 0, 1);
+            return result[0];
+        }
+
+        public static double GetNewDouble(IntPtr pointer)
+        {
+            var result = new double[1];
+            Marshal.Copy(pointer, result, 0, 1);
+            return result[0];
+        }
+
+        public static Matrix4x4 GetNewMatrix4x4(IntPtr pointer)
         {
             var matrix = new Matrix4x4();
-            matrix[0] = array[0];
-            matrix[1] = array[4];
-            matrix[2] = array[8];
-            matrix[3] = array[12];
-            matrix[4] = array[1];
-            matrix[5] = array[5];
-            matrix[6] = array[9];
-            matrix[7] = array[13];
-            matrix[8] = array[2];
-            matrix[9] = array[6];
-            matrix[10] = array[10];
-            matrix[11] = array[14];
-            matrix[12] = array[3];
-            matrix[13] = array[7];
-            matrix[14] = array[11];
-            matrix[15] = array[15];
+            var data = new float[16];
+            Marshal.Copy(pointer, data, 0, 16);
+            matrix[0] = data[0];
+            matrix[4] = data[1];
+            matrix[8] = data[2];
+            matrix[12] = data[3];
+            matrix[1] = data[4];
+            matrix[5] = data[5];
+            matrix[9] = data[6];
+            matrix[13] = data[7];
+            matrix[2] = data[8];
+            matrix[6] = data[9];
+            matrix[10] = data[10];
+            matrix[14] = data[11];
+            matrix[3] = data[12];
+            matrix[7] = data[13];
+            matrix[11] = data[14];
+            matrix[15] = data[15];
             return matrix;
         }
 
-		private static GCHandle Matrix4x4ToAssimp (Vector3 translation, Vector3 rotation, Vector3 scale)
-		{
-			var matrix = Matrix4x4.TRS (translation, Quaternion.Euler(rotation), scale);
-			var array = new float[16];
-			array[0] = matrix[0];
-			array[4] = matrix[1];
-			array[8] = matrix[2];
-			array[12] = matrix[3];
-			array[1] = matrix[4];
-			array[5] = matrix[5];
-			array[9] = matrix[6];
-			array[13] = matrix[7];
-			array[2] = matrix[8];
-			array[6] = matrix[9];
-			array[10] = matrix[10];
-			array[14] = matrix[11];
-			array[3] = matrix[12];
-			array[7] = matrix[13];
-			array[11] = matrix[14];
-			array[15] = matrix[15];
-			return LockGc (array);
-		}
+        public static GCHandle Matrix4x4ToAssimp(Vector3 translation, Vector3 rotation, Vector3 scale)
+        {
+            var matrix = Matrix4x4.TRS(translation, Quaternion.Euler(rotation), scale);
+            var array = new float[16];
+            array[0] = matrix[0];
+            array[4] = matrix[1];
+            array[8] = matrix[2];
+            array[12] = matrix[3];
+            array[1] = matrix[4];
+            array[5] = matrix[5];
+            array[9] = matrix[6];
+            array[13] = matrix[7];
+            array[2] = matrix[8];
+            array[6] = matrix[9];
+            array[10] = matrix[10];
+            array[14] = matrix[11];
+            array[3] = matrix[12];
+            array[7] = matrix[13];
+            array[11] = matrix[14];
+            array[15] = matrix[15];
+            return LockGc(array);
+        }
 
+        public static float[] ReadFloatArray(IntPtr pointer, int size)
+        {
+            var result = new float[size];
+            Marshal.Copy(pointer, result, 0, size);
+            return result;
+        }
+
+        public static double[] ReadDoubleArray(IntPtr pointer, int size)
+        {
+            var result = new double[size];
+            Marshal.Copy(pointer, result, 0, size);
+            return result;
+        }
+
+        public static int[] ReadIntArray(IntPtr pointer, int size)
+        {
+            var result = new int[size];
+            Marshal.Copy(pointer, result, 0, size);
+            return result;
+        }
+
+        public static byte[] ReadByteArray(IntPtr pointer, int size)
+        {
+            var result = new byte[size];
+            Marshal.Copy(pointer, result, 0, size);
+            return result;
+        }
         #endregion
     }
 }

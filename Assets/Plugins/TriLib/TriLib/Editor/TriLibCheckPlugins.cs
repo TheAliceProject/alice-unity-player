@@ -1,31 +1,47 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-#if UNITY_EDITOR_OSX && UNITY_IOS
-using UnityEditor.Callbacks;
+using UnityEditor.Build;
+#if UNITY_EDITOR_OSX
 using UnityEditor.iOS.Xcode;
 #endif
 using TriLib;
 using System;
 using System.IO;
-
+using System.Linq;
+#if UNITY_2018_2_OR_NEWER
+using UnityEditor.Build.Reporting;
+#endif
 [InitializeOnLoad]
-public class TriLibCheckPlugins
+#if UNITY_2018_1_OR_NEWER
+public class TriLibCheckPlugins : IPreprocessBuildWithReport, IPostprocessBuildWithReport
+#else
+public class TriLibCheckPlugins : IPreprocessBuild, IPostprocessBuild
+#endif
 {
-    private const string DebugSymbol = "ASSIMP_OUTPUT_MESSAGES";
-    private const string DevilSymbol = "USE_DEVIL";
-    private const string DebugEnabledMenuPath = "TriLib/Debug Enabled";
-    private const string DevilEnabledMenuPath = "TriLib/DevIL Enabled (Windows only)";
-#if UNITY_EDITOR_OSX && UNITY_IOS
-	private const string IOSSimulatorSymbol = "USE_IOS_SIMULATOR";
-    private const string IOSSimulatorEnabledMenuPath = "TriLib/iOS Simulator Enabled";
-	private const string XCodeProjectPath = "Libraries/TriLib/TriLib/Plugins/iOS";
+    public const string DebugSymbol = "TRILIB_OUTPUT_MESSAGES";
+    public const string ZipSymbol = "TRILIB_USE_ZIP";
+    public const string DebugEnabledMenuPath = "TriLib/Enable Debug";
+    public const string ZipEnabledMenuPath = "TriLib/Enable Zip loading";
+#if UNITY_EDITOR_OSX
+	public const string XCodeProjectPath = "Libraries/TriLib/TriLib/Plugins/iOS";
 #endif
     public static bool PluginsLoaded { get; private set; }
+
+    public int callbackOrder
+    {
+        get { return 1000; }
+    }
+
+#if UNITY_EDITOR_OSX
+	private static bool _iosFileSharingEnabled;
+#endif
+
     static TriLibCheckPlugins()
     {
         try
         {
+            CheckForOldVersions();
             AssimpInterop.ai_IsExtensionSupported(".3ds");
             PluginsLoaded = true;
         }
@@ -43,6 +59,52 @@ public class TriLibCheckPlugins
         }
     }
 
+    static void CheckForOldVersions()
+    {
+        var assimpInteropAssetGuids = AssetDatabase.FindAssets("AssimpInterop t:Script");
+        if (assimpInteropAssetGuids.Length > 0)
+        {
+            try
+            {
+                var assimpInteropAssetPath = AssetDatabase.GUIDToAssetPath(assimpInteropAssetGuids[0]);
+                if (assimpInteropAssetPath.EndsWith("AssimpInterop.cs"))
+                {
+                    var assimpInteropDirectory = FileUtils.GetFileDirectory(assimpInteropAssetPath);
+                    var scriptsDirectory = Directory.GetParent(assimpInteropDirectory);
+                    if (scriptsDirectory != null && scriptsDirectory.Parent != null)
+                    {
+                        var pluginsDirectories = scriptsDirectory.Parent.GetDirectories("Plugins", SearchOption.TopDirectoryOnly);
+                        if (pluginsDirectories.Length > 0)
+                        {
+                            var hasDeprecatedFolder = false;
+                            var pluginsDirectory = pluginsDirectories[0];
+                            if (pluginsDirectory.GetDirectories("Windows").Length == 0 && pluginsDirectory.GetDirectories("OSX").Length == 0 && pluginsDirectory.GetDirectories("Linux").Length == 0)
+                            {
+                                hasDeprecatedFolder = true;
+                            }
+                            else
+                            {
+                                var webGLDirectory = pluginsDirectory.GetDirectories("WebGL");
+                                if (webGLDirectory.Length > 0 && webGLDirectory[0].GetDirectories("Emscripten1.37.3").Length > 0 || webGLDirectory[0].GetDirectories("Emscripten1.37.33").Length > 0 || webGLDirectory[0].GetDirectories("Emscripten1.37.40").Length > 0 || webGLDirectory[0].GetDirectories("Emscripten1.38.11").Length > 0)
+                                {
+                                    hasDeprecatedFolder = true;
+                                }
+                            }
+                            if (hasDeprecatedFolder)
+                            {
+                                EditorUtility.DisplayDialog("TriLib", "Looks like you have an old TriLib install mixed with the newest update.\nPlease make a clean TriLib install (remove all TriLib files and install TriLib again).", "Ok");
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+    }
+
     [MenuItem(DebugEnabledMenuPath)]
     public static void DebugEnabled()
     {
@@ -56,25 +118,25 @@ public class TriLibCheckPlugins
         return true;
     }
 
-    [MenuItem(DevilEnabledMenuPath)]
-    public static void DevilEnabled()
+    [MenuItem(ZipEnabledMenuPath)]
+    public static void ZipEnabled()
     {
-        GenerateSymbolsAndUpdateMenu(DevilEnabledMenuPath, DevilSymbol, true);
+        GenerateSymbolsAndUpdateMenu(ZipEnabledMenuPath, ZipSymbol, true);
     }
 
-    [MenuItem(DevilEnabledMenuPath, true)]
-    public static bool DevilEnabledValidate()
+    [MenuItem(ZipEnabledMenuPath, true)]
+    public static bool ZipEnabledValidate()
     {
-        GenerateSymbolsAndUpdateMenu(DevilEnabledMenuPath, DevilSymbol, false);
+        GenerateSymbolsAndUpdateMenu(ZipEnabledMenuPath, ZipSymbol, false);
         return true;
     }
 
-    private static void GenerateSymbolsAndUpdateMenu(string menuPath, string checkingDefineSymbol, bool generateSymbols)
+    private static void GenerateSymbolsAndUpdateMenu(string menuPath, string checkingDefineSymbol, bool generateSymbols, bool? forceDefinition = null)
     {
         var isDefined = false;
         var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
         var defineSymbolsArray = defineSymbols.Split(';');
-        string newDefineSymbols = generateSymbols ? string.Empty : null;
+        var newDefineSymbols = generateSymbols ? string.Empty : null;
         foreach (var defineSymbol in defineSymbolsArray)
         {
             var trimmedDefineSymbol = defineSymbol.Trim();
@@ -94,7 +156,7 @@ public class TriLibCheckPlugins
         }
         if (generateSymbols)
         {
-            if (!isDefined)
+            if (forceDefinition.HasValue && forceDefinition.GetValueOrDefault() || !forceDefinition.HasValue && !isDefined)
             {
                 newDefineSymbols += string.Format("{0};", checkingDefineSymbol);
             }
@@ -103,49 +165,114 @@ public class TriLibCheckPlugins
         Menu.SetChecked(menuPath, generateSymbols ? !isDefined : isDefined);
     }
 
-#if UNITY_EDITOR_OSX && UNITY_IOS
-	[MenuItem(IOSSimulatorEnabledMenuPath)]
-	public static void IOSSimulatorEnabled()
-	{
-		GenerateSymbolsAndUpdateMenu(IOSSimulatorEnabledMenuPath, IOSSimulatorSymbol, true);
-	}
-
-	[MenuItem(IOSSimulatorEnabledMenuPath, true)]
-	public static bool IOSSimulatorEnabledValidate()
-	{
-		GenerateSymbolsAndUpdateMenu(IOSSimulatorEnabledMenuPath, IOSSimulatorSymbol, false);
-		return true;
-	}
-
-    [PostProcessBuildAttribute(1000)]
-	public static void OnPreProcessBuild(BuildTarget target, string pathToBuiltProject) {
-		if (target == BuildTarget.iOS) {
-			var path = PBXProject.GetPBXProjectPath(pathToBuiltProject);
-			var pbxProject = new PBXProject();
-			pbxProject.ReadFromFile(path);
-			var targetGuid = pbxProject.TargetGuidByName(PBXProject.GetUnityTargetName ());
-#if USE_IOS_SIMULATOR
-			RemoveFileFromProject(pbxProject, targetGuid, "libassimp.release.a");
-			RemoveFileFromProject(pbxProject, targetGuid, "libirrxml.release.a");
-			RemoveFileFromProject(pbxProject, targetGuid, "libzlibstatic.release.a");
+#if UNITY_2018_1_OR_NEWER
+    public void OnPreprocessBuild(BuildReport report)
+    {
+        var buildTarget = report.summary.platform;
 #else
-			RemoveFileFromProject(pbxProject, targetGuid, "libassimp.debug.a");
-			RemoveFileFromProject(pbxProject, targetGuid, "libirrxml.debug.a");
-			RemoveFileFromProject(pbxProject, targetGuid, "libzlibstatic.debug.a");
+    public void OnPreprocessBuild(BuildTarget target, string path)
+    {
+        var buildTarget = target;
+#endif
+        if (buildTarget == BuildTarget.iOS)
+        {
+            var pluginsLabel = UnityEditorInternal.InternalEditorUtility.inBatchMode || EditorUtility.DisplayDialog("TriLib", "Building to iOS Device (iPhone, iPad) or iOS Simulator?", "Device", "Simulator") ? "_TriLib_iOS_Device_" : "_TriLib_iOS_Simulator_";
+#if UNITY_EDITOR_OSX
+		    _iosFileSharingEnabled = UnityEditorInternal.InternalEditorUtility.inBatchMode || EditorUtility.DisplayDialog ("TriLib", "Enable iOS File Sharing?", "Yes", "No");
+#endif
+            var iOSImporters = PluginImporter.GetImporters(BuildTarget.iOS);
+            foreach (var importer in iOSImporters)
+            {
+                if (importer.isNativePlugin)
+                {
+                    var asset = AssetDatabase.LoadMainAssetAtPath(importer.assetPath);
+                    var labels = AssetDatabase.GetLabels(asset);
+                    if (labels.Contains("_TriLib_iOS_"))
+                    {
+                        importer.SetIncludeInBuildDelegate(assetPath => labels.Contains(pluginsLabel));
+                    }
+                }
+            }
+            if (!UnityEditorInternal.InternalEditorUtility.inBatchMode)
+            {
+#if UNITY_EDITOR_OSX
+                EditorUtility.DisplayDialog("TriLib", "Warning: Bitcode is not supported by TriLib and will be disabled.", "Ok");
+#else
+                EditorUtility.DisplayDialog("TriLib", "Warning:\nBitcode is not supported. You should disable it on your project settings.\nZLIB library should be included in your project frameworks.", "Ok");
+#endif
+            }
+        }
+#if !UNITY_2018_1_OR_NEWER
+        else if (buildTarget == BuildTarget.Android)
+        {
+            var androidImporters = PluginImporter.GetImporters(BuildTarget.Android);
+            foreach (var importer in androidImporters)
+            {
+                if (importer.isNativePlugin)
+                {
+                    var asset = AssetDatabase.LoadMainAssetAtPath(importer.assetPath);
+                    var labels = AssetDatabase.GetLabels(asset);
+                    if (labels.Contains("_TriLib_Android_") && labels.Contains("_TriLib_Android_ARM64_"))
+                    {
+                        importer.SetIncludeInBuildDelegate(assetPath => false);
+                    }
+                }
+            }
+        }
+#endif
+        var allImporters = PluginImporter.GetImporters(buildTarget);
+        foreach (var importer in allImporters)
+        {
+            if (!importer.isNativePlugin)
+            {
+                var asset = AssetDatabase.LoadMainAssetAtPath(importer.assetPath);
+                var labels = AssetDatabase.GetLabels(asset);
+                if (labels.Contains("_TriLib_ZIP_"))
+                {
+#if TRILIB_USE_ZIP
+                    importer.SetIncludeInBuildDelegate(assetPath => PlayerSettings.GetScriptingBackend(BuildPipeline.GetBuildTargetGroup(buildTarget)) != ScriptingImplementation.WinRTDotNET);
+#else
+                    importer.SetIncludeInBuildDelegate(assetPath => false);
+#endif
+                }
+            }
+        }
+    }
+
+#if UNITY_2018_1_OR_NEWER
+    public void OnPostprocessBuild(BuildReport report)
+    {
+#if UNITY_EDITOR_OSX
+        var buildTarget = report.summary.platform;
+        var buildPath = report.summary.outputPath;
+#endif
+#else
+    public void OnPostprocessBuild(BuildTarget target, string path)
+    {
+#if UNITY_EDITOR_OSX
+        var buildTarget = target;
+        var buildPath = path;
+#endif
+#endif
+#if UNITY_EDITOR_OSX
+		if (buildTarget == BuildTarget.iOS) {
+			var pbxProject = new PBXProject ();
+			var pbxProjectPath = PBXProject.GetPBXProjectPath (buildPath);
+			pbxProject.ReadFromFile (pbxProjectPath);
+			var targetGuid = pbxProject.TargetGuidByName (PBXProject.GetUnityTargetName ());
+			pbxProject.AddFrameworkToProject (targetGuid, "libz.dylib", true);
+			pbxProject.AddFrameworkToProject (targetGuid, "libz.tbd", true);
 			pbxProject.SetBuildProperty (targetGuid, "ENABLE_BITCODE", "NO");
-#endif
-			pbxProject.WriteToFile (path);
+			pbxProject.WriteToFile (pbxProjectPath);
+			if (_iosFileSharingEnabled) {
+				var plistPath = buildPath + "/info.plist";
+				var plist = new PlistDocument ();
+				plist.ReadFromFile (plistPath);
+				var dict = plist.root.AsDict ();
+				dict.SetBoolean ("UIFileSharingEnabled", true);
+				plist.WriteToFile (plistPath);
+			}
 		}
-	}
-
-	private static void RemoveFileFromProject(PBXProject pbxProject, string targetGuid, string filename) {
-		var path = Path.Combine(XCodeProjectPath, filename);
-		var fileGuid = pbxProject.FindFileGuidByProjectPath (path);
-		if (fileGuid != null) {
-			pbxProject.RemoveFileFromBuild (targetGuid, fileGuid);
-			pbxProject.RemoveFile (fileGuid);
-		}
-	}
 #endif
+    }
 }
-

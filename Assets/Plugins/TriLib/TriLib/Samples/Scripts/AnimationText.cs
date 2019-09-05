@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#pragma warning disable 649
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace TriLib
@@ -35,3 +36,4 @@ namespace TriLib
         }
     }
 }
+#pragma warning restore 649
