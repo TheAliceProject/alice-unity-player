@@ -4,7 +4,6 @@ namespace TriLib
 {
     /// <summary>
     /// Represents the importing post process steps.
-    /// @note This documentation is being translated for a more Unity friendly version.
     /// This documentation is based on the latest Assimp branch.
     /// Based on: <a href="http://assimp.sourceforge.net/lib_html/postprocess_8h.html">Assimp documentation</a>.
     /// </summary>
@@ -186,7 +185,7 @@ namespace TriLib
         /// <ul>
         /// <li>Error: There's something wrong with the imported data. Further
         /// postprocessing is not possible and the data is not usable at all.
-        /// The import fails. #TriLib.AssimpInterop.ai_GetErrorString
+        /// The import fails. #TriLib.AssimpInterop.aiGetErrorString
         /// carry the error message around.</li>
         /// </ul>
         ///
@@ -448,9 +447,21 @@ namespace TriLib
         /// Use <tt>#TriLib.AssetAdvancedPropertyClassNames.DeboneAllOrNone</tt> if you want bones removed if and
         /// only if all bones within the scene qualify for removal.
         /// </summary>
+        Debone = 0x4000000,
 
-        Debone = 0x4000000
-    };
+        /// <summary>
+        /// -------------------------------------------------------------------------
+        /// Drops normals for all faces of all meshes.
+        ///
+        /// This is ignored if no normals are present.
+        /// Face normals are shared between all points of a single face,
+        /// so a single point can have multiple normals, which
+        /// forces the library to duplicate vertices in some cases.
+        /// <tt>#TriLib.AssetAdvancedPropertyClassNames.JoinIdenticalVertices</tt> is *senseless* then.
+        /// This process gives sense back to <tt>#TriLib.AssetAdvancedPropertyClassNames.JoinIdenticalVertices</tt>
+        /// </summary>
+        DropNormals = 0x40000000
+    }
     /// <summary>
     /// Represents the importing post process pressets.
     /// @note This documentation is being translated for a more Unity friendly version.
@@ -493,9 +504,9 @@ namespace TriLib
         /// of use for you so it might be better to not specify them.
         /// </summary>
 #if UNITY_2017_3_OR_NEWER
-		public const AssimpPostProcessSteps TargetRealtimeQuality = AssimpPostProcessSteps.CalcTangentSpace | AssimpPostProcessSteps.GenSmoothNormals | AssimpPostProcessSteps.JoinIdenticalVertices | AssimpPostProcessSteps.ImproveCacheLocality | AssimpPostProcessSteps.LimitBoneWeights | AssimpPostProcessSteps.RemoveRedundantMaterials | AssimpPostProcessSteps.Triangulate | AssimpPostProcessSteps.GenUvCoords | AssimpPostProcessSteps.SortByPType | AssimpPostProcessSteps.FindInvalidData;
+		public const AssimpPostProcessSteps TargetRealtimeQuality = AssimpPostProcessSteps.CalcTangentSpace | AssimpPostProcessSteps.GenSmoothNormals | AssimpPostProcessSteps.JoinIdenticalVertices | AssimpPostProcessSteps.ImproveCacheLocality | AssimpPostProcessSteps.LimitBoneWeights | AssimpPostProcessSteps.Triangulate | AssimpPostProcessSteps.GenUvCoords | AssimpPostProcessSteps.SortByPType | AssimpPostProcessSteps.FindInvalidData;
 #else
-		public const AssimpPostProcessSteps TargetRealtimeQuality = AssimpPostProcessSteps.CalcTangentSpace | AssimpPostProcessSteps.GenSmoothNormals | AssimpPostProcessSteps.JoinIdenticalVertices | AssimpPostProcessSteps.ImproveCacheLocality | AssimpPostProcessSteps.LimitBoneWeights | AssimpPostProcessSteps.RemoveRedundantMaterials | AssimpPostProcessSteps.SplitLargeMeshes | AssimpPostProcessSteps.Triangulate | AssimpPostProcessSteps.GenUvCoords | AssimpPostProcessSteps.SortByPType | AssimpPostProcessSteps.FindInvalidData;
+        public const AssimpPostProcessSteps TargetRealtimeQuality = AssimpPostProcessSteps.CalcTangentSpace | AssimpPostProcessSteps.GenSmoothNormals | AssimpPostProcessSteps.JoinIdenticalVertices | AssimpPostProcessSteps.ImproveCacheLocality | AssimpPostProcessSteps.LimitBoneWeights | AssimpPostProcessSteps.SplitLargeMeshes | AssimpPostProcessSteps.Triangulate | AssimpPostProcessSteps.GenUvCoords | AssimpPostProcessSteps.SortByPType | AssimpPostProcessSteps.FindInvalidData;
 #endif
         /// <summary>
         /// @brief Default postprocess configuration optimizing the data for real-time rendering.
@@ -507,6 +518,6 @@ namespace TriLib
         /// Some of them offer further configurable properties, while some of them might not be
         /// of use for you so it might be better to not specify them.
         /// </summary>
-        public const AssimpPostProcessSteps TargetRealtimeMaxQuality = TargetRealtimeQuality | AssimpPostProcessSteps.FindInstances | AssimpPostProcessSteps.ValidateDataStructure | AssimpPostProcessSteps.OptimizeMeshes;
+        public const AssimpPostProcessSteps TargetRealtimeMaxQuality = TargetRealtimeQuality | AssimpPostProcessSteps.FindInstances | AssimpPostProcessSteps.OptimizeMeshes;
     }
 }

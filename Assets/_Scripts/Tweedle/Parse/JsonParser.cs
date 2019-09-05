@@ -270,9 +270,8 @@ namespace Alice.Tweedle.Parse
                         {
                             var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
                             var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
-                            options.TexturesPathOverride = System.IO.Path.GetDirectoryName(cachePath);
 
-                            GameObject loadedModel = assetLoader.LoadFromMemory(data, meshRef.file, options);
+                            GameObject loadedModel = assetLoader.LoadFromMemoryWithTextures(data, meshRef.file, options, null, System.IO.Path.GetDirectoryName(cachePath));
 
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
                             SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);

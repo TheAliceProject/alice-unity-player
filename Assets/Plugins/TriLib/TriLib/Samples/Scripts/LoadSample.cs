@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 649
+using System;
 using UnityEngine;
 
 namespace TriLib
@@ -10,7 +11,7 @@ namespace TriLib
         /// </summary>
         public class LoadSample : MonoBehaviour
         {
-#if !UNITY_WINRT
+#if UNITY_EDITOR || !UNITY_WINRT
             /// <summary>
             /// Tries to load "Bouncing.fbx" model
             /// </summary>
@@ -23,6 +24,7 @@ namespace TriLib
                         var assetLoaderOptions = AssetLoaderOptions.CreateInstance();
                         assetLoaderOptions.RotationAngles = new Vector3(90f, 180f, 0f);
                         assetLoaderOptions.AutoPlayAnimations = true;
+                        assetLoaderOptions.UseOriginalPositionRotationAndScale = true;
                         var loadedGameObject = assetLoader.LoadFromFile(Application.dataPath + "/TriLib/TriLib/Samples/Models/Bouncing.fbx", assetLoaderOptions);
                         loadedGameObject.transform.position = new Vector3(128f, 0f, 0f);
                     }
@@ -36,3 +38,4 @@ namespace TriLib
         }
     }
 }
+#pragma warning restore 649

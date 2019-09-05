@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#pragma warning disable 649
+using UnityEngine;
 using System;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,7 @@ namespace TriLib
 {
     namespace Samples
     {
-#if (UNITY_WINRT && !UNITY_EDITOR_WIN)
+#if !UNITY_EDITOR && UNITY_WINRT && (NET_4_6 || NETFX_CORE || NET_STANDARD_2_0)
         /// <summary>
         /// Represents a <see cref="FileOpenDialog"/> file opening event.
         /// </summary>
@@ -18,7 +19,7 @@ namespace TriLib
         /// <summary>
         /// Represents a <see cref="FileOpenDialog"/> file opening event.
         /// </summary>
-        /// <param name="filename">Choosen filename.</param>
+        /// <param name="filename">Chosen filename.</param>
         public delegate void FileOpenEventHandle(string filename);
 #endif
         /// <summary>
@@ -58,6 +59,14 @@ namespace TriLib
                 }
             }
             /// <summary>
+            /// Gets/Sets the Working directory.
+            /// </summary>
+            public string Directory
+            {
+                get { return _directory; }
+                set { _directory = value; }
+            }
+            /// <summary>
             /// Event that occurs when user choose a file.
             /// </summary>
             private event FileOpenEventHandle OnFileOpen;
@@ -65,33 +74,33 @@ namespace TriLib
             /// "Container Transform" reference.
             /// </summary>
             [SerializeField]
-            private Transform _containerTransform = null;
+            private Transform _containerTransform;
             /// <summary>
             /// "<see cref="FileText"/> prefab" reference.
             /// </summary>
             [SerializeField]
-            private FileText _fileTextPrefab = null;
+            private FileText _fileTextPrefab;
             /// <summary>
             /// "Inner Game Object" reference.
             /// </summary>
             [SerializeField]
-            private GameObject _fileLoaderRenderer = null;
+            private GameObject _fileLoaderRenderer;
             /// <summary>
             /// "Close button" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Button _closeButton = null;
+            private UnityEngine.UI.Button _closeButton;
             /// <summary>
             /// "Header text" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Text _headerText = null;
+            private UnityEngine.UI.Text _headerText;
             /// <summary>
             /// Working directory.
             /// </summary>
             private string _directory;
 
-#if (UNITY_WINRT && !UNITY_EDITOR_WIN)
+#if !UNITY_EDITOR && UNITY_WINRT && (NET_4_6 || NETFX_CORE || NET_STANDARD_2_0)
 			/// <summary>
 			/// File open event handler.
 			/// </summary>
@@ -135,7 +144,7 @@ namespace TriLib
 			{
                 UnityEngine.WSA.Application.InvokeOnUIThread(async () => {
                     var filePicker = new Windows.Storage.Pickers.FileOpenPicker();
-                    filePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+                    filePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Objects3D;
                     filePicker.FileTypeFilter.Add("*");        
                     var file = await filePicker.PickSingleFileAsync();
                     if (file != null) {
@@ -186,14 +195,17 @@ namespace TriLib
             {
                 switch (itemType)
                 {
-				case ItemType.ParentDirectory:
-					var parentDirectory = Directory.GetParent (_directory);
-					if (parentDirectory != null) {
-						_directory = parentDirectory.FullName;
-						ReloadItemNames ();
-					} else {
-						ShowDirectoryNames ();
-					}
+                    case ItemType.ParentDirectory:
+                        var parentDirectory = System.IO.Directory.GetParent(_directory);
+                        if (parentDirectory != null)
+                        {
+                            _directory = parentDirectory.FullName;
+                            ReloadItemNames();
+                        }
+                        else
+                        {
+                            ShowDirectoryNames();
+                        }
                         break;
                     case ItemType.Directory:
                         _directory = filename;
@@ -217,7 +229,7 @@ namespace TriLib
                 }
             }
 
-			/// <summary>
+            /// <summary>
             /// Initializes variables.
             /// </summary>
             protected void Awake()
@@ -234,12 +246,12 @@ namespace TriLib
             {
                 DestroyItems();
                 CreateItem(ItemType.ParentDirectory, "[Parent Directory]");
-                var directories = Directory.GetDirectories(_directory);
+                var directories = System.IO.Directory.GetDirectories(_directory);
                 foreach (var directory in directories)
                 {
                     CreateItem(ItemType.Directory, directory);
                 }
-                var files = Directory.GetFiles(_directory, "*.*");
+                var files = System.IO.Directory.GetFiles(_directory, "*.*");
                 if (!string.IsNullOrEmpty(Filter) && Filter != "*.*")
                 {
                     files = files.Where(x => Filter.Contains(Path.GetExtension(x).ToLower())).ToArray();
@@ -250,17 +262,18 @@ namespace TriLib
                 }
             }
 
-			/// <summary>
-			/// Shows the directory names.
-			/// </summary>
-			private void ShowDirectoryNames() {
-				DestroyItems();
-				var driveInfos = Directory.GetLogicalDrives();
-				foreach (var driveInfo in driveInfos)
-				{
-					CreateItem(ItemType.Directory, driveInfo);
-				}
-			}
+            /// <summary>
+            /// Shows the directory names.
+            /// </summary>
+            private void ShowDirectoryNames()
+            {
+                DestroyItems();
+                var driveInfos = System.IO.Directory.GetLogicalDrives();
+                foreach (var driveInfo in driveInfos)
+                {
+                    CreateItem(ItemType.Directory, driveInfo);
+                }
+            }
 
             /// <summary>
             /// Creates a <see cref="FileText"/> item in the container.
@@ -272,9 +285,9 @@ namespace TriLib
                 var instantiated = Instantiate(_fileTextPrefab, _containerTransform);
                 instantiated.ItemType = itemType;
                 instantiated.Text = text;
-			}
-
-			#endif
+            }
+#endif
         }
     }
 }
+#pragma warning restore 649

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#pragma warning disable 649
+using UnityEngine;
 
 namespace TriLib
 {
@@ -18,19 +19,19 @@ namespace TriLib
             /// "OK button" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.Button _okButton = null;
+            private UnityEngine.UI.Button _okButton;
 
             /// <summary>
             /// "Error text" reference.
             /// </summary>
             [SerializeField]
-            private UnityEngine.UI.InputField _errorText = null;
+            private UnityEngine.UI.InputField _errorText;
 
             /// <summary>
             /// "Error dialog inner Game Object" reference.
             /// </summary>
             [SerializeField]
-            private GameObject _rendererGameObject = null;
+            private GameObject _rendererGameObject;
 
             public string Text
             {
@@ -67,3 +68,4 @@ namespace TriLib
         }
     }
 }
+#pragma warning restore 649

@@ -8,7 +8,7 @@ namespace Alice.Player.Unity {
         
         private string m_ResourceId;
         private Renderer[] m_Renderers;
-        private MeshFilter[] m_Filters;
+        private SkinnedMeshRenderer[] m_SkinnedMeshes;
         private MaterialPropertyBlock[] m_PropertyBlocks;
 
         private int m_BoundsRendererIndex = -1;
@@ -34,20 +34,20 @@ namespace Alice.Player.Unity {
                 m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
                 m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
 
-                m_Filters = model.GetComponentsInChildren<MeshFilter>();
+                m_SkinnedMeshes = model.GetComponentsInChildren<SkinnedMeshRenderer>();
                 if (m_Renderers == null) {
-                    m_PropertyBlocks = new MaterialPropertyBlock[m_Filters.Length];
-                    m_Renderers = new Renderer[m_Filters.Length];
-                } else if (m_Renderers.Length != m_Filters.Length) {
-                    System.Array.Resize(ref m_PropertyBlocks, m_Filters.Length);
-                    System.Array.Resize(ref m_Renderers, m_Filters.Length);
+                    m_PropertyBlocks = new MaterialPropertyBlock[m_SkinnedMeshes.Length];
+                    m_Renderers = new Renderer[m_SkinnedMeshes.Length];
+                } else if (m_Renderers.Length != m_SkinnedMeshes.Length) {
+                    System.Array.Resize(ref m_PropertyBlocks, m_SkinnedMeshes.Length);
+                    System.Array.Resize(ref m_Renderers, m_SkinnedMeshes.Length);
                 }
 
                 float largestVolume = -1;
                 m_BoundsRendererIndex = -1;
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
-                    m_Renderers[i] = m_Filters[i].GetComponent<Renderer>();
+                    m_Renderers[i] = m_SkinnedMeshes[i].GetComponent<Renderer>();
 
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
                     m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
@@ -59,7 +59,7 @@ namespace Alice.Player.Unity {
                         skinnedRenderer.updateWhenOffscreen = true;
                         size = skinnedRenderer.localBounds.size;
                     } else {
-                        size = m_Filters[i].sharedMesh.bounds.size;
+                        size = m_SkinnedMeshes[i].sharedMesh.bounds.size;
                     }
 
                     var volume = size.x*size.y*size.z;
@@ -73,12 +73,12 @@ namespace Alice.Player.Unity {
                 CacheMeshBounds();
             } else {
                 m_Renderers = null;
-                m_Filters = null;
+                m_SkinnedMeshes = null;
             }
         }
 
         protected override Bounds GetMeshBounds() {
-            if (m_Filters == null) {
+            if (m_SkinnedMeshes == null || m_BoundsRendererIndex < 0) {
                 return new Bounds(UnityEngine.Vector3.zero, UnityEngine.Vector3.zero);
             }
 
@@ -87,7 +87,7 @@ namespace Alice.Player.Unity {
                 return skinnedRenderer.localBounds;
             }
 
-            return m_Filters[m_BoundsRendererIndex].sharedMesh.bounds;
+            return m_SkinnedMeshes[m_BoundsRendererIndex].sharedMesh.bounds;
         }
 
         protected override void OnPaintChanged() {

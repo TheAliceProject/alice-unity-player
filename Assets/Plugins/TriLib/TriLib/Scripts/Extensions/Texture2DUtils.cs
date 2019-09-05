@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
-using System.IO;
 using System;
-#if USE_DEVIL
-using DevIL;
-#endif
 
 namespace TriLib
 {
@@ -29,154 +25,174 @@ namespace TriLib
     }
 
     /// <summary>
-    /// Represents a <see cref="UnityEngine.Texture2D"/> loading event handle.
+    /// Represents a <see cref="UnityEngine.Texture2D"/> post-loading event handle.
     /// </summary>
-	[Obsolete("The Material parameter is inconsistent after the alpha textures support update, so, it will be removed on future versions.")]
     public delegate void TextureLoadHandle(string sourcePath, Material material, string propertyName, Texture2D texture);
+
+    /// <summary>
+    /// Represents a  <see cref="UnityEngine.Texture2D"/> pre-loading event handle.
+    /// </summary>
+    public delegate void TexturePreLoadHandle(IntPtr scene, string path, string name, Material material, string propertyName, ref bool checkAlphaChannel, TextureWrapMode textureWrapMode = TextureWrapMode.Repeat, string basePath = null, TextureLoadHandle onTextureLoaded = null, TextureCompression textureCompression = TextureCompression.None, bool isNormalMap = false);
 
     /// <summary>
     /// Represents a class to load external textures.
     /// </summary>
     public static class Texture2DUtils
     {
-		#pragma warning disable 612, 618
-        /// <summary>
-        /// Loads a <see cref="UnityEngine.Texture2D"/> from an external source.
-        /// </summary>
-        /// <param name="scene">Scene where the texture belongs.</param>
-        /// <param name="path">Path to load the texture data.</param>
-        /// <param name="name">Name of the <see cref="UnityEngine.Texture2D"/> to be created.</param>
-        /// <param name="material"><see cref="UnityEngine.Material"/> to assign the <see cref="UnityEngine.Texture2D"/>.</param>
-        /// <param name="propertyName"><see cref="UnityEngine.Material"/> property name to assign to the <see cref="UnityEngine.Texture2D"/>.</param>
-		/// <param name="checkAlphaChannel">If True, checks every image pixel to determine if alpha channel is being used and sets this value.</param>
-        /// <param name="textureWrapMode">Wrap mode of the <see cref="UnityEngine.Texture2D"/> to be created.</param>
-        /// <param name="basePath">Base path to lookup for the <see cref="UnityEngine.Texture2D"/>.</param>
-        /// <param name="onTextureLoaded">Event to trigger when the <see cref="UnityEngine.Texture2D"/> finishes loading.</param>
-        /// <param name="textureCompression">Texture loading compression level.</param>
-        /// <param name="textureFileNameWithoutExtension">Texture filename without the extension.</param>
-        /// <param name="isNormalMap">Is the Texture a Normal Map?</param>
-		/// <returns>The loaded <see cref="UnityEngine.Texture2D"/>.</returns> 
-		public static Texture2D LoadTextureFromFile(IntPtr scene, string path, string name, Material material, string propertyName, ref bool checkAlphaChannel, TextureWrapMode textureWrapMode = TextureWrapMode.Repeat, string basePath = null, TextureLoadHandle onTextureLoaded = null, TextureCompression textureCompression = TextureCompression.None, string textureFileNameWithoutExtension = null, bool isNormalMap = false)
+        public static Texture2D ProcessTexture(
+           EmbeddedTextureData embeddedTextureData,
+           string name,
+           ref bool hasAlphaChannel,
+           bool isNormalMap = false,
+           TextureWrapMode textureWrapMode = TextureWrapMode.Repeat,
+           FilterMode textureFilterMode = FilterMode.Bilinear,
+           TextureCompression textureCompression = TextureCompression.None,
+           bool checkAlphaChannel = false,
+           bool generateMipMaps = true
+       )
         {
-            if (string.IsNullOrEmpty(path))
+            Texture2D finalTexture2D = null;
+            if (embeddedTextureData.DataPointer == IntPtr.Zero || embeddedTextureData.DataLength <= 0)
             {
-                return null;
-            }
-            bool assimpUncompressed;
-            string finalPath;
-            byte[] data;
-			var texture = AssimpInterop.aiScene_GetEmbeddedTexture (scene, path);
-			if (texture != IntPtr.Zero)
-            {
-				assimpUncompressed = !AssimpInterop.aiMaterial_IsEmbeddedTextureCompressed(scene, texture);
-				var dataLength = AssimpInterop.aiMaterial_GetEmbeddedTextureDataSize(scene, texture, !assimpUncompressed);
-				data = AssimpInterop.aiMaterial_GetEmbeddedTextureData(scene, texture, dataLength);
-				finalPath = Path.GetFileNameWithoutExtension(path);
+#if TRILIB_OUTPUT_MESSAGES
+                    Debug.LogWarningFormat("Texture '{0}' not found", name);
+#endif
             }
             else
             {
-				string filename = null;
-                finalPath = path;
-				data = FileUtils.LoadFileData (finalPath);
-				if (data.Length == 0 && basePath != null)
+                Texture2D tempTexture2D;
+                if (ApplyTextureData(embeddedTextureData, out tempTexture2D))
                 {
-                    finalPath = Path.Combine(basePath, path);
-				}
-				data = FileUtils.LoadFileData (finalPath);
-				if (data.Length == 0) {
-					filename = FileUtils.GetFilename(path);
-					finalPath = filename;
-				}
-				data = FileUtils.LoadFileData (finalPath);
-				if (data.Length == 0 && basePath != null && filename != null)
-                {
-                    finalPath = Path.Combine(basePath, filename);
-				}
-				data = FileUtils.LoadFileData (finalPath);
-				if (data.Length == 0)
-                {
-#if ASSIMP_OUTPUT_MESSAGES
-                    Debug.LogWarningFormat("Texture '{0}' not found", path);
-#endif
-                    return null;
+                    finalTexture2D = ProcessTextureData(tempTexture2D, name, ref hasAlphaChannel, textureWrapMode, textureFilterMode, textureCompression, isNormalMap, checkAlphaChannel, generateMipMaps);
                 }
-                assimpUncompressed = false;
-            }
-            bool loaded;
-            Texture2D tempTexture2D;
-            if (assimpUncompressed)
-            {
-                //TODO: additional DLL methods to load actual resolution
-                var textureResolution = Mathf.FloorToInt(Mathf.Sqrt(data.Length / 4));
-				tempTexture2D = new Texture2D(textureResolution, textureResolution, TextureFormat.ARGB32, true);
-                tempTexture2D.LoadRawTextureData(data);
-                tempTexture2D.Apply();
-                loaded = true;
-            }
-            else
-            {
-#if USE_DEVIL && (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
-                loaded = IlLoader.LoadTexture2DFromByteArray(data, data.Length, out tempTexture2D);  
-#else
-				tempTexture2D = new Texture2D(2, 2, TextureFormat.RGBA32, true);
-                loaded = tempTexture2D.LoadImage(data);
+#if TRILIB_OUTPUT_MESSAGES
+            Debug.LogErrorFormat("Unable to load texture '{0}'", name);
 #endif
             }
-            tempTexture2D.name = name;
-            tempTexture2D.wrapMode = textureWrapMode;
-            if (loaded)
+            embeddedTextureData.Dispose();
+            return finalTexture2D;
+        }
+
+        private static bool ApplyTextureData(EmbeddedTextureData embeddedTextureData, out Texture2D outputTexture2D)
+        {
+            if (embeddedTextureData.Data == null && embeddedTextureData.DataPointer == IntPtr.Zero)
             {
-                var colors = tempTexture2D.GetPixels32();
-                var finalTexture2D = new Texture2D(tempTexture2D.width, tempTexture2D.height, TextureFormat.ARGB32, true);
-                if (isNormalMap)
+                outputTexture2D = null;
+                return false;
+            }
+            try
+            {
+                outputTexture2D = new Texture2D(embeddedTextureData.Width, embeddedTextureData.Height, TextureFormat.RGBA32, false);
+                if (embeddedTextureData.DataPointer != IntPtr.Zero)
                 {
-                    for (var i = 0; i < colors.Length; i++)
-                    {
-                        var color = colors[i];
-                        color.a = color.r;
-                        color.r = 0;
-                        color.b = 0;
-                        colors[i] = color;
-                    }
-                    finalTexture2D.SetPixels32(colors);
-                    finalTexture2D.Apply();
+                    outputTexture2D.LoadRawTextureData(embeddedTextureData.DataPointer, embeddedTextureData.DataLength);
                 }
                 else
                 {
-                    finalTexture2D.SetPixels32(colors);
-                    finalTexture2D.Apply();
-                    if (textureCompression != TextureCompression.None)
-                    {
-                        tempTexture2D.Compress(textureCompression == TextureCompression.HighQuality);
-                    }
+                    outputTexture2D.LoadRawTextureData(embeddedTextureData.Data);
                 }
-				if (checkAlphaChannel) {
-					checkAlphaChannel = false;
-					foreach (var color in colors) {
-						if (color.a != 255) {
-							checkAlphaChannel = true;
-							break;
-						}
-					}
-				}
-				if (material != null) {
-					material.SetTexture(propertyName, finalTexture2D);
-				}
-                if (onTextureLoaded != null)
+                outputTexture2D.Apply();
+                return true;
+            }
+#if TRILIB_OUTPUT_MESSAGES
+                catch (Exception e)
                 {
-                    onTextureLoaded(finalPath, material, propertyName, finalTexture2D);
+                    outputTexture2D = null;
+                    Debug.LogErrorFormat("Invalid embedded texture data {0}", e);
+                    return false;
                 }
-				return finalTexture2D;
-            }
-            else
+#else
+            catch
             {
-#if ASSIMP_OUTPUT_MESSAGES
-                Debug.LogErrorFormat("Unable to load texture '{0}'", path);
-#endif
+                outputTexture2D = null;
+                return false;
             }
-			return null;
+#endif
         }
-	}
-	#pragma warning restore 612, 618
+
+        private static Texture2D ProcessTextureData(Texture2D texture2D, string name, ref bool hasAlphaChannel, TextureWrapMode textureWrapMode, FilterMode textureFilterMode, TextureCompression textureCompression, bool isNormalMap, bool checkAlphaChannel = false, bool generateMipMaps = false)
+        {
+            if (texture2D == null)
+            {
+                return null;
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                texture2D.name = StringUtils.GenerateUniqueName(texture2D);
+            }
+            texture2D.name = name;
+            texture2D.wrapMode = textureWrapMode;
+            texture2D.filterMode = textureFilterMode;
+            var colors = texture2D.GetPixels32();
+            if (isNormalMap)
+            {
+                var tempTexture2D = new Texture2D(texture2D.width, texture2D.height, TextureFormat.RGBA32, generateMipMaps);
+                tempTexture2D.name = texture2D.name;
+                tempTexture2D.wrapMode = texture2D.wrapMode;
+                tempTexture2D.filterMode = texture2D.filterMode;
+                for (var i = 0; i < colors.Length; i++)
+                {
+                    var color = colors[i];
+                    var r = color.r;
+                    color.r = color.a;
+                    color.a = r;
+                    colors[i] = color;
+                }
+                tempTexture2D.SetPixels32(colors);
+                tempTexture2D.Apply(generateMipMaps);
+                if (Application.isPlaying)
+                {
+                    UnityEngine.Object.Destroy(texture2D);
+                }
+                else
+                {
+                    UnityEngine.Object.DestroyImmediate(texture2D);
+                }
+                texture2D = tempTexture2D;
+            }
+            if (!isNormalMap && generateMipMaps)
+            {
+                var tempTexture2D = new Texture2D(texture2D.width, texture2D.height, TextureFormat.RGBA32, true);
+                tempTexture2D.name = texture2D.name;
+                tempTexture2D.wrapMode = texture2D.wrapMode;
+                tempTexture2D.filterMode = texture2D.filterMode;
+                tempTexture2D.SetPixels32(colors);
+                tempTexture2D.Apply(true);
+                if (Application.isPlaying)
+                {
+                    UnityEngine.Object.Destroy(texture2D);
+                }
+                else
+                {
+                    UnityEngine.Object.DestroyImmediate(texture2D);
+                }
+                texture2D = tempTexture2D;
+            }
+            if (textureCompression != TextureCompression.None)
+            {
+                bool isPowerOfTwo = IsPowerOf2(texture2D.width) && IsPowerOf2(texture2D.height);
+                if (isPowerOfTwo)
+                {
+                    texture2D.Compress(textureCompression == TextureCompression.HighQuality);
+                }
+            }
+            if (checkAlphaChannel)
+            {
+                hasAlphaChannel = false;
+                foreach (var color in colors)
+                {
+                    if (color.a == 255) continue;
+                    hasAlphaChannel = true;
+                    break;
+                }
+            }
+            return texture2D;
+        }
+
+        private static bool IsPowerOf2(int x)
+        {
+            return (x & (x - 1)) == 0;
+        }
+    }
 }
 
