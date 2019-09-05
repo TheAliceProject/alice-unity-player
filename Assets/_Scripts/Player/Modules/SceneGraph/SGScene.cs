@@ -209,6 +209,12 @@ namespace Alice.Player.Unity {
                             MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
                             Rigidbody rigidBody = renderer.gameObject.AddComponent<Rigidbody>();
                             rigidBody.isKinematic = true;
+
+                            Mesh colliderMesh = new Mesh();
+                            renderer.BakeMesh(colliderMesh);
+                            collider.sharedMesh = null;
+                            collider.sharedMesh = colliderMesh;
+                            
                             collider.convex = true;
                             collider.isTrigger = true;
                             renderer.gameObject.AddComponent<CollisionBroadcaster>();

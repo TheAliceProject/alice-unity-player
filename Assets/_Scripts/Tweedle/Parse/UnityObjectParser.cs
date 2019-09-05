@@ -13,6 +13,7 @@ namespace Alice.Tweedle.Parse
         public bool dumpTypeOutlines = false;
         public Canvas uiCanvas;
         public WorldLoaderControl worldLoader;
+        public ModalWindow modalWindowPrefab;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
@@ -29,9 +30,6 @@ namespace Alice.Tweedle.Parse
 
             worldLoader.AddWorldToRecents(zipPath);
 
-            Camera.main.backgroundColor = Color.clear;
-            uiCanvas.gameObject.SetActive(false);
-
             if (Player.Unity.SceneGraph.Exists) {
                 Player.Unity.SceneGraph.Current.Clear();
             }
@@ -43,8 +41,19 @@ namespace Alice.Tweedle.Parse
             }
 
             m_System = new TweedleSystem();
-            JsonParser.ParseZipFile(m_System, zipPath);
+            try{
+                JsonParser.ParseZipFile(m_System, zipPath);
+            }
+            catch (TweedleParseException exception)
+            {
+                ModalWindow modalWindow = Instantiate(modalWindowPrefab, uiCanvas.transform);
+                string message = "This world is not compatible with this player.\n<b>Player:</b>\n   " + exception.ExpectedVersion + "\n<b>World:</b>\n   " + exception.DiscoveredVersion;
+                modalWindow.SetData("Oops!", message);
+                return;
+            }
+
             m_System.Link();
+            Camera.main.backgroundColor = Color.clear;
 
             if (dumpTypeOutlines)
             {
@@ -65,6 +74,7 @@ namespace Alice.Tweedle.Parse
         private void StartQueueProcessing()
         {
             m_QueueProcessor = StartCoroutine(m_VM.ProcessQueue());
+            uiCanvas.gameObject.SetActive(false);
         }
     }
 }

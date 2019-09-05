@@ -195,6 +195,8 @@ MonoBehaviour:
   dumpTypeOutlines: 0
   uiCanvas: {fileID: 0}
   worldLoader: {fileID: 2140524349600315743}
+  modalWindowPrefab: {fileID: 7627015889440884549, guid: dee85d91b48f0ef4bbe006aea37fe262,
+    type: 3}
 --- !u!114 &2140524349600315743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +212,7 @@ MonoBehaviour:
   recentWorldButtonPrefab: {fileID: 3550514987311526686, guid: b91743378d3629d4e9fcd1b8bea1ac64,
     type: 3}
   contentBox: {fileID: 7612658897906668719}
-  parser: {fileID: 0}
+  parser: {fileID: 114332211912072098}
   versionString: {fileID: 4170412154501291896}
 --- !u!1 &1565839083502646
 GameObject:

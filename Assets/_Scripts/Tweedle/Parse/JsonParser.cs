@@ -16,7 +16,6 @@ namespace Alice.Tweedle.Parse
 {
     public class JsonParser
     {
-
         public static void ParseZipFile(TweedleSystem inSystem, string inZipPath) {
             using (FileStream stream = new FileStream(inZipPath, FileMode.Open, FileAccess.Read, FileShare.None)) {
                 using (ZipFile zipFile = new ZipFile(stream))
@@ -101,7 +100,7 @@ namespace Alice.Tweedle.Parse
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
                         ParseZipFile(m_System, libRef.path.fullPath);
                     } else {
-                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].name);
+                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].name, "SceneGraphLibrary " + PlayerLibraryManifest.Instance.GetLibraryVersion(), "SceneGraphLibrary " + prerequisites[i].version);
                     }
                 }
             }
