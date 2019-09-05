@@ -86,11 +86,13 @@ namespace Alice.Player.Unity {
             get { 
                 if (m_ModelLoaderOptions == null) {
                     m_ModelLoaderOptions = AssetLoaderOptions.CreateInstance();
+                    m_ModelLoaderOptions.UseOriginalPositionRotationAndScale = true;
                     m_ModelLoaderOptions.DontLoadAnimations = true; 
                     m_ModelLoaderOptions.AutoPlayAnimations = false;
+                    m_ModelLoaderOptions.ApplyNormalTexture = true;
+                    m_ModelLoaderOptions.MaterialTransparencyMode = MaterialTransparencyMode.Cutout;
                     m_ModelLoaderOptions.PostProcessSteps = AssimpProcessPreset.TargetRealtimeFast | AssimpProcessPreset.ConvertToLeftHanded;
                     m_ModelLoaderOptions.RotationAngles = Vector3.zero;
-
                 }
                 return m_ModelLoaderOptions; 
             }
