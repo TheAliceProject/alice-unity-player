@@ -30,9 +30,22 @@
             return Equals((ProjectIdentifier)obj);
         }
 
+        public bool EqualsVersionMatch(ProjectIdentifier other)
+        {
+            return name.Equals(other.name) && VersionEqualOrGreater(version, other.version) && type.Equals(other.type);
+        }
+
         public bool Equals(ProjectIdentifier other)
         {
             return name.Equals(other.name) && version.Equals(other.version) && type.Equals(other.type);
+        }
+
+        public bool VersionEqualOrGreater(string libraryVersion, string testVersion)
+        {
+            int libVer = int.Parse(libraryVersion.Substring(libraryVersion.IndexOf('.') + 1));
+            int testVer = int.Parse(testVersion.Substring(testVersion.IndexOf('.') + 1));
+
+            return libVer >= testVer;
         }
 
         public override int GetHashCode()
