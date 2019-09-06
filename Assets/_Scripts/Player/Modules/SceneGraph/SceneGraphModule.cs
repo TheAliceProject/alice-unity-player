@@ -338,7 +338,6 @@ namespace Alice.Player.Modules {
             TweedleAudioPlayer audio = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.TweedleAudioSource, entityXform.transform);
             AudioClip clip = SceneGraph.Current.AudioCache.Get(sound);
             float waitTime = stopTime < 0f ? clip.length : (stopTime - startTime);
-            Debug.Log(waitTime);
             audio.SetData(clip, volume, startTime);
             audio.Play(waitTime);
             Routine.Start(DelayReturnRoutine(asyncReturn, waitTime));
