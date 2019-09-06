@@ -3,14 +3,9 @@ using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.IO;
-using System;
 using UnityEngine;
 using System.Text;
-using UnityEngine.Networking;
-using System.Collections;
-using BeauRoutine;
-using NAudio;
-using NAudio.Wave;
+using NLayer;
 
 namespace Alice.Tweedle.Parse
 {
@@ -218,27 +213,12 @@ namespace Alice.Tweedle.Parse
                 else if(fileSuffix == ".mp3"){
                     // Hopefully an mp3 file (maybe in the future check some bytes? Probably unnecessary though)
 
-                    // This is a bit silly, but it seems like you must save the file as an mp3, then load it in with AudioFileReader
-                    // I have tried to convert the mp3 byte array to a wav byte array without much luck. NAudio might be able to do it though?
-                    string tempFile = Application.persistentDataPath + "/bytes" + audioFiles++.ToString() + ".mp3";
+                    // This is a bit silly, but it seems like you must save the file as an mp3, then load it in.
+                    // I have tried to convert the mp3 byte array to a wav byte array without much luck.
+                    string tempFile = Application.persistentDataPath + "/tempAudio" + audioFiles++.ToString() + ".mp3";
                     System.IO.File.WriteAllBytes(tempFile, data);
-                    //Parse the file with NAudio
-                    AudioFileReader afr = new AudioFileReader(tempFile);
-                    //Create an empty float to fill with song data
-                    float[] maxData = new float[afr.Length];
-                    //Read the file and fill the float
-                    int dataSize = afr.Read(maxData, 0, (int)afr.Length); // afr.length is a Long type
-                    // New array because the first will have tons of empty 0's at the end.
-                    float[] actualSizeData = new float[dataSize];
-                    Array.Copy(maxData, actualSizeData, dataSize);
-                    //Create a clip file the size needed to collect the sound data
-                    audioClip = AudioClip.Create("mp3", actualSizeData.Length, afr.WaveFormat.Channels, afr.WaveFormat.SampleRate, false);
-                    //Fill the file with the sound data
-                    afr.Dispose();
-                    audioClip.SetData(actualSizeData, 0);
-                    
-                    // Should probably delete the temp file after, getting some file access errors though.
-                    //System.IO.File.Delete(tempFile);
+                    audioClip = LoadMp3(tempFile);
+                    // These temporary files will get deleted when the program is started and/or stopped
                 }
                 else{
                     Debug.LogError(fileSuffix + " files are not supported at this time.");
@@ -246,6 +226,22 @@ namespace Alice.Tweedle.Parse
                 if(audioClip != null)
                     SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
             }
+        }
+
+        public static AudioClip LoadMp3(string filePath) {
+            string filename = System.IO.Path.GetFileNameWithoutExtension(filePath);
+
+            MpegFile mpegFile = new MpegFile(filePath);
+
+            // assign samples into AudioClip
+            AudioClip ac = AudioClip.Create(filename,
+                                            (int)(mpegFile.Length / sizeof(float) / mpegFile.Channels),
+                                            mpegFile.Channels,
+                                            mpegFile.SampleRate,
+                                            true,
+                                            data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); },
+                                            position => { mpegFile = new MpegFile(filePath); });
+            return ac;
         }
 
         private void LoadModelStructures(ModelManifest inManifest) {

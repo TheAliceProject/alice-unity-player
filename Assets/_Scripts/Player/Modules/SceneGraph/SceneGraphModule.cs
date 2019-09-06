@@ -337,7 +337,7 @@ namespace Alice.Player.Modules {
             // Create a new audio source every time, because we need to use the start time and stop time, so PlayOneShot will not work. We will destroy the audioclip when it's finished playing.
             TweedleAudioPlayer audio = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.TweedleAudioSource, entityXform.transform);
             AudioClip clip = SceneGraph.Current.AudioCache.Get(sound);
-            float waitTime = stopTime < 0f ? (clip.length / clip.channels) : (stopTime - startTime);
+            float waitTime = stopTime < 0f ? clip.length : (stopTime - startTime);
             audio.SetData(clip, volume, startTime);
             audio.Play(waitTime);
             Routine.Start(DelayReturnRoutine(asyncReturn, waitTime));
