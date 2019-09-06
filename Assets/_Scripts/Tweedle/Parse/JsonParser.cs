@@ -215,9 +215,10 @@ namespace Alice.Tweedle.Parse
 
                     // This is a bit silly, but it seems like you must save the file as an mp3, then load it in.
                     // I have tried to convert the mp3 byte array to a wav byte array without much luck.
-                    string tempFile = Application.persistentDataPath + "/bytes" + audioFiles++.ToString() + ".mp3";
+                    string tempFile = Application.persistentDataPath + "/tempAudio" + audioFiles++.ToString() + ".mp3";
                     System.IO.File.WriteAllBytes(tempFile, data);
                     audioClip = LoadMp3(tempFile);
+                    // These temporary files will get deleted when the program is started and/or stopped
                 }
                 else{
                     Debug.LogError(fileSuffix + " files are not supported at this time.");
@@ -240,7 +241,6 @@ namespace Alice.Tweedle.Parse
                                             true,
                                             data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); },
                                             position => { mpegFile = new MpegFile(filePath); });
-
             return ac;
         }
 

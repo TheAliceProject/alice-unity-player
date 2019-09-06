@@ -19,6 +19,16 @@ namespace Alice.Tweedle.Parse
         private VirtualMachine m_VM;
         private Coroutine m_QueueProcessor;
 
+        void Awake()
+        {
+            DeleteTemporaryAudioFiles();
+        }
+
+        void OnDestroy()
+        {
+            DeleteTemporaryAudioFiles();
+        }
+
         public void Select(string fileName = "")
         {
             string zipPath = fileName;
@@ -75,6 +85,21 @@ namespace Alice.Tweedle.Parse
         {
             m_QueueProcessor = StartCoroutine(m_VM.ProcessQueue());
             uiCanvas.gameObject.SetActive(false);
+        }
+
+        private void DeleteTemporaryAudioFiles()
+        {
+            DirectoryInfo dir = new DirectoryInfo(Application.persistentDataPath);
+            FileInfo[] info = dir.GetFiles("*.mp3");
+            foreach (FileInfo f in info){
+                if(f.FullName.Contains("tempAudio")){
+                    try{
+                        System.IO.File.Delete(f.FullName);
+                    }catch(IOException exception){
+                        // We'll get them on the next startup.
+                    }
+                }
+            }
         }
     }
 }
