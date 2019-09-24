@@ -4,6 +4,9 @@ using UnityEngine;
 using ICSharpCode.SharpZipLib.Zip;
 using Alice.Tweedle.VM;
 using Alice.Tweedle.File;
+using System.Collections.Generic;
+using System.Collections;
+using BeauRoutine;
 
 namespace Alice.Tweedle.Parse
 {
@@ -17,8 +20,8 @@ namespace Alice.Tweedle.Parse
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
-        private Coroutine m_QueueProcessor;
-
+        private Routine m_QueueProcessor;
+        private string m_currentFilePath;
         void Awake()
         {
             DeleteTemporaryAudioFiles();
@@ -39,6 +42,7 @@ namespace Alice.Tweedle.Parse
                 return;
 
             worldLoader.AddWorldToRecents(zipPath);
+            m_currentFilePath = zipPath;
 
             if (Player.Unity.SceneGraph.Exists) {
                 Player.Unity.SceneGraph.Current.Clear();
@@ -47,7 +51,7 @@ namespace Alice.Tweedle.Parse
             m_System?.Unload();
             if (m_QueueProcessor != null)
             {
-                StopCoroutine(m_QueueProcessor);
+                m_QueueProcessor.Stop();
             }
 
             m_System = new TweedleSystem();
@@ -75,6 +79,17 @@ namespace Alice.Tweedle.Parse
             StartQueueProcessing();
         }
 
+        public void ReloadCurrentLevel()
+        {
+            Routine.Start(ReloadDelayed());
+        }
+
+        public IEnumerator ReloadDelayed()
+        {
+            yield return null; // Wait a frame
+            Select(m_currentFilePath);
+        }
+
         // Use this for MonoBehaviour initialization
         void Start()
         {
@@ -83,7 +98,7 @@ namespace Alice.Tweedle.Parse
 
         private void StartQueueProcessing()
         {
-            m_QueueProcessor = StartCoroutine(m_VM.ProcessQueue());
+            m_QueueProcessor.Replace(this, m_VM.ProcessQueue());
             uiCanvas.gameObject.SetActive(false);
         }
 
