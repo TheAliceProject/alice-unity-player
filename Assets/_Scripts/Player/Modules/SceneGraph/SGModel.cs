@@ -44,7 +44,7 @@ namespace Alice.Player.Unity {
 
         
         protected Transform m_ModelTransform;
-        private Bounds m_CachedMeshBounds;
+        protected Bounds m_CachedMeshBounds;
         
         private Paint m_CachedPaint = Primitives.Color.WHITE;
         protected float m_CachedOpacity = 1;

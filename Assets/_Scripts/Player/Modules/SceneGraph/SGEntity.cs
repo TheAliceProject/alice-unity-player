@@ -40,7 +40,23 @@ namespace Alice.Player.Unity {
             set {
                 if (value != m_Vehicle) {
                     m_Vehicle = value;
-                    cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
+                    
+                    if(value is SGJoint)
+                    {
+                        Transform holder = m_Vehicle.cachedTransform.Find("holder");
+                        if(holder == null)
+                        {
+                            holder = new GameObject("holder").transform;  
+                        }
+                        
+                        holder.SetParent(m_Vehicle?.cachedTransform);
+                        holder.localPosition = UnityEngine.Vector3.zero;
+                        cachedTransform.SetParent(holder, true);
+                    }
+                    else
+                    {
+                        cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
+                    }
                 }
             }
         }

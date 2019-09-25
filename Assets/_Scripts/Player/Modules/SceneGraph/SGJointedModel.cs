@@ -1,20 +1,15 @@
 using UnityEngine;
-using Alice.Tweedle.Interop;
 using Alice.Tweedle;
-using Alice.Player.Primitives;
+using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
         
         private string m_ResourceId;
         private Renderer[] m_Renderers;
-        private SkinnedMeshRenderer[] m_SkinnedMeshes;
         private MaterialPropertyBlock[] m_PropertyBlocks;
 
-        private int m_BoundsRendererIndex = -1;
-
         public void SetResource(string inIdentifier) {
-
             if (m_ResourceId == inIdentifier) {
                 return;
             }
@@ -34,65 +29,48 @@ namespace Alice.Player.Unity {
                 m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
                 m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
 
-                m_SkinnedMeshes = model.GetComponentsInChildren<SkinnedMeshRenderer>();
-                if (m_Renderers == null) {
-                    m_PropertyBlocks = new MaterialPropertyBlock[m_SkinnedMeshes.Length];
-                    m_Renderers = new Renderer[m_SkinnedMeshes.Length];
-                } else if (m_Renderers.Length != m_SkinnedMeshes.Length) {
-                    System.Array.Resize(ref m_PropertyBlocks, m_SkinnedMeshes.Length);
-                    System.Array.Resize(ref m_Renderers, m_SkinnedMeshes.Length);
-                }
-
-                float largestVolume = -1;
-                m_BoundsRendererIndex = -1;
+                m_Renderers = model.GetComponentsInChildren<Renderer>();
+                m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
-                    m_Renderers[i] = m_SkinnedMeshes[i].GetComponent<Renderer>();
-
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
                     m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
 
-                    UnityEngine.Vector3 size;
                     if (m_Renderers[i] is SkinnedMeshRenderer) {
                         // make sure the skinned mesh renderers local bounds get updated
                         var skinnedRenderer = (SkinnedMeshRenderer)m_Renderers[i];
                         skinnedRenderer.updateWhenOffscreen = true;
-                        size = skinnedRenderer.localBounds.size;
-                    } else {
-                        size = m_SkinnedMeshes[i].sharedMesh.bounds.size;
-                    }
-
-                    var volume = size.x*size.y*size.z;
-
-                    if (volume > largestVolume) {
-                        largestVolume = volume;
-                        m_BoundsRendererIndex = i;
                     }
                     ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
                 }
                 CacheMeshBounds();
-            } else {
+            }
+            else {
                 m_Renderers = null;
-                m_SkinnedMeshes = null;
             }
         }
 
         protected override Bounds GetMeshBounds() {
-            if (m_SkinnedMeshes == null || m_BoundsRendererIndex < 0) {
-                return new Bounds(UnityEngine.Vector3.zero, UnityEngine.Vector3.zero);
-            }
+            if (m_Renderers.Length == 0)
+                return new Bounds(Vector3.zero, Vector3.zero);
 
-            if (m_Renderers[m_BoundsRendererIndex] is SkinnedMeshRenderer) {
-                var skinnedRenderer = (SkinnedMeshRenderer)m_Renderers[m_BoundsRendererIndex];
-                return skinnedRenderer.localBounds;
+            Bounds compoundBounds = GetBoundsFor(m_Renderers[0]);
+            for (int i = 1; i < m_Renderers.Length; ++i) {
+                compoundBounds.Encapsulate(GetBoundsFor(m_Renderers[i]));
             }
+            return compoundBounds;
+        }
 
-            return m_SkinnedMeshes[m_BoundsRendererIndex].sharedMesh.bounds;
+        private Bounds GetBoundsFor(Renderer ren) {
+            if (ren is SkinnedMeshRenderer) {
+                return ((SkinnedMeshRenderer)ren).localBounds;
+            }
+            return ren.bounds;
         }
 
         protected override void OnPaintChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
+                //ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }
 
@@ -111,9 +89,28 @@ namespace Alice.Player.Unity {
             return joint;
         }
 
-        private GameObject FindInHierarchy(Transform inTransform, string inName) {
+        protected override void SetSize(Vector3 inSize)
+        {
+            var meshSize = m_CachedMeshBounds.size;
+            m_ModelTransform.localScale = new UnityEngine.Vector3(
+                meshSize.x == 0 ? 1 : inSize.x/meshSize.x,
+                meshSize.y == 0 ? 1 : inSize.y/meshSize.y,
+                meshSize.z == 0 ? 1 : inSize.z/meshSize.z
+            );
+
+            // Inverse scale any holders on joints that may exist
+            foreach(GameObject holderObject in FindAllInHierarchy(m_ModelTransform, "holder")){
+                Transform holder = holderObject.transform;
+                holder.localScale = new UnityEngine.Vector3(
+                meshSize.x == 0 ? 1 : 1f / (inSize.x/meshSize.x),
+                meshSize.y == 0 ? 1 : 1f / (inSize.y/meshSize.y),
+                meshSize.z == 0 ? 1 : 1f / (inSize.z/meshSize.z)
+                );
+            }
+        }
             
 
+        private GameObject FindInHierarchy(Transform inTransform, string inName) {
             foreach (Transform child in inTransform) {
                 if (child.gameObject.name == inName) {
                     return child.gameObject;
@@ -126,6 +123,18 @@ namespace Alice.Player.Unity {
             }
             
             return null;
+        }
+
+        private List<GameObject> FindAllInHierarchy(Transform inTransform, string inName) {
+            
+            List<GameObject> objectsInHierarchy = new List<GameObject>();
+            foreach(Transform child in inTransform.GetComponentsInChildren<Transform>())
+            {
+                if (child.gameObject.name == inName) {
+                    objectsInHierarchy.Add(child.gameObject);
+                }
+            }
+            return objectsInHierarchy;
         }
     }
 }
