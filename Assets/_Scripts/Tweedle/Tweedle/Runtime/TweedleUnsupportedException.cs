@@ -2,7 +2,7 @@
 
 namespace Alice.Tweedle
 {
-    public class TweedleUnsupportedException : SystemException
+    public class TweedleUnsupportedException : TweedleRuntimeException
     {
         public TweedleUnsupportedException(string message)
             :base(message)

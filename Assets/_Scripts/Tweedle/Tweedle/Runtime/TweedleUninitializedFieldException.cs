@@ -2,7 +2,7 @@
 
 namespace Alice.Tweedle
 {
-    public class TweedleUninitializedFieldException : SystemException
+    public class TweedleUninitializedFieldException : TweedleRuntimeException
     {
         public TweedleUninitializedFieldException(string message)
             :base(message)
