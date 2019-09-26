@@ -96,8 +96,7 @@ namespace Alice.Player.Unity {
             return joint;
         }
 
-        protected override void SetSize(Vector3 inSize)
-        {
+        protected override void SetSize(Vector3 inSize) {
             var meshSize = m_CachedMeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
                 meshSize.x == 0 ? 1 : inSize.x/meshSize.x,

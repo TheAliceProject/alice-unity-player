@@ -41,11 +41,9 @@ namespace Alice.Player.Unity {
                 if (value != m_Vehicle) {
                     m_Vehicle = value;
                     
-                    if(value is SGJoint)
-                    {
+                    if(value is SGJoint){
                         Transform holder = m_Vehicle.cachedTransform.Find("holder");
-                        if(holder == null)
-                        {
+                        if(holder == null){
                             holder = new GameObject("holder").transform;  
                         }
                         (value as SGJoint).GetParentJointedModel().AddToVehicleList(holder);
@@ -53,8 +51,7 @@ namespace Alice.Player.Unity {
                         holder.localPosition = UnityEngine.Vector3.zero;
                         cachedTransform.SetParent(holder, true);
                     }
-                    else
-                    {
+                    else{
                         cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
                     }
                 }
