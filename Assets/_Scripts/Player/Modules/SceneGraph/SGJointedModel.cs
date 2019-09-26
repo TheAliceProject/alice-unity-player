@@ -8,6 +8,7 @@ namespace Alice.Player.Unity {
         private string m_ResourceId;
         private Renderer[] m_Renderers;
         private MaterialPropertyBlock[] m_PropertyBlocks;
+        public List<Transform> m_vehicledList = new List<Transform>();
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -50,6 +51,11 @@ namespace Alice.Player.Unity {
             }
         }
 
+        public void AddToVehicleList(Transform t)
+        {
+            m_vehicledList.Add(t);
+        }
+
         protected override Bounds GetMeshBounds() {
             if (m_Renderers.Length == 0)
                 return new Bounds(Vector3.zero, Vector3.zero);
@@ -85,6 +91,7 @@ namespace Alice.Player.Unity {
             SGJoint joint = null;
             if (bone != null) {
                 joint = SGEntity.Create<SGJoint>(inOwner, bone);
+                joint.SetParentJointedModel(this);
             }
             return joint;
         }
@@ -99,8 +106,7 @@ namespace Alice.Player.Unity {
             );
 
             // Inverse scale any holders on joints that may exist
-            foreach(GameObject holderObject in FindAllInHierarchy(m_ModelTransform, "holder")){
-                Transform holder = holderObject.transform;
+            foreach(Transform holder in m_vehicledList){
                 holder.localScale = new UnityEngine.Vector3(
                 meshSize.x == 0 ? 1 : 1f / (inSize.x/meshSize.x),
                 meshSize.y == 0 ? 1 : 1f / (inSize.y/meshSize.y),
