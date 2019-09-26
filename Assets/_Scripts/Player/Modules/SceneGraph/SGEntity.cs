@@ -48,7 +48,7 @@ namespace Alice.Player.Unity {
                         {
                             holder = new GameObject("holder").transform;  
                         }
-                        
+                        (value as SGJoint).GetParentJointedModel().AddToVehicleList(holder);
                         holder.SetParent(m_Vehicle?.cachedTransform);
                         holder.localPosition = UnityEngine.Vector3.zero;
                         cachedTransform.SetParent(holder, true);
