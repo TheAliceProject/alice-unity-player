@@ -12,8 +12,8 @@ namespace Alice.Player.Modules
         public const double NEGATIVE_INFINITY = double.NegativeInfinity;
 
         [PInteropMethod]
-        static public double sqrt(double decimalNumber) {
-            return Math.Sqrt(decimalNumber);
+        static public double sqrt(double number) {
+            return Math.Sqrt(number);
         }
 
         [PInteropMethod]

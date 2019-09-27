@@ -76,7 +76,7 @@ namespace Alice.Player.Unity {
 
         protected override void OnPaintChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                //ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
+                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }
 
@@ -107,9 +107,9 @@ namespace Alice.Player.Unity {
             // Inverse scale any holders on joints that may exist
             foreach(Transform holder in m_vehicledList){
                 holder.localScale = new UnityEngine.Vector3(
-                meshSize.x == 0 ? 1 : 1f / (inSize.x/meshSize.x),
-                meshSize.y == 0 ? 1 : 1f / (inSize.y/meshSize.y),
-                meshSize.z == 0 ? 1 : 1f / (inSize.z/meshSize.z)
+                meshSize.x == 0 ? 1 : meshSize.x/inSize.x,
+                meshSize.y == 0 ? 1 : meshSize.y/inSize.y,
+                meshSize.z == 0 ? 1 : meshSize.z/inSize.z
                 );
             }
         }
@@ -128,18 +128,6 @@ namespace Alice.Player.Unity {
             }
             
             return null;
-        }
-
-        private List<GameObject> FindAllInHierarchy(Transform inTransform, string inName) {
-            
-            List<GameObject> objectsInHierarchy = new List<GameObject>();
-            foreach(Transform child in inTransform.GetComponentsInChildren<Transform>())
-            {
-                if (child.gameObject.name == inName) {
-                    objectsInHierarchy.Add(child.gameObject);
-                }
-            }
-            return objectsInHierarchy;
         }
     }
 }
