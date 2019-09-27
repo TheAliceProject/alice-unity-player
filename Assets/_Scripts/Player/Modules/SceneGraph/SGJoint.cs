@@ -22,8 +22,10 @@ namespace Alice.Player.Unity {
             // convert to left-handedness
 
             // If the SGJointedModel has been scaled, inverse the scale of position to match
-            float scale = m_parentModel.transform.GetChild(0).localScale.x;
-            cachedTransform.localPosition = vp.UnityPosition() / scale;
+            UnityEngine.Vector3 scale = m_parentModel.transform.GetChild(0).localScale;
+            cachedTransform.localPosition = new UnityEngine.Vector3(vp.UnityPosition().x / scale.x,
+                                                                    vp.UnityPosition().y / scale.y,
+                                                                    vp.UnityPosition().z / scale.z);
             cachedTransform.localRotation = vp.UnityRotation();
         }
     }
