@@ -49,6 +49,12 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
+        public double calculateMagnitude()
+        {
+            return UnityPosition().magnitude;
+        }
+
+        [PInteropMethod]
         public Position add(Direction other) {
             return new Position(Value + other.Value);
         }
