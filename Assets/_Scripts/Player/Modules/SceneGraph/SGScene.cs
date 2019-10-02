@@ -37,6 +37,7 @@ namespace Alice.Player.Unity {
         private Light m_BelowLight;
         private const float k_BelowLightIntensity = 1f;
         private const float k_BelowLightPitch = -90f;
+        private UnityEngine.Vector3 m_DefaultColliderSize = new UnityEngine.Vector3(0.1f, 0.1f, 0.1f);
 
         private float dragSpeed = 10f;
         private UnityEngine.Vector3 dragOrigin;
@@ -188,7 +189,7 @@ namespace Alice.Player.Unity {
                 MeshRenderer[] meshRenderers = models[i].transform.GetComponentsInChildren<MeshRenderer>();
                 SkinnedMeshRenderer[] skinnedMeshRenderers = models[i].transform.GetComponentsInChildren<SkinnedMeshRenderer>();
                 
-                if(meshRenderers != null || skinnedMeshRenderers != null)
+                if((meshRenderers != null || skinnedMeshRenderers != null) && (meshRenderers.Length > 0 || skinnedMeshRenderers.Length > 0))
                 {
                     foreach (MeshRenderer renderer in meshRenderers)
                     {
@@ -223,11 +224,15 @@ namespace Alice.Player.Unity {
                 }
                 else // Add box collider if no renderer exists
                 {
-                    Rigidbody rigidBody = models[i].gameObject.AddComponent<Rigidbody>();
-                    rigidBody.isKinematic = true;
-                    BoxCollider collider = models[i].gameObject.AddComponent<BoxCollider>();
-                    collider.isTrigger = true;
-                    models[i].gameObject.AddComponent<CollisionBroadcaster>();
+                    if(models[i].gameObject.GetComponent<BoxCollider>() == null)
+                    {
+                        Rigidbody rigidBody = models[i].gameObject.AddComponent<Rigidbody>();
+                        rigidBody.isKinematic = true;
+                        BoxCollider collider = models[i].gameObject.AddComponent<BoxCollider>();
+                        collider.size = m_DefaultColliderSize;
+                        collider.isTrigger = true;
+                        models[i].gameObject.AddComponent<CollisionBroadcaster>();
+                    }
                 }
             }
         }
