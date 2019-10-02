@@ -23,7 +23,8 @@ namespace Alice.Tweedle.Interop
         {
             if (m_Returned)
             {
-                throw new TweedleRuntimeException("AsyncResult has already returned.");
+                UnityEngine.Debug.LogError("AsyncResult has already returned.");
+                return;
             }
 
             m_Returned = true;
