@@ -497,6 +497,7 @@ namespace Alice.Tweedle.Parse
             Init();
             ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Missing value for required parameter n"));
             Assert.Throws<TweedleLinkException>(()=> {
                 ExecuteStatement("WholeNumber val  <- obj.requiredMore();");
             });
@@ -508,6 +509,7 @@ namespace Alice.Tweedle.Parse
             Init();
             ExecuteStatement("ClassToHave obj <- new ClassToHave();");
 
+            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Unrecognized parameter t"));
             Assert.Throws<TweedleLinkException>(()=> {
                 ExecuteStatement("WholeNumber val  <- obj.requiredMore(t: 5);");
             });
