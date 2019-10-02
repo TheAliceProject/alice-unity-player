@@ -14,7 +14,7 @@ namespace Alice.Tweedle
 
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            return new ValueStep("Get Identifier " + Name, scope, scope.GetValue(Name));
+            return new ValueGenerationStep("Get Value For Identifier " + Name, scope, () => scope.GetValue(Name));
         }
 
         public override string ToTweedle()

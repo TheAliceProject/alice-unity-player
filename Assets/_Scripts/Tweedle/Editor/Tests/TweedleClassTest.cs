@@ -35,6 +35,9 @@ namespace Alice.Tweedle.Parse
             + "  WholeNumber optionalOrDefaultMoreVariable(WholeNumber n <- x) {\n"
             + "    return n + x;\n"
             + "  }\n"
+            + "  WholeNumber optionalOrDefaultEarlierVariable(WholeNumber a, WholeNumber n <- a) {\n"
+            + "    return n + a;\n"
+            + "  }\n"
             + "  WholeNumber requiredMore(WholeNumber n) {\n"
             + "    return n + x;\n"
             + "  }\n"
@@ -560,6 +563,26 @@ namespace Alice.Tweedle.Parse
             TValue tested = scope.GetValue("val");
 
             Assert.AreEqual(6, tested.ToInt());
+        }
+
+        [Test]
+        public void MethodWithNamedOptionalArgumentShouldUsePassedArgmuent() {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 4);");
+            ExecuteStatement("WholeNumber val  <- obj.optionalOrDefaultEarlierVariable(a: 9, n: 8);");
+            TValue tested = scope.GetValue("val");
+
+            Assert.AreEqual(17, tested.ToInt());
+        }
+
+        [Test]
+        public void MethodWithUnnamedOptionalArgumentShouldUseDefaultValueFromPreviousArgmuent() {
+            Init();
+            ExecuteStatement("ClassToHave obj <- new ClassToHave(start: 4);");
+            ExecuteStatement("WholeNumber val  <- obj.optionalOrDefaultEarlierVariable(a: 7);");
+            TValue tested = scope.GetValue("val");
+
+            Assert.AreEqual(14, tested.ToInt());
         }
 
         [Test]
