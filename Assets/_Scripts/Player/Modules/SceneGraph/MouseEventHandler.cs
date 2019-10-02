@@ -98,10 +98,10 @@ namespace Alice.Player.Unity
 
 
             if (objectToMove == null && defaultModelManipulationActive){
-                objectToMove = Camera.main.transform;
+                objectToMove = Camera.main.transform.parent;
             }
 
-            if (objectToMove == Camera.main.transform){ // Moving the camera
+            if (objectToMove == Camera.main.transform.parent){ // Moving the camera
                 if (IsShiftHeld()){    // Up down
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
                     UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * dragSpeed, dragSpeed * pos.y, pos.y * dragSpeed);
