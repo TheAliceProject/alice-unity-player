@@ -61,9 +61,9 @@ namespace Alice.Tweedle
 
         #region Object Semantics
 
-        public TMethod MethodNamed(ExecutionScope inScope, string inMethodName)
+        public TMethod MethodNamed(ExecutionScope inScope, string inMethodName, string[] inArgNames)
         {
-            return m_Type.Method(inScope, ref this, inMethodName, MemberFlags.Instance);
+            return m_Type.Method(inScope, ref this, inMethodName, inArgNames, MemberFlags.Instance);
         }
 
         public TValue Get(ExecutionScope inScope, string inFieldName)

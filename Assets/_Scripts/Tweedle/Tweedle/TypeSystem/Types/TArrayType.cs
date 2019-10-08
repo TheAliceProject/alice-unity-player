@@ -63,7 +63,7 @@ namespace Alice.Tweedle
             return FindMember(m_Fields, inName, inFlags);
         }
 
-        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
+        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, string[] inArgNames, MemberFlags inFlags = MemberFlags.None)
         {
             return FindMember(m_Methods, inName, inFlags);
         }

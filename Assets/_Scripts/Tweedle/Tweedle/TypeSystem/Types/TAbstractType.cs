@@ -24,7 +24,7 @@ namespace Alice.Tweedle
             throw new TweedleNoMembersException(inName, this, "Field");
         }
 
-        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
+        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, string[] inArgNames, MemberFlags inFlags = MemberFlags.None)
         {
             throw new TweedleNoMembersException(inName, this, "Method");
         }

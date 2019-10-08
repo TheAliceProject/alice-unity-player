@@ -52,7 +52,7 @@ namespace Alice.Tweedle
         #region Object Semantics 
 
         public abstract TField Field(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None);
-        public abstract TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None);
+        public abstract TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, string[] inArgNames, MemberFlags inFlags = MemberFlags.None);
         public abstract TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments);
 
         public abstract bool IsReferenceType();
@@ -69,10 +69,10 @@ namespace Alice.Tweedle
             return Field(inScope, ref val, inName, inFlags);
         }
 
-        public TMethod Method(ExecutionScope inScope, string inName, MemberFlags inFlags = MemberFlags.None)
+        public TMethod Method(ExecutionScope inScope, string inName, string[] inArgNames, MemberFlags inFlags = MemberFlags.None)
         {
             TValue val = new TValue(this);
-            return Method(inScope, ref val, inName, inFlags);
+            return Method(inScope, ref val, inName, inArgNames, inFlags);
         }
 
         public TField[] Fields(ExecutionScope inScope)
