@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Alice.Tweedle.VM;
 
@@ -46,7 +47,8 @@ namespace Alice.Tweedle
 
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            MethodScope methodScope = scope.MethodCallScope(MethodName, invokeSuper);
+            string[] argumentNames = Array.ConvertAll(arguments, (arg) => arg.Name);
+            MethodScope methodScope = scope.MethodCallScope(MethodName, argumentNames, invokeSuper);
 
             var targetStep = TargetStep(scope);
             ExecutionStep prepMethodStep = new ValueOperationStep(
