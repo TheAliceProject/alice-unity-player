@@ -102,13 +102,13 @@ namespace Alice.Tweedle
         /// <summary>
         /// Returns if the given arguments are valid for invoking this method.
         /// </summary>
-        public bool ExpectsArgs(NamedArgument[] inArguments)
+        public bool ExpectsArgs(string[] inArgNames)
         {
             int requiredArgsFound = 0;
-            for (int i = 0; i < inArguments.Length; ++i)
+            for (int i = 0; i < inArgNames.Length; ++i)
             {
                 TParameter param;
-                if (!m_RecognizedParams.TryGetValue(inArguments[i].Name, out param))
+                if (!m_RecognizedParams.TryGetValue(inArgNames[i], out param))
                     return false;
                 
                 if (param.Required)

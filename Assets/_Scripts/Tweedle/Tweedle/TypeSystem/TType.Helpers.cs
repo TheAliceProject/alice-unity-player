@@ -29,22 +29,32 @@ namespace Alice.Tweedle
         }
 
         /// <summary>
-        /// Finds a method with the given name, arguments, and flags.
+        /// Finds a method with the given name, arguments, and flags, if there is one, in inMembers.
         /// </summary>
-        protected T FindMethodWithArgs<T>(T[] inMembers, string inName, NamedArgument[] inArguments, MemberFlags inFlags) where T : TMethod
-        {
-            for (int i = 0; i < inMembers.Length; ++i)
-            {
+        protected T FindMethodWithArgsQuietly<T>(T[] inMembers, string inName, string[] inArgNames, MemberFlags inFlags) where T : TMethod {
+            for (int i = 0; i < inMembers.Length; ++i) {
                 T method = inMembers[i];
                 if (method.Name.Equals(inName, StringComparison.Ordinal)
                     && (method.Flags & inFlags) == inFlags
-                    && method.ExpectsArgs(inArguments))
+                    && method.ExpectsArgs(inArgNames))
                     return method;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Finds a method with the given name, arguments, and flags, or throws an exception.
+        /// </summary>
+        protected T FindMethodWithArgs<T>(T[] inMembers, string inName, string[] inArgNames, MemberFlags inFlags) where T : TMethod
+        {
+            T method = FindMethodWithArgsQuietly(inMembers, inName, inArgNames, inFlags);
+            if (method != null) {
+                return method;
             }
 
             string errorMessage = "Unable to locate method " + Name + "." + inName + "(";
-            for (int i = 0; i < inArguments.Length; ++i) {
-                errorMessage += inArguments[i].Name + " ";
+            for (int i = 0; i < inArgNames.Length; ++i) {
+                errorMessage += inArgNames[i] + " ";
             }
             errorMessage += ")";
             throw new TweedleRuntimeException(errorMessage);

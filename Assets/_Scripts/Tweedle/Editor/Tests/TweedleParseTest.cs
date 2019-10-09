@@ -208,7 +208,7 @@ namespace Alice.Tweedle.Parse
         {
             TClassType tested = (TClassType)ParseType(commonProgram);
 
-            Assert.NotNull(tested.Method(null, "getMyScene"), "There should be a method.");
+            Assert.NotNull(tested.Method(null, "getMyScene", new string[0]), "There should be a method.");
         }
 
         [Test]
@@ -216,7 +216,7 @@ namespace Alice.Tweedle.Parse
         {
             TClassType tested = (TClassType)ParseType(commonProgram);
 
-            Assert.NotNull(tested.Method(null, "main"), "There should be a method.");
+            Assert.NotNull(tested.Method(null, "main", new string[] { "args" }), "There should be a method.");
         }
 
         [Test]
@@ -225,14 +225,14 @@ namespace Alice.Tweedle.Parse
             TClassType tested = (TClassType)ParseType(commonProgram);
             Assert.Throws<NullReferenceException>(delegate ()
             {
-                tested.Method(null, "constructor");
+                tested.Method(null, "constructor", new string[0]);
             });
         }
 
         [Test]
         public void StaticModifierShouldNotBeOnGetMySceneMethod()
         {
-            TMethod tested = ((TClassType)ParseType(commonProgram)).Method(null, "getMyScene");
+            TMethod tested = ((TClassType)ParseType(commonProgram)).Method(null, "getMyScene", new string[0]);
 
             Assert.IsFalse(tested.IsStatic(), "Method getMyScene should not be static.");
         }
@@ -240,7 +240,7 @@ namespace Alice.Tweedle.Parse
         [Test]
         public void StaticModifierShouldBeOnMainMethod()
         {
-            TMethod tested = ((TClassType)ParseType(commonProgram)).Method(null, "main");
+            TMethod tested = ((TClassType)ParseType(commonProgram)).Method(null, "main", new string[] { "args" });
 
             Assert.IsTrue(tested.IsStatic(), "Method main should be static.");
         }

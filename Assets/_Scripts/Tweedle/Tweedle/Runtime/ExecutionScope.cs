@@ -255,9 +255,9 @@ namespace Alice.Tweedle.VM
             return new StaticConstructorScope(this, inType);
         }
 
-        internal MethodScope MethodCallScope(string methodName, bool invokeSuper)
+        internal MethodScope MethodCallScope(string methodName, string[] inArgNames, bool invokeSuper)
         {
-            return new MethodScope(this, methodName, invokeSuper);
+            return new MethodScope(this, methodName, inArgNames, invokeSuper);
         }
 
         internal virtual TType CallingType(string methodName)

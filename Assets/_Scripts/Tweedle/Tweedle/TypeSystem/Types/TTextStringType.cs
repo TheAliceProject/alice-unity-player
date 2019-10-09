@@ -22,7 +22,12 @@ namespace Alice.Tweedle
             };
             m_Methods = new TMethod[]
             {
-                SubstringMethod()
+                SubstringMethod(),
+                ContentEqualsMethod(),
+                EqualsIgnoreCaseMethod(),
+                StartsWithMethod(),
+                EndsWithMethod(),
+                ContainsMethod()
             };
         }
 
@@ -57,6 +62,39 @@ namespace Alice.Tweedle
             });
         }
 
+        private TMethod ContentEqualsMethod() {
+            return ComparisonMethod("contentEquals", (thisStr, arg) => thisStr.Equals(arg));
+        }
+
+        private TMethod EqualsIgnoreCaseMethod() {
+            return ComparisonMethod("equalsIgnoreCase", (thisStr, arg) => thisStr.ToLower().Equals(arg.ToLower()));
+        }
+
+        private TMethod StartsWithMethod() {
+            return ComparisonMethod("startsWith", (thisStr, arg) => thisStr.StartsWith(arg, StringComparison.Ordinal));
+        }
+
+        private TMethod EndsWithMethod() {
+            return ComparisonMethod("endsWith", (thisStr, arg) => thisStr.EndsWith(arg, StringComparison.Ordinal));
+        }
+
+        private TMethod ContainsMethod() {
+            return ComparisonMethod("contains", (thisStr, arg) => thisStr.Contains(arg));
+        }
+
+        private TMethod ComparisonMethod(string methodName, Func<string, string, bool> methodBody) {
+            return new TCustomMethod(methodName, MemberFlags.Instance, TBuiltInTypes.BOOLEAN,
+            // Used during the construction of TBuiltInTypes.TEXT_STRING, so "this" refers to the TEXT_STRING type as it is being built
+            new TParameter[] { TParameter.RequiredParameter(this, "text") },
+            new TParameter[] {},
+            (ExecutionScope inScope) => {
+                TValue _this = inScope.GetThis();
+                string text = inScope.GetValue("text").ToTextString();
+                string thisString = _this.ToTextString();
+                return TValue.FromBoolean(methodBody(thisString, text));
+            });
+        }
+
         #endregion // Custom Members
 
         #region Link
@@ -78,7 +116,7 @@ namespace Alice.Tweedle
             return FindMember(m_Fields, inName, inFlags);
         }
 
-        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
+        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, string[] inArgNames, MemberFlags inFlags = MemberFlags.None)
         {
             return FindMember(m_Methods, inName, inFlags);
         }
