@@ -27,7 +27,7 @@ namespace Alice.Tweedle
             return realType.Field(inScope, ref inValue, inName, inFlags);
         }
 
-        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
+        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, string[] inArgNames, MemberFlags inFlags = MemberFlags.None)
         {
             AssertValueIsType(ref inValue);
 
@@ -36,7 +36,7 @@ namespace Alice.Tweedle
             inFlags |= MemberFlags.Static;
 
             TType realType = inValue.TypeRef().Get(inScope);
-            return realType.Method(inScope, ref inValue, inName, inFlags);
+            return realType.Method(inScope, ref inValue, inName, inArgNames, inFlags);
         }
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)

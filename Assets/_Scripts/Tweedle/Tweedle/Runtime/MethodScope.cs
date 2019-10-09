@@ -3,10 +3,12 @@
     class MethodScope : InvocationScope {
         bool invokeSuper;
         TType invokedType;
+        string[] argNames;
 
-        public MethodScope(ExecutionScope scope, string methodName, bool invokeSuper)
+        public MethodScope(ExecutionScope scope, string methodName, string[] argNames, bool invokeSuper)
             : base(scope) {
             callStackEntry = methodName;
+            this.argNames = argNames;
             this.invokeSuper = invokeSuper;
         }
 
@@ -34,7 +36,7 @@
                 startingType = thisValue.Type;
             }
 
-            method = startingType.Method(callingScope, ref thisValue, callStackEntry);
+            method = startingType.Method(callingScope, ref thisValue, callStackEntry, argNames);
 
             if (method == null)//|| !method.ExpectsArgs(callExpression.arguments))
             {

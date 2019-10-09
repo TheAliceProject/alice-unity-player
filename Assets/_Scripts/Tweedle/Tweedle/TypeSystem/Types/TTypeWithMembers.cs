@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -60,18 +61,19 @@ namespace Alice.Tweedle
             return field;
         }
 
-        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, MemberFlags inFlags = MemberFlags.None)
+        public override TMethod Method(ExecutionScope inScope, ref TValue inValue, string inName, string[] inArgNames, MemberFlags inFlags = MemberFlags.None)
         {
             AssertValueIsTypeOrTypeRef(ref inValue);
-            TMethod method = FindMember(m_Methods, inName, inFlags | MemberFlags.Method);
+            TMethod method = FindMethodWithArgsQuietly(m_Methods, inName, inArgNames, inFlags | MemberFlags.Method);
             if (method == null && SuperType != null)
-                method = SuperType.Get(inScope).Method(inScope, ref inValue, inName, inFlags);
+                method = SuperType.Get(inScope).Method(inScope, ref inValue, inName, inArgNames, inFlags);
             return method;
         }
 
         public override TMethod Constructor(ExecutionScope inScope, NamedArgument[] inArguments)
         {
-            return FindMethodWithArgs(m_Constructors, TMethod.ConstructorName, inArguments, MemberFlags.Instance | MemberFlags.Constructor);
+            string[] argumentNames = Array.ConvertAll(inArguments, (arg) => arg.Name);
+            return FindMethodWithArgs(m_Constructors, TMethod.ConstructorName, argumentNames, MemberFlags.Instance | MemberFlags.Constructor);
         }
 
         public override TField[] Fields(ExecutionScope inScope, ref TValue inValue)
