@@ -32,15 +32,16 @@ namespace Alice.Tweedle.Parse
             DeleteTemporaryAudioFiles();
         }
 
-        public void Select(string fileName = "")
-        {
+        public void Select(string fileName = "") {
             string zipPath = fileName;
-            if(zipPath == "")
+            if (zipPath == "") {
                 zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
-
-            if (System.IO.File.Exists(zipPath) == false)
+                zipPath = System.Uri.UnescapeDataString(zipPath);
+            }
+            if (System.IO.File.Exists(zipPath) == false) {
+                Debug.LogError("UnityObjectParser.Select Failed to open File " + zipPath);
                 return;
-
+            }
             worldLoader.AddWorldToRecents(zipPath);
             m_currentFilePath = zipPath;
 
