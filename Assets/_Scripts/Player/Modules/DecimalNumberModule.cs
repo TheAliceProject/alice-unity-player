@@ -12,6 +12,11 @@ namespace Alice.Player.Modules
         public const double NEGATIVE_INFINITY = double.NegativeInfinity;
 
         [PInteropMethod]
+        static public double from(int wholeNumber) {
+            return Convert.ToDouble(wholeNumber);
+        }
+        
+        [PInteropMethod]
         static public double sqrt(double number) {
             return Math.Sqrt(number);
         }
