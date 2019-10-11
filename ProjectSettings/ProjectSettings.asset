@@ -276,8 +276,8 @@ PlayerSettings:
     m_Enabled: 1
     m_Devices:
     - None
-    - OpenVR
     - Oculus
+    - OpenVR
     - MockHMD
   m_BuildTargetEnableVuforiaSettings: []
   openGLRequireES31: 0
