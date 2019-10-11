@@ -34,6 +34,7 @@ MonoBehaviour:
     type: 3}
   m_FlyingText: {fileID: 7801169308338121330, guid: 38dd5eae6afbaeb45932f2a6c836397d,
     type: 3}
+  m_VRRig: {fileID: 7811638191363421627, guid: 57a99d88f3e3d924795a033752aa67d5, type: 3}
   m_SceneCanvas: {fileID: 773480886470413249, guid: 5cfb8ef305475774184a722dace45635,
     type: 3}
   m_TweedleAudioSource: {fileID: 6945351565470147520, guid: ee2097cc29c22c14ab38e7dfe3ff7fb7,

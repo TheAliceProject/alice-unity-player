@@ -70,6 +70,11 @@ namespace Alice.Player.Unity {
         private GameObject m_FlyingText = null;
         public GameObject FlyingTextObject { get { return m_FlyingText; } }
 
+        [Header("VR")]
+        [SerializeField]
+        private VRRig m_VRRig = null;
+        public VRRig VRRig { get { return m_VRRig;  } }
+        
         [Header("UI")]
         [SerializeField]
         private SceneCanvas m_SceneCanvas = null;
