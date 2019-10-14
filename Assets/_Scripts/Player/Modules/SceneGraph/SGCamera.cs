@@ -41,6 +41,7 @@ namespace Alice.Player.Unity {
                 m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
                 Camera = m_rig.headCamera;
                 Camera.tag = "MainCamera";
+                m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
             }
             else{
                 Camera = Camera.main;
