@@ -1872,9 +1872,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3db9526081f618849a1f38d34c53cee7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VRDeviceActive: 0
-  loadWorldInVr: 0
-  VRDeviceModel: 
+  LoadWorldInVR: 0
+  VRTypeFound: 
   loadInVRToggle: {fileID: 197045846}
 --- !u!1 &1336893041
 GameObject:

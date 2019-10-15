@@ -11,34 +11,28 @@ namespace Alice.Player.Unity {
 
         protected override void Awake() {
             base.Awake();
-            Camera = Camera.main;
-            Camera.transform.SetParent(cachedTransform, false);
-            Camera.transform.localPosition = UnityEngine.Vector3.zero;
-            Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
-            Debug.Log("Found device? " + XRDevice.isPresent);
+            bool vrLoaded = false;
             if(VRControl.I.LoadWorldInVR)
             {
-                Debug.Log("Found model: " + XRDevice.model);
-
-                if (VRControl.I.LoadWorldInVR && VRControl.I.VRDeviceActive)
+                if (XRDevice.isPresent)
                 {
-                    Debug.Log("Loading VR Rig");
                     if (Camera.main != null)
                         Destroy(Camera.main.gameObject);
                     m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
                     Camera = m_rig.headCamera;
                     Camera.tag = "MainCamera";
                     m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
-                }
-                else
-                {
-                    Camera = Camera.main;
-                    Camera.transform.SetParent(cachedTransform, false);
-                    Camera.transform.localPosition = UnityEngine.Vector3.zero;
-                    Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
+                    vrLoaded = true;
                 }
             }
-                
+            
+            if(!vrLoaded)
+            {
+                Camera = Camera.main;
+                Camera.transform.SetParent(cachedTransform, false);
+                Camera.transform.localPosition = UnityEngine.Vector3.zero;
+                Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
+            }
         }
 
         public override void CleanUp() {
