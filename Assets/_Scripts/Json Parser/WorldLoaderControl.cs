@@ -25,7 +25,7 @@ public class WorldLoaderControl : MonoBehaviour
         loadInVR.onValueChanged.AddListener((value) =>
         {
             VRControl.I.LoadWorldInVR = value;
-            VRControl.I.SetVROutput(value);
+            VRControl.I.SetVROutput(value ? VRControl.I.VRTypeFound : "");
         });
 
         versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());

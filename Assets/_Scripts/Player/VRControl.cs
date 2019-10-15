@@ -4,12 +4,14 @@ using UnityEngine;
 using BeauRoutine;
 using UnityEngine.XR;
 using UnityEngine.UI;
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+using System.Diagnostics;
+#endif
 
 public class VRControl : MonoBehaviour
 {
-    public bool VRDeviceActive = false;
     public bool LoadWorldInVR = false;
-    public string VRDeviceModel = "";
+    public string VRTypeFound = "";
 
     public Toggle loadInVRToggle;
     private static VRControl _instance;
@@ -25,54 +27,44 @@ public class VRControl : MonoBehaviour
         else{
             _instance = this;
         }
-
-        m_routine.Replace(this, CheckVRStatus());
     }
 
     void Start()
     {
-        SetVROutput(true);
-    }
-
-    public void SetVROutput(bool enable)
-    {
-        Routine.Start(SwitchOutput(enable));
-    }
-
-    private IEnumerator CheckVRStatus()
-    {
-        while(true)
-        {
-            if (XRDevice.isPresent)
-            {
-                VRDeviceActive = true;
-                Debug.Log("Found model: " + XRDevice.model);
+    // On mac, there won't be any VR support for now
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+        Process[] pname = Process.GetProcessesByName("vrserver");
+         if(pname != null && pname.Length > 0){
+            VRTypeFound = "OpenVR";
+            SetVROutput("OpenVR");
+        } 
+        else{
+            pname = Process.GetProcessesByName("OculusClient");
+            if (pname != null && pname.Length > 0){
+                VRTypeFound = "Oculus";
+                SetVROutput("Oculus");
             }
-            else
-            {
-                VRDeviceActive = false;
-            }
-            yield return 1f;
         }
+#endif
     }
 
-    private IEnumerator SwitchOutput(bool enableVR)
+    public void SetVROutput(string deviceToLoad)
     {
-        if (enableVR)
+        m_routine.Replace(this, SwitchOutput(deviceToLoad));
+    }
+
+    private IEnumerator SwitchOutput(string deviceToLoad)
+    {
+        if (deviceToLoad != "")
         {
-            XRSettings.LoadDeviceByName("Oculus");
+            XRSettings.LoadDeviceByName(deviceToLoad);
             yield return null;
             
-            if(XRSettings.loadedDeviceName != "Oculus")
+            if(XRSettings.loadedDeviceName != deviceToLoad)
             {
-                XRSettings.LoadDeviceByName("OpenVR");
-                yield return null;
-                if(XRSettings.loadedDeviceName == "OpenVR")
-                {
-                    XRSettings.enabled = true;
-                    LoadWorldInVR = true;
-                    loadInVRToggle.gameObject.SetActive(true);
-                }
+                UnityEngine.Debug.Log("Problem loading device: " + deviceToLoad);
+                XRSettings.LoadDeviceByName("");
+                XRSettings.enabled = false;
             }
             else
             {
