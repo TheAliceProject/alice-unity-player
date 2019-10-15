@@ -67,7 +67,6 @@ public class WorldControl : MonoBehaviour
             paused = !paused;
             UpdateStatus();
         });
-
     }
 
     void UpdateStatus()

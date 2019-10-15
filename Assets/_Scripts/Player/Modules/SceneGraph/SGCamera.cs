@@ -15,7 +15,30 @@ namespace Alice.Player.Unity {
             Camera.transform.SetParent(cachedTransform, false);
             Camera.transform.localPosition = UnityEngine.Vector3.zero;
             Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
-            Routine.Start(InstantiateCameraRoutine());
+            Debug.Log("Found device? " + XRDevice.isPresent);
+            if(VRControl.I.LoadWorldInVR)
+            {
+                Debug.Log("Found model: " + XRDevice.model);
+
+                if (VRControl.I.LoadWorldInVR && VRControl.I.VRDeviceActive)
+                {
+                    Debug.Log("Loading VR Rig");
+                    if (Camera.main != null)
+                        Destroy(Camera.main.gameObject);
+                    m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
+                    Camera = m_rig.headCamera;
+                    Camera.tag = "MainCamera";
+                    m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
+                }
+                else
+                {
+                    Camera = Camera.main;
+                    Camera.transform.SetParent(cachedTransform, false);
+                    Camera.transform.localPosition = UnityEngine.Vector3.zero;
+                    Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
+                }
+            }
+                
         }
 
         public override void CleanUp() {
@@ -23,69 +46,6 @@ namespace Alice.Player.Unity {
             {
                 Camera.transform.SetParent(null, true);
                 Camera = null;
-            }
-        }
-
-        IEnumerator InstantiateCameraRoutine()
-        {
-            for (int i = 0; i < XRSettings.supportedDevices.Length; i++)
-            {
-                yield return EnableVRRoutine(XRSettings.supportedDevices[i]);
-                if(XRSettings.enabled)
-                    break;
-            }
-
-            if(XRSettings.isDeviceActive && XRSettings.enabled){
-                if(Camera.main != null)
-                    Destroy(Camera.main.gameObject);
-                m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
-                Camera = m_rig.headCamera;
-                Camera.tag = "MainCamera";
-                m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
-            }
-            else{
-                Camera = Camera.main;
-                Camera.transform.SetParent(cachedTransform, false);
-                Camera.transform.localPosition = UnityEngine.Vector3.zero;
-                Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
-            }
-        }
-
-        IEnumerator DisableVRRoutine()
-        {
-            XRSettings.LoadDeviceByName("");
-            XRSettings.enabled = false;
-            yield return null;
-            //Camera.main.ResetAspect();
-        }
-
-        IEnumerator EnableVRRoutine(string deviceName)
-        {
-            if (deviceName == "None")
-                yield break;
-
-            // Todo: Figure out how to check for None, OpenVR, and Oculus without failing out.
-            try{
-                XRSettings.LoadDeviceByName(deviceName);
-            } catch(Exception e){
-                Debug.Log("Failed to find device: " + deviceName);
-            }
-
-
-            int tries = 5;
-            while (true)
-            {
-                if (0 != string.Compare(XRSettings.loadedDeviceName, deviceName, true))
-                {
-                    tries--;
-                    yield return null;
-                }
-                else
-                {
-                    Debug.Log("Enabled VR device: " + XRSettings.loadedDeviceName);
-                    XRSettings.enabled = true;
-                    yield break;
-                }
             }
         }
     }
