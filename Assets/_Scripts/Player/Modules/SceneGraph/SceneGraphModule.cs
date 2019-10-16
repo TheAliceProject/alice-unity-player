@@ -423,7 +423,7 @@ namespace Alice.Player.Modules {
             var entity = SceneGraph.Current.FindEntity(model);
             if (entity && entity is SGModel) {
                 var sgModel = (SGModel)entity;
-                return sgModel.GetBounds(dynamic);
+                return AxisAlignedBox.FromUnity(sgModel.GetBounds(dynamic));
             }
             throw new SceneGraphException("No scene graph entity exists for tweedle object.");
         }
