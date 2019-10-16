@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Alice.Tweedle.Interop;
-using System; 
+using System;
+using UnityEngine;
+
 namespace Alice.Player.Primitives
 {
     [PInteropType]
@@ -91,11 +93,17 @@ namespace Alice.Player.Primitives
             );
         }
 
-        static public implicit operator AxisAlignedBox(UnityEngine.Bounds inBounds)
+        static public implicit operator AxisAlignedBox(Bounds inBounds)
         {
             var min = inBounds.min;
             var max = inBounds.max;
             return new AxisAlignedBox(new Vector3(min.x, min.y, min.z), new Vector3(max.x, max.y, max.z));
+        }
+
+        internal static AxisAlignedBox FromUnity(Bounds inBounds) {
+            var min = inBounds.min;
+            var max = inBounds.max;
+            return new AxisAlignedBox(new Vector3(-max.x, min.y, min.z), new Vector3(-min.x, max.y, max.z));
         }
 
         public override string ToString() {
