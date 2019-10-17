@@ -13,7 +13,10 @@ namespace Alice.Player.Unity {
         private Routine m_routine;
         private List<Transform> m_ObjectMovers = new List<Transform>();
     
-        private List<Key> m_arrowKeys = new List<Key> { Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.W, Key.A, Key.S, Key.D };
+        private List<Key> m_arrowKeys = new List<Key> { Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, 
+                                                        Key.W, Key.A, Key.S, Key.D,
+                                                        Key.RIGHT_AXIS_UP, Key.RIGHT_AXIS_DOWN, Key.RIGHT_AXIS_LEFT, Key.RIGHT_AXIS_RIGHT,
+                                                        Key.LEFT_AXIS_UP, Key.LEFT_AXIS_DOWN, Key.LEFT_AXIS_LEFT, Key.LEFT_AXIS_RIGHT};
         private List<Key> m_currentlyHeldKeys = new List<Key>();
 
         private const float UP_DOWN_SCALE_FACTOR = 0.055f;
@@ -39,7 +42,7 @@ namespace Alice.Player.Unity {
                 return;
 
             // Manage key downs and key ups in regards to the held key policy
-            if(keyDown){
+            if(keyDown && !m_currentlyHeldKeys.Contains((Key)theKey)){
                 m_currentlyHeldKeys.Add((Key)theKey);
             }
             else{ // key up
@@ -51,16 +54,18 @@ namespace Alice.Player.Unity {
             while(true){
                 for (int i = 0; i < m_ObjectMovers.Count; i++){
                     for (int j = 0; j < m_currentlyHeldKeys.Count; j++){
-                        if (m_currentlyHeldKeys[j] == Key.W || m_currentlyHeldKeys[j] == Key.UP){
+                        Key currentlyHeld = m_currentlyHeldKeys[j];
+                        if (currentlyHeld == Key.W || currentlyHeld == Key.UP || currentlyHeld == Key.LEFT_AXIS_UP || currentlyHeld == Key.RIGHT_AXIS_UP){
+                            Debug.Log("Moving " + m_ObjectMovers.Count + " " + m_currentlyHeldKeys.Count);
                             m_ObjectMovers[i].position -= (m_ObjectMovers[i].forward * UP_DOWN_SCALE_FACTOR);
                         }
-                        if (m_currentlyHeldKeys[j] == Key.S || m_currentlyHeldKeys[j] == Key.DOWN){
+                        if (currentlyHeld == Key.S || currentlyHeld == Key.DOWN || currentlyHeld == Key.LEFT_AXIS_DOWN || currentlyHeld == Key.RIGHT_AXIS_DOWN){
                             m_ObjectMovers[i].position += (m_ObjectMovers[i].forward * UP_DOWN_SCALE_FACTOR);
                         }
-                        if (m_currentlyHeldKeys[j] == Key.A || m_currentlyHeldKeys[j] == Key.LEFT){
+                        if (currentlyHeld == Key.A || currentlyHeld == Key.LEFT || currentlyHeld == Key.LEFT_AXIS_LEFT || currentlyHeld == Key.RIGHT_AXIS_LEFT){
                             m_ObjectMovers[i].SetRotation(m_ObjectMovers[i].localRotation.eulerAngles.y - LEFT_RIGHT_SCALE_FACTOR, Axis.Y, Space.Self);
                         }
-                        if (m_currentlyHeldKeys[j] == Key.D || m_currentlyHeldKeys[j] == Key.RIGHT){
+                        if (currentlyHeld == Key.D || currentlyHeld == Key.RIGHT || currentlyHeld == Key.LEFT_AXIS_RIGHT || currentlyHeld == Key.RIGHT_AXIS_RIGHT){
                             m_ObjectMovers[i].SetRotation(m_ObjectMovers[i].localRotation.eulerAngles.y + LEFT_RIGHT_SCALE_FACTOR, Axis.Y, Space.Self);
                         }
                     }
