@@ -2,8 +2,7 @@
 
 namespace Alice.Tweedle
 {
-    public class TweedleNonexistentFieldException : SystemException
-    {
+    public class TweedleNonexistentFieldException : TweedleRuntimeException {
         public TweedleNonexistentFieldException(string message)
             :base(message)
         {

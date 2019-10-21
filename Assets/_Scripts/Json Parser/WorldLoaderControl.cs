@@ -12,7 +12,8 @@ public class WorldLoaderControl : MonoBehaviour
     public Transform contentBox;
     public UnityObjectParser parser;
     public TextMeshProUGUI versionString;
-
+    public Toggle loadInVR;
+    
     private List<GameObject> activeButtons = new List<GameObject>();
     private List<string> recentWorlds = new List<string>();
     private const string RecentWorldsFileName = "/recentWorlds.txt";
@@ -20,6 +21,13 @@ public class WorldLoaderControl : MonoBehaviour
     void Start()
     {
         PopulateLevels();
+        
+        loadInVR.onValueChanged.AddListener((value) =>
+        {
+            VRControl.I.LoadWorldInVR = value;
+            VRControl.I.SetVROutput(value ? VRControl.I.VRTypeFound : "");
+        });
+
         versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
     }
 

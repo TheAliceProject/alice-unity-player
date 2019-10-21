@@ -195,6 +195,28 @@ namespace Alice.Player.Modules
         COMPOSE,
         ALT_GRAPH,
         BEGIN,
+        // VR
+        LEFT_TRIGGER,
+        RIGHT_TRIGGER,
+        LEFT_GRIP,
+        RIGHT_GRIP,
+        LEFT_PRIMARY,
+        RIGHT_PRIMARY,
+        LEFT_SECONDARY,
+        RIGHT_SECONDARY,
+        LEFT_AXIS_UP,
+        RIGHT_AXIS_UP,
+        LEFT_AXIS_DOWN,
+        RIGHT_AXIS_DOWN,
+        LEFT_AXIS_LEFT,
+        RIGHT_AXIS_LEFT,
+        LEFT_AXIS_RIGHT,
+        RIGHT_AXIS_RIGHT,
+        LEFT_THUMBSTICK_CLICK,
+        RIGHT_THUMBSTICK_CLICK,
+        LEFT_MENU,
+        RIGHT_MENU,
+
         UNDEFINED
     }
 
@@ -575,6 +597,47 @@ namespace Alice.Player.Modules
         public const int ALT_GRAPH = (int)Key.ALT_GRAPH;
         [PInteropField]
         public const int BEGIN = (int)Key.BEGIN;
+        // VR
+        [PInteropField]
+        public const int LEFT_TRIGGER = (int)Key.LEFT_TRIGGER;
+        [PInteropField]
+        public const int RIGHT_TRIGGER = (int)Key.RIGHT_TRIGGER;
+        [PInteropField]
+        public const int LEFT_GRIP = (int)Key.LEFT_GRIP;
+        [PInteropField]
+        public const int RIGHT_GRIP = (int)Key.RIGHT_GRIP;
+        [PInteropField]
+        public const int LEFT_PRIMARY = (int)Key.LEFT_PRIMARY;
+        [PInteropField]
+        public const int RIGHT_PRIMARY = (int)Key.RIGHT_PRIMARY;
+        [PInteropField]
+        public const int LEFT_SECONDARY = (int)Key.LEFT_SECONDARY;
+        [PInteropField]
+        public const int RIGHT_SECONDARY = (int)Key.RIGHT_SECONDARY;
+        [PInteropField]
+        public const int LEFT_AXIS_UP = (int)Key.LEFT_AXIS_UP;
+        [PInteropField]
+        public const int RIGHT_AXIS_UP = (int)Key.RIGHT_AXIS_UP;
+        [PInteropField]
+        public const int LEFT_AXIS_DOWN = (int)Key.LEFT_AXIS_DOWN;
+        [PInteropField]
+        public const int RIGHT_AXIS_DOWN = (int)Key.RIGHT_AXIS_DOWN;
+        [PInteropField]
+        public const int LEFT_AXIS_LEFT = (int)Key.LEFT_AXIS_LEFT;
+        [PInteropField]
+        public const int RIGHT_AXIS_LEFT = (int)Key.RIGHT_AXIS_LEFT;
+        [PInteropField]
+        public const int LEFT_AXIS_RIGHT = (int)Key.LEFT_AXIS_RIGHT;
+        [PInteropField]
+        public const int RIGHT_AXIS_RIGHT = (int)Key.RIGHT_AXIS_RIGHT;
+        [PInteropField]
+        public const int LEFT_THUMBSTICK_CLICK = (int)Key.LEFT_THUMBSTICK_CLICK;
+        [PInteropField]
+        public const int RIGHT_THUMBSTICK_CLICK = (int)Key.RIGHT_THUMBSTICK_CLICK;
+        [PInteropField]
+        public const int LEFT_MENU = (int)Key.LEFT_MENU;
+        [PInteropField]
+        public const int RIGHT_MENU = (int)Key.RIGHT_MENU;
         [PInteropField]
         public const int UNDEFINED = (int)Key.UNDEFINED;
     }

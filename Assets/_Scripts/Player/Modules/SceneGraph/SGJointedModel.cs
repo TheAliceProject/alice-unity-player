@@ -71,6 +71,11 @@ namespace Alice.Player.Unity {
             if (ren is SkinnedMeshRenderer) {
                 return ((SkinnedMeshRenderer)ren).localBounds;
             }
+            if (ren is MeshRenderer) {
+                var localize = ren.worldToLocalMatrix;
+                var localCenter = localize.MultiplyPoint(ren.bounds.center);
+                return new Bounds(localCenter, ren.bounds.size);
+            }
             return ren.bounds;
         }
 

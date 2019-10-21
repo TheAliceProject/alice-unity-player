@@ -17,6 +17,8 @@ namespace Alice.Tweedle
             if (IsEnabled)
             {
                 Body.AddParallelSteps(scope, next);
+            } else if (next != null) {
+                next.Queue();
             }
         }
 
