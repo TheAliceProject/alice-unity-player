@@ -39,13 +39,10 @@ namespace Alice.Player.Unity {
         private const float k_BelowLightPitch = -90f;
         private UnityEngine.Vector3 m_DefaultColliderSize = new UnityEngine.Vector3(0.1f, 0.1f, 0.1f);
 
-        private float dragSpeed = 10f;
         private UnityEngine.Vector3 dragOrigin;
         private UnityEngine.Vector3 shiftOrigin;
         private UnityEngine.Vector3 rotateOrigin;
 
-        private float lastMouseDownTime = 0f;
-        private Transform objectToMove = null;
         private Plane movementPlane = new Plane(UnityEngine.Vector3.up, UnityEngine.Vector3.zero);
         private UnityEngine.Vector3 objectOriginPoint = UnityEngine.Vector3.zero;
         private UnityEngine.Vector3 planeOriginPoint = UnityEngine.Vector3.zero;
