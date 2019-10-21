@@ -4,8 +4,8 @@ using Alice.Player.Modules;
 
 public static class KeyMap
 {
-    public static Dictionary<KeyCode, Key> TweedleKeyLookup = new Dictionary<KeyCode, Key>() 
-    { 
+    public static Dictionary<KeyCode, Key> TweedleKeyLookup = new Dictionary<KeyCode, Key>()
+    {
         {KeyCode.Alpha0, Key.DIGIT_0},
         {KeyCode.Keypad0, Key.NUMPAD0},
         {KeyCode.Alpha1, Key.DIGIT_1},
@@ -101,4 +101,56 @@ public static class KeyMap
         {KeyCode.UpArrow, Key.UP},
         {KeyCode.DownArrow, Key.DOWN}
     };
+
+    public static List<string> VRButtonStrings = new List<string>() {
+        "RightTrigger",
+        "RightGrip",
+        "PrimaryRight",
+        "SecondaryRight",
+        "MenuRight",
+        "LeftTrigger",
+        "LeftGrip",
+        "PrimaryLeft",
+        "SecondaryLeft",
+        "MenuLeft",
+        "RightThumbstickClick",
+        "LeftThumbstickClick"
+    };
+
+    public static List<string> VRAxisStrings = new List<string>(){
+        "RightThumbstickUpDown",
+        "RightThumbstickLeftRight",
+        "LeftThumbstickUpDown",
+        "LeftThumbstickLeftRight"
+    };
+
+    public static Dictionary<string, Key> VRButtonLookup = new Dictionary<string, Key>()
+    {
+        {"RightTrigger", Key.RIGHT_TRIGGER},
+        {"RightGrip", Key.RIGHT_GRIP},
+        {"PrimaryRight", Key.RIGHT_PRIMARY},
+        {"SecondaryRight", Key.RIGHT_SECONDARY},
+        {"MenuRight", Key.RIGHT_MENU},
+        {"LeftTrigger", Key.LEFT_TRIGGER},
+        {"LeftGrip", Key.LEFT_GRIP},
+        {"PrimaryLeft", Key.LEFT_PRIMARY},
+        {"SecondaryLeft", Key.LEFT_SECONDARY},
+        {"MenuLeft", Key.LEFT_MENU},
+        {"RightThumbstickClick", Key.RIGHT_THUMBSTICK_CLICK},
+        {"LeftThumbstickClick", Key.LEFT_THUMBSTICK_CLICK}
+    };
+
+    public static Dictionary<string, Key> VRAxisLookup = new Dictionary<string, Key>()
+    {
+        {"RightThumbstickUpDown_P", Key.RIGHT_AXIS_UP},
+        {"RightThumbstickUpDown_N", Key.RIGHT_AXIS_DOWN},
+        {"RightThumbstickLeftRight_N", Key.RIGHT_AXIS_LEFT},
+        {"RightThumbstickLeftRight_P", Key.RIGHT_AXIS_RIGHT},
+        {"LeftThumbstickUpDown_P", Key.LEFT_AXIS_UP},
+        {"LeftThumbstickUpDown_N", Key.LEFT_AXIS_DOWN},
+        {"LeftThumbstickLeftRight_N", Key.LEFT_AXIS_LEFT},
+        {"LeftThumbstickLeftRight_P", Key.LEFT_AXIS_RIGHT}
+    };
 }
+
+        

@@ -25,7 +25,10 @@ namespace Alice.Player.Unity {
         private float lastCheckedTime = 0f;
         private int queuedCalls = 0;
         private Routine m_routine;
-        private List<Key> arrowKeys = new List<Key> {Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN, Key.W, Key.A, Key.S, Key.D};
+        private List<Key> arrowKeys = new List<Key> {Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN,
+                                                    Key.W, Key.A, Key.S, Key.D,
+                                                    Key.RIGHT_AXIS_UP, Key.RIGHT_AXIS_DOWN, Key.RIGHT_AXIS_LEFT, Key.RIGHT_AXIS_RIGHT,
+                                                    Key.LEFT_AXIS_UP, Key.LEFT_AXIS_DOWN, Key.LEFT_AXIS_LEFT, Key.LEFT_AXIS_RIGHT};
         private List<Key> numpadKeys = new List<Key> { Key.NUMPAD0, Key.NUMPAD1, Key.NUMPAD2, Key.NUMPAD3, Key.NUMPAD4, Key.NUMPAD5, Key.NUMPAD6, Key.NUMPAD7, Key.NUMPAD8, Key.NUMPAD9,
                                                         Key.DIGIT_0, Key.DIGIT_1, Key.DIGIT_2, Key.DIGIT_3, Key.DIGIT_4, Key.DIGIT_5, Key.DIGIT_6, Key.DIGIT_7, Key.DIGIT_8, Key.DIGIT_9,  };
 
