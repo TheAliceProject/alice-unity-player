@@ -1,13 +1,24 @@
 fileFormatVersion: 2
 guid: 6afe13b701dae4a53b6999e859a265c6
 ScriptedImporter:
-  fileIDToRecycleName:
-    100000: gameObject/AliceLogoCutoutForDarkBackground
-    400000: gameObject/AliceLogoCutoutForDarkBackground/Transform
-    21200000: gameObject/AliceLogoCutoutForDarkBackground/SpriteRenderer
-    21300000: sprite
-    100100000: gameObject
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: gameObject/AliceLogoCutoutForDarkBackground
+  - first:
+      4: 400000
+    second: gameObject/AliceLogoCutoutForDarkBackground/Transform
+  - first:
+      212: 21200000
+    second: gameObject/AliceLogoCutoutForDarkBackground/SpriteRenderer
+  - first:
+      213: 21300000
+    second: sprite
+  - first:
+      1001: 100100000
+    second: gameObject
   externalObjects: {}
+  serializedVersion: 2
   userData: 
   assetBundleName: 
   assetBundleVariant: 
@@ -19,6 +30,7 @@ ScriptedImporter:
   alignment: 0
   customPivot: {x: 0, y: 0}
   generatePhysicsShape: 0
+  viewportOptions: 0
   preserveViewport: 0
   advancedMode: 0
   predefinedResolutionIndex: 1
@@ -52,4 +64,5 @@ ScriptedImporter:
         width: 0
         height: 0
       spriteID: 8a8e87419bbba46aa99189eb61164b7e
+      internalID: 0
     PhysicsOutlines: []
