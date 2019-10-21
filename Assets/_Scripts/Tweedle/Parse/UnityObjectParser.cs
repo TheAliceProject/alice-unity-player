@@ -7,6 +7,7 @@ using Alice.Tweedle.File;
 using System.Collections.Generic;
 using System.Collections;
 using BeauRoutine;
+using SFB;
 
 namespace Alice.Tweedle.Parse
 {
@@ -35,11 +36,15 @@ namespace Alice.Tweedle.Parse
         public void Select(string fileName = "") {
             string zipPath = fileName;
             if (zipPath == "") {
-                zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", project_ext);
-                zipPath = System.Uri.UnescapeDataString(zipPath);
+                var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", project_ext, false);
+                if(path.Length > 0)
+                {
+                    zipPath = path[0];
+                    zipPath = System.Uri.UnescapeDataString(zipPath);
+                }
             }
             if (System.IO.File.Exists(zipPath) == false) {
-                Debug.LogError("UnityObjectParser.Select Failed to open File " + zipPath);
+                Debug.LogWarning("UnityObjectParser.Select Failed to open File " + zipPath);
                 return;
             }
             worldLoader.AddWorldToRecents(zipPath);
