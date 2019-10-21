@@ -6,12 +6,7 @@ using ICSharpCode.SharpZipLib.Core;
 
 public class JsonParser : MonoBehaviour
 {
-	[SerializeField] private Text text = null;
-
 	#region JSON_ZIP
-
-	private static string json_ext = "json";
-	private static string zip_ext = "zip";
 
 	private string UniqueDirectoryName(string path)
 	{

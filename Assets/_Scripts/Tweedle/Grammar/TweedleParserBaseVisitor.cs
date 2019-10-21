@@ -32,7 +32,6 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 /// </summary>
 /// <typeparam name="Result">The return type of the visit operation.</typeparam>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.7.2")]
-[System.CLSCompliant(false)]
 public partial class TweedleParserBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, ITweedleParserVisitor<Result> {
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="TweedleParser.typeDeclaration"/>.

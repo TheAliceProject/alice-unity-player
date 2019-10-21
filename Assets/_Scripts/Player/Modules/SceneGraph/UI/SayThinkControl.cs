@@ -14,25 +14,23 @@ namespace Alice.Player.Unity {
     public class SayThinkControl : MonoBehaviour
     {
         [SerializeField]
-        private TMP_FontAsset serifFont;
+        private TMP_FontAsset serifFont = null;
         [SerializeField]
-        private TMP_FontAsset sansSerifFont;
+        private TMP_FontAsset sansSerifFont = null;
         [SerializeField]
-        private TMP_FontAsset monospaceFont;
+        private TMP_FontAsset monospaceFont = null;
 
         [SerializeField]
-        private SayThinkBubble sayPrefab;
+        private SayThinkBubble sayPrefab = null;
         [SerializeField]
-        private SayThinkBubble thinkPrefab;
-        [SerializeField]
-        private GameObject emptyObject;
+        private SayThinkBubble thinkPrefab = null;
 
         [SerializeField]
-        private RectTransform leftBubbles;
+        private RectTransform leftBubbles = null;
         [SerializeField]
-        private RectTransform centerBubbles;
+        private RectTransform centerBubbles = null;
         [SerializeField]
-        private RectTransform rightBubbles;
+        private RectTransform rightBubbles = null;
 
         private Dictionary<SayThinkBubble, AsyncReturn> bubbleReturns = new Dictionary<SayThinkBubble, AsyncReturn>();
         private float m_lastWidth;

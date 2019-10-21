@@ -22,7 +22,6 @@ namespace Alice.Player.Unity {
         public KeyPressType keyType;
 
         private bool callActive = false;
-        private float lastCheckedTime = 0f;
         private int queuedCalls = 0;
         private Routine m_routine;
         private List<Key> arrowKeys = new List<Key> {Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN,

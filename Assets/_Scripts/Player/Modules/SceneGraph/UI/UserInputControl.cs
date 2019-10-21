@@ -10,13 +10,13 @@ namespace Alice.Player.Unity {
     public class UserInputControl : MonoBehaviour
     {
         [SerializeField]
-        private UserInput stringInputPrefab;
+        private UserInput stringInputPrefab = null;
         [SerializeField]
-        private BooleanInput booleanInputPrefab;
+        private BooleanInput booleanInputPrefab = null;
         [SerializeField]
-        private NumericInput doubleInputPrefab;
+        private NumericInput doubleInputPrefab = null;
         [SerializeField]
-        private NumericInput intReturnPrefab;
+        private NumericInput intReturnPrefab = null;
 
         public AsyncReturn<string> spawnStringInput(string message)
         {

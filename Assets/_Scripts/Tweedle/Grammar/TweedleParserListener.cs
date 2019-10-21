@@ -29,7 +29,6 @@ using IToken = Antlr4.Runtime.IToken;
 /// <see cref="TweedleParser"/>.
 /// </summary>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.7.2")]
-[System.CLSCompliant(false)]
 public interface ITweedleParserListener : IParseTreeListener {
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="TweedleParser.typeDeclaration"/>.
