@@ -368,15 +368,6 @@ namespace Alice.Player.Modules {
 
         #region Transformations
         [PInteropMethod]
-        public static VantagePoint getVantagePoint(TValue viewer, TValue target) {
-            if (ReferenceEquals(viewer.RawObject<object>(), target.RawObject<object>())) {
-                return VantagePoint.IDENTITY;
-            }
-
-            return getInverseAbsoluteTransformation(viewer).multiply(getAbsoluteTransformation(target));
-        }
-
-        [PInteropMethod]
         public static VantagePoint getLocalTransformation(TValue thing) {
             var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
@@ -403,6 +394,7 @@ namespace Alice.Player.Modules {
             var entity = SceneGraph.Current.FindEntity(thing);
             if (entity) {
                 var r = UnityEngine.Quaternion.Inverse(entity.cachedTransform.rotation);
+                r.Normalize();
                 var p = r*-entity.cachedTransform.position;
                 return VantagePoint.FromUnity(p, r);
             }
