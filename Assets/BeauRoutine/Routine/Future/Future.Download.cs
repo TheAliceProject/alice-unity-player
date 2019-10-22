@@ -12,15 +12,8 @@
 // on Android, we'll disable UnityWebRequest support on Android for prior versions
 #if UNITY_5_4_OR_NEWER && (UNITY_EDITOR || !UNITY_ANDROID || UNITY_2017_1_OR_NEWER)
     #define WEB_REQUEST_SUPPORTED
-    
-    #if UNITY_2017_2_OR_NEWER
-        #define USE_SEND_WEB_REQUEST
-    #endif // UNITY_2017_2_OR_NEWER
-
-    #if UNITY_2017_1_OR_NEWER
-        #define USE_SEPARATE_ERROR_CHECKS
-    #endif // UNITY_2017_1_OR_NEWER
-
+    #define USE_SEND_WEB_REQUEST
+    #define USE_SEPARATE_ERROR_CHECKS
     // Uncomment if we ever get a UnityWebRequest equivalent
     // to WWW.GetAudioClipCompressed()
     // #define WEB_REQUEST_AUDIOCLIP_COMPRESSED
@@ -44,67 +37,6 @@ namespace BeauRoutine
         /// </summary>
         static public class Download
         {
-            #region WWW
-
-            /// <summary>
-            /// Downloads from the given WWW and returns a Future for that WWW.
-            /// </summary>
-            static public Future<WWW> WWW(WWW inWWW, MonoBehaviour inRoutineHost = null)
-            {
-                var future = Future.Create<WWW>();
-                future.LinkTo(
-                    Routine.Start(inRoutineHost, DownloadWWW(future, inWWW))
-                    );
-                return future;
-            }
-
-            /// <summary>
-            /// Downloads from the given URL and returns a Future for the resulting WWW.
-            /// </summary>
-            static public Future<WWW> WWW(string inURL, MonoBehaviour inRoutineHost = null)
-            {
-                var future = Future.Create<WWW>();
-                try
-                {
-                    WWW www = new WWW(inURL);
-                    future.LinkTo(
-                        Routine.Start(inRoutineHost, DownloadWWW(future, www))
-                        );
-                }
-                catch(Exception e)
-                {
-                    future.Fail(Future.FailureType.Exception, e);
-                }
-                return future;
-            }
-
-            static private IEnumerator DownloadWWW(Future<WWW> inFuture, WWW inWWW)
-            {
-                using (inWWW)
-                {
-                    while(!inWWW.isDone)
-                    {
-                        yield return null;
-                        inFuture.SetProgress(inWWW.progress);
-                    }
-
-                    if (string.IsNullOrEmpty(inWWW.error))
-                    {
-                        inFuture.Complete(inWWW);
-                    }
-                    else
-                    {
-                        inFuture.Fail(Future.FailureType.Unknown, inWWW.error);
-                    }
-
-                    // wait two frames to ensure the Future's callbacks have been invoked
-                    yield return null;
-                    yield return null;
-                }
-            }
-
-            #endregion
-
 #if WEB_REQUEST_SUPPORTED
 
             #region UnityWebRequest
@@ -172,18 +104,6 @@ namespace BeauRoutine
 
             #region Text
 
-            /// <summary>
-            /// Downloads text from the given WWW and returns a Future for the text.
-            /// </summary>
-            static public Future<string> Text(WWW inWWW, MonoBehaviour inRoutineHost = null)
-            {
-                var future = Future.Create<string>();
-                future.LinkTo(
-                    Routine.Start(inRoutineHost, DownloadStringRoutine(future, inWWW))
-                    );
-                return future;
-            }
-
 #if WEB_REQUEST_SUPPORTED
             /// <summary>
             /// Downloads text from the given UnityWebRequest and returns a Future for the text.
@@ -211,11 +131,6 @@ namespace BeauRoutine
                     future.LinkTo(
                         Routine.Start(inRoutineHost, DownloadStringRoutine(future, webRequest))
                     );
-#else
-                    WWW www = new WWW(inURL);
-                    future.LinkTo(
-                        Routine.Start(inRoutineHost, DownloadStringRoutine(future, www))
-                        );
 #endif // WEB_REQUEST_SUPPORTED
                 }
                 catch(Exception e)
@@ -223,43 +138,6 @@ namespace BeauRoutine
                     future.Fail(Future.FailureType.Exception, e);
                 }
                 return future;
-            }
-
-            static private IEnumerator DownloadStringRoutine(Future<string> inFuture, WWW inWWW)
-            {
-                using (inWWW)
-                {
-                    while(!inWWW.isDone)
-                    {
-                        yield return null;
-                        inFuture.SetProgress(inWWW.progress);
-                    }
-                    if (string.IsNullOrEmpty(inWWW.error))
-                    {
-                        try
-                        {
-                            bool bValidMIMEType;
-                            if (TryValidateMIMEType(inWWW, "text/", out bValidMIMEType))
-                            {
-                                if (!bValidMIMEType)
-                                {
-                                    inFuture.Fail(Future.FailureType.Unknown, "Invalid MIME type");
-                                    yield break;
-                                }
-                            }
-
-                            inFuture.Complete(inWWW.text);
-                        }
-                        catch (Exception e)
-                        {
-                            inFuture.Fail(Future.FailureType.Exception, e);
-                        }
-                    }
-                    else
-                    {
-                        inFuture.Fail(Future.FailureType.Unknown, inWWW.error);
-                    }
-                }
             }
 
 #if WEB_REQUEST_SUPPORTED
@@ -308,18 +186,6 @@ namespace BeauRoutine
 
             #region Bytes
 
-            /// <summary>
-            /// Downloads bytes from the given WWW and returns a Future for the bytes.
-            /// </summary>
-            static public Future<byte[]> Bytes(WWW inWWW, MonoBehaviour inRoutineHost = null)
-            {
-                var future = Future.Create<byte[]>();
-                future.LinkTo(
-                    Routine.Start(inRoutineHost, DownloadBytesRoutine(future, inWWW))
-                    );
-                return future;
-            }
-
 #if WEB_REQUEST_SUPPORTED
             /// <summary>
             /// Downloads bytes from the given UnityWebRequest and returns a Future for the bytes.
@@ -347,11 +213,6 @@ namespace BeauRoutine
                     future.LinkTo(
                         Routine.Start(inRoutineHost, DownloadBytesRoutine(future, webRequest))
                     );
-#else
-                    WWW www = new WWW(inURL);
-                    future.LinkTo(
-                        Routine.Start(inRoutineHost, DownloadBytesRoutine(future, www))
-                    );
 #endif // WEB_REQUEST_SUPPORTED
                 }
                 catch(Exception e)
@@ -359,34 +220,6 @@ namespace BeauRoutine
                     future.Fail(Future.FailureType.Exception, e);
                 }
                 return future;
-            }
-
-            static private IEnumerator DownloadBytesRoutine(Future<byte[]> inFuture, WWW inWWW)
-            {
-                using (inWWW)
-                {
-                    while(!inWWW.isDone)
-                    {
-                        yield return null;
-                        inFuture.SetProgress(inWWW.progress);
-                    }
-                    if (string.IsNullOrEmpty(inWWW.error))
-                    {
-                        try
-                        {
-                            inFuture.Complete(inWWW.bytes);
-                        }
-                        catch(Exception e)
-                        {
-                            inFuture.Fail(Future.FailureType.Exception, e);
-                        }
-                    }
-                    else
-                    {
-                        inFuture.Fail(Future.FailureType.Unknown, inWWW.error);
-                    }
-                    yield return null;
-                }
             }
 
 #if WEB_REQUEST_SUPPORTED
@@ -426,18 +259,6 @@ namespace BeauRoutine
 
             #region Texture
 
-            /// <summary>
-            /// Downloads a texture from the given WWW and returns a Future for the texture.
-            /// </summary>
-            static public Future<Texture2D> Texture(WWW inWWW, bool inbDownloadAsNonReadable = false, MonoBehaviour inRoutineHost = null)
-            {
-                var future = Future.Create<Texture2D>();
-                future.LinkTo(
-                    Routine.Start(inRoutineHost, DownloadTextureRoutine(future, inWWW, inbDownloadAsNonReadable))
-                    );
-                return future;
-            }
-
 #if WEB_REQUEST_SUPPORTED
             /// <summary>
             /// Downloads a texture from the given UnityWebRequest and returns a Future for the texture.
@@ -465,11 +286,6 @@ namespace BeauRoutine
                     future.LinkTo(
                         Routine.Start(inRoutineHost, DownloadTextureRoutine(future, webRequest, inbDownloadAsNonReadable))
                         );
-#else
-                    WWW www = new WWW(inURL);
-                    future.LinkTo(
-                        Routine.Start(inRoutineHost, DownloadTextureRoutine(future, www, inbDownloadAsNonReadable))
-                        );
 #endif // WEB_REQUEST_SUPPORTED
                 }
                 catch(Exception e)
@@ -477,53 +293,6 @@ namespace BeauRoutine
                     future.Fail(Future.FailureType.Exception, e);
                 }
                 return future;
-            }
-
-            static private IEnumerator DownloadTextureRoutine(Future<Texture2D> inFuture, WWW inWWW, bool inbNonReadable)
-            {
-                using (inWWW)
-                {
-                    while(!inWWW.isDone)
-                    {
-                        yield return null;
-                        inFuture.SetProgress(inWWW.progress);
-                    }
-                    if (string.IsNullOrEmpty(inWWW.error))
-                    {
-                        try
-                        {
-                            bool bValidMIMEType;
-                            if (TryValidateMIMEType(inWWW, "image/", out bValidMIMEType))
-                            {
-                                if (!bValidMIMEType)
-                                {
-                                    inFuture.Fail(Future.FailureType.Unknown, "Invalid MIME type");
-                                    yield break;
-                                }
-                            }
-
-                            Texture2D texture = inbNonReadable ? inWWW.textureNonReadable : inWWW.texture;
-                            if (texture == null)
-                                inFuture.Fail(Future.FailureType.Unknown, "Texture is null");
-                            else if (!TextureIsValid(texture))
-                                inFuture.Fail(Future.FailureType.Unknown, "Not a valid texture");
-                            else
-                            {
-                                texture.name = UnityEngine.WWW.UnEscapeURL(inWWW.url);
-                                inFuture.Complete(texture);
-                            }
-                        }
-                        catch(Exception e)
-                        {
-                            inFuture.Fail(Future.FailureType.Exception, e);
-                        }
-                    }
-                    else
-                    {
-                        inFuture.Fail(Future.FailureType.Unknown, inWWW.error);
-                    }
-                    yield return null;
-                }
             }
 
 #if WEB_REQUEST_SUPPORTED
@@ -588,125 +357,6 @@ namespace BeauRoutine
             }
 
             #endregion
-
-            #region AudioClip
-
-            /// <summary>
-            /// Downloads an AudioClip from the given WWW and returns a Future for the AudioClip.
-            /// </summary>
-            static public Future<AudioClip> AudioClip(WWW inWWW, bool inbCompressed = false, MonoBehaviour inRoutineHost = null)
-            {
-                var future = Future.Create<AudioClip>();
-                future.LinkTo(
-                    Routine.Start(inRoutineHost, DownloadAudioClipRoutine(future, inWWW, inbCompressed))
-                    );
-                return future;
-            }
-
-#if WEB_REQUEST_SUPPORTED
-            /// <summary>
-            /// Downloads an AudioClip from the given UnityWebRequest and returns a Future for the AudioClip.
-            /// </summary>
-            static public Future<AudioClip> AudioClip(UnityWebRequest inWebRequest, bool inbCompressed = false, MonoBehaviour inRoutineHost = null)
-            {
-#if !WEB_REQUEST_AUDIOCLIP_COMPRESSED
-                if (inbCompressed)
-                {
-                    Debug.LogError("[BeauRoutine.Future] Cannot load a compressed AudioClip through a UnityWebRequest in this version of Unity.");
-                    return Future.Failed<AudioClip>(Future.FailureType.Unknown, "Unable to load compressed AudioClips with UnityWebRequest");
-                }
-#endif // WEB_REQUEST_AUDIOCLIP_COMPRESSED
-                var future = Future.Create<AudioClip>();
-                future.LinkTo(
-                    Routine.Start(inRoutineHost, DownloadAudioClipRoutine(future, inWebRequest, inbCompressed))
-                    );
-                return future;
-            }
-#endif // WEB_REQUEST_SUPPORTED
-
-            /// <summary>
-            /// Downloads an AudioClip from the given URL and returns a Future for the AudioClip.
-            /// </summary>
-            static public Future<AudioClip> AudioClip(string inURL, bool inbCompressed = false, MonoBehaviour inRoutineHost = null)
-            {
-                var future = Future.Create<AudioClip>();
-                try
-                {
-#if WEB_REQUEST_SUPPORTED
-    #if !WEB_REQUEST_AUDIOCLIP_COMPRESSED
-                    if (!inbCompressed)
-    #endif // !WEB_REQUEST_AUDIOCLIP_COMPRESSED
-                    {
-                        UnityWebRequest webRequest = new UnityWebRequest(inURL);
-                        future.LinkTo(
-                            Routine.Start(inRoutineHost, DownloadAudioClipRoutine(future, webRequest, inbCompressed))
-                        );
-                    }
-    #if !WEB_REQUEST_AUDIOCLIP_COMPRESSED
-                    else
-    #endif // !WEB_REQUEST_AUDIOCLIP_COMPRESSED
-#endif
-
-#if !WEB_REQUEST_SUPPORTED || !WEB_REQUEST_AUDIOCLIP_COMPRESSED
-                    {
-                        WWW www = new WWW(inURL);
-                        future.LinkTo(
-                            Routine.Start(inRoutineHost, DownloadAudioClipRoutine(future, www, inbCompressed))
-                            );
-                    }
-#endif // !WEB_REQUEST_AUDIOCLIP_COMPRESSED
-                }
-                catch(Exception e)
-                {
-                    future.Fail(Future.FailureType.Exception, e);
-                }
-                return future;
-            }
-
-            static private IEnumerator DownloadAudioClipRoutine(Future<AudioClip> inFuture, WWW inWWW, bool inbCompressed)
-            {
-                using (inWWW)
-                {
-                    while(!inWWW.isDone)
-                    {
-                        yield return null;
-                        inFuture.SetProgress(inWWW.progress);
-                    }
-                    if (string.IsNullOrEmpty(inWWW.error))
-                    {
-                        try
-                        {
-                            bool bValidMIMEType;
-                            if (TryValidateMIMEType(inWWW, "audio/", out bValidMIMEType))
-                            {
-                                if (!bValidMIMEType)
-                                {
-                                    inFuture.Fail(Future.FailureType.Unknown, "Invalid MIME type");
-                                    yield break;
-                                }
-                            }
-
-                            AudioClip audioClip = inbCompressed ? inWWW.GetAudioClipCompressed(false) : inWWW.GetAudioClip(false);
-                            if (audioClip == null)
-                                inFuture.Fail(Future.FailureType.Unknown, "Clip is null");
-                            else
-                            {
-                                audioClip.name = UnityEngine.WWW.UnEscapeURL(inWWW.url);
-                                inFuture.Complete(audioClip);
-                            }
-                        }
-                        catch(Exception e)
-                        {
-                            inFuture.Fail(Future.FailureType.Exception, e);
-                        }
-                    }
-                    else
-                    {
-                        inFuture.Fail(Future.FailureType.Unknown, inWWW.error);
-                    }
-                    yield return null;
-                }
-            }
 
 #if WEB_REQUEST_SUPPORTED
             static private IEnumerator DownloadAudioClipRoutine(Future<AudioClip> inFuture, UnityWebRequest inWebRequest, bool inbCompressed)
@@ -795,33 +445,6 @@ namespace BeauRoutine
                 return AudioType.UNKNOWN;
 #endif // UNITY_IOS && !UNITY_EDITOR
             }
-
-#endregion
-
-            // Returns whether it could validate the MIME type of the returned content.
-            static private bool TryValidateMIMEType(WWW inWWW, string inMIMEType, out bool outbValidated)
-            {
-                outbValidated = true;
-                
-                try
-                {
-                    string contentType = string.Empty;
-                    bool bFoundContentType = inWWW.responseHeaders != null && inWWW.responseHeaders.TryGetValue("Content-Type", out contentType);
-                    if (bFoundContentType)
-                    {
-                        if (!contentType.StartsWith(inMIMEType))
-                        {
-                            outbValidated = false;
-                        }
-
-                        return true;
-                    }
-                }
-                catch (Exception) { }
-
-                return false;
-            }
-
 #if WEB_REQUEST_SUPPORTED
 
             // Returns whether it could validate the MIME type of the returned content.

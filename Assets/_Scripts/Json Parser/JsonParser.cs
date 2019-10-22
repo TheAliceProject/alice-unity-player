@@ -6,78 +6,7 @@ using ICSharpCode.SharpZipLib.Core;
 
 public class JsonParser : MonoBehaviour
 {
-	[SerializeField] private Text text = null;
-
-	#region JSON_FILE
-
-	public void ToJsonFileUI()
-	{
-		ExampleClass obj = new ExampleClass();
-		obj.level = 1;
-		obj.timeElapsed = 0.5f;
-		obj.playerName = "Name";
-
-		string json = JsonUtility.ToJson(obj);
-
-		string extensions = "txt";
-		string path = Crosstales.FB.FileBrowser.SaveFile("Save File", "", "ToJsonExample", extensions);
-		System.IO.File.WriteAllText(path, json);
-
-		text.text = "Saved Object to Json file: " + path;
-	}
-
-	public void FromJsonFileUI()
-	{
-		string extensions = "";
-		string path = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", extensions);
-
-		text.text = FromJsonFile(path);
-	}
-
-	#endregion
-
 	#region JSON_ZIP
-
-	private static string json_ext = "json";
-	private static string zip_ext = "zip";
-
-	public void ToJsonZipUI()
-	{
-		ExampleClass obj = new ExampleClass();
-		obj.level = 1;
-		obj.timeElapsed = 0.5f;
-		obj.playerName = "Name";
-
-		string json = JsonUtility.ToJson(obj);
-
-		string fileName = "ToJsonExample";
-		string filePath = Crosstales.FB.FileBrowser.SaveFile("Save File", "", fileName, json_ext);
-		string folderPath = filePath.Substring(0, filePath.Length - json_ext.Length - 1);
-
-		folderPath = UniqueDirectoryName(folderPath);
-		Directory.CreateDirectory(folderPath);
-		File.WriteAllText(System.IO.Path.Combine(folderPath, fileName + "." + json_ext), json);
-
-		string zipPath = folderPath + "." + zip_ext;
-		ZipDirectory(zipPath, folderPath);
-	}
-
-	public void FromJsonZipUI()
-	{
-		string zipPath = Crosstales.FB.FileBrowser.OpenSingleFile("Open File", "", zip_ext);
-		string extractPath = zipPath.Substring(0, zipPath.Length - zip_ext.Length - 1);
-		extractPath = UniqueDirectoryName(extractPath);
-		ExtractZipFile(zipPath, extractPath);
-		DirectoryInfo dir = new DirectoryInfo(extractPath);
-
-		text.text = "";
-
-		FileInfo[] files = dir.GetFiles("*." + json_ext);
-		for (int i = 0; i < files.Length; i++)
-		{
-			text.text += FromJsonFile(files[i].FullName);
-		}
-	}
 
 	private string UniqueDirectoryName(string path)
 	{

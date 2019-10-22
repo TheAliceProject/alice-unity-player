@@ -17,19 +17,19 @@ namespace Alice.Player.Unity {
         public const float BASE_FONT_SIZE = 12f;
 
         [SerializeField]
-        private bool isSay;
+        private bool isSay = false;
         [SerializeField]
-        private TextMeshProUGUI bubbleText;
+        private TextMeshProUGUI bubbleText = null;
         [SerializeField]
-        private Image bubbleBackground;
+        private Image bubbleBackground = null;
         [SerializeField]
-        private Image bubbleOutline;
+        private Image bubbleOutline = null;
         [SerializeField]
-        private Image[] tailBackground;
+        private Image[] tailBackground = null;
         [SerializeField]
-        private Image[] tailOutline;
+        private Image[] tailOutline = null;
         [SerializeField]
-        private RectTransform tailPivot;
+        private RectTransform tailPivot = null;
 
         private SayThinkControl sayThinkControlRef;
         private Routine spawnRoutine = Routine.Null;

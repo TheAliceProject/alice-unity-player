@@ -16,7 +16,6 @@ namespace Alice.Player.Unity {
         public bool onlyOnModels = false;
 
         private bool callActive = false;
-        private float lastCheckedTime = 0f;
         private int queuedCalls = 0;
 
         public MouseEventListenerProxy(PAction<Portion, Portion, TValue> listener, OverlappingEventPolicy policy, SGModel[] triggerTargets){

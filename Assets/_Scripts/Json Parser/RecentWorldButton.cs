@@ -14,7 +14,9 @@ public class RecentWorldButton : MonoBehaviour
 
     public void SetText(string text)
     {
-        nameText.text = text.Substring(text.LastIndexOf("/") + 1);
+        int lastSlash = -1;
+        lastSlash = Mathf.Max(text.LastIndexOf("/"), text.LastIndexOf("\\"));
+        nameText.text = text.Substring(lastSlash + 1);
         fullText.text = text;
         filePath = text;
     }

@@ -12,8 +12,6 @@ namespace Alice.Player.Unity {
         private float m_InnerRadius = 0.25f;
         private float m_OuterRadius = 0.75f;
 
-        private bool m_MeshWasCopied = false;
-
         protected override Mesh ShapeMesh { get { return SceneGraph.Current?.InternalResources?.TorusMesh; } }
         protected override Material OpaqueMaterial { get { return SceneGraph.Current?.InternalResources?.OpaqueTorusMaterial; } }
         protected override Material TransparentMaterial { get { return SceneGraph.Current?.InternalResources?.TransparentTorusMaterial; } }
@@ -58,7 +56,6 @@ namespace Alice.Player.Unity {
 
             m_MeshFilter.mesh.bounds = new Bounds(UnityEngine.Vector3.zero, 
                                                   new UnityEngine.Vector3(diam, height, diam));
-            m_MeshWasCopied = true;
             CacheMeshBounds();
         }
 

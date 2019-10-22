@@ -11,7 +11,6 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
 {
     public RectTransform anchor;
 
-    private bool paused = false;
     private Routine m_routine;
 
     private const float downYPosition = 30f;

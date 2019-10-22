@@ -8,7 +8,6 @@ namespace Alice.Player.Unity
     public class OcclusionCalculator : MonoBehaviour
     {
         private Plane castPlane = new Plane(Vector3.zero, 0f);
-        private float planeDistance = 20f;
         private UnityEngine.Vector3 planePos;
         public List<SGModel> objectsToWatch = new List<SGModel>();
         private BBPoints boundingBoxPoints = new BBPoints();
