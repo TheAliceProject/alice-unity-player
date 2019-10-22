@@ -35,7 +35,10 @@ namespace Alice.Player.Unity {
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
-                    m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
+                    if (m_Renderers[i].sharedMaterial.mainTexture != null)
+                        m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
+                    else
+                        Debug.LogWarningFormat("SetTexture '{0}' is null for {1}", MAIN_TEXTURE_SHADER_NAME, model);
 
                     if (m_Renderers[i] is SkinnedMeshRenderer) {
                         // make sure the skinned mesh renderers local bounds get updated
