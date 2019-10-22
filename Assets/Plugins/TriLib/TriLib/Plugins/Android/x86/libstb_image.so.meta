@@ -3,15 +3,16 @@ guid: f72b1a2827a7a0749af0ea25442ea5a2
 labels:
 - _TriLib_Android_
 - _TriLib_Android_X86_
-timeCreated: 1536008272
-licenseType: Free
 PluginImporter:
   externalObjects: {}
   serializedVersion: 2
   iconMap: {}
   executionOrder: {}
+  defineConstraints: []
   isPreloaded: 0
   isOverridable: 0
+  isExplicitlyReferenced: 0
+  validateReferences: 1
   platformData:
   - first:
       '': Any
@@ -77,7 +78,7 @@ PluginImporter:
     second:
       enabled: 0
       settings:
-        CPU: x86_64
+        CPU: AnyCPU
   - first:
       Standalone: LinuxUniversal
     second:
