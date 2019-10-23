@@ -22,6 +22,7 @@ namespace Alice.Player.Unity {
                     Camera = m_rig.headCamera;
                     Camera.tag = "MainCamera";
                     m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
+                    VRControl.I.rig = m_rig;
                     vrLoaded = true;
                 }
             }

@@ -22,6 +22,7 @@ namespace Alice.Player.Unity {
         private List<TimeEventListenerProxy> m_TimeListeners = new List<TimeEventListenerProxy>();
         private KeyboardEventHandler m_KeyboardEventHandler = new KeyboardEventHandler();
         private MouseEventHandler m_MouseEventHandler = new MouseEventHandler();
+        private VREventHandler m_VrEventHandler = new VREventHandler();
         private InteractionEventHandler m_InteractionHandler = new InteractionEventHandler();
 
         private UnityEngine.Color m_AmbientLightColor = new UnityEngine.Color(0.25f, 0.25f, 0.25f, 1f);
@@ -79,6 +80,7 @@ namespace Alice.Player.Unity {
             m_MouseEventHandler.HandleMouseEvents(); 
             m_KeyboardEventHandler.HandleKeyboardEvents();
             m_InteractionHandler.HandleInteractionEvents();
+            m_VrEventHandler.HandleVREvents();
         }
 
         private void CheckTimeListeners()
