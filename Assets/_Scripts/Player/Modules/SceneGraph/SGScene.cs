@@ -92,6 +92,7 @@ namespace Alice.Player.Unity {
 
         public void SetDefaultModelManipulationActive(bool active)
         {
+            VRControl.I.rig.EnableLaserPointers(true);
             m_MouseEventHandler.SetModelManipulation(active);
         }
     
@@ -133,6 +134,7 @@ namespace Alice.Player.Unity {
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             AddColliders(clickedObjects);
+            VRControl.I.rig.EnableLaserPointers(true);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
 

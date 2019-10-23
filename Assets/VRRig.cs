@@ -13,11 +13,7 @@ public class VRRig : MonoBehaviour
     private LineRenderer leftRend;
     private bool laserPointersEnabled = false;
 
-    void Start()
-    {
-        EnableLaserPointers();
-    }
-    public void EnableLaserPointers()
+    void Awake()
     {
         rightRend = rightController.gameObject.AddComponent<LineRenderer>();
         rightRend.material = new Material(Shader.Find("Sprites/Default"));
@@ -33,7 +29,16 @@ public class VRRig : MonoBehaviour
         leftRend.startWidth = 0.01f;
         leftRend.positionCount = 2;
 
-        laserPointersEnabled = true;
+        leftRend.enabled = false;
+        rightRend.enabled = false;
+        laserPointersEnabled = false;
+    }
+
+    public void EnableLaserPointers(bool ena)
+    {
+        leftRend.enabled = ena;
+        rightRend.enabled = ena;
+        laserPointersEnabled = ena;
     }
 
     void Update()
