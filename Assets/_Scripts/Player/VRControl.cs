@@ -14,6 +14,7 @@ public class VRControl : MonoBehaviour
     public string VRTypeFound = "";
 
     public Toggle loadInVRToggle;
+    public VRRig rig;
     private static VRControl _instance;
     public static VRControl I { get { return _instance; } }
     private Routine m_routine;
@@ -23,6 +24,7 @@ public class VRControl : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        rig = null;
         if (_instance != null && _instance != this){
             Destroy(this.gameObject);
         }
