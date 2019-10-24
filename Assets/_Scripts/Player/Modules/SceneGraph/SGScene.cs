@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
 using BeauRoutine;
+using UnityEngine.XR;
 
 namespace Alice.Player.Unity {
     
@@ -22,6 +23,7 @@ namespace Alice.Player.Unity {
         private List<TimeEventListenerProxy> m_TimeListeners = new List<TimeEventListenerProxy>();
         private KeyboardEventHandler m_KeyboardEventHandler = new KeyboardEventHandler();
         private MouseEventHandler m_MouseEventHandler = new MouseEventHandler();
+        private VREventHandler m_VrEventHandler = new VREventHandler();
         private InteractionEventHandler m_InteractionHandler = new InteractionEventHandler();
 
         private UnityEngine.Color m_AmbientLightColor = new UnityEngine.Color(0.25f, 0.25f, 0.25f, 1f);
@@ -79,6 +81,7 @@ namespace Alice.Player.Unity {
             m_MouseEventHandler.HandleMouseEvents(); 
             m_KeyboardEventHandler.HandleKeyboardEvents();
             m_InteractionHandler.HandleInteractionEvents();
+            m_VrEventHandler.HandleVREvents();
         }
 
         private void CheckTimeListeners()
@@ -90,6 +93,8 @@ namespace Alice.Player.Unity {
 
         public void SetDefaultModelManipulationActive(bool active)
         {
+            if (XRSettings.enabled)
+                VRControl.I.rig.EnableLaserPointers(true);
             m_MouseEventHandler.SetModelManipulation(active);
         }
     
@@ -130,6 +135,8 @@ namespace Alice.Player.Unity {
         }
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
+            if (XRSettings.enabled)
+                VRControl.I.rig.EnableLaserPointers(true);
             AddColliders(clickedObjects);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }

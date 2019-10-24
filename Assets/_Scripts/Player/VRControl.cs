@@ -10,19 +10,32 @@ using System.Diagnostics;
 
 public class VRControl : MonoBehaviour
 {
-    public bool LoadWorldInVR = false;
-    public string VRTypeFound = "";
-
-    public Toggle loadInVRToggle;
     private static VRControl _instance;
     public static VRControl I { get { return _instance; } }
-    private Routine m_routine;
 
+    public const float INITIAL_CAMERA_ANGLE_CUTOFF = 20f; // Degrees. For desktop worlds, the initial angle is a good idea. In VR, worlds generally look better
+                                                          // if the player is completely upright. We'll still let them turn the camera by large amounts, but filter out little (unintentional) ones
     public const float TRIGGER_SENSITIVITY = 0.95f;
+    public bool LoadWorldInVR = false;
+    public string VRTypeFound = "";
+    public Toggle loadInVRToggle;
+    public VRRig rig;
+
+    private Routine m_routine;
+    private bool lastRightTrigger = false;
+    private bool lastLeftTrigger = false;
+
+    private bool rightTriggerDown = false;
+    private bool leftTriggerDown = false;
+    private bool rightTriggerUp = false;
+    private bool leftTriggerUp = false;
+    private Transform lastControllerClicked = null;
+
 
     // Start is called before the first frame update
     void Awake()
     {
+        rig = null;
         if (_instance != null && _instance != this){
             Destroy(this.gameObject);
         }
@@ -49,6 +62,14 @@ public class VRControl : MonoBehaviour
         }
 #endif
     }
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+    void Update()
+    {
+        if(XRSettings.enabled)
+            CheckTriggers();
+    }
+#endif
 
     public void SetVROutput(string deviceToLoad)
     {
@@ -81,5 +102,67 @@ public class VRControl : MonoBehaviour
             yield return null;
             XRSettings.enabled = false;
         }
+    }
+
+    public Transform GetLastControllerClicked()
+    {
+        return lastControllerClicked;
+    }
+
+    private void CheckTriggers()
+    {
+        // Make these act as buttons ( only active for one frame )
+        if(rightTriggerDown)
+            rightTriggerDown = false;
+        if(leftTriggerDown)
+            leftTriggerDown = false;
+        if(rightTriggerUp)
+            rightTriggerUp = false;
+        if(leftTriggerUp)
+            leftTriggerUp = false;
+
+        if (!lastRightTrigger && Input.GetAxis("RightTrigger") >= TRIGGER_SENSITIVITY)
+        {
+            lastRightTrigger = true;
+            rightTriggerDown = true;
+            lastControllerClicked = rig.rightController;
+        }
+        else if (lastRightTrigger && Input.GetAxis("RightTrigger") < TRIGGER_SENSITIVITY)
+        {
+            lastRightTrigger = false;
+            rightTriggerUp = true;
+        }
+
+        if (!lastLeftTrigger && Input.GetAxis("LeftTrigger") >= TRIGGER_SENSITIVITY)
+        {
+            lastLeftTrigger = true;
+            leftTriggerDown = true;
+            lastControllerClicked = rig.leftController;
+        }
+        else if (lastLeftTrigger && Input.GetAxis("LeftTrigger") < TRIGGER_SENSITIVITY)
+        {
+            lastLeftTrigger = false;
+            leftTriggerUp = true;
+        }
+
+    }
+    public bool IsRightTriggerDown()
+    {
+        return rightTriggerDown;
+    }
+
+    public bool IsRightTriggerUp()
+    {
+        return rightTriggerUp;
+    }
+
+    public bool IsLeftTriggerDown()
+    {
+        return leftTriggerDown;
+    }
+
+    public bool IsLeftTriggerUp()
+    {
+        return leftTriggerUp;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
+using UnityEngine.XR;
 
 namespace Alice.Player.Unity 
 {
@@ -14,6 +15,7 @@ namespace Alice.Player.Unity
         private Transform objectToMove = null;
         private Plane movementPlane = new Plane(UnityEngine.Vector3.up, UnityEngine.Vector3.zero);
         private UnityEngine.Vector3 objectOriginPoint = UnityEngine.Vector3.zero;
+        private UnityEngine.Vector3 cameraOriginPoint = UnityEngine.Vector3.zero;
         private UnityEngine.Vector3 planeOriginPoint = UnityEngine.Vector3.zero;
         private float dragSpeed = 10f;
         private UnityEngine.Vector3 dragOrigin;
@@ -30,10 +32,10 @@ namespace Alice.Player.Unity
         }
 
         public void HandleMouseEvents(){
-            if (Input.GetKeyDown(KeyCode.Mouse0)){ // Left mouse click
+            if (IsMouseOrTriggerDown()){ // Left mouse click
                 lastMouseDownTime = Time.time;
                 RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
+                Ray ray = GetRayFromMouseOrController();
                 if (Physics.Raycast(ray, out hit, 100.0f)){
                     if (defaultModelManipulationActive){
                         objectToMove = hit.transform.GetComponentInParent<SGModel>().transform;  // transform.parent;
@@ -49,13 +51,13 @@ namespace Alice.Player.Unity
                 shiftOrigin = Input.mousePosition;
             if (IsCtrlDown())
                 rotateOrigin = Input.mousePosition;
-            if (Input.GetKeyUp(KeyCode.Mouse0)){
+            if (IsMouseOrTriggerUp()){
                 objectToMove = null;
                 if (Time.time - lastMouseDownTime < 0.25f){ // Considered a click and not a hold
                     RaycastHit hit;
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
-                    Portion distanceFromLeft = new Portion((float)Input.mousePosition.x / (float)Screen.width);
-                    Portion distanceFromBottom = new Portion((float)Input.mousePosition.y / (float)Screen.height);
+                    Ray ray = GetRayFromMouseOrController();
+                    Portion distanceFromLeft = XRSettings.enabled ? Portion.NONE : new Portion((float)Input.mousePosition.x / (float)Screen.width);
+                    Portion distanceFromBottom = XRSettings.enabled ? Portion.NONE : new Portion((float)Input.mousePosition.y / (float)Screen.height);
                     for (int i = 0; i < m_MouseClickListeners.Count; i++){
                         if (m_MouseClickListeners[i].onlyOnModels){ // Clicked on object event
                             if (Physics.Raycast(ray, out hit, 100.0f)){
@@ -87,14 +89,30 @@ namespace Alice.Player.Unity
                     planeOriginPoint = planeRay.origin + (planeRay.direction * distance);
             }
 
-            if (Input.GetMouseButtonDown(0)){
-                dragOrigin = Input.mousePosition;
+            if (IsMouseOrTriggerDown()){
+                if(XRSettings.enabled){
+                    Ray planeRay = GetRayFromMouseOrController();
+                    float distance;
+                    if (movementPlane.Raycast(planeRay, out distance))
+                        dragOrigin = planeRay.origin + (planeRay.direction * distance);
+                }
+                else {
+                    dragOrigin = Input.mousePosition;
+                }
+
                 return;
             }
 
             // After this point do nothing if mouse button is not held
-            if (!Input.GetMouseButton(0))
-                return;
+            if(XRSettings.enabled){
+                if(Input.GetAxis("RightTrigger") < VRControl.TRIGGER_SENSITIVITY && Input.GetAxis("LeftTrigger") < VRControl.TRIGGER_SENSITIVITY)
+                    return;
+            }
+            else{
+                if (!Input.GetMouseButton(0))
+                    return; 
+            }
+
 
 
             if (objectToMove == null && defaultModelManipulationActive){
@@ -114,10 +132,25 @@ namespace Alice.Player.Unity
                     rotateOrigin = Input.mousePosition;
                 }
                 else{   // Scroll
-                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-                    UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * dragSpeed, 0, pos.y * dragSpeed);
-                    objectToMove.position += move;
-                    dragOrigin = Input.mousePosition;
+                    if(XRSettings.enabled)
+                    {
+                        Ray planeRay = GetRayFromMouseOrController();
+                        float distance;
+                        if (movementPlane.Raycast(planeRay, out distance))
+                        {
+                            UnityEngine.Vector3 pointalongplane = planeRay.origin + (planeRay.direction * distance);
+                            UnityEngine.Vector3 moveAmount = (dragOrigin - pointalongplane).normalized / 20f;
+                            dragOrigin -= moveAmount;
+                            objectToMove.position = new UnityEngine.Vector3(objectToMove.position.x - moveAmount.x, objectToMove.position.y, objectToMove.position.z - moveAmount.z);
+                        }
+                    }
+                    else
+                    {
+                        UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
+                        UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * dragSpeed, 0, pos.y * dragSpeed);
+                        objectToMove.position += move;
+                        dragOrigin = Input.mousePosition;     
+                    }
                 }
             }
             else if (objectToMove != null){ // Moving an object
@@ -134,7 +167,7 @@ namespace Alice.Player.Unity
                     rotateOrigin = Input.mousePosition;
                 }
                 else{ // move object along plane
-                    Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    Ray planeRay = GetRayFromMouseOrController();
                     float distance;
                     if (movementPlane.Raycast(planeRay, out distance)){
                         UnityEngine.Vector3 pointalongplane = planeRay.origin + (planeRay.direction * distance);
@@ -146,6 +179,27 @@ namespace Alice.Player.Unity
             }
         }
 
+        private Ray GetRayFromMouseOrController()
+        {
+            Ray ray;
+            Transform lastControllerClicked = VRControl.I.GetLastControllerClicked();
+            if (XRSettings.enabled && lastControllerClicked != null){
+                // Draw ray from controller forward
+                ray = new Ray(lastControllerClicked.position, lastControllerClicked.forward);
+            }
+            else            {
+                ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
+            }
+            return ray;
+        }
+
+
+        private bool IsMouseOrTriggerDown(){
+            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.I.IsRightTriggerDown() || VRControl.I.IsLeftTriggerDown();
+        }
+        private bool IsMouseOrTriggerUp(){
+            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.I.IsRightTriggerUp() || VRControl.I.IsLeftTriggerUp();
+        }
         private bool IsShiftHeld(){
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
@@ -164,5 +218,7 @@ namespace Alice.Player.Unity
         private bool IsCtrlUp(){
             return Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl);
         }
+
+
     }
 }

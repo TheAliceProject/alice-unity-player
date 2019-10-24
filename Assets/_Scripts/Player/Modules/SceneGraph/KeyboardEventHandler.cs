@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Alice.Player.Modules;
+using UnityEngine.XR;
 
 namespace Alice.Player.Unity 
 {
@@ -42,39 +43,48 @@ namespace Alice.Player.Unity
                     }
 
                     // Check for VR Buttons
-                    foreach(string buttonString in KeyMap.VRButtonStrings)
-                    {
-                        if(Input.GetButtonDown(buttonString)){
-                            Key vrKey = KeyMap.VRButtonLookup[buttonString];
-                            m_heldKeyCodes.Add(buttonString);
-                            NotifyKeyboardEvents((int)vrKey, true);
+                    if(XRSettings.enabled){
+                        foreach (string buttonString in KeyMap.VRButtonStrings){
+                            if (Input.GetButtonDown(buttonString))
+                            {
+                                Key vrKey = KeyMap.VRButtonLookup[buttonString];
+                                m_heldKeyCodes.Add(buttonString);
+                                NotifyKeyboardEvents((int)vrKey, true);
+                            }
                         }
                     }
                 }
 
                 // Check for VR Axes
                 // TODO: Verify functionality with overlapping key policy
-                foreach (string axisString in KeyMap.VRAxisStrings)
-                {
-                    if (Input.GetAxis(axisString) > VRControl.TRIGGER_SENSITIVITY)
-                    {
-                        string posString = axisString + "_P";
-                        if(!m_heldKeyCodes.Contains(posString))
-                        {
-                            m_heldKeyCodes.Add(posString);
-                            NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[posString], true);
+                if(XRSettings.enabled){
+                    foreach (string axisString in KeyMap.VRAxisStrings){
+                        if (Input.GetAxis(axisString) > VRControl.TRIGGER_SENSITIVITY){
+                            string posString = axisString + "_P";
+                            if (!m_heldKeyCodes.Contains(posString)){
+                                m_heldKeyCodes.Add(posString);
+                                NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[posString], true);
+                            }
+                        }
+                        else if (Input.GetAxis(axisString) < -VRControl.TRIGGER_SENSITIVITY){
+                            string negString = axisString + "_N";
+                            if (!m_heldKeyCodes.Contains(negString)){
+                                m_heldKeyCodes.Add(negString);
+                                NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[negString], true);
+                            }
                         }
                     }
-                    else if (Input.GetAxis(axisString) < -VRControl.TRIGGER_SENSITIVITY)
-                    {
-                        string negString = axisString + "_N";
-                        if(!m_heldKeyCodes.Contains(negString))
-                        {
-                            m_heldKeyCodes.Add(negString);
-                            NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[negString], true);
-                        }
+
+                    if (VRControl.I.IsLeftTriggerDown()){
+                        m_heldKeyCodes.Add("LeftTrigger");
+                        NotifyKeyboardEvents((int)Key.LEFT_TRIGGER, true);
+                    }
+                    if (VRControl.I.IsRightTriggerDown()){
+                        m_heldKeyCodes.Add("RightTrigger");
+                        NotifyKeyboardEvents((int)Key.RIGHT_TRIGGER, true);
                     }
                 }
+
 
                 // Check for key up if we've pressed one down in the past
                 if(m_heldKeys.Count > 0){
@@ -94,34 +104,44 @@ namespace Alice.Player.Unity
                     m_keysToRemove.Clear();
                 }
 
-                if(m_heldKeyCodes.Count > 0){
-                    m_vrKeysToRemove.Clear();
-                    foreach(string vrKey in m_heldKeyCodes){
-                        if(vrKey.Substring(vrKey.Length - 2) == "_P"){
-                            if (Input.GetAxis(vrKey.Substring(0, vrKey.Length - 2)) < VRControl.TRIGGER_SENSITIVITY){
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[vrKey], false);
+                if (XRSettings.enabled){
+                    if (m_heldKeyCodes.Count > 0){
+                        m_vrKeysToRemove.Clear();
+                        foreach (string vrKey in m_heldKeyCodes){
+                            if (vrKey.Substring(vrKey.Length - 2) == "_P"){
+                                if (Input.GetAxis(vrKey.Substring(0, vrKey.Length - 2)) < VRControl.TRIGGER_SENSITIVITY){
+                                    m_vrKeysToRemove.Add(vrKey);
+                                    NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[vrKey], false);
+                                }
+                            }
+                            else if (vrKey.Substring(vrKey.Length - 2) == "_N"){
+                                if (Input.GetAxis(vrKey.Substring(0, vrKey.Length - 2)) > -VRControl.TRIGGER_SENSITIVITY){
+                                    m_vrKeysToRemove.Add(vrKey);
+                                    NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[vrKey], false);
+                                }
+                            }
+                            else{
+                                // Button
+                                if (Input.GetButtonUp(vrKey)){
+                                    m_vrKeysToRemove.Add(vrKey);
+                                    NotifyKeyboardEvents((int)KeyMap.VRButtonLookup[vrKey], false);
+                                }
+                                if(KeyMap.VRButtonLookup[vrKey] == Key.LEFT_TRIGGER && VRControl.I.IsLeftTriggerUp()){
+                                    m_vrKeysToRemove.Add(vrKey);
+                                    NotifyKeyboardEvents((int)Key.LEFT_TRIGGER, false);
+                                }
+                                if (KeyMap.VRButtonLookup[vrKey] == Key.RIGHT_TRIGGER && VRControl.I.IsRightTriggerUp()){
+                                    m_vrKeysToRemove.Add(vrKey);
+                                    NotifyKeyboardEvents((int)Key.RIGHT_TRIGGER, false);
+                                }
                             }
                         }
-                        else if (vrKey.Substring(vrKey.Length - 2) == "_N"){
-                            if (Input.GetAxis(vrKey.Substring(0, vrKey.Length - 2)) > -VRControl.TRIGGER_SENSITIVITY){
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents((int)KeyMap.VRAxisLookup[vrKey], false);
-                            }
-                        }
-                        else{
-                            // Button
-                            if (Input.GetButtonUp(vrKey)){
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents((int)KeyMap.VRButtonLookup[vrKey], false);
-                            }
-                        }
-                    }
 
-                    foreach (string vKey in m_vrKeysToRemove){
-                        m_heldKeyCodes.Remove(vKey);
+                        foreach (string vKey in m_vrKeysToRemove){
+                            m_heldKeyCodes.Remove(vKey);
+                        }
+                        m_vrKeysToRemove.Clear();
                     }
-                    m_vrKeysToRemove.Clear();
                 }
             }
         }
