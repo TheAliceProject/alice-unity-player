@@ -56,7 +56,6 @@ namespace Alice.Player.Unity {
                     for (int j = 0; j < m_currentlyHeldKeys.Count; j++){
                         Key currentlyHeld = m_currentlyHeldKeys[j];
                         if (currentlyHeld == Key.W || currentlyHeld == Key.UP || currentlyHeld == Key.LEFT_AXIS_UP || currentlyHeld == Key.RIGHT_AXIS_UP){
-                            Debug.Log("Moving " + m_ObjectMovers.Count + " " + m_currentlyHeldKeys.Count);
                             m_ObjectMovers[i].position -= (m_ObjectMovers[i].forward * UP_DOWN_SCALE_FACTOR);
                         }
                         if (currentlyHeld == Key.S || currentlyHeld == Key.DOWN || currentlyHeld == Key.LEFT_AXIS_DOWN || currentlyHeld == Key.RIGHT_AXIS_DOWN){
