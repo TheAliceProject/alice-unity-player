@@ -186,7 +186,6 @@ namespace Alice.Player.Unity
             if (XRSettings.enabled && lastControllerClicked != null){
                 // Draw ray from controller forward
                 ray = new Ray(lastControllerClicked.position, lastControllerClicked.forward);
-                Debug.DrawRay(lastControllerClicked.position, lastControllerClicked.forward, UnityEngine.Color.red, 1f);
             }
             else            {
                 ray = Camera.main.ScreenPointToRay(Input.mousePosition); // Draw ray from screen to mouse click point
@@ -196,10 +195,10 @@ namespace Alice.Player.Unity
 
 
         private bool IsMouseOrTriggerDown(){
-            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.I.RightTriggerDown() || VRControl.I.LeftTriggerDown();
+            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.I.IsRightTriggerDown() || VRControl.I.IsLeftTriggerDown();
         }
         private bool IsMouseOrTriggerUp(){
-            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.I.RightTriggerUp() || VRControl.I.LeftTriggerUp();
+            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.I.IsRightTriggerUp() || VRControl.I.IsLeftTriggerUp();
         }
         private bool IsShiftHeld(){
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);

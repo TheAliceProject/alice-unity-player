@@ -75,11 +75,11 @@ namespace Alice.Player.Unity
                         }
                     }
 
-                    if (VRControl.I.LeftTriggerDown()){
+                    if (VRControl.I.IsLeftTriggerDown()){
                         m_heldKeyCodes.Add("LeftTrigger");
                         NotifyKeyboardEvents((int)Key.LEFT_TRIGGER, true);
                     }
-                    if (VRControl.I.RightTriggerDown()){
+                    if (VRControl.I.IsRightTriggerDown()){
                         m_heldKeyCodes.Add("RightTrigger");
                         NotifyKeyboardEvents((int)Key.RIGHT_TRIGGER, true);
                     }
@@ -126,11 +126,11 @@ namespace Alice.Player.Unity
                                     m_vrKeysToRemove.Add(vrKey);
                                     NotifyKeyboardEvents((int)KeyMap.VRButtonLookup[vrKey], false);
                                 }
-                                if(KeyMap.VRButtonLookup[vrKey] == Key.LEFT_TRIGGER && VRControl.I.LeftTriggerUp()){
+                                if(KeyMap.VRButtonLookup[vrKey] == Key.LEFT_TRIGGER && VRControl.I.IsLeftTriggerUp()){
                                     m_vrKeysToRemove.Add(vrKey);
                                     NotifyKeyboardEvents((int)Key.LEFT_TRIGGER, false);
                                 }
-                                if (KeyMap.VRButtonLookup[vrKey] == Key.RIGHT_TRIGGER && VRControl.I.RightTriggerUp()){
+                                if (KeyMap.VRButtonLookup[vrKey] == Key.RIGHT_TRIGGER && VRControl.I.IsRightTriggerUp()){
                                     m_vrKeysToRemove.Add(vrKey);
                                     NotifyKeyboardEvents((int)Key.RIGHT_TRIGGER, false);
                                 }
