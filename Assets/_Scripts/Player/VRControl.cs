@@ -121,25 +121,25 @@ public class VRControl : MonoBehaviour
         if(leftTriggerUp)
             leftTriggerUp = false;
 
-        if (!lastRightTrigger && Input.GetAxis("RightTrigger") >= VRControl.TRIGGER_SENSITIVITY)
+        if (!lastRightTrigger && Input.GetAxis("RightTrigger") >= TRIGGER_SENSITIVITY)
         {
             lastRightTrigger = true;
             rightTriggerDown = true;
-            lastControllerClicked = VRControl.I.rig.rightController;
+            lastControllerClicked = rig.rightController;
         }
-        else if (lastRightTrigger && Input.GetAxis("RightTrigger") < VRControl.TRIGGER_SENSITIVITY)
+        else if (lastRightTrigger && Input.GetAxis("RightTrigger") < TRIGGER_SENSITIVITY)
         {
             lastRightTrigger = false;
             rightTriggerUp = true;
         }
 
-        if (!lastLeftTrigger && Input.GetAxis("LeftTrigger") >= VRControl.TRIGGER_SENSITIVITY)
+        if (!lastLeftTrigger && Input.GetAxis("LeftTrigger") >= TRIGGER_SENSITIVITY)
         {
             lastLeftTrigger = true;
             leftTriggerDown = true;
-            lastControllerClicked = VRControl.I.rig.leftController;
+            lastControllerClicked = rig.leftController;
         }
-        else if (lastLeftTrigger && Input.GetAxis("LeftTrigger") < VRControl.TRIGGER_SENSITIVITY)
+        else if (lastLeftTrigger && Input.GetAxis("LeftTrigger") < TRIGGER_SENSITIVITY)
         {
             lastLeftTrigger = false;
             leftTriggerUp = true;

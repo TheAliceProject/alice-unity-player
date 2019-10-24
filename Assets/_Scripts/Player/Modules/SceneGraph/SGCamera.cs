@@ -70,7 +70,6 @@ namespace Alice.Player.Unity {
             float newAngle = angle % 360f;
             if (newAngle > 180f)
                 newAngle -= 360f;
-            Debug.Log(newAngle);
             return newAngle;
         }
     }
