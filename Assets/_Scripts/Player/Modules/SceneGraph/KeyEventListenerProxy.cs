@@ -6,6 +6,7 @@ using Alice.Player.Modules;
 using Alice.Tweedle;
 using Alice.Player.Primitives;
 using BeauRoutine;
+using UnityEngine.XR;
 
 namespace Alice.Player.Unity {
     public class KeyEventListenerProxy{
@@ -48,6 +49,16 @@ namespace Alice.Player.Unity {
             else if(keyType == KeyPressType.NumPadKey){
                 if(!numpadKeys.Contains((Key)theKey))
                     return;
+            }
+            else if(XRSettings.enabled)
+            {
+                if(!KeyMap.KeyboardToVRLookup.ContainsKey((Key)theKey)){
+                    return;
+                }
+                else{
+                    theKey = (int)KeyMap.KeyboardToVRLookup[(Key)theKey];
+                }
+
             }
 
             // Manage key downs and key ups in regards to the held key policy

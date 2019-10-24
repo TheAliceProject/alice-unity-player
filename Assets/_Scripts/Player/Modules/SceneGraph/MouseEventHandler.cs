@@ -182,7 +182,8 @@ namespace Alice.Player.Unity
         private Ray GetRayFromMouseOrController()
         {
             Ray ray;
-            if (XRSettings.enabled){
+            Transform lastControllerClicked = VRControl.I.GetLastControllerClicked();
+            if (XRSettings.enabled && lastControllerClicked != null){
                 // Draw ray from controller forward
                 ray = new Ray(lastControllerClicked.position, lastControllerClicked.forward);
                 Debug.DrawRay(lastControllerClicked.position, lastControllerClicked.forward, UnityEngine.Color.red, 1f);
@@ -195,10 +196,10 @@ namespace Alice.Player.Unity
 
 
         private bool IsMouseOrTriggerDown(){
-            return Input.GetKeyDown(KeyCode.Mouse0) || RightTriggerDown() || LeftTriggerDown();
+            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.I.RightTriggerDown() || VRControl.I.LeftTriggerDown();
         }
         private bool IsMouseOrTriggerUp(){
-            return Input.GetKeyUp(KeyCode.Mouse0) || RightTriggerUp() || LeftTriggerUp();
+            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.I.RightTriggerUp() || VRControl.I.LeftTriggerUp();
         }
         private bool IsShiftHeld(){
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -219,41 +220,6 @@ namespace Alice.Player.Unity
             return Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl);
         }
 
-        private bool rightTriggerDown = false;
-        private bool leftTriggerDown = false;
-        private Transform lastControllerClicked = null;
-        private bool RightTriggerDown(){
-            if(!rightTriggerDown && Input.GetAxis("RightTrigger") >= VRControl.TRIGGER_SENSITIVITY){
-                rightTriggerDown = true;
-                lastControllerClicked = VRControl.I.rig.rightController;
-                return true;
-            }
-            return false;
-        }
 
-        private bool RightTriggerUp(){
-            if(rightTriggerDown && Input.GetAxis("RightTrigger") < VRControl.TRIGGER_SENSITIVITY){
-                rightTriggerDown = false;
-                return true;
-            }
-            return false;
-        }
-
-        private bool LeftTriggerDown(){
-            if (!leftTriggerDown && Input.GetAxis("LeftTrigger") >= VRControl.TRIGGER_SENSITIVITY){
-                leftTriggerDown = true;
-                lastControllerClicked = VRControl.I.rig.leftController;
-                return true;
-            }
-            return false;
-        }
-
-        private bool LeftTriggerUp(){
-            if (leftTriggerDown && Input.GetAxis("LeftTrigger") < VRControl.TRIGGER_SENSITIVITY){
-                leftTriggerDown = false;
-                return true;
-            }
-            return false;
-        }
     }
 }

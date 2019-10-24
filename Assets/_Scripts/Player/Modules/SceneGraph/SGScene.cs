@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
 using BeauRoutine;
+using UnityEngine.XR;
 
 namespace Alice.Player.Unity {
     
@@ -92,7 +93,8 @@ namespace Alice.Player.Unity {
 
         public void SetDefaultModelManipulationActive(bool active)
         {
-            VRControl.I.rig.EnableLaserPointers(true);
+            if (XRSettings.enabled)
+                VRControl.I.rig.EnableLaserPointers(true);
             m_MouseEventHandler.SetModelManipulation(active);
         }
     
@@ -133,8 +135,9 @@ namespace Alice.Player.Unity {
         }
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
+            if (XRSettings.enabled)
+                VRControl.I.rig.EnableLaserPointers(true);
             AddColliders(clickedObjects);
-            VRControl.I.rig.EnableLaserPointers(true);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
 

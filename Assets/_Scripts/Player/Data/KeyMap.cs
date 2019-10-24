@@ -102,6 +102,19 @@ public static class KeyMap
         {KeyCode.DownArrow, Key.DOWN}
     };
 
+    public static Dictionary<Key, Key> KeyboardToVRLookup = new Dictionary<Key, Key>()
+    {
+        {Key.RIGHT_PRIMARY, Key.A},
+        {Key.RIGHT_SECONDARY, Key.B},
+        {Key.LEFT_PRIMARY, Key.X},
+        {Key.LEFT_SECONDARY, Key.Y},
+        {Key.LEFT_TRIGGER, Key.SPACE},
+        {Key.RIGHT_GRIP, Key.CONTROL},
+        {Key.LEFT_GRIP, Key.SHIFT},
+        {Key.RIGHT_THUMBSTICK_CLICK, Key.DIGIT_1},
+        {Key.LEFT_THUMBSTICK_CLICK, Key.DIGIT_2}
+    };
+
     public static List<string> VRButtonStrings = new List<string>() {
         "RightTrigger",
         "RightGrip",

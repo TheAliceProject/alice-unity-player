@@ -10,16 +10,25 @@ using System.Diagnostics;
 
 public class VRControl : MonoBehaviour
 {
-    public bool LoadWorldInVR = false;
-    public string VRTypeFound = "";
-
-    public Toggle loadInVRToggle;
-    public VRRig rig;
     private static VRControl _instance;
     public static VRControl I { get { return _instance; } }
-    private Routine m_routine;
 
     public const float TRIGGER_SENSITIVITY = 0.95f;
+    public bool LoadWorldInVR = false;
+    public string VRTypeFound = "";
+    public Toggle loadInVRToggle;
+    public VRRig rig;
+
+    private Routine m_routine;
+    private bool lastRightTrigger = false;
+    private bool lastLeftTrigger = false;
+
+    private bool rightTriggerDown = false;
+    private bool leftTriggerDown = false;
+    private bool rightTriggerUp = false;
+    private bool leftTriggerUp = false;
+    private Transform lastControllerClicked = null;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -52,6 +61,14 @@ public class VRControl : MonoBehaviour
 #endif
     }
 
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+    void Update()
+    {
+        if(XRSettings.enabled)
+            CheckTriggers();
+    }
+#endif
+
     public void SetVROutput(string deviceToLoad)
     {
         m_routine.Replace(this, SwitchOutput(deviceToLoad));
@@ -83,5 +100,67 @@ public class VRControl : MonoBehaviour
             yield return null;
             XRSettings.enabled = false;
         }
+    }
+
+    public Transform GetLastControllerClicked()
+    {
+        return lastControllerClicked;
+    }
+
+    private void CheckTriggers()
+    {
+        // Make these act as buttons ( only active for one frame )
+        if(rightTriggerDown)
+            rightTriggerDown = false;
+        if(leftTriggerDown)
+            leftTriggerDown = false;
+        if(rightTriggerUp)
+            rightTriggerUp = false;
+        if(leftTriggerUp)
+            leftTriggerUp = false;
+
+        if (!lastRightTrigger && Input.GetAxis("RightTrigger") >= VRControl.TRIGGER_SENSITIVITY)
+        {
+            lastRightTrigger = true;
+            rightTriggerDown = true;
+            lastControllerClicked = VRControl.I.rig.rightController;
+        }
+        else if (lastRightTrigger && Input.GetAxis("RightTrigger") < VRControl.TRIGGER_SENSITIVITY)
+        {
+            lastRightTrigger = false;
+            rightTriggerUp = true;
+        }
+
+        if (!lastLeftTrigger && Input.GetAxis("LeftTrigger") >= VRControl.TRIGGER_SENSITIVITY)
+        {
+            lastLeftTrigger = true;
+            leftTriggerDown = true;
+            lastControllerClicked = VRControl.I.rig.leftController;
+        }
+        else if (lastLeftTrigger && Input.GetAxis("LeftTrigger") < VRControl.TRIGGER_SENSITIVITY)
+        {
+            lastLeftTrigger = false;
+            leftTriggerUp = true;
+        }
+
+    }
+    public bool RightTriggerDown()
+    {
+        return rightTriggerDown;
+    }
+
+    public bool RightTriggerUp()
+    {
+        return rightTriggerUp;
+    }
+
+    public bool LeftTriggerDown()
+    {
+        return leftTriggerDown;
+    }
+
+    public bool LeftTriggerUp()
+    {
+        return leftTriggerUp;
     }
 }
