@@ -67,6 +67,7 @@ namespace Alice.Player.Unity {
             RegisterPropertyDelegate(AMBIENT_LIGHT_COLOR_PROPERTY_NAME, OnUpdateAmbientLightColor);
             RegisterPropertyDelegate(ABOVE_LIGHT_COLOR_PROPERTY_NAME, OnUpdateAboveLightColor);
             RegisterPropertyDelegate(BELOW_LIGHT_COLOR_PROPERTY_NAME, OnUpdateBelowLightColor);
+            m_MouseEventHandler.isMac = SystemInfo.operatingSystem.Contains("Mac OS");
         }
 
         void OnApplicationFocus(bool hasFocus)

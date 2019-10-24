@@ -22,6 +22,7 @@ namespace Alice.Player.Unity
         private UnityEngine.Vector3 shiftOrigin;
         private UnityEngine.Vector3 rotateOrigin;
         private bool defaultModelManipulationActive = false;
+        internal bool isMac;
 
         public void SetModelManipulation(bool active){
             defaultModelManipulationActive = active;
@@ -49,7 +50,7 @@ namespace Alice.Player.Unity
 
             if (IsShiftDown())
                 shiftOrigin = Input.mousePosition;
-            if (IsCtrlDown())
+            if (IsRotateModifierDown())
                 rotateOrigin = Input.mousePosition;
             if (IsMouseOrTriggerUp()){
                 objectToMove = null;
@@ -81,7 +82,7 @@ namespace Alice.Player.Unity
             }
 
 
-            if (defaultModelManipulationActive && (objectToMove != null) && (IsShiftUp() || IsCtrlUp())){
+            if (defaultModelManipulationActive && (objectToMove != null) && (IsShiftUp() || IsRotateModifierUp())){
                 objectOriginPoint = objectToMove.position;
                 Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 float distance;
@@ -126,7 +127,7 @@ namespace Alice.Player.Unity
                     objectToMove.position += move;
                     shiftOrigin = Input.mousePosition;
                 }
-                else if (IsCtrlHeld()){ // Rotate
+                else if (IsRotateModifierHeld()){
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
                     objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 20f);
                     rotateOrigin = Input.mousePosition;
@@ -161,7 +162,7 @@ namespace Alice.Player.Unity
                     objectToMove.position += move;
                     shiftOrigin = Input.mousePosition;
                 }
-                else if (IsCtrlHeld()){ // If holding control, rotate object
+                else if (IsRotateModifierHeld()){
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
                     objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 200f);
                     rotateOrigin = Input.mousePosition;
@@ -206,17 +207,23 @@ namespace Alice.Player.Unity
         private bool IsShiftDown(){
             return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
         }
-        private bool IsCtrlHeld(){
-            return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+        private bool IsRotateModifierHeld() {
+            return
+                (isMac && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) ||
+                (!isMac && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)));
         }
-        private bool IsCtrlDown(){
-            return Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
+        private bool IsRotateModifierDown(){
+            return
+                (isMac && (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))) ||
+                (!isMac && (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)));
         }
         private bool IsShiftUp(){
             return Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift);
         }
-        private bool IsCtrlUp(){
-            return Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl);
+        private bool IsRotateModifierUp(){
+            return
+                (isMac && (Input.GetKeyUp(KeyCode.LeftAlt) || Input.GetKeyUp(KeyCode.RightAlt))) ||
+                (!isMac && (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.RightControl)));
         }
 
 
