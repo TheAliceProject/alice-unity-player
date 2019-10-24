@@ -27,7 +27,8 @@ namespace Alice.Player.Unity {
         }
 
         private Dictionary<string, UpdatePropertyDelegate> m_PropertyBindings = new Dictionary<string, UpdatePropertyDelegate>();
-        private Dictionary<object, UpdatePropertyDelegate> m_Properties = new Dictionary<object, UpdatePropertyDelegate>();
+        private Dictionary<string, TObject> m_NamedProperties = new Dictionary<string, TObject>();
+        private Dictionary<TObject, UpdatePropertyDelegate> m_Properties = new Dictionary<TObject, UpdatePropertyDelegate>();
 
         private SGEntity m_Vehicle;
 
@@ -76,18 +77,33 @@ namespace Alice.Player.Unity {
 
                 @delegate(inInitValue);
                 m_Properties.Add(inProperty.Object(), @delegate);
+                m_NamedProperties.Add(inName, inProperty.Object());
             } else {
                 throw new SceneGraphException(string.Format("Property \"{0}\" cannot be bound because no valid callback has been registered.", inName));
             }
         }
 
+        public void UpdateProperty(string inName, TValue inValue) {
+            TObject propertyObj;
+            if (m_NamedProperties.TryGetValue(inName, out propertyObj)) {
+                propertyObj.Set("value", inValue);
+                UpdateProperty(propertyObj, inValue);
+            } else {
+                throw new SceneGraphException(string.Format("Property \"{0}\" cannot be updated because no valid callback has been registered.", inName));
+            }
+        }
+
         public void UpdateProperty(TValue inProperty, TValue inValue) {
+            TObject propertyObj = inProperty.Object();
+            UpdateProperty(propertyObj, inValue);
+        }
+
+        private void UpdateProperty(TObject propertyObj, TValue inValue) {
             UpdatePropertyDelegate @delegate;
-            object propertyObj = inProperty.Object();
             if (m_Properties.TryGetValue(propertyObj, out @delegate)) {
                 @delegate(inValue);
             } else {
-                Debug.LogFormat("no delegate found for property type {0} of {1}", inProperty.Type.Name, this.GetType().Name);
+                Debug.LogFormat("no delegate found for property type {0} of {1}", propertyObj.GetType().Name, this.GetType().Name);
             }
         }
 

@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 
 namespace Alice.Player.Primitives
@@ -87,6 +89,8 @@ namespace Alice.Player.Primitives
         [PInteropField]
         public Position position { get { return new Position(TranslationValue); } }
 
+        internal static TType InteropType { get; set; }
+
         [PInteropConstructor]
         public VantagePoint(Position position, Orientation orientation) {
             TranslationValue = position.Value;
@@ -150,6 +154,10 @@ namespace Alice.Player.Primitives
 
         public override int GetHashCode() {
             return TranslationValue.GetHashCode() + RotationValue.GetHashCode();
+        }
+
+        internal TValue AsTValue() {
+            return TValue.FromObject(InteropType, this);
         }
     }
     
