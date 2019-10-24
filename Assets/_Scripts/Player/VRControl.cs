@@ -146,22 +146,22 @@ public class VRControl : MonoBehaviour
         }
 
     }
-    public bool RightTriggerDown()
+    public bool IsRightTriggerDown()
     {
         return rightTriggerDown;
     }
 
-    public bool RightTriggerUp()
+    public bool IsRightTriggerUp()
     {
         return rightTriggerUp;
     }
 
-    public bool LeftTriggerDown()
+    public bool IsLeftTriggerDown()
     {
         return leftTriggerDown;
     }
 
-    public bool LeftTriggerUp()
+    public bool IsLeftTriggerUp()
     {
         return leftTriggerUp;
     }

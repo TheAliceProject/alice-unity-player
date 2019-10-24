@@ -54,10 +54,6 @@ public class VRRig : MonoBehaviour
     {
         if(laserPointersEnabled)
         {   
-            if(this == null || rightRend == null || leftRend == null){
-                laserPointersEnabled = false;
-                return;
-            }
             rightRend.SetPosition(0, rightController.position);
             rightRend.SetPosition(1, rightController.position + (rightController.forward * 10f));
 
