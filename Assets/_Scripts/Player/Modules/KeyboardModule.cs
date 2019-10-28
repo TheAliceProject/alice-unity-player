@@ -34,9 +34,8 @@ namespace Alice.Player.Modules
         public static void moveWithArrows(TValue thing, float speed) {
             // Speed is ignored for now.
             var sceneEntity = SceneGraph.Current.Scene;
-            var entityXform = SceneGraph.Current.FindEntity(thing);
-            Transform objectTransform = entityXform.cachedTransform;
-            sceneEntity.AddKeyMover(objectTransform);
+            SGTransformableEntity entity = (SGTransformableEntity) SceneGraph.Current.FindEntity(thing);
+            sceneEntity.AddKeyMover(entity);
 
         }
     }

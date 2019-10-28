@@ -157,7 +157,7 @@ namespace Alice.Player.Unity {
             m_KeyboardEventHandler.AddListener(new KeyEventListenerProxy(listener, overlappingEventPolicy, heldKeyPolicy, KeyEventListenerProxy.KeyPressType.NumPadKey));
         }
 
-        public void AddKeyMover(Transform entity)
+        public void AddKeyMover(SGTransformableEntity entity)
         {
             m_KeyboardEventHandler.AddObjectMover(entity);
         }
