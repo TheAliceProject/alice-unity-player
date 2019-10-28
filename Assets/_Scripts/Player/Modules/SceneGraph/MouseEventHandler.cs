@@ -149,7 +149,7 @@ namespace Alice.Player.Unity
                     {
                         UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
                         UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * dragSpeed, 0, pos.y * dragSpeed);
-                        objectToMove.position += move;
+                        objectToMove.position -= move;
                         dragOrigin = Input.mousePosition;     
                     }
                 }
