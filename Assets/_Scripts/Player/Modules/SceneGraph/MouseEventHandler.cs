@@ -129,7 +129,7 @@ namespace Alice.Player.Unity
                 }
                 else if (IsRotateModifierHeld()){
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
-                    objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 20f);
+                    objectToMove.Rotate(-dragSpeed * pos.y * 4f, -dragSpeed * pos.x * 4f, 0);
                     rotateOrigin = Input.mousePosition;
                 }
                 else{   // Scroll
