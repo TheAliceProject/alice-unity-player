@@ -48,7 +48,7 @@ namespace Alice.Player.Unity
                 }
             }
 
-            if (IsShiftDown())
+            if (IsVerticalModifierDown())
                 shiftOrigin = Input.mousePosition;
             if (IsRotateModifierDown())
                 rotateOrigin = Input.mousePosition;
@@ -82,7 +82,7 @@ namespace Alice.Player.Unity
             }
 
 
-            if (defaultModelManipulationActive && (objectToMove != null) && (IsShiftUp() || IsRotateModifierUp())){
+            if (defaultModelManipulationActive && (objectToMove != null) && (IsVerticalModifierUp() || IsRotateModifierUp())){
                 objectOriginPoint = objectToMove.position;
                 Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 float distance;
@@ -121,7 +121,7 @@ namespace Alice.Player.Unity
             }
 
             if (objectToMove == Camera.main.transform.parent){ // Moving the camera
-                if (IsShiftHeld()){    // Up down
+                if (IsVerticalModifierHeld()){
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
                     UnityEngine.Vector3 move = new UnityEngine.Vector3(pos.x * dragSpeed, dragSpeed * pos.y, pos.y * dragSpeed);
                     objectToMove.position += move;
@@ -155,8 +155,7 @@ namespace Alice.Player.Unity
                 }
             }
             else if (objectToMove != null){ // Moving an object
-                // If holding shift, move object up and down
-                if (IsShiftHeld()){
+                if (IsVerticalModifierHeld()) {
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
                     UnityEngine.Vector3 move = new UnityEngine.Vector3(0f, dragSpeed * pos.y, 0f);
                     objectToMove.position += move;
@@ -201,10 +200,10 @@ namespace Alice.Player.Unity
         private bool IsMouseOrTriggerUp(){
             return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.I.IsRightTriggerUp() || VRControl.I.IsLeftTriggerUp();
         }
-        private bool IsShiftHeld(){
+        private bool IsVerticalModifierHeld(){
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
-        private bool IsShiftDown(){
+        private bool IsVerticalModifierDown(){
             return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
         }
         private bool IsRotateModifierHeld() {
@@ -217,7 +216,7 @@ namespace Alice.Player.Unity
                 (isMac && (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))) ||
                 (!isMac && (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)));
         }
-        private bool IsShiftUp(){
+        private bool IsVerticalModifierUp(){
             return Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift);
         }
         private bool IsRotateModifierUp(){
