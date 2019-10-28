@@ -12,10 +12,12 @@ namespace Alice.Player.Unity
         private List<MouseEventListenerProxy> m_MouseClickListeners = new List<MouseEventListenerProxy>();
 
         private float lastMouseDownTime = 0f;
+        private SGModel sgObject;
         private Transform objectToMove = null;
         private Plane movementPlane = new Plane(UnityEngine.Vector3.up, UnityEngine.Vector3.zero);
+        private Plane verticalMovementPlane;
         private UnityEngine.Vector3 objectOriginPoint = UnityEngine.Vector3.zero;
-        private UnityEngine.Vector3 cameraOriginPoint = UnityEngine.Vector3.zero;
+        private float yClickOffset;
         private UnityEngine.Vector3 planeOriginPoint = UnityEngine.Vector3.zero;
         private float dragSpeed = 10f;
         private UnityEngine.Vector3 dragOrigin;
@@ -39,8 +41,16 @@ namespace Alice.Player.Unity
                 Ray ray = GetRayFromMouseOrController();
                 if (Physics.Raycast(ray, out hit, 100.0f)){
                     if (defaultModelManipulationActive){
-                        objectToMove = hit.transform.GetComponentInParent<SGModel>().transform;  // transform.parent;
+                        sgObject = hit.transform.GetComponentInParent<SGModel>();
+                        objectToMove = sgObject.transform;
                         objectOriginPoint = hit.transform.position;
+
+                        verticalMovementPlane = new Plane(UnityEngine.Vector3.forward, objectOriginPoint);
+                        yClickOffset = hit.point.y - objectOriginPoint.y;
+
+                        // Use hit.point.y to base movement plane on mouse click, not model origin
+                        UnityEngine.Vector3 clickOriginPoint = new UnityEngine.Vector3(objectOriginPoint.x, hit.point.y , objectOriginPoint.z);
+                        movementPlane = new Plane(UnityEngine.Vector3.up, clickOriginPoint);
                         float distance;
                         if (movementPlane.Raycast(ray, out distance))
                             planeOriginPoint = ray.origin + (ray.direction * distance);
@@ -156,14 +166,22 @@ namespace Alice.Player.Unity
             }
             else if (objectToMove != null){ // Moving an object
                 if (IsVerticalModifierHeld()) {
-                    UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - shiftOrigin);
-                    UnityEngine.Vector3 move = new UnityEngine.Vector3(0f, dragSpeed * pos.y, 0f);
-                    objectToMove.position += move;
+                    Ray planeRay = GetRayFromMouseOrController();
+                    float distance;
+                    if (verticalMovementPlane.Raycast(planeRay, out distance)) {
+                        UnityEngine.Vector3 pointalongplane = planeRay.origin + (planeRay.direction * distance);
+                        var vp = VantagePoint.FromUnity(
+                            new UnityEngine.Vector3(objectOriginPoint.x, pointalongplane.y - yClickOffset, objectOriginPoint.z),
+                            objectToMove.rotation);
+                        sgObject.UpdateVantagePointProperty(vp);
+                    }
                     shiftOrigin = Input.mousePosition;
                 }
                 else if (IsRotateModifierHeld()){
                     UnityEngine.Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - rotateOrigin);
-                    objectToMove.Rotate(UnityEngine.Vector3.up, dragSpeed * pos.x * 200f);
+                    objectToMove.Rotate(UnityEngine.Vector3.up, -dragSpeed * pos.x * 200f);
+                    var vp = VantagePoint.FromUnity(objectToMove.position, objectToMove.rotation);
+                    sgObject.UpdateVantagePointProperty(vp);
                     rotateOrigin = Input.mousePosition;
                 }
                 else{ // move object along plane
@@ -172,7 +190,10 @@ namespace Alice.Player.Unity
                     if (movementPlane.Raycast(planeRay, out distance)){
                         UnityEngine.Vector3 pointalongplane = planeRay.origin + (planeRay.direction * distance);
                         UnityEngine.Vector3 moveAmount = planeOriginPoint - pointalongplane;
-                        objectToMove.position = new UnityEngine.Vector3(objectOriginPoint.x - moveAmount.x, objectToMove.position.y, objectOriginPoint.z - moveAmount.z);
+                        var vp = VantagePoint.FromUnity(
+                            new UnityEngine.Vector3(objectOriginPoint.x - moveAmount.x, objectToMove.position.y, objectOriginPoint.z - moveAmount.z),
+                            objectToMove.rotation);
+                        sgObject.UpdateVantagePointProperty(vp);
                     }
                 }
 
