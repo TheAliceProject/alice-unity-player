@@ -1,12 +1,10 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Player.Modules;
-using Alice.Tweedle;
-using Alice.Player.Primitives;
 using BeauRoutine;
 using UnityEngine.XR;
+using static Alice.Player.Unity.KeyboardEventHandler;
 
 namespace Alice.Player.Unity {
     public class KeyEventListenerProxy{
@@ -23,14 +21,8 @@ namespace Alice.Player.Unity {
         public KeyPressType keyType;
 
         private bool callActive = false;
-        private int queuedCalls = 0;
+        private Queue<Key> queuedKeys = new Queue<Key>();
         private Routine m_routine;
-        private List<Key> arrowKeys = new List<Key> {Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN,
-                                                    Key.W, Key.A, Key.S, Key.D,
-                                                    Key.RIGHT_AXIS_UP, Key.RIGHT_AXIS_DOWN, Key.RIGHT_AXIS_LEFT, Key.RIGHT_AXIS_RIGHT,
-                                                    Key.LEFT_AXIS_UP, Key.LEFT_AXIS_DOWN, Key.LEFT_AXIS_LEFT, Key.LEFT_AXIS_RIGHT};
-        private List<Key> numpadKeys = new List<Key> { Key.NUMPAD0, Key.NUMPAD1, Key.NUMPAD2, Key.NUMPAD3, Key.NUMPAD4, Key.NUMPAD5, Key.NUMPAD6, Key.NUMPAD7, Key.NUMPAD8, Key.NUMPAD9,
-                                                        Key.DIGIT_0, Key.DIGIT_1, Key.DIGIT_2, Key.DIGIT_3, Key.DIGIT_4, Key.DIGIT_5, Key.DIGIT_6, Key.DIGIT_7, Key.DIGIT_8, Key.DIGIT_9,  };
 
 
         public KeyEventListenerProxy(PAction<int> listener, OverlappingEventPolicy overlappingEventPolicy, HeldKeyPolicy heldKeyPolicy, KeyPressType keyType){
@@ -40,86 +32,53 @@ namespace Alice.Player.Unity {
             this.keyType = keyType;
         }
 
-        public void NotifyEvent(int theKey, bool keyDown)
+        public void NotifyEvent(Key theKey, KeyAction keyAction)
         {
-            if(keyType == KeyPressType.ArrowKey){
-                if(!arrowKeys.Contains((Key)theKey))
-                    return;
+            if (keyType == KeyPressType.ArrowKey && !KeyMap.ArrowKeys.Contains(theKey)) {
+                return;
             }
-            else if(keyType == KeyPressType.NumPadKey){
-                if(!numpadKeys.Contains((Key)theKey))
-                    return;
+            if (keyType == KeyPressType.NumPadKey && !KeyMap.NumpadKeys.Contains(theKey)) {
+                return;
             }
-            else if(XRSettings.enabled)
+            if(XRSettings.enabled)
             {
-                if(!KeyMap.KeyboardToVRLookup.ContainsKey((Key)theKey)){
+                if(!KeyMap.KeyboardToVRLookup.ContainsKey(theKey)){
                     return;
                 }
-                else{
-                    theKey = (int)KeyMap.KeyboardToVRLookup[(Key)theKey];
-                }
-
+                theKey = KeyMap.KeyboardToVRLookup[theKey];
             }
 
-            // Manage key downs and key ups in regards to the held key policy
-            if(keyDown){
-                if(heldKeyPolicy == HeldKeyPolicy.FireOnceOnPress){
-                    CallEvent(theKey);
-                }
-                else if(heldKeyPolicy == HeldKeyPolicy.FireMultiple){
-                    if(!m_routine){
-                        m_routine = Routine.Start(FireMultipleRoutine(theKey));
-                    }
-                }
-            }
-            else{ // key up
-                if(heldKeyPolicy == HeldKeyPolicy.FireOnceOnRelease){
-                    CallEvent(theKey);
-                }
-                else if(m_routine){
-                    m_routine.Stop();
-                }
+            if ((keyAction == KeyAction.Press && heldKeyPolicy != HeldKeyPolicy.FireOnceOnRelease) ||
+                (keyAction == KeyAction.Repeat && heldKeyPolicy == HeldKeyPolicy.FireMultiple)||
+                (keyAction == KeyAction.Release && heldKeyPolicy == HeldKeyPolicy.FireOnceOnRelease)) {
+                CallEvent(theKey);
             }
         }
 
 
-        public void CallEvent(int theKey)
+        public void CallEvent(Key theKey)
         {
-            if(callActive){
-                if(overlappingEventPolicy == OverlappingEventPolicy.Ignore){
-                    return;
+            if(callActive && overlappingEventPolicy != OverlappingEventPolicy.Overlap){
+                if(overlappingEventPolicy == OverlappingEventPolicy.Enqueue){
+                    queuedKeys.Enqueue(theKey);
                 }
-                else if(overlappingEventPolicy == OverlappingEventPolicy.Enqueue){
-                    queuedCalls++;
-                    return;
-                }
+                return;
             }
 
-            AsyncReturn callReturn;
-            callReturn = keyListener.Call(theKey);
             callActive = true;
-            callReturn.OnReturn(() => {
-                returnedCall(theKey);
-            });
+            AsyncReturn callReturn = keyListener.Call((int) theKey);
+            if (overlappingEventPolicy == OverlappingEventPolicy.Enqueue) {
+                callReturn.OnReturn(returnedCall);
+            }
         }
 
         // For queued events
-        public void returnedCall(int theKey)
+        public void returnedCall()
         {
             callActive = false;
-            if(queuedCalls > 0)
+            if(queuedKeys.Count > 0)
             {
-                queuedCalls--;
-                CallEvent(theKey);
-            }
-        }
-
-        private IEnumerator FireMultipleRoutine(int theKey)
-        {
-            while(true)
-            {
-                CallEvent(theKey);
-                yield return 0.033f;
+                CallEvent(queuedKeys.Dequeue());
             }
         }
     }
