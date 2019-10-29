@@ -203,7 +203,7 @@ namespace Alice.Player.Unity
         private Ray GetRayFromMouseOrController()
         {
             Ray ray;
-            Transform lastControllerClicked = VRControl.I.GetLastControllerClicked();
+            Transform lastControllerClicked = VRControl.GetLastControllerClicked();
             if (XRSettings.enabled && lastControllerClicked != null){
                 // Draw ray from controller forward
                 ray = new Ray(lastControllerClicked.position, lastControllerClicked.forward);
@@ -216,10 +216,10 @@ namespace Alice.Player.Unity
 
 
         private bool IsMouseOrTriggerDown(){
-            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.I.IsRightTriggerDown() || VRControl.I.IsLeftTriggerDown();
+            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.IsRightTriggerDown() || VRControl.IsLeftTriggerDown();
         }
         private bool IsMouseOrTriggerUp(){
-            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.I.IsRightTriggerUp() || VRControl.I.IsLeftTriggerUp();
+            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.IsRightTriggerUp() || VRControl.IsLeftTriggerUp();
         }
         private bool IsVerticalModifierHeld(){
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
