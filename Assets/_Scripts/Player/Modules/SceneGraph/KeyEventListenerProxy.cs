@@ -56,9 +56,8 @@ namespace Alice.Player.Unity {
         }
 
 
-        public void CallEvent(Key theKey)
-        {
-            if(callActive && overlappingEventPolicy != OverlappingEventPolicy.Overlap){
+        private void CallEvent(Key theKey) {
+            if (callActive && overlappingEventPolicy != OverlappingEventPolicy.Overlap){
                 if(overlappingEventPolicy == OverlappingEventPolicy.Enqueue){
                     queuedKeys.Enqueue(theKey);
                 }
@@ -70,7 +69,7 @@ namespace Alice.Player.Unity {
             callReturn.OnReturn(returnedCall);
         }
 
-        public void returnedCall()
+        private void returnedCall()
         {
             callActive = false;
             if(queuedKeys.Count > 0)
