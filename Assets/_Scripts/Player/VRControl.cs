@@ -4,6 +4,7 @@ using UnityEngine;
 using BeauRoutine;
 using UnityEngine.XR;
 using UnityEngine.UI;
+using System;
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
 using System.Diagnostics;
 #endif
@@ -11,16 +12,15 @@ using System.Diagnostics;
 public class VRControl : MonoBehaviour
 {
     private static VRControl _instance;
-    public static VRControl I { get { return _instance; } }
 
     public const float INITIAL_CAMERA_ANGLE_CUTOFF = 20f; // Degrees. For desktop worlds, the initial angle is a good idea. In VR, worlds generally look better
                                                           // if the player is completely upright. We'll still let them turn the camera by large amounts, but filter out little (unintentional) ones
     public const float TRIGGER_SENSITIVITY = 0.95f;
-    public bool LoadWorldInVR = false;
     public string VRTypeFound = "";
     public Toggle loadInVRToggle;
     public VRRig rig;
 
+    private bool loadWorldInVR = false;
     private Routine m_routine;
     private bool lastRightTrigger = false;
     private bool lastLeftTrigger = false;
@@ -71,6 +71,29 @@ public class VRControl : MonoBehaviour
     }
 #endif
 
+    public static void Loaded(bool value) {
+        if (_instance != null) {
+            _instance.loadWorldInVR = value;
+            _instance.SetVROutput(value ? _instance.VRTypeFound : "");
+        }
+    }
+
+    internal static bool IsLoadedInVR() {
+        return _instance != null && _instance.loadWorldInVR;
+    }
+
+    internal static void SetRig(VRRig m_rig) {
+        if (_instance != null) {
+            _instance.rig = m_rig;
+        }
+    }
+
+    internal static void EnableLaserPointers(bool ena) {
+        if (_instance != null && _instance.rig != null) {
+            _instance.rig.EnableLaserPointers(ena);
+        }
+    }
+
     public void SetVROutput(string deviceToLoad)
     {
         m_routine.Replace(this, SwitchOutput(deviceToLoad));
@@ -92,7 +115,7 @@ public class VRControl : MonoBehaviour
             else
             {
                 XRSettings.enabled = true;
-                LoadWorldInVR = true;
+                loadWorldInVR = true;
                 loadInVRToggle.gameObject.SetActive(true);
             }
         }
@@ -104,9 +127,9 @@ public class VRControl : MonoBehaviour
         }
     }
 
-    public Transform GetLastControllerClicked()
+    public static Transform GetLastControllerClicked()
     {
-        return lastControllerClicked;
+        return _instance == null ? null : _instance.lastControllerClicked;
     }
 
     private void CheckTriggers()
@@ -146,23 +169,23 @@ public class VRControl : MonoBehaviour
         }
 
     }
-    public bool IsRightTriggerDown()
+    public static bool IsRightTriggerDown()
     {
-        return rightTriggerDown;
+        return _instance != null && _instance.rightTriggerDown;
     }
 
-    public bool IsRightTriggerUp()
+    public static bool IsRightTriggerUp()
     {
-        return rightTriggerUp;
+        return _instance != null && _instance.rightTriggerUp;
     }
 
-    public bool IsLeftTriggerDown()
+    public static bool IsLeftTriggerDown()
     {
-        return leftTriggerDown;
+        return _instance != null && _instance.leftTriggerDown;
     }
 
-    public bool IsLeftTriggerUp()
+    public static bool IsLeftTriggerUp()
     {
-        return leftTriggerUp;
+        return _instance != null && _instance.leftTriggerUp;
     }
 }
