@@ -22,11 +22,7 @@ public class WorldLoaderControl : MonoBehaviour
     {
         PopulateLevels();
         
-        loadInVR.onValueChanged.AddListener((value) =>
-        {
-            VRControl.I.LoadWorldInVR = value;
-            VRControl.I.SetVROutput(value ? VRControl.I.VRTypeFound : "");
-        });
+        loadInVR.onValueChanged.AddListener(VRControl.Loaded);
 
         versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
     }
