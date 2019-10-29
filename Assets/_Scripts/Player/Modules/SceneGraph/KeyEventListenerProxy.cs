@@ -67,12 +67,9 @@ namespace Alice.Player.Unity {
 
             callActive = true;
             AsyncReturn callReturn = keyListener.Call((int) theKey);
-            if (overlappingEventPolicy == OverlappingEventPolicy.Enqueue) {
-                callReturn.OnReturn(returnedCall);
-            }
+            callReturn.OnReturn(returnedCall);
         }
 
-        // For queued events
         public void returnedCall()
         {
             callActive = false;
