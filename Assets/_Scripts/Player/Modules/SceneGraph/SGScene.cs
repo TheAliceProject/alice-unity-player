@@ -95,7 +95,7 @@ namespace Alice.Player.Unity {
         public void SetDefaultModelManipulationActive(bool active)
         {
             if (XRSettings.enabled)
-                VRControl.I.rig.EnableLaserPointers(true);
+                VRControl.EnableLaserPointers(true);
             m_MouseEventHandler.SetModelManipulation(active);
         }
     
@@ -137,7 +137,7 @@ namespace Alice.Player.Unity {
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             if (XRSettings.enabled)
-                VRControl.I.rig.EnableLaserPointers(true);
+                VRControl.EnableLaserPointers(true);
             AddColliders(clickedObjects);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
