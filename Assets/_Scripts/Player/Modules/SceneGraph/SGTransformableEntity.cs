@@ -19,5 +19,8 @@ namespace Alice.Player.Unity {
             cachedTransform.localRotation = vp.UnityRotation();
         }
 
+        internal void UpdateVantagePointProperty(VantagePoint vp) {
+            UpdateProperty(TRANSFORMATION_PROPERTY_NAME, vp.AsTValue());
+        }
     }
 }

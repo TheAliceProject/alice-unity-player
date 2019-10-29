@@ -39,7 +39,9 @@ namespace Alice.Player
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Position)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Direction)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Orientation)));
-            inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(VantagePoint)));
+            var interopVantagePoint = TInterop.GenerateType(inAssembly, typeof(VantagePoint));
+            VantagePoint.InteropType = interopVantagePoint;
+            inAssembly.Add(interopVantagePoint);
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Angle)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(AxisAlignedBox)));
             inAssembly.Add(TInterop.GenerateType(inAssembly, typeof(Size)));
