@@ -17,7 +17,7 @@ namespace Alice.Player.Unity
         }
 
         private List<KeyEventListenerProxy> m_KeyPressListeners = new List<KeyEventListenerProxy>();
-        private List<KeyCode> m_heldKeys = new List<KeyCode>();
+        private HashSet<KeyCode> m_heldKeys = new HashSet<KeyCode>();
         private List<string> m_heldKeyCodes = new List<string>();
         private ObjectKeyboardMover m_objectMover = new ObjectKeyboardMover();
         private List<KeyCode> m_keysToRemove = new List<KeyCode>();
