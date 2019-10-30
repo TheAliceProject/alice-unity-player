@@ -38,14 +38,10 @@ public class VRRig : MonoBehaviour
     }
 
     public void EnablePointersForUI(bool ena){
-        EnablePointers(true);
+        EnablePointers(ena || enabledForManipulation);
         enabledForUI = ena;
-
-        // If we're turning off UI pointers, and manipulation isn't active, disable all pointers.
-        if(!ena && !enabledForManipulation){
-            EnablePointers(false);
-        }
     }
+    
     public void EnablePointersForManipulation(bool ena)
     {
         EnablePointers(ena);
