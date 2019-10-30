@@ -142,7 +142,7 @@ namespace Alice.Player.Unity
                     m_heldKeys.Remove(key);
                 }
                 m_releasedKeys.Clear();
-                yield return 0.02f;
+                yield return null;
             }
         }
 
