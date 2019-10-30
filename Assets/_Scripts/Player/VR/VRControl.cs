@@ -5,6 +5,7 @@ using BeauRoutine;
 using UnityEngine.XR;
 using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
 using System.Diagnostics;
 #endif
@@ -16,10 +17,12 @@ public class VRControl : MonoBehaviour
     public const float INITIAL_CAMERA_ANGLE_CUTOFF = 20f; // Degrees. For desktop worlds, the initial angle is a good idea. In VR, worlds generally look better
                                                           // if the player is completely upright. We'll still let them turn the camera by large amounts, but filter out little (unintentional) ones
     public const float TRIGGER_SENSITIVITY = 0.95f;
+    public const float WORLD_CANVAS_DISTANCE = 1.5f;
     public string VRTypeFound = "";
     public Toggle loadInVRToggle;
     public VRRig rig;
-
+    public EventSystem eventSystem;
+    
     private bool loadWorldInVR = false;
     private Routine m_routine;
     private bool lastRightTrigger = false;
@@ -88,10 +91,24 @@ public class VRControl : MonoBehaviour
         }
     }
 
-    internal static void EnableLaserPointers(bool ena) {
+    internal static void EnablePointersForObjects(bool ena) {
         if (_instance != null && _instance.rig != null) {
-            _instance.rig.EnableLaserPointers(ena);
+            _instance.rig.EnablePointersForManipulation(ena);
         }
+    }
+
+    internal static VRRig Rig(){
+        if (_instance != null){
+            return _instance.rig;
+        }
+        return null;
+    }
+
+    internal static EventSystem EventSystem(){
+        if (_instance != null){
+            return _instance.eventSystem;
+        }
+        return null;
     }
 
     public void SetVROutput(string deviceToLoad)

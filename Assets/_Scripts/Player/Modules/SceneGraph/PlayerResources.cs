@@ -80,6 +80,10 @@ namespace Alice.Player.Unity {
         private SceneCanvas m_SceneCanvas = null;
         public SceneCanvas SceneCanvas { get { return m_SceneCanvas; } }
 
+        [SerializeField]
+        private SceneCanvas m_WorldCanvas = null;
+        public SceneCanvas WorldCanvas { get { return m_WorldCanvas; } }
+
         [Header("Audio")]
         [SerializeField]
         private TweedleAudioPlayer m_TweedleAudioSource = null;

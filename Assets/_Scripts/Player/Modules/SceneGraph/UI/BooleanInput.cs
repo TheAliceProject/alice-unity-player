@@ -54,6 +54,12 @@ public class BooleanInput : MonoBehaviour
             yield return null;
         }
         returnBool.Return(boolState == BoolState.True);
-        Destroy(this.gameObject);
+        if(VRControl.IsLoadedInVR()){
+            VRControl.Rig().EnablePointersForUI(false);
+            Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
+        }
+        else{
+            Destroy(this.gameObject);
+        }
     }
 }

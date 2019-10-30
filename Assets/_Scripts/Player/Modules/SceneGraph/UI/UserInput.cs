@@ -59,6 +59,15 @@ public class UserInput : MonoBehaviour
             yield return null;
         }
         returnString.Return(GetUserInput());
-        Destroy(this.gameObject);
+
+        if (VRControl.IsLoadedInVR())
+        {
+            VRControl.Rig().EnablePointersForUI(false);
+            Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

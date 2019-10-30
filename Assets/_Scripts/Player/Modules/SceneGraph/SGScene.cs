@@ -95,7 +95,7 @@ namespace Alice.Player.Unity {
         public void SetDefaultModelManipulationActive(bool active)
         {
             if (XRSettings.enabled)
-                VRControl.EnableLaserPointers(true);
+                VRControl.EnablePointersForObjects(true);
             m_MouseEventHandler.SetModelManipulation(active);
         }
     
@@ -122,6 +122,28 @@ namespace Alice.Player.Unity {
         {
             return m_SceneCanvas;
         }
+
+        public SceneCanvas CreateNewWorldCanvas()
+        {
+            // We want to spawn this in the direction the player is looking, but at a certain distance
+            var canvas = Instantiate(SceneGraph.Current.InternalResources.WorldCanvas);
+            var headTransform = VRControl.Rig().head;
+
+            // Get player facing direction
+            UnityEngine.Vector3 facingDirection = headTransform.position + headTransform.forward;
+            // Reset height to player height
+            facingDirection.y = headTransform.position.y;
+            // Get direction vector of head
+            UnityEngine.Vector3 directionVector = facingDirection - headTransform.position;
+            // Normalize and set a certain distance away
+            canvas.transform.position = headTransform.position + (directionVector.normalized * VRControl.WORLD_CANVAS_DISTANCE);
+
+            // Rotate the canvas correctly
+            canvas.transform.LookAt(headTransform);
+            canvas.transform.Rotate(0f, 180f, 0f, Space.Self);
+            canvas.transform.SetParent(cachedTransform);
+            return canvas;
+        }
         
         public void  AddActivationListener(PAction inListener) {
             m_ActivationListeners.Add(inListener);
@@ -137,7 +159,7 @@ namespace Alice.Player.Unity {
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             if (XRSettings.enabled)
-                VRControl.EnableLaserPointers(true);
+                VRControl.EnablePointersForObjects(true);
             AddColliders(clickedObjects);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
