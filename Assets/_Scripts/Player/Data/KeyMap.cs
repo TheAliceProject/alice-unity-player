@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Alice.Player.Modules;
+using System;
 
 public static class KeyMap
 {
@@ -127,28 +128,6 @@ public static class KeyMap
         {Key.LEFT_THUMBSTICK_CLICK, Key.DIGIT_2}
     };
 
-    public static List<string> VRButtonStrings = new List<string>() {
-        "RightTrigger",
-        "RightGrip",
-        "PrimaryRight",
-        "SecondaryRight",
-        "MenuRight",
-        "LeftTrigger",
-        "LeftGrip",
-        "PrimaryLeft",
-        "SecondaryLeft",
-        "MenuLeft",
-        "RightThumbstickClick",
-        "LeftThumbstickClick"
-    };
-
-    public static List<string> VRAxisStrings = new List<string>(){
-        "RightThumbstickUpDown",
-        "RightThumbstickLeftRight",
-        "LeftThumbstickUpDown",
-        "LeftThumbstickLeftRight"
-    };
-
     public static Dictionary<string, Key> VRButtonLookup = new Dictionary<string, Key>()
     {
         {"RightTrigger", Key.RIGHT_TRIGGER},
@@ -165,17 +144,13 @@ public static class KeyMap
         {"LeftThumbstickClick", Key.LEFT_THUMBSTICK_CLICK}
     };
 
-    public static Dictionary<string, Key> VRAxisLookup = new Dictionary<string, Key>()
+    public static Dictionary<string, Tuple<Key, Key>> AxisKeyPairs = new Dictionary<string, Tuple<Key, Key>>()
     {
-        {"RightThumbstickUpDown_P", Key.RIGHT_AXIS_UP},
-        {"RightThumbstickUpDown_N", Key.RIGHT_AXIS_DOWN},
-        {"RightThumbstickLeftRight_N", Key.RIGHT_AXIS_LEFT},
-        {"RightThumbstickLeftRight_P", Key.RIGHT_AXIS_RIGHT},
-        {"LeftThumbstickUpDown_P", Key.LEFT_AXIS_UP},
-        {"LeftThumbstickUpDown_N", Key.LEFT_AXIS_DOWN},
-        {"LeftThumbstickLeftRight_N", Key.LEFT_AXIS_LEFT},
-        {"LeftThumbstickLeftRight_P", Key.LEFT_AXIS_RIGHT}
+        {"RightThumbstickUpDown", new Tuple<Key, Key>(Key.RIGHT_AXIS_DOWN, Key.RIGHT_AXIS_UP)},
+        {"RightThumbstickLeftRight", new Tuple<Key, Key>(Key.RIGHT_AXIS_LEFT, Key.RIGHT_AXIS_RIGHT)},
+        {"LeftThumbstickUpDown", new Tuple<Key, Key>(Key.LEFT_AXIS_DOWN, Key.LEFT_AXIS_UP)},
+        {"LeftThumbstickLeftRight", new Tuple<Key, Key>(Key.LEFT_AXIS_LEFT, Key.LEFT_AXIS_RIGHT)},
     };
 }
 
-        
+
