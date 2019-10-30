@@ -96,14 +96,14 @@ public class NumericInput : MonoBehaviour
     {
         yield return DoneWithValidInput();
         returnInt.Return(Convert.ToInt32(GetUserInput()));
-        Destroy(this.gameObject);
+        DestroyMe();
     }
 
     private IEnumerator WaitForUserToPopulate(AsyncReturn<double> returnDouble)
     {
         yield return DoneWithValidInput();
         returnDouble.Return(Convert.ToDouble(GetUserInput()));
-        Destroy(this.gameObject);
+        DestroyMe();
     }
 
     private IEnumerator DoneWithValidInput()
@@ -121,6 +121,19 @@ public class NumericInput : MonoBehaviour
             else{
                 validInput = true;
             }
+        }
+    }  
+
+    private void DestroyMe()
+    {
+        if (VRControl.IsLoadedInVR())
+        {
+            VRControl.Rig().EnablePointersForUI(false);
+            Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
+        }
+        else
+        {
+            Destroy(this.gameObject);
         }
     }
 }
