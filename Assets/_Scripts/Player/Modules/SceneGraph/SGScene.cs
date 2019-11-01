@@ -12,13 +12,13 @@ namespace Alice.Player.Unity {
     
     public sealed class SGScene : SGEntity {
 
+        public static bool UIActive = false;
         public const string FOG_DENSITY_PROPERTY_NAME = "FogDensity";
         public const string ATMOSPHERE_COLOR_PROPERTY_NAME = "AtmosphereColor";
         public const string GLOBAL_BRIGHTNESS_PROPERTY_NAME = "Brightness";
         public const string AMBIENT_LIGHT_COLOR_PROPERTY_NAME = "AmbientLightColor";
         public const string ABOVE_LIGHT_COLOR_PROPERTY_NAME = "AboveLightColor";
         public const string BELOW_LIGHT_COLOR_PROPERTY_NAME = "BelowLightColor";
-        public static bool defaultModelManipulationActive = false;
         private List<PAction> m_ActivationListeners = new List<PAction>();
         private List<TimeEventListenerProxy> m_TimeListeners = new List<TimeEventListenerProxy>();
         private KeyboardEventHandler m_KeyboardEventHandler = new KeyboardEventHandler();
@@ -40,6 +40,7 @@ namespace Alice.Player.Unity {
         private const float k_BelowLightIntensity = 1f;
         private const float k_BelowLightPitch = -90f;
         private UnityEngine.Vector3 m_DefaultColliderSize = new UnityEngine.Vector3(0.1f, 0.1f, 0.1f);
+        private bool lastUiActive = false;
 
         private UnityEngine.Vector3 dragOrigin;
         private UnityEngine.Vector3 shiftOrigin;
@@ -78,6 +79,15 @@ namespace Alice.Player.Unity {
 
         // Time, Mouse, and Keyboard intercepting
         void Update(){
+            // When spawning a UI window, force release all keys being held
+            if(!lastUiActive && SGScene.UIActive)
+                m_KeyboardEventHandler.ReleaseAllKeys();
+
+            // UI Should block input events
+            lastUiActive = SGScene.UIActive;
+            if(SGScene.UIActive)
+                return;
+
             CheckTimeListeners();
             m_MouseEventHandler.HandleMouseEvents(); 
             m_KeyboardEventHandler.HandleKeyboardEvents();
