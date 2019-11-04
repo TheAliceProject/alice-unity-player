@@ -34,6 +34,7 @@ namespace Alice.Player.Unity {
         private SayThinkControl sayThinkControlRef;
         private Routine spawnRoutine = Routine.Null;
         private Routine tailRoutine = Routine.Null;
+        private Transform speechOrigin = null;
 
         void Start()
         {
@@ -88,20 +89,22 @@ namespace Alice.Player.Unity {
 
         private IEnumerator AlignTailRoutine(SGEntity entity){
             while(true){
-                UnityEngine.Vector3 objectPos = entity.cachedTransform.localPosition;
+                if(speechOrigin == null)
+                    GetMouthPosition(entity.cachedTransform);
+                UnityEngine.Vector3 objectPos = speechOrigin.position;
                 float tailRotation = 0f;
                 float tailLength = 0f;
                 if(VRControl.IsLoadedInVR()){
                     var screenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
                     UnityEngine.Vector2 objectScreenPoint;
                     RectTransformUtility.ScreenPointToLocalPointInRectangle((this.transform as RectTransform), screenPoint, Camera.main, out objectScreenPoint);
-                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 50f;
+                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 10f;
                     tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
                 }
 
                 else{
                     var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
-                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 50f; // -50f for some buffer 
+                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 10f; // -10f for some buffer space away from mouth 
                     tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
                 }
 
@@ -125,6 +128,37 @@ namespace Alice.Player.Unity {
                 }
                 yield return null;
             }
+        }
+
+        private void GetMouthPosition(Transform parent)
+        {
+            // Best case scenario, we find a lower lip bone
+            speechOrigin = FindDeepChild(parent, "LOWER_LIP");
+            if(speechOrigin != null)
+                return;
+            
+            speechOrigin = FindDeepChild(parent, "MOUTH");
+            if(speechOrigin != null)
+                return;
+
+            // Default to parent 
+            speechOrigin = parent;
+            return;
+        }
+
+        private Transform FindDeepChild(Transform parent, string aName)
+        {
+            Queue<Transform> queue = new Queue<Transform>();
+            queue.Enqueue(parent);
+            while (queue.Count > 0)
+            {
+                var c = queue.Dequeue();
+                if (c.name == aName)
+                    return c;
+                foreach(Transform t in c)
+                    queue.Enqueue(t);
+            }
+            return null;
         }
     }
 }
