@@ -39,6 +39,36 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537976136349472559}
   m_Enabled: 1
+--- !u!1 &2566672118917667382
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8459345788559452728}
+  m_Layer: 0
+  m_Name: CanvasRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8459345788559452728
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2566672118917667382}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.465}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3520005908546779515}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &3520005908371299689
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,6 +256,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3183362635757862434}
+  - {fileID: 8459345788559452728}
   m_Father: {fileID: 3520005908811345824}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -339,6 +370,7 @@ MonoBehaviour:
   head: {fileID: 3520005908546779515}
   leftController: {fileID: 3520005908371299688}
   rightController: {fileID: 3520005909084331050}
+  canvasRoot: {fileID: 8459345788559452728}
   headCamera: {fileID: 757374203648644505}
   rightRend: {fileID: 7277373018887493053}
   leftRend: {fileID: 6756112286272519854}
