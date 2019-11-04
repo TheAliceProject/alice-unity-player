@@ -123,8 +123,32 @@ namespace Alice.Player.Unity {
 
         private SceneCanvas CreateCanvas()
         {
-            var canvas = Instantiate(SceneGraph.Current.InternalResources.SceneCanvas);
-            canvas.transform.SetParent(cachedTransform);
+            SceneCanvas canvas = null;
+            if(XRSettings.enabled)
+            {
+                canvas = Instantiate(SceneGraph.Current.InternalResources.VRSceneCanvas);
+                canvas.transform.SetParent(VRControl.Rig().canvasRoot);
+                var headTransform = VRControl.Rig().head;
+
+                // Get player facing direction
+                UnityEngine.Vector3 facingDirection = headTransform.position + headTransform.forward;
+                // Reset height to player height
+                facingDirection.y = headTransform.position.y;
+                // Get direction vector of head
+                UnityEngine.Vector3 directionVector = facingDirection - headTransform.position;
+                // Normalize and set a certain distance away
+                canvas.transform.position = headTransform.position + (directionVector.normalized * VRControl.WORLD_CANVAS_DISTANCE);
+
+                // Rotate the canvas correctly
+                canvas.transform.LookAt(headTransform);
+                canvas.transform.Rotate(0f, 180f, 0f, Space.Self);
+            }
+            else
+            {
+                canvas = Instantiate(SceneGraph.Current.InternalResources.SceneCanvas);
+                canvas.transform.SetParent(cachedTransform);
+            }
+
             return canvas;
         }
 
