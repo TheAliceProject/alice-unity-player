@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Alice.Player.Modules;
-using Alice.Player.Primitives;
 using Alice.Tweedle.Interop;
-using Alice.Tweedle;
-using UnityEngine.UI;
 using TMPro;
-using System;
 
 namespace Alice.Player.Unity {
 
@@ -35,27 +31,29 @@ namespace Alice.Player.Unity {
         private Dictionary<SayThinkBubble, AsyncReturn> bubbleReturns = new Dictionary<SayThinkBubble, AsyncReturn>();
         private float m_lastWidth;
         private float m_lastHeight;
-        private float spacing = 100f;
+        private const float BUBBLE_SPACING = 100f;
+        private const float VR_WIDTH_SCALE_FACTOR = 2f;
         void Update()
         {
-            if(Screen.width != m_lastWidth || Screen.height != m_lastHeight)
+            if (Screen.width != m_lastWidth)
             {
+                float screenWidth = VRControl.IsLoadedInVR() ? Screen.width / VR_WIDTH_SCALE_FACTOR : Screen.width;
                 Vector2 currDelta = leftBubbles.sizeDelta;
                 Vector2 currPos = leftBubbles.anchoredPosition;
-                currPos.x = -(Screen.width - spacing)/ 2f;
-                currDelta.x = (Screen.width - spacing) / 3f;
+                currPos.x = -(screenWidth - BUBBLE_SPACING) / 2f;
+                currDelta.x = (screenWidth - BUBBLE_SPACING) / 3f;
                 leftBubbles.anchoredPosition = currPos;
                 leftBubbles.sizeDelta = currDelta;
 
                 // Center always at 0
                 currDelta = centerBubbles.sizeDelta;
-                currDelta.x = (Screen.width - spacing) / 3f;
+                currDelta.x = (screenWidth - BUBBLE_SPACING) / 3f;
                 centerBubbles.sizeDelta = currDelta;
 
                 currDelta = rightBubbles.sizeDelta;
                 currPos = rightBubbles.anchoredPosition;
-                currPos.x = (Screen.width - spacing) / 2f;
-                currDelta.x = (Screen.width - spacing) / 3f;
+                currPos.x = (screenWidth - BUBBLE_SPACING) / 2f;
+                currDelta.x = (screenWidth - BUBBLE_SPACING) / 3f;
                 rightBubbles.anchoredPosition = currPos;
                 rightBubbles.sizeDelta = currDelta;
 
