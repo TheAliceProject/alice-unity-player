@@ -34,6 +34,7 @@ namespace Alice.Player.Unity {
         private SayThinkControl sayThinkControlRef;
         private Routine spawnRoutine = Routine.Null;
         private Routine tailRoutine = Routine.Null;
+        private Transform speechOrigin = null;
 
         void Start()
         {
@@ -80,20 +81,33 @@ namespace Alice.Player.Unity {
         private IEnumerator SayThinkRoutine(RectTransform trans, SGEntity entity, float duration){
             bubbleText.transform.SetScale(1f, Axis.X);
             tailRoutine.Replace(this, AlignTailRoutine(entity));
-            yield return trans.ScaleTo(new Vector2(1f, 1f), 0.25f, Axis.XYZ);
+            yield return (trans as Transform).ScaleTo(new UnityEngine.Vector3(1f, 1f, 1f), 0.25f, Axis.XYZ);
             yield return duration;
-            yield return trans.ScaleTo(0f, 0.25f, Axis.XYZ);
+            yield return trans.ScaleTo(0f, 0.25f, Axis.XY);
             sayThinkControlRef.DestroyBubble(this);
         }
 
         private IEnumerator AlignTailRoutine(SGEntity entity){
             while(true){
-                UnityEngine.Vector3 objectPos = entity.cachedTransform.localPosition;
-                var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
-        
-                float tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 50f; // -50f for some buffer 
-                //Debug.DrawLine(tailPivot.position, objectScreenPoint, UnityEngine.Color.green, 4f);
-                float tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
+                if(speechOrigin == null)
+                    GetMouthPosition(entity.cachedTransform);
+                UnityEngine.Vector3 objectPos = speechOrigin.position;
+                float tailRotation = 0f;
+                float tailLength = 0f;
+                if(VRControl.IsLoadedInVR()){
+                    var screenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
+                    UnityEngine.Vector2 objectScreenPoint;
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle((this.transform as RectTransform), screenPoint, Camera.main, out objectScreenPoint);
+                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 10f;
+                    tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
+                }
+
+                else{
+                    var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
+                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 10f; // -10f for some buffer space away from mouth 
+                    tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
+                }
+
                 tailPivot.SetRotation(tailRotation, Axis.Z, Space.Self);
                 if(isSay){
                     // Stretch tail to object
@@ -114,6 +128,37 @@ namespace Alice.Player.Unity {
                 }
                 yield return null;
             }
+        }
+
+        private void GetMouthPosition(Transform parent)
+        {
+            // Best case scenario, we find a lower lip bone
+            speechOrigin = FindDeepChild(parent, "LOWER_LIP");
+            if(speechOrigin != null)
+                return;
+            
+            speechOrigin = FindDeepChild(parent, "MOUTH");
+            if(speechOrigin != null)
+                return;
+
+            // Default to parent 
+            speechOrigin = parent;
+            return;
+        }
+
+        private Transform FindDeepChild(Transform parent, string aName)
+        {
+            Queue<Transform> queue = new Queue<Transform>();
+            queue.Enqueue(parent);
+            while (queue.Count > 0)
+            {
+                var c = queue.Dequeue();
+                if (c.name == aName)
+                    return c;
+                foreach(Transform t in c)
+                    queue.Enqueue(t);
+            }
+            return null;
         }
     }
 }

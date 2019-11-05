@@ -8,6 +8,7 @@ public class VRRig : MonoBehaviour
     public Transform head;
     public Transform leftController;
     public Transform rightController;
+    public Transform canvasRoot;
     public Camera headCamera;
     public LineRenderer rightRend;
     public LineRenderer leftRend;
