@@ -13,8 +13,10 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
 
     private Routine m_routine;
 
-    public float onYPosition = 30f;
-    public float offYPosition = 100f;
+    private const float onYPosition = 30f;
+    private const float onYPositionVR = -150f;
+    private const float offYPosition = 100f;
+    private const float offYPositionVR = -750f;
     public bool isVR = false;
 
     private const float moveTime = 0.25f;
@@ -40,27 +42,31 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
     
     IEnumerator CheckHoveringOverUI()
     {
-        yield return anchor.AnchorPosTo(onYPosition, moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
+        yield return anchor.AnchorPosTo(GetOnPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
         while(EventSystem.current.IsPointerOverGameObject())
         {
             yield return null;
         }
-        yield return anchor.AnchorPosTo(offYPosition, moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
+        yield return anchor.AnchorPosTo(GetOffPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
     }
 
-    public void ForceSlide(bool on, bool withVR=false)
+    public void ForceSlide(bool on)
     {
-        if (withVR){
-            VRControl.Rig().EnablePointersForControl(on);
-        }
-
         controlsActive = on;
-        m_routine.Replace(this, anchor.AnchorPosTo(on ? onYPosition : offYPosition, moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut));
+        m_routine.Replace(this, anchor.AnchorPosTo(on ? GetOnPosition() : GetOffPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut));
     }
 
     public void VRSlide()
     {
         controlsActive = !controlsActive;
-        ForceSlide(controlsActive, true);
+        ForceSlide(controlsActive);
+        VRControl.Rig().EnablePointersForControl(controlsActive);
+    }
+
+    private float GetOnPosition(){
+        return isVR ? onYPositionVR : onYPosition;
+    }
+    private float GetOffPosition(){
+        return isVR ? offYPositionVR : offYPosition;
     }
 }
