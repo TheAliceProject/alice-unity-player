@@ -28,7 +28,7 @@ public class WorldControl : MonoBehaviour
             Camera newCamera = Instantiate(CameraPrefab);
             newCamera.tag = "MainCamera";
             Time.timeScale = currentTimeScale = 1f;
-            uISlidedown.ForceSlide(true);
+            uISlidedown.ForceSlide(false);
         });
 
         restartButton.onClick.AddListener(() =>
@@ -36,7 +36,7 @@ public class WorldControl : MonoBehaviour
             Destroy(GameObject.Find("SceneGraph"));
             Camera newCamera = Instantiate(CameraPrefab);
             newCamera.tag = "MainCamera";
-            uISlidedown.ForceSlide(true);
+            uISlidedown.ForceSlide(false);
             WorldObjects.GetParser().ReloadCurrentLevel();
         });
 

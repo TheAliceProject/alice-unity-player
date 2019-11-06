@@ -13,21 +13,26 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
 
     private Routine m_routine;
 
-    private const float onYPosition = 30f;
-    private const float offYPosition = 100f;
-
-    private const float onYPositionVR = 250f;
-    private const float offYPositionVR = -100f;
+    public float onYPosition = 30f;
+    public float offYPosition = 100f;
+    public bool isVR = false;
 
     private const float moveTime = 0.25f;
     private bool controlsActive = false;
     
+    void Update()
+    {
+        if(isVR && Input.GetButtonDown("MenuLeft")){
+            VRSlide();
+        }
+    }
+
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
-        if(!VRControl.IsLoadedInVR())
+        if(!isVR)
         {
-            GameObject sceneGraphTest = GameObject.Find("SceneGraph");
-            if (sceneGraphTest == null)
+            GameObject sceneGraph = GameObject.Find("SceneGraph");
+            if (sceneGraph == null)
                 return;
             m_routine.Replace(this, CheckHoveringOverUI());
         }
@@ -35,30 +40,27 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
     
     IEnumerator CheckHoveringOverUI()
     {
-        yield return anchor.AnchorPosTo(GetOnPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
+        yield return anchor.AnchorPosTo(onYPosition, moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
         while(EventSystem.current.IsPointerOverGameObject())
         {
             yield return null;
         }
-        yield return anchor.AnchorPosTo(GetOffPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
+        yield return anchor.AnchorPosTo(offYPosition, moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
     }
 
-    public void ForceSlide(bool on)
+    public void ForceSlide(bool on, bool withVR=false)
     {
+        if (withVR){
+            VRControl.Rig().EnablePointersForControl(on);
+        }
+
         controlsActive = on;
-        m_routine.Replace(this, anchor.AnchorPosTo(on ? GetOffPosition() : GetOnPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut));
+        m_routine.Replace(this, anchor.AnchorPosTo(on ? onYPosition : offYPosition, moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut));
     }
 
-    public void ToggleSlide()
+    public void VRSlide()
     {
-        ForceSlide(!controlsActive);
-    }
-
-    private float GetOnPosition(){
-        return VRControl.IsLoadedInVR() ? onYPositionVR : onYPosition;
-    }
-
-    private float GetOffPosition(){
-        return VRControl.IsLoadedInVR() ? offYPositionVR : offYPosition;
+        controlsActive = !controlsActive;
+        ForceSlide(controlsActive, true);
     }
 }
