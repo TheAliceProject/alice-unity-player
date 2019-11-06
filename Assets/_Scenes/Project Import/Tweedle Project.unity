@@ -243,6 +243,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anchor: {fileID: 448281127}
+  onYPosition: 30
+  offYPosition: 100
 --- !u!224 &448281127 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5961744192874826453, guid: 2691b1fcc3d89f343978187ec7df7027,
@@ -487,11 +489,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuButton: {fileID: 559558611}
   restartButton: {fileID: 154085130}
-  introCanvas: {fileID: 616136224}
   CameraPrefab: {fileID: 8664015909828947525, guid: 1b061487ac515db419a162d8f975d36b,
     type: 3}
   uISlidedown: {fileID: 256013915}
-  parser: {fileID: 203157111}
   speedUpButton: {fileID: 1416396877}
   slowDownButton: {fileID: 1024430893}
   pauseButton: {fileID: 461703357}
@@ -862,7 +862,7 @@ PrefabInstance:
     - target: {fileID: 7612658897906668719, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00001476235
+      value: 0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 2246813896871826968, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
@@ -879,6 +879,16 @@ PrefabInstance:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4541764972182016756, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: introCanvas
+      value: 
+      objectReference: {fileID: 616136224}
+    - target: {fileID: 4541764972182016756, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: parser
+      value: 
+      objectReference: {fileID: 203157111}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
 --- !u!114 &816766728 stripped
