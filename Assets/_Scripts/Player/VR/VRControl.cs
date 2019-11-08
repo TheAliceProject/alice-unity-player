@@ -70,7 +70,9 @@ public class VRControl : MonoBehaviour
     void Update()
     {
         if(XRSettings.enabled)
+        {
             CheckTriggers();
+        }
     }
 #endif
 

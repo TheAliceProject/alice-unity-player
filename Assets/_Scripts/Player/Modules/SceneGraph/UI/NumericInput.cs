@@ -61,12 +61,14 @@ public class NumericInput : MonoBehaviour
 
     public void Spawn(string label, AsyncReturn<double> returnDouble)
     {
+        SGScene.UIActive = true;
         SetLabel(label);
         m_Routine.Replace(this, WaitForUserToPopulate(returnDouble));
     }
 
     public void Spawn(string label, AsyncReturn<int> returnInt)
     {
+        SGScene.UIActive = true;
         SetLabel(label);
         m_Routine.Replace(this, WaitForUserToPopulate(returnInt));
     }
@@ -126,6 +128,7 @@ public class NumericInput : MonoBehaviour
 
     private void DestroyMe()
     {
+        SGScene.UIActive = false;
         if (VRControl.IsLoadedInVR())
         {
             VRControl.Rig().EnablePointersForUI(false);

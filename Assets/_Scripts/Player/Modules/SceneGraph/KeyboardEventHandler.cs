@@ -77,6 +77,37 @@ namespace Alice.Player.Unity
             }
         }
 
+        public void ReleaseAllKeys(){
+            if (m_heldKeyCodes.Count > 0)
+            {
+                HashSet<KeyCode> releasedKeyCodes = new HashSet<KeyCode>();
+                foreach (KeyCode vKey in m_heldKeyCodes)
+                {
+                    if (KeyMap.TweedleKeyLookup.ContainsKey(vKey))
+                        releasedKeyCodes.Add(vKey);
+                    Release(KeyMap.TweedleKeyLookup[vKey]);
+                }
+                foreach (KeyCode vKey in releasedKeyCodes)
+                {
+                    m_heldKeyCodes.Remove(vKey);
+                }
+            }
+            foreach (string axisString in KeyMap.AxisKeyPairs.Keys)
+            {
+                float axisValue = Input.GetAxis(axisString);
+                Tuple<Key, Key> keys;
+                if (KeyMap.AxisKeyPairs.TryGetValue(axisString, out keys))
+                {
+                    Release(keys.Item1);
+                    Release(keys.Item2);
+                }
+            }
+            Release(Key.LEFT_TRIGGER);
+            Release(Key.RIGHT_TRIGGER);
+
+            RemoveReleasedKeys();
+        }
+
         private void UpdateControllerEvents(){
             if (Input.anyKeyDown){
                 foreach (string buttonString in KeyMap.VRButtonLookup.Keys){
