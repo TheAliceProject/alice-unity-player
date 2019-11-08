@@ -81,6 +81,10 @@ namespace Alice.Player.Unity {
         public SceneCanvas SceneCanvas { get { return m_SceneCanvas; } }
 
         [SerializeField]
+        private SceneCanvas m_VRCanvas = null;
+        public SceneCanvas VRSceneCanvas { get { return m_VRCanvas; } }
+
+        [SerializeField]
         private SceneCanvas m_WorldCanvas = null;
         public SceneCanvas WorldCanvas { get { return m_WorldCanvas; } }
 

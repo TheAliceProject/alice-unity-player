@@ -33,6 +33,7 @@ public class UserInput : MonoBehaviour
 
     public void Spawn(string label, AsyncReturn<string> stringReturn)
     {
+        SGScene.UIActive = true;
         SetLabel(label);
         userInputDone = false;
         m_Routine.Replace(this, WaitForUserToPopulate(stringReturn));
@@ -60,6 +61,7 @@ public class UserInput : MonoBehaviour
         }
         returnString.Return(GetUserInput());
 
+        SGScene.UIActive = false;
         if (VRControl.IsLoadedInVR())
         {
             VRControl.Rig().EnablePointersForUI(false);

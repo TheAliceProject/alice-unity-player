@@ -33,6 +33,7 @@ public class BooleanInput : MonoBehaviour
 
     public void Spawn(string label, AsyncReturn<bool> boolReturn)
     {
+        SGScene.UIActive = true;
         SetLabel(label);
         boolState = BoolState.None;
         m_Routine.Replace(this, WaitForUserToPopulate(boolReturn));
@@ -54,6 +55,7 @@ public class BooleanInput : MonoBehaviour
             yield return null;
         }
         returnBool.Return(boolState == BoolState.True);
+        SGScene.UIActive = false;
         if(VRControl.IsLoadedInVR()){
             VRControl.Rig().EnablePointersForUI(false);
             Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
