@@ -104,6 +104,11 @@ namespace Alice.Player.Unity {
             );
         }
 
+        public virtual Scale GetScale(){
+            UnityEngine.Vector3 scale = transform.GetChild(0).localScale;
+            return new Scale(scale.x, scale.y, scale.z);
+        }
+
         private void OnPaintPropertyChanged(TValue inValue) {
             m_CachedPaint = inValue.RawObject<Paint>();  
             OnPaintChanged();

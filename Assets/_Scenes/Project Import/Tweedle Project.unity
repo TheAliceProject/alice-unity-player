@@ -243,8 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anchor: {fileID: 448281127}
-  onYPosition: 30
-  offYPosition: 100
+  isVR: 0
 --- !u!224 &448281127 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5961744192874826453, guid: 2691b1fcc3d89f343978187ec7df7027,
