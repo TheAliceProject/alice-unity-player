@@ -2826,6 +2826,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4761171393770823067, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
+        type: 3}
+      propertyPath: m_Name
+      value: DecimalInputVR
+      objectReference: {fileID: 0}
     - target: {fileID: 7966229941131597301, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: label
@@ -2841,11 +2846,6 @@ PrefabInstance:
       propertyPath: doneButton
       value: 
       objectReference: {fileID: 2784758098472035801}
-    - target: {fileID: 4761171393770823067, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
-        type: 3}
-      propertyPath: m_Name
-      value: DecimalInputVR
-      objectReference: {fileID: 0}
     - target: {fileID: 3754606767596030181, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_textInfo.textComponent
@@ -2864,22 +2864,22 @@ PrefabInstance:
     - target: {fileID: 3754606767596030181, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_margin.w
-      value: 4.9122443
+      value: 1.698957
       objectReference: {fileID: 0}
     - target: {fileID: 3754606767596030181, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_fontSize
-      value: 22.75
+      value: 28.21
       objectReference: {fileID: 0}
     - target: {fileID: 3754606767596030181, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_margin.z
-      value: 190.62404
+      value: 185.00075
       objectReference: {fileID: 0}
     - target: {fileID: 3754606767596030181, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_margin.x
-      value: -18.032057
+      value: -83.100784
       objectReference: {fileID: 0}
     - target: {fileID: 3754606767596030181, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
@@ -2905,6 +2905,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.wordCount
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3754606767596030181, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
+        type: 3}
+      propertyPath: m_margin.y
+      value: -11.91821
       objectReference: {fileID: 0}
     - target: {fileID: 5556377539936690009, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
@@ -3149,7 +3154,7 @@ PrefabInstance:
     - target: {fileID: 2693204585050452797, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 79
+      value: 57.3
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7966229941131597301, guid: 780a58cb0e22a0d46ab1cbce382c3d23, type: 3}
