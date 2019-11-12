@@ -72,7 +72,7 @@ namespace Alice.Player.Unity {
 
         private Bounds GetBoundsFor(Renderer ren) {
             if (ren is SkinnedMeshRenderer) {
-                return ((SkinnedMeshRenderer)ren).localBounds;
+                return ((SkinnedMeshRenderer)ren).sharedMesh.bounds;
             }
             if (ren is MeshRenderer) {
                 var localize = ren.worldToLocalMatrix;

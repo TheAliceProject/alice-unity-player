@@ -430,6 +430,18 @@ namespace Alice.Player.Modules {
             }
             throw new SceneGraphException("No scene graph entity exists for tweedle object.");
         }
+
+        [PInteropMethod]
+        public static Scale getLocalScale(TValue model)
+        {
+            var entity = SceneGraph.Current.FindEntity(model);
+            if (entity && entity is SGModel)
+            {
+                var sgModel = (SGModel)entity;
+                return sgModel.GetScale();
+            }
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
+        }
         #endregion // Transformations
     }
 }
