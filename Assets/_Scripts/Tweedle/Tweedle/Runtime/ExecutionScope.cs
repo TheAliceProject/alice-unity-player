@@ -154,11 +154,14 @@ namespace Alice.Tweedle.VM
             {
                 return result;
             }
-            if (TryGetThisValue(varName, out result))
+            if (TryGetInstanceFieldValue(varName, out result))
             {
                 return result;
             }
-            
+            if (TryGetStaticFieldValue(varName, out result)) {
+                return result;
+            }
+
             throw new TweedleRuntimeException("Attempt to read unassigned variable <" + varName + "> failed");
         }
 
@@ -200,7 +203,7 @@ namespace Alice.Tweedle.VM
             return false;
         }
 
-        protected bool TryGetThisValue(string varName, out TValue outValue)
+        protected bool TryGetInstanceFieldValue(string varName, out TValue outValue)
         {
             if (thisValue != TValue.UNDEFINED)
             {
@@ -210,6 +213,19 @@ namespace Alice.Tweedle.VM
                     return true;
                 }
                 catch (TweedleNonexistentFieldException) { }
+            }
+
+            outValue = TValue.UNDEFINED;
+            return false;
+        }
+
+        protected bool TryGetStaticFieldValue(string varName, out TValue outValue) {
+            if (thisValue != TValue.UNDEFINED) {
+                try {
+                    TValue typeVal = TValue.FromType(thisValue.Type);
+                    outValue = typeVal.Get(this, varName);
+                    return true;
+                } catch (TweedleNonexistentFieldException) { }
             }
 
             outValue = TValue.UNDEFINED;
