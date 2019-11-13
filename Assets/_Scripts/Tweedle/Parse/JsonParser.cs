@@ -269,7 +269,11 @@ namespace Alice.Tweedle.Parse
                             GameObject loadedModel = assetLoader.LoadFromMemoryWithTextures(data, meshRef.file, options, null, System.IO.Path.GetDirectoryName(cachePath));
 
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
-                            SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
+
+                            Bounds boundsConverted = new Bounds(Vector3.zero, new Vector3(-inManifest.boundingBox.min[0] + inManifest.boundingBox.max[0],
+                                                                                        -inManifest.boundingBox.min[1] + inManifest.boundingBox.max[1],
+                                                                                        -inManifest.boundingBox.min[2] + inManifest.boundingBox.max[2]));
+                            SceneGraph.Current.ModelCache.Add(cacheID, loadedModel, boundsConverted);
                         }
                     }
                 }

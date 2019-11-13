@@ -1,8 +1,11 @@
 using UnityEngine;
+using System.Collections.Generic;
+
 namespace Alice.Player.Unity {
     public sealed class ModelCache : ResourceCache<GameObject> {
 
         private Transform m_Root;
+        private Dictionary<string, Bounds> m_boundingBox = new Dictionary<string, Bounds>();
 
         public ModelCache(Transform inRoot) : base() {
             m_Root = inRoot;
@@ -11,13 +14,19 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public override bool Add(string inIdentifier, GameObject inModel) {
+        public bool Add(string inIdentifier, GameObject inModel, Bounds inBounds) {
             bool success = base.Add(inIdentifier, inModel);
             NormalizeWeightsInModel(inModel);
             if (success && m_Root) {
                 inModel.transform.SetParent(m_Root, false);
             }
+            m_boundingBox[inIdentifier] = inBounds;
             return success;
+        }
+
+        public Bounds GetBoundingBoxFromModel(string inIdentifier)
+        {
+            return m_boundingBox[inIdentifier];
         }
 
         private void NormalizeWeightsInMesh(Mesh mesh)
