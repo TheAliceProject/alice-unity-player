@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Alice.Tweedle;
 
 namespace Alice.Tweedle.VM
@@ -101,7 +102,7 @@ namespace Alice.Tweedle.VM
                 //  * Add multiple child steps to the queue (doTogether)
                 step.Execute();
             }
-            catch (TweedleRuntimeException tre)
+            catch (Exception tre)
             {
                 UnityEngine.Debug.Log(
                     "*------------------------Exception------------------------*\n" + tre.Message +
