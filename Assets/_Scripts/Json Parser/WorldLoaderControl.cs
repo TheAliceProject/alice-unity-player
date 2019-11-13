@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.IO;
 using Alice.Tweedle.Parse;
 using TMPro;
+using BeauRoutine;
 
 public class WorldLoaderControl : MonoBehaviour
 {
@@ -77,6 +78,9 @@ public class WorldLoaderControl : MonoBehaviour
             if (File.Exists(worldFiles[i]))
             {
                 RecentWorldButton worldButton = Instantiate(recentWorldButtonPrefab, contentBox);
+                RectTransform contentBoxRect = (RectTransform)contentBox;
+                float currSize = contentBoxRect.sizeDelta.y;
+                contentBoxRect.SetSizeDelta(currSize + 50f, Axis.Y);
                 worldButton.SetText(worldFiles[i]);
                 worldButton.button.onClick.AddListener(() =>
                 {
