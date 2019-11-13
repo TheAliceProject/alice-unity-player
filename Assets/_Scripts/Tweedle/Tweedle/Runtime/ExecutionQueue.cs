@@ -105,8 +105,8 @@ namespace Alice.Tweedle.VM
             {
                 UnityEngine.Debug.Log(
                     "*------------------------Exception------------------------*\n" + tre.Message +
-                    "\n*----------------------System Stack-----------------------*\n" + tre.StackTrace +
                     "\n*----------------------Tweedle Stack----------------------*\n" + step.CallStack() +
+                    "\n*----------------------System Stack-----------------------*\n" + tre.StackTrace +
                     "\n*---------------------------------------------------------*");
                 // TODO decide how best to handle errors in steps
                 throw tre;
