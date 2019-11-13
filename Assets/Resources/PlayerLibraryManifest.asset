@@ -18,5 +18,5 @@ MonoBehaviour:
       relativePath: SceneGraphLibrary.a3w
     identifier:
       name: SceneGraphLibrary
-      version: 0.7
+      version: 0.8
       type: Library
