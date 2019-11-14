@@ -62,17 +62,6 @@ namespace Alice.Player.Unity {
         }
 
         protected override Bounds GetMeshBounds() {
-            if (m_Renderers.Length == 0)
-                return new Bounds(Vector3.zero, Vector3.zero);
-
-            Bounds compoundBounds = GetBoundsFor(m_Renderers[0]);
-            for (int i = 1; i < m_Renderers.Length; ++i) {
-                compoundBounds.Encapsulate(GetBoundsFor(m_Renderers[i]));
-            }
-            return compoundBounds;
-        }
-
-        private Bounds GetBoundsFor(Renderer ren) {
             return m_modelBounds;
         }
 

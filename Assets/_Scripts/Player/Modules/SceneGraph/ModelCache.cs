@@ -5,7 +5,7 @@ namespace Alice.Player.Unity {
     public sealed class ModelCache : ResourceCache<GameObject> {
 
         private Transform m_Root;
-        private Dictionary<string, Bounds> m_boundingBox = new Dictionary<string, Bounds>();
+        private Dictionary<string, Bounds> m_initialBoundingBoxes = new Dictionary<string, Bounds>();
 
         public ModelCache(Transform inRoot) : base() {
             m_Root = inRoot;
@@ -20,13 +20,13 @@ namespace Alice.Player.Unity {
             if (success && m_Root) {
                 inModel.transform.SetParent(m_Root, false);
             }
-            m_boundingBox[inIdentifier] = inBounds;
+            m_initialBoundingBoxes[inIdentifier] = inBounds;
             return success;
         }
 
         public Bounds GetBoundingBoxFromModel(string inIdentifier)
         {
-            return m_boundingBox[inIdentifier];
+            return m_initialBoundingBoxes[inIdentifier];
         }
 
         private void NormalizeWeightsInMesh(Mesh mesh)
