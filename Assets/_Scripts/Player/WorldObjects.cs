@@ -8,6 +8,7 @@ public class WorldObjects : MonoBehaviour
     private static WorldObjects _instance;
 
     public GameObject introCanvas;
+    public GameObject vrObjects;
     public UnityObjectParser parser;
 
     void Awake()
@@ -30,6 +31,15 @@ public class WorldObjects : MonoBehaviour
     internal static UnityObjectParser GetParser(){
         if (_instance != null){
             return _instance.parser;
+        }
+        return null;
+    }
+
+    internal static GameObject GetVRObjects()
+    {
+        if (_instance != null)
+        {
+            return _instance.vrObjects;
         }
         return null;
     }

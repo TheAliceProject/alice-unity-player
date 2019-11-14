@@ -76,7 +76,7 @@ public class VRRig : MonoBehaviour
     private float CheckHandRaycasts(Transform controller){
         RaycastHit hit;
         float pointerDistance = VRControl.WORLD_CANVAS_DISTANCE;
-        if (Physics.Raycast(controller.position, controller.forward, out hit, 5f)){
+        if (Physics.Raycast(controller.position, controller.forward, out hit, 500f)){
             pointerDistance = hit.distance;
             Button hitButton = hit.transform.gameObject.GetComponent<Button>();
             if (hitButton != null){
