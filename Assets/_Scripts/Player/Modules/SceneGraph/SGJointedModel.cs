@@ -7,6 +7,7 @@ namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
         
         private string m_ResourceId;
+        private Bounds m_modelBounds;
         private Renderer[] m_Renderers;
         private MaterialPropertyBlock[] m_PropertyBlocks;
         public List<Transform> m_vehicledList = new List<Transform>();
@@ -27,6 +28,7 @@ namespace Alice.Player.Unity {
 
             if (prefab) {
                 var model = Instantiate(prefab, cachedTransform, false);
+                m_modelBounds = SceneGraph.Current.ModelCache.GetBoundingBoxFromModel(inIdentifier);
                 m_ModelTransform = model.transform;
                 m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
                 m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
@@ -61,26 +63,7 @@ namespace Alice.Player.Unity {
         }
 
         protected override Bounds GetMeshBounds() {
-            if (m_Renderers.Length == 0)
-                return new Bounds(Vector3.zero, Vector3.zero);
-
-            Bounds compoundBounds = GetBoundsFor(m_Renderers[0]);
-            for (int i = 1; i < m_Renderers.Length; ++i) {
-                compoundBounds.Encapsulate(GetBoundsFor(m_Renderers[i]));
-            }
-            return compoundBounds;
-        }
-
-        private Bounds GetBoundsFor(Renderer ren) {
-            if (ren is SkinnedMeshRenderer) {
-                return ((SkinnedMeshRenderer)ren).sharedMesh.bounds;
-            }
-            if (ren is MeshRenderer) {
-                var localize = ren.worldToLocalMatrix;
-                var localCenter = localize.MultiplyPoint(ren.bounds.center);
-                return new Bounds(localCenter, ren.bounds.size);
-            }
-            return ren.bounds;
+            return m_modelBounds;
         }
 
         protected override void OnPaintChanged() {
