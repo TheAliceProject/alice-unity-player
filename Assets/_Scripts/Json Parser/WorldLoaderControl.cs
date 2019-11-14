@@ -23,7 +23,8 @@ public class WorldLoaderControl : MonoBehaviour
     {
         PopulateLevels();
         
-        loadInVR.onValueChanged.AddListener(VRControl.Loaded);
+        if(loadInVR != null)
+            loadInVR.onValueChanged.AddListener(VRControl.Loaded);
 
         versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
     }
@@ -84,7 +85,7 @@ public class WorldLoaderControl : MonoBehaviour
                 worldButton.SetText(worldFiles[i]);
                 worldButton.button.onClick.AddListener(() =>
                 {
-                    parser.Select(worldButton.GetFilePath());
+                    parser.OpenWorld(worldButton.GetFilePath());
                 });
                 activeButtons.Add(worldButton.gameObject);
             }

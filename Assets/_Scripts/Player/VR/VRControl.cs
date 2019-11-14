@@ -18,11 +18,12 @@ public class VRControl : MonoBehaviour
                                                           // if the player is completely upright. We'll still let them turn the camera by large amounts, but filter out little (unintentional) ones
     public const float TRIGGER_SENSITIVITY = 0.5f;
     public const float WORLD_CANVAS_DISTANCE = 1.5f;
-    public string VRTypeFound = "";
     public Toggle loadInVRToggle;
     public VRRig rig;
     public EventSystem eventSystem;
-    
+    public GameObject VRObjects;
+
+    private string VRTypeFound = "";
     private bool loadWorldInVR = false;
     private Routine m_routine;
     private bool lastRightTrigger = false;
@@ -38,7 +39,6 @@ public class VRControl : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        rig = null;
         if (_instance != null && _instance != this){
             Destroy(this.gameObject);
         }
@@ -133,6 +133,7 @@ public class VRControl : MonoBehaviour
             }
             else
             {
+                VRObjects.SetActive(true);
                 XRSettings.enabled = true;
                 loadWorldInVR = true;
                 loadInVRToggle.gameObject.SetActive(true);

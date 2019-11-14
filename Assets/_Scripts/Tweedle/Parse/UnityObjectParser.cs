@@ -16,6 +16,9 @@ namespace Alice.Tweedle.Parse
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
         public Canvas uiCanvas;
+        public VRRig uiRig;
+        public Canvas vrCanvas;
+
         public WorldLoaderControl worldLoader;
         public ModalWindow modalWindowPrefab;
 
@@ -33,7 +36,7 @@ namespace Alice.Tweedle.Parse
             DeleteTemporaryAudioFiles();
         }
 
-        public void Select(string fileName = "") {
+        public void OpenWorld(string fileName = "") {
             string zipPath = fileName;
             if (zipPath == "") {
                 var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", project_ext, false);
@@ -93,7 +96,7 @@ namespace Alice.Tweedle.Parse
         public IEnumerator ReloadDelayed()
         {
             yield return null; // Wait a frame
-            Select(m_currentFilePath);
+            OpenWorld(m_currentFilePath);
         }
 
         // Use this for MonoBehaviour initialization
@@ -106,6 +109,7 @@ namespace Alice.Tweedle.Parse
         {
             m_QueueProcessor.Replace(this, m_VM.ProcessQueue());
             uiCanvas.gameObject.SetActive(false);
+            WorldObjects.GetVRObjects().SetActive(false);
         }
 
         private void DeleteTemporaryAudioFiles()
