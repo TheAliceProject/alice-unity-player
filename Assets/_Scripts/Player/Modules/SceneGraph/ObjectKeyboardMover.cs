@@ -32,13 +32,11 @@ namespace Alice.Player.Unity {
         private void move(SGTransformableEntity movedObject, Key theKey) {
             var movingTrans = movedObject.cachedTransform;
             if (KeyMap.UpKeys.Contains(theKey)) {
-                var p = movingTrans.position - movingTrans.forward * UP_DOWN_SCALE_FACTOR * Time.deltaTime;
-                VantagePoint vp = VantagePoint.FromUnity(p, movingTrans.rotation);
+                VantagePoint vp = VantagePoint.FromUnity(movingTrans.position - BackwardMovement(movingTrans), movingTrans.rotation);
                 movedObject.UpdateVantagePointProperty(vp);
             }
             if (KeyMap.DownKeys.Contains(theKey)) {
-                var p = movingTrans.position + movingTrans.forward * UP_DOWN_SCALE_FACTOR * Time.deltaTime;
-                VantagePoint vp = VantagePoint.FromUnity(p, movingTrans.rotation);
+                VantagePoint vp = VantagePoint.FromUnity(movingTrans.position + BackwardMovement(movingTrans), movingTrans.rotation);
                 movedObject.UpdateVantagePointProperty(vp);
             }
             if (KeyMap.LeftKeys.Contains(theKey)) {
@@ -51,6 +49,13 @@ namespace Alice.Player.Unity {
                 VantagePoint vp = VantagePoint.FromUnity(movingTrans.position, movingTrans.rotation);
                 movedObject.UpdateVantagePointProperty(vp);
             }
+        }
+
+        private static UnityEngine.Vector3 BackwardMovement(Transform movingTrans) {
+            UnityEngine.Vector3 forward = movingTrans.forward;
+            UnityEngine.Vector3 forwardMotion = new UnityEngine.Vector3(forward.x, 0, forward.z);
+            forwardMotion.Normalize();
+            return forwardMotion * UP_DOWN_SCALE_FACTOR * Time.deltaTime;
         }
     }
 }
