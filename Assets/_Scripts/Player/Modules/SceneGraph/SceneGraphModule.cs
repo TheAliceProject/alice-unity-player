@@ -94,6 +94,15 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static string[] findJointsBeginningWith(string start, TValue model) {
+            var modelEnt = SceneGraph.Current.FindEntity<SGJointedModel>(model);
+            if (modelEnt) {
+                return modelEnt.FindJointsBeginningWith(start);
+            }
+            throw new SceneGraphException("No scene graph entity exists for tweedle object.");
+        }
+
+        [PInteropMethod]
         public static void createSceneEntity(TValue scene) {
             var entity = SGEntity.Create<SGScene>(scene);
             SceneGraph.Current.AddEntity(entity);

@@ -1,5 +1,5 @@
 ﻿using System;
-using Alice.Tweedle;
+using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
@@ -7,11 +7,14 @@ namespace Alice.Tweedle.VM
     {
         Func<TValue> body;
 
-        public ValueGenerationStep(string callStack, ExecutionScope scope, Func<TValue> body)
+        public ValueGenerationStep(string callStackEntry, ExecutionScope scope, Func<TValue> body)
             : base(scope)
         {
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
+                scope.StackWith(stackBuilder.Builder);
+                callStack = stackBuilder.ToString();
+            }
             this.body = body;
-            this.callStack = callStack;
         }
 
         internal override void Execute()

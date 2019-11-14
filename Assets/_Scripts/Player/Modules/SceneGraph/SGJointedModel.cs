@@ -1,6 +1,7 @@
 using UnityEngine;
 using Alice.Tweedle;
 using System.Collections.Generic;
+using System;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
@@ -104,6 +105,12 @@ namespace Alice.Player.Unity {
             return joint;
         }
 
+        internal string[] FindJointsBeginningWith(string start) {
+            List<string> matches = new List<string>();
+            CollectInHierarchy(m_ModelTransform, start, matches);
+            return matches.ToArray();
+        }
+
         protected override void SetSize(Vector3 inSize) {
             var meshSize = m_CachedMeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
@@ -121,7 +128,15 @@ namespace Alice.Player.Unity {
                 );
             }
         }
-            
+
+        private void CollectInHierarchy(Transform inTransform, string start, List<string> matches) {
+            foreach (Transform child in inTransform) {
+                if (child.gameObject.name.StartsWith(start, StringComparison.Ordinal)) {
+                    matches.Add(child.gameObject.name);
+                }
+                CollectInHierarchy(child, start, matches);
+            }
+        }
 
         private GameObject FindInHierarchy(Transform inTransform, string inName) {
             foreach (Transform child in inTransform) {
