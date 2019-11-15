@@ -74,12 +74,14 @@ public class WorldLoaderControl : MonoBehaviour
     void LoadButtons(List<string> worldFiles)
     {
         ClearButtons();
+        RectTransform contentBoxRect = (RectTransform)contentBox;
+        contentBoxRect.SetSizeDelta(0f, Axis.Y);
         for (int i = 0; i < worldFiles.Count && i <= 8; i++)
         {    
             if (File.Exists(worldFiles[i]))
             {
                 RecentWorldButton worldButton = Instantiate(recentWorldButtonPrefab, contentBox);
-                RectTransform contentBoxRect = (RectTransform)contentBox;
+                contentBoxRect = (RectTransform)contentBox;
                 float currSize = contentBoxRect.sizeDelta.y;
                 contentBoxRect.SetSizeDelta(currSize + 50f, Axis.Y);
                 worldButton.SetText(worldFiles[i]);
