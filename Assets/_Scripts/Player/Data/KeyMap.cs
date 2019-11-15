@@ -125,7 +125,15 @@ public static class KeyMap
         {Key.RIGHT_GRIP, Key.CONTROL},
         {Key.LEFT_GRIP, Key.SHIFT},
         {Key.RIGHT_THUMBSTICK_CLICK, Key.DIGIT_1},
-        {Key.LEFT_THUMBSTICK_CLICK, Key.DIGIT_2}
+        {Key.LEFT_THUMBSTICK_CLICK, Key.DIGIT_2},
+        {Key.RIGHT_AXIS_RIGHT, Key.RIGHT},
+        {Key.LEFT_AXIS_RIGHT, Key.RIGHT},
+        {Key.RIGHT_AXIS_LEFT, Key.LEFT},
+        {Key.LEFT_AXIS_LEFT, Key.LEFT},
+        {Key.RIGHT_AXIS_UP, Key.UP},
+        {Key.LEFT_AXIS_UP, Key.UP},
+        {Key.RIGHT_AXIS_DOWN, Key.DOWN},
+        {Key.LEFT_AXIS_DOWN, Key.DOWN}
     };
 
     public static Dictionary<string, Key> VRButtonLookup = new Dictionary<string, Key>()
