@@ -353,6 +353,42 @@ namespace Alice.Player.Modules {
             return asyncReturn;
         }
 
+        [PInteropMethod]
+        public static AsyncReturn<bool> doTheseCollide(TValue targetA, TValue targetB)
+        {
+            AsyncReturn<bool> asyncReturn = new AsyncReturn<bool>();
+            var entityA = SceneGraph.Current.FindEntity(targetA);
+            var entityB = SceneGraph.Current.FindEntity(targetB);
+            bool AisModel = false;
+            bool BisModel = false;
+            Bounds entityABounds = new Bounds();
+            Bounds entityBBounds = new Bounds();
+
+            if (entityA is SGModel){
+                AisModel = true;
+                entityABounds = (entityA as SGModel).GetBoundsInWorldSpace(false);
+            }
+            if (entityB is SGModel){
+                BisModel = true;
+                entityBBounds = (entityB as SGModel).GetBoundsInWorldSpace(false);
+            }
+
+            if(AisModel && BisModel){
+                if(entityABounds.Intersects(entityBBounds))
+                    asyncReturn.Return(true);
+                else
+                    asyncReturn.Return(false);
+            }
+            else if(AisModel){
+                asyncReturn.Return(entityABounds.Contains(entityB.cachedTransform.position));
+            }
+            else if(BisModel){
+                asyncReturn.Return(entityBBounds.Contains(entityA.cachedTransform.position));
+            }
+
+            return asyncReturn;
+        }
+
         private static IEnumerator DelayReturnRoutine(AsyncReturn asyncReturn, float delay)
         {
             yield return delay;
