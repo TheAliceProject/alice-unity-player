@@ -15,6 +15,7 @@ public class VRBrowser : MonoBehaviour
         public TextMeshProUGUI currentDirectory;
         public UnityObjectParser parser;
         public ScrollRect rect;
+        public Sprite worldSprite;
 
         private string pwd;
         // Use this for initialization
@@ -114,6 +115,7 @@ public class VRBrowser : MonoBehaviour
                 if (file.Contains(".a3w") || file.Contains(".A3W"))
                 {
                     button = InstantiateBrowserButton();
+                    button.SetSpriteLabel(worldSprite); // Otherwise folder by default
                     button.transform.localPosition = new Vector3(button.transform.localPosition.x, -45f * i - 25f, button.transform.localPosition.z);
                     button.label.text = Path.GetFileName(file);
                     i++;
