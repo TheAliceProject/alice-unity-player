@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 88.3, y: -53.9}
+  m_AnchoredPosition: {x: 81.2, y: -110.9}
   m_SizeDelta: {x: 120, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3624997915560520747
@@ -190,7 +190,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -12.9, y: 15.1}
+  m_AnchoredPosition: {x: 157, y: 55.8}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8641761323754268361
@@ -264,7 +264,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 20.2417, y: 15.447819, z: 0, w: 0}
+  m_margin: {x: 20.2417, y: 59.138794, z: -128.3422, w: 0}
   m_textInfo:
     textComponent: {fileID: 5143537938083166203}
     characterCount: 6
@@ -350,7 +350,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 119, y: 40}
+  m_SizeDelta: {x: 160, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3252812604709924398
 CanvasRenderer:
@@ -408,7 +408,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.29803923, g: 0.3254902, b: 0.35686275, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.2509804, g: 0.7843138, b: 0.9568628, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.2509804, g: 0.7843138, b: 0.9568628, a: 1}
@@ -445,9 +445,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 45
-  m_PreferredWidth: -1
-  m_PreferredHeight: 45
+  m_MinHeight: -1
+  m_PreferredWidth: 160
+  m_PreferredHeight: 90
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -466,3 +466,4 @@ MonoBehaviour:
   button: {fileID: 5590707378707279913}
   nameText: {fileID: 5143537938083166203}
   fullText: {fileID: 2331497485436973847}
+  background: {fileID: 3484151924084765465}

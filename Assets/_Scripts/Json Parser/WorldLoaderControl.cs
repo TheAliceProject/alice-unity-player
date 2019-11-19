@@ -83,7 +83,7 @@ public class WorldLoaderControl : MonoBehaviour
                 RecentWorldButton worldButton = Instantiate(recentWorldButtonPrefab, contentBox);
                 contentBoxRect = (RectTransform)contentBox;
                 float currSize = contentBoxRect.sizeDelta.y;
-                contentBoxRect.SetSizeDelta(currSize + 50f, Axis.Y);
+                contentBoxRect.SetSizeDelta(currSize + 100f, Axis.Y);
                 worldButton.SetText(worldFiles[i]);
                 worldButton.button.onClick.AddListener(() =>
                 {

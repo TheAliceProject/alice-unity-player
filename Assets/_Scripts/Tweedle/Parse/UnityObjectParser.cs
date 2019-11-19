@@ -1,10 +1,7 @@
 using System.IO;
 using UnityEngine;
-
-using ICSharpCode.SharpZipLib.Zip;
 using Alice.Tweedle.VM;
-using Alice.Tweedle.File;
-using System.Collections.Generic;
+using UnityEngine.UI;
 using System.Collections;
 using BeauRoutine;
 using SFB;
@@ -18,6 +15,7 @@ namespace Alice.Tweedle.Parse
         public Canvas uiCanvas;
         public VRRig uiRig;
         public Canvas vrCanvas;
+        public Button loadNewWorldButton;
 
         public WorldLoaderControl worldLoader;
         public ModalWindow modalWindowPrefab;
@@ -29,6 +27,10 @@ namespace Alice.Tweedle.Parse
         void Awake()
         {
             DeleteTemporaryAudioFiles();
+            loadNewWorldButton.onClick.AddListener(() =>
+            {
+                OpenWorld();
+            });
         }
 
         void OnDestroy()
