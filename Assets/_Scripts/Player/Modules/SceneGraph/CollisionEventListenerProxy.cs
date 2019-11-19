@@ -134,12 +134,10 @@ namespace Alice.Player.Unity {
 
         public float GetDistance()
         {
-            //return UnityEngine.Vector3.Distance(entity1.transform.position, entity2.transform.position);
             UnityEngine.Vector3 point1, point2;
             if(entity1HasBounds){
                 var sgModel = (SGModel)entity1;
-                bounds1 = sgModel.GetBounds(true);
-                bounds1.center = entity1.cachedTransform.position;
+                bounds1 = sgModel.GetBoundsInWorldSpace(true);
                 point1 = bounds1.ClosestPoint(entity2.transform.position);
             }
             else{
@@ -149,8 +147,7 @@ namespace Alice.Player.Unity {
 
             if (entity2HasBounds){
                 var sgModel = (SGModel)entity2;
-                bounds2 = sgModel.GetBounds(true);
-                bounds2.center = entity2.cachedTransform.position;
+                bounds2 = sgModel.GetBoundsInWorldSpace(true);
                 point2 = bounds2.ClosestPoint(entity1.transform.position);
             }
             else{
