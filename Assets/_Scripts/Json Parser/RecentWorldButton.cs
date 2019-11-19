@@ -11,7 +11,8 @@ public class RecentWorldButton : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI fullText;
     public Image background;
-
+    public BoxCollider collider;
+    
     private string filePath;
 
     public void SetText(string text)
@@ -30,6 +31,12 @@ public class RecentWorldButton : MonoBehaviour
             background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
         }
 
+    }
+
+    public void ScaleText(float scaleFactor)
+    {
+        nameText.fontSize *= scaleFactor;
+        fullText.fontSize *= scaleFactor;
     }
 
     public string GetFilePath()

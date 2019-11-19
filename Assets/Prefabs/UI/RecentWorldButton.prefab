@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 81.2, y: -110.9}
+  m_AnchoredPosition: {x: 81.2, y: -113.5}
   m_SizeDelta: {x: 120, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3624997915560520747
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -326.01004, w: 11.099823}
+  m_margin: {x: 0, y: 0, z: -355.26498, w: 2.4954357}
   m_textInfo:
     textComponent: {fileID: 2331497485436973847}
     characterCount: 74
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 20.2417, y: 59.138794, z: -128.3422, w: 0}
+  m_margin: {x: 20.2417, y: 55.69701, z: -375, w: -7.743952}
   m_textInfo:
     textComponent: {fileID: 5143537938083166203}
     characterCount: 6
@@ -325,6 +325,7 @@ GameObject:
   - component: {fileID: 5590707378707279913}
   - component: {fileID: 8084481429812900512}
   - component: {fileID: 3550514987311526686}
+  - component: {fileID: 5884409317675412868}
   m_Layer: 5
   m_Name: RecentWorldButton
   m_TagString: Untagged
@@ -467,3 +468,17 @@ MonoBehaviour:
   nameText: {fileID: 5143537938083166203}
   fullText: {fileID: 2331497485436973847}
   background: {fileID: 3484151924084765465}
+  collider: {fileID: 5884409317675412868}
+--- !u!65 &5884409317675412868
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5730807624979998085}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 160, y: 90, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
