@@ -52,6 +52,10 @@ public class UserInput : MonoBehaviour
     public void UserClickedButton()
     {
         userInputDone = true;
+        if (VRControl.IsLoadedInVR())
+        {
+            VRControl.Rig().EnablePointersForUI(false);
+        }
     }
 
     private IEnumerator WaitForUserToPopulate(AsyncReturn<string> returnString)
@@ -64,7 +68,6 @@ public class UserInput : MonoBehaviour
         SGScene.UIActive = false;
         if (VRControl.IsLoadedInVR())
         {
-            VRControl.Rig().EnablePointersForUI(false);
             Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
         }
         else

@@ -92,6 +92,10 @@ public class NumericInput : MonoBehaviour
     public void ClickedOkayButton()
     {
         userInputDone = true;
+        if (VRControl.IsLoadedInVR())
+        {
+            VRControl.Rig().EnablePointersForUI(false);
+        }
     }
 
     private IEnumerator WaitForUserToPopulate(AsyncReturn<int> returnInt)
@@ -131,7 +135,6 @@ public class NumericInput : MonoBehaviour
         SGScene.UIActive = false;
         if (VRControl.IsLoadedInVR())
         {
-            VRControl.Rig().EnablePointersForUI(false);
             Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
         }
         else
