@@ -16,7 +16,7 @@ public class VRControl : MonoBehaviour
 
     public const float INITIAL_CAMERA_ANGLE_CUTOFF = 20f; // Degrees. For desktop worlds, the initial angle is a good idea. In VR, worlds generally look better
                                                           // if the player is completely upright. We'll still let them turn the camera by large amounts, but filter out little (unintentional) ones
-    public const float TRIGGER_SENSITIVITY = 0.95f;
+    public const float TRIGGER_SENSITIVITY = 0.5f;
     public const float WORLD_CANVAS_DISTANCE = 1.5f;
     public string VRTypeFound = "";
     public Toggle loadInVRToggle;

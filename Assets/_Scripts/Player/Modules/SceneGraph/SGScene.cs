@@ -34,7 +34,7 @@ namespace Alice.Player.Unity {
         private Light m_AboveLightA;
         private Light m_AboveLightB;
         private Light m_AboveLightC;
-        private const float k_AboveLightIntensity = 0.533f;
+        private const float k_AboveLightIntensity = 0.25f;
         private const float k_AboveLightPitch = 45f;
         private Light m_BelowLight;
         private const float k_BelowLightIntensity = 1f;
