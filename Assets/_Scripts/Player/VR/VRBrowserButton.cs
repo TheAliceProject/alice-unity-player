@@ -9,6 +9,7 @@ namespace Alice.Tweedle.Parse
     public class VRBrowserButton : MonoBehaviour
     {
         public Button button;
+        public Image labelImage;
         public TextMeshProUGUI label;
         public VRBrowser parentBrowser;
 
@@ -24,6 +25,11 @@ namespace Alice.Tweedle.Parse
         public void SetBrowser(VRBrowser browser)
         {
             parentBrowser = browser;
+        }
+
+        public void SetSpriteLabel(Sprite s)
+        {
+            labelImage.sprite = s;
         }
     }
 }
