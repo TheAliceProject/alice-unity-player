@@ -270,9 +270,10 @@ namespace Alice.Tweedle.Parse
 
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
 
-                            Bounds boundsConverted = new Bounds(Vector3.zero, new Vector3(-inManifest.boundingBox.min[0] + inManifest.boundingBox.max[0],
-                                                                                        -inManifest.boundingBox.min[1] + inManifest.boundingBox.max[1],
-                                                                                        -inManifest.boundingBox.min[2] + inManifest.boundingBox.max[2]));
+                            Utils.BoundingBox boundingBox = (meshRef is StructureReference) ? ((StructureReference) meshRef).boundingBox : inManifest.boundingBox;
+                            Bounds boundsConverted = new Bounds(Vector3.zero, new Vector3(-boundingBox.min[0] + boundingBox.max[0],
+                                                                                        -boundingBox.min[1] + boundingBox.max[1],
+                                                                                        -boundingBox.min[2] + boundingBox.max[2]));
                             SceneGraph.Current.ModelCache.Add(cacheID, loadedModel, boundsConverted);
                         }
                     }
