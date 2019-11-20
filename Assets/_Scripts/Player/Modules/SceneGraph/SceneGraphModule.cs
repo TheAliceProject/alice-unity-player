@@ -374,16 +374,16 @@ namespace Alice.Player.Modules {
             }
 
             if(AisModel && BisModel){
-                if(entityABounds.Intersects(entityBBounds))
-                    asyncReturn.Return(true);
-                else
-                    asyncReturn.Return(false);
+                asyncReturn.Return(entityABounds.Intersects(entityBBounds));
             }
             else if(AisModel){
                 asyncReturn.Return(entityABounds.Contains(entityB.cachedTransform.position));
             }
             else if(BisModel){
                 asyncReturn.Return(entityBBounds.Contains(entityA.cachedTransform.position));
+            }
+            else{ // Neither entity is a model. We could check if positions match exactly or within some small delta
+                asyncReturn.Return(UnityEngine.Vector3.Distance(entityA.cachedTransform.position, entityB.cachedTransform.position) < 0.05f);
             }
 
             return asyncReturn;
