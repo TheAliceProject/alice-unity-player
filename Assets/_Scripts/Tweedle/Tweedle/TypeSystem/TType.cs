@@ -185,7 +185,7 @@ namespace Alice.Tweedle
                     return true;
                 type = (TType)type.SuperType;
             }
-            return inType == TBuiltInTypes.ANY;
+            return inType == TBuiltInTypes.ANY || inType == TBuiltInTypes.TEXT_STRING;
         }
 
         public virtual TValue Cast(ref TValue inValue, TType inType)
