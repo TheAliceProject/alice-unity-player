@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.IO;
 using Alice.Tweedle.Parse;
 using TMPro;
+using BeauRoutine;
 
 public class WorldLoaderControl : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class WorldLoaderControl : MonoBehaviour
     public UnityObjectParser parser;
     public TextMeshProUGUI versionString;
     public Toggle loadInVR;
-    
+    public bool useVRSizing = false; // Set in inspector
+
     private List<GameObject> activeButtons = new List<GameObject>();
     private List<string> recentWorlds = new List<string>();
     private const string RecentWorldsFileName = "/recentWorlds.txt";
@@ -22,9 +24,16 @@ public class WorldLoaderControl : MonoBehaviour
     {
         PopulateLevels();
         
-        loadInVR.onValueChanged.AddListener(VRControl.Loaded);
+        if(loadInVR != null)
+            loadInVR.onValueChanged.AddListener(VRControl.Loaded);
 
-        versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
+        if(versionString)
+            versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
+    }
+
+    void OnEnable()
+    {
+        PopulateLevels();
     }
 
     public void AddWorldToRecents(string file)
@@ -72,15 +81,24 @@ public class WorldLoaderControl : MonoBehaviour
     void LoadButtons(List<string> worldFiles)
     {
         ClearButtons();
-        for (int i = 0; i < worldFiles.Count && i <= 8; i++)
+        RectTransform contentBoxRect = (RectTransform)contentBox;
+        contentBoxRect.SetSizeDelta(0f, Axis.Y);
+        for (int i = 0; i < worldFiles.Count && i <= GetNumRecents(); i++)
         {    
             if (File.Exists(worldFiles[i]))
             {
                 RecentWorldButton worldButton = Instantiate(recentWorldButtonPrefab, contentBox);
+                if(useVRSizing){
+                    worldButton.ScaleText(1.5f);
+                    worldButton.collider.enabled = true;
+                }
+                contentBoxRect = (RectTransform)contentBox;
+                float currSize = contentBoxRect.sizeDelta.y;
+                contentBoxRect.SetSizeDelta(currSize + GetSpacing(), Axis.Y);
                 worldButton.SetText(worldFiles[i]);
                 worldButton.button.onClick.AddListener(() =>
                 {
-                    parser.Select(worldButton.GetFilePath());
+                    parser.OpenWorld(worldButton.GetFilePath());
                 });
                 activeButtons.Add(worldButton.gameObject);
             }
@@ -94,5 +112,15 @@ public class WorldLoaderControl : MonoBehaviour
             Destroy(activeButtons[i]);
         }
         activeButtons.Clear();
+    }
+
+    int GetNumRecents()
+    {
+        return useVRSizing ? 6 : 8;
+    }
+
+    float GetSpacing()
+    {
+        return useVRSizing ? 100f : 105f;
     }
 }

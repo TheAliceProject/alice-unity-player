@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Alice.Tweedle.Parse;
+using UnityEngine.XR;
 
 public class WorldControl : MonoBehaviour
 {
@@ -25,7 +25,12 @@ public class WorldControl : MonoBehaviour
         {
             Destroy(GameObject.Find("SceneGraph"));
             WorldObjects.GetIntroCanvas().SetActive(true);
+            if(XRSettings.enabled)
+            {
+                WorldObjects.GetVRObjects().SetActive(true);
+            }
             Camera newCamera = Instantiate(CameraPrefab);
+            newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
             newCamera.tag = "MainCamera";
             Time.timeScale = currentTimeScale = 1f;
             uISlidedown.ForceSlide(false);
