@@ -30,8 +30,6 @@ public class VRRig : MonoBehaviour
     }
 
     private void EnablePointers(bool ena){
-        if(leftRend != null)
-            leftRend.enabled = ena;
         if(rightRend != null)
             rightRend.enabled = ena;
     }
@@ -58,16 +56,13 @@ public class VRRig : MonoBehaviour
 
     void Update(){
         if(enabledForManipulation || enabledForUI || enabledForControl){
-            float leftPointerDistance = 10f;
             float rightPointerDistance = 10f;
             if(enabledForUI || enabledForControl){
-                leftPointerDistance = CheckHandRaycasts(leftController);
                 rightPointerDistance = CheckHandRaycasts(rightController);
             }
 
             for (int i = 0; i < 2; i++){
                 rightRend.SetPosition(i, rightController.position + (rightController.forward * ((float)i * rightPointerDistance)));
-                leftRend.SetPosition(i, leftController.position + (leftController.forward * ((float)i * leftPointerDistance)));
             }
 
         }
@@ -76,14 +71,14 @@ public class VRRig : MonoBehaviour
     private float CheckHandRaycasts(Transform controller){
         RaycastHit hit;
         float pointerDistance = VRControl.WORLD_CANVAS_DISTANCE;
-        if (Physics.Raycast(controller.position, controller.forward, out hit, 5f)){
+        if (Physics.Raycast(controller.position, controller.forward, out hit, 500f)){
             pointerDistance = hit.distance;
             Button hitButton = hit.transform.gameObject.GetComponent<Button>();
             if (hitButton != null){
                 ExecuteEvents.Execute(hitButton.gameObject, new BaseEventData(eventSystem), ExecuteEvents.selectHandler);
                 selectedButtons.Add(hitButton.gameObject);
 
-                if (VRControl.IsLeftTriggerUp() || VRControl.IsRightTriggerUp()){
+                if (VRControl.IsRightTriggerUp()){
                     ExecuteEvents.Execute(hitButton.gameObject, new BaseEventData(eventSystem), ExecuteEvents.submitHandler);
                 }
             }

@@ -16,6 +16,8 @@ namespace Alice.Tweedle.Parse
                 using (ZipFile zipFile = new ZipFile(stream))
                 {
                     JsonParser reader = new JsonParser(inSystem, zipFile);
+                    if(!inZipPath.Contains("SceneGraphLibrary"))
+                        reader.CacheThumbnail(inZipPath);
                     reader.Parse();
                 }
             }
@@ -36,6 +38,15 @@ namespace Alice.Tweedle.Parse
             m_System = inSystem;
             m_ZipFile = inZipFile;
             m_Parser = new TweedleParser();
+        }
+
+        public void CacheThumbnail(string fileName)
+        {
+            // Save thumbnail
+            byte[] data = m_ZipFile.ReadDataEntry("thumbnail.png");
+            if(data == null)
+                return;
+            System.IO.File.WriteAllBytes(Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png", data);
         }
 
         private void Parse()
