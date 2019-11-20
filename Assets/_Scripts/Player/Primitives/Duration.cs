@@ -72,6 +72,11 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
+        public double toDecimalNumber() {
+            return Value;
+        }
+
+        [PInteropMethod]
         public Duration add(Duration other) 
         {
             return new Duration(Value + other.Value);

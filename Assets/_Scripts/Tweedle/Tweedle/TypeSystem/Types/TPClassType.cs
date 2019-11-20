@@ -85,6 +85,14 @@ namespace Alice.Tweedle
             return inValue.RawObject<object>().ToString();
         }
 
+        public override double ConvertToDouble(ref TValue inValue) {
+            TMethod conversion = FindMethodWithArgsQuietly(m_Methods, "toDecimalNumber", new string[0], MemberFlags.Instance);
+            if (conversion == null || !(conversion is PMethod)) {
+                throw new TweedleRuntimeException("This type (" + this + ") cannot convert the value " + inValue + " to a double.");
+            }
+            return (double) ((PMethod)conversion).InvokeNow(inValue.RawObject<object>(), new object[0]);
+        }
+
         public override Type GetPObjectType()
         {
             return m_Type;
