@@ -30,8 +30,6 @@ public class VRRig : MonoBehaviour
     }
 
     private void EnablePointers(bool ena){
-        //if(leftRend != null)
-        //    leftRend.enabled = ena;
         if(rightRend != null)
             rightRend.enabled = ena;
     }
@@ -58,15 +56,12 @@ public class VRRig : MonoBehaviour
 
     void Update(){
         if(enabledForManipulation || enabledForUI || enabledForControl){
-            //float leftPointerDistance = 10f;
             float rightPointerDistance = 10f;
             if(enabledForUI || enabledForControl){
-                //leftPointerDistance = CheckHandRaycasts(leftController);
                 rightPointerDistance = CheckHandRaycasts(rightController);
             }
 
             for (int i = 0; i < 2; i++){
-                //leftRend.SetPosition(i, leftController.position + (leftController.forward * ((float)i * leftPointerDistance)));
                 rightRend.SetPosition(i, rightController.position + (rightController.forward * ((float)i * rightPointerDistance)));
             }
 
