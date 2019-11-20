@@ -47,6 +47,10 @@ public class BooleanInput : MonoBehaviour
     public void UserClickedButton(bool clickedTrue)
     {
         boolState = clickedTrue ? BoolState.True : BoolState.False;
+        if (VRControl.IsLoadedInVR())
+        {
+            VRControl.Rig().EnablePointersForUI(false);
+        }
     }
 
     private IEnumerator WaitForUserToPopulate(AsyncReturn<bool> returnBool)
@@ -57,7 +61,6 @@ public class BooleanInput : MonoBehaviour
         returnBool.Return(boolState == BoolState.True);
         SGScene.UIActive = false;
         if(VRControl.IsLoadedInVR()){
-            VRControl.Rig().EnablePointersForUI(false);
             Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
         }
         else{
