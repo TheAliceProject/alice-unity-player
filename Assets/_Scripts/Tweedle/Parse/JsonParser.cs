@@ -44,6 +44,8 @@ namespace Alice.Tweedle.Parse
         {
             // Save thumbnail
             byte[] data = m_ZipFile.ReadDataEntry("thumbnail.png");
+            if(data == null)
+                return;
             System.IO.File.WriteAllBytes(Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png", data);
         }
 

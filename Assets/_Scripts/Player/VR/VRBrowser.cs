@@ -18,11 +18,12 @@ public class VRBrowser : MonoBehaviour
         public Sprite worldSprite;
 
         private string pwd;
+        private List<string> tempDirs = new List<string>();
         // Use this for initialization
         void Start()
         {
-            string path = pwd = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-            LoadFilesInPath(path);
+            pwd = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            LoadFilesInPath(pwd);
             VRControl.Rig().EnablePointersForUI(true);
         }
 
@@ -55,18 +56,17 @@ public class VRBrowser : MonoBehaviour
             }
             else
             {
-                string newPath = path.Substring(0);
                 try
                 {
-                    System.IO.Directory.GetDirectories(pwd + newPath);
+                    System.IO.Directory.GetDirectories(pwd + path);
                 }
                 catch (Exception e)
                 {
                     return;
                 }
 
-                LoadFilesInPath(pwd + newPath);
-                pwd += newPath;
+                LoadFilesInPath(pwd + path);
+                pwd += path;
             }
         }
 
@@ -77,16 +77,13 @@ public class VRBrowser : MonoBehaviour
             for (int j = 0; j < root.childCount; j++)
                 Destroy(root.GetChild(j).gameObject);
 
+            // Resize scroll view based on number of items to display
             int numItems = 0;
-            foreach (string file in System.IO.Directory.GetFiles(path))
-            {
+            foreach (string file in System.IO.Directory.GetFiles(path)){
                 if (file.Contains(".a3w") || file.Contains(".A3W"))
                     numItems++;
             }
-            foreach (string dir in System.IO.Directory.GetDirectories(path))
-            {
-                numItems++;
-            }
+            numItems += GetNormalDirectories(path).Length;
             numItems++; // ".."
             root.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, 45f * (float)numItems + 10f);
 
@@ -95,18 +92,12 @@ public class VRBrowser : MonoBehaviour
             VRBrowserButton button = InstantiateBrowserButton();
             button.transform.localPosition = new Vector3(button.transform.localPosition.x, -25f, button.transform.localPosition.z);
             button.label.text = "..";
-            foreach (string dir in System.IO.Directory.GetDirectories(path))
+            foreach (string dir in GetNormalDirectories(path))
             {
-                // Ignore certain special files
-                FileInfo pathInfo = new FileInfo(dir);
-                if (pathInfo.Attributes.ToString().Contains("ReparsePoint") || pathInfo.Attributes.ToString().Contains("System"))
-                    continue;
-
                 button = InstantiateBrowserButton();
                 button.transform.localPosition = new Vector3(button.transform.localPosition.x, -45f * i - 25f, button.transform.localPosition.z);
                 int lastSlash = Mathf.Max(dir.LastIndexOf('/'), dir.LastIndexOf('\\'));
                 button.label.text = dir.Substring(lastSlash);
-
                 i++;
             }
 
@@ -121,6 +112,20 @@ public class VRBrowser : MonoBehaviour
                     i++;
                 }
             }
+        }
+
+        private string[] GetNormalDirectories(string path)
+        {
+            tempDirs.Clear();
+            foreach (string dir in System.IO.Directory.GetDirectories(path))
+            {
+                // Ignore certain special files
+                FileInfo pathInfo = new FileInfo(dir);
+                if (pathInfo.Attributes.ToString().Contains("ReparsePoint") || pathInfo.Attributes.ToString().Contains("System"))
+                    continue;
+                tempDirs.Add(dir);
+            }
+            return tempDirs.ToArray();
         }
 
         public void ChooseFileOrDirectory(string path)
