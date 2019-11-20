@@ -31,7 +31,7 @@ public class VRBrowser : MonoBehaviour
         {
             if(Input.GetAxis("RightThumbstickUpDown") > 0.75f)
                 rect.verticalNormalizedPosition += (0.15f / root.childCount);
-            else if(Input.GetAxis("RightThumbstickUpDown") < -0.7f)
+            else if(Input.GetAxis("RightThumbstickUpDown") < -0.75f)
                 rect.verticalNormalizedPosition -= (0.15f / root.childCount);
         }
 
