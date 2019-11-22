@@ -28,8 +28,9 @@ namespace Alice.Player.Unity {
 
         protected override void SetSize(UnityEngine.Vector3 inSize) {
             // Scale the text to match alice size and proportions
-            inSize.y *= .678f; // Constant to match 3D Text plugin with Alice text
-            inSize.x = inSize.y;
+            inSize.y *= .678f; // Constants to match 3D Text plugin with Alice text
+            inSize.x *= .239f;
+            inSize.z *= 15f;
             m_ModelTransform.localScale = inSize;
         }
 
