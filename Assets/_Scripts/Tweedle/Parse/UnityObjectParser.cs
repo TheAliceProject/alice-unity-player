@@ -14,7 +14,6 @@ namespace Alice.Tweedle.Parse
         public bool dumpTypeOutlines = false;
         public Canvas uiCanvas;
         public VRRig uiRig;
-        public Canvas vrCanvas;
         public Button loadNewWorldButton;
 
         public WorldLoaderControl worldLoader;
