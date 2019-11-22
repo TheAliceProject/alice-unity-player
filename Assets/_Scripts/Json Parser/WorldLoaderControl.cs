@@ -9,14 +9,11 @@ using BeauRoutine;
 
 public class WorldLoaderControl : MonoBehaviour
 {
-    public RecentWorldButton recentWorldButtonPrefab;
-    public Transform contentBox;
-    public UnityObjectParser parser;
+    public RecentWorldButton[] recentButtons;
     public TextMeshProUGUI versionString;
     public Toggle loadInVR;
     public bool useVRSizing = false; // Set in inspector
 
-    private List<GameObject> activeButtons = new List<GameObject>();
     private List<string> recentWorlds = new List<string>();
     private const string RecentWorldsFileName = "/recentWorlds.txt";
 
@@ -38,7 +35,6 @@ public class WorldLoaderControl : MonoBehaviour
 
     public void AddWorldToRecents(string file)
     {
-        ClearButtons();
         if(recentWorlds.Contains(file))
             recentWorlds.Remove(file);
         recentWorlds.Insert(0, file);
@@ -80,38 +76,28 @@ public class WorldLoaderControl : MonoBehaviour
 
     void LoadButtons(List<string> worldFiles)
     {
-        ClearButtons();
-        RectTransform contentBoxRect = (RectTransform)contentBox;
-        contentBoxRect.SetSizeDelta(0f, Axis.Y);
-        for (int i = 0; i < worldFiles.Count && i <= GetNumRecents(); i++)
-        {    
-            if (File.Exists(worldFiles[i]))
+        for (int i = 0; i < recentButtons.Length; i++)
+        {
+            if(i >= worldFiles.Count - 1)
             {
-                RecentWorldButton worldButton = Instantiate(recentWorldButtonPrefab, contentBox);
-                if(useVRSizing){
-                    worldButton.ScaleText(1.5f);
-                    worldButton.collider.enabled = true;
-                }
-                contentBoxRect = (RectTransform)contentBox;
-                float currSize = contentBoxRect.sizeDelta.y;
-                contentBoxRect.SetSizeDelta(currSize + GetSpacing(), Axis.Y);
-                worldButton.SetText(worldFiles[i]);
-                worldButton.button.onClick.AddListener(() =>
+                recentButtons[i].gameObject.SetActive(false);
+            }
+            else if (File.Exists(worldFiles[i]))
+            {
+                if (useVRSizing)
                 {
-                    parser.OpenWorld(worldButton.GetFilePath());
+                    recentButtons[i].ScaleText(1.5f);
+                    recentButtons[i].collider.enabled = true;
+                }
+                recentButtons[i].SetText(worldFiles[i]);
+                int x = i;
+                recentButtons[i].button.onClick.RemoveAllListeners();
+                recentButtons[i].button.onClick.AddListener(() =>
+                {
+                    WorldObjects.GetParser().OpenWorld(recentButtons[x].GetFilePath());
                 });
-                activeButtons.Add(worldButton.gameObject);
             }
         }
-    }
-
-    void ClearButtons()
-    {
-        for (int i = 0; i < activeButtons.Count; i++)
-        {
-            Destroy(activeButtons[i]);
-        }
-        activeButtons.Clear();
     }
 
     int GetNumRecents()
