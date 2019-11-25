@@ -53,7 +53,7 @@ namespace Alice.Tweedle.Parse
                 Debug.LogWarning("UnityObjectParser.Select Failed to open File " + zipPath);
                 return;
             }
-            worldLoader.AddWorldToRecents(zipPath);
+
             m_currentFilePath = zipPath;
 
             if (Player.Unity.SceneGraph.Exists) {
@@ -77,7 +77,7 @@ namespace Alice.Tweedle.Parse
         private IEnumerator DisplayLoadingAndLoadLevel(string path)
         {
             yield return loadingScreen.DisplayLoadingScreen(true);
-
+            worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
             try
             {

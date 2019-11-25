@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using Alice.Tweedle.Parse;
 using TMPro;
 using BeauRoutine;
 
 public class WorldLoaderControl : MonoBehaviour
 {
     public RecentWorldButton[] recentButtons;
-    public TextMeshProUGUI versionString;
     public Toggle loadInVR;
     public bool useVRSizing = false; // Set in inspector
 
@@ -23,9 +21,6 @@ public class WorldLoaderControl : MonoBehaviour
         
         if(loadInVR != null)
             loadInVR.onValueChanged.AddListener(VRControl.Loaded);
-
-        if(versionString)
-            versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
     }
 
     void OnEnable()
@@ -44,8 +39,12 @@ public class WorldLoaderControl : MonoBehaviour
 
     void PopulateLevels()
     {
-        if(!File.Exists(Application.persistentDataPath + RecentWorldsFileName))
+        if(!File.Exists(Application.persistentDataPath + RecentWorldsFileName)){
+            for (int i = 0; i < recentButtons.Length; i++)
+                recentButtons[i].gameObject.SetActive(false);
             return;
+        }
+
 
         recentWorlds.Clear();
         var fs = File.OpenText(Application.persistentDataPath + RecentWorldsFileName);
@@ -78,7 +77,7 @@ public class WorldLoaderControl : MonoBehaviour
     {
         for (int i = 0; i < recentButtons.Length; i++)
         {
-            if(i >= worldFiles.Count - 1)
+            if(i > worldFiles.Count-1)
             {
                 recentButtons[i].gameObject.SetActive(false);
             }
@@ -89,6 +88,7 @@ public class WorldLoaderControl : MonoBehaviour
                     recentButtons[i].ScaleText(1.5f);
                     recentButtons[i].collider.enabled = true;
                 }
+                recentButtons[i].gameObject.SetActive(true);
                 recentButtons[i].SetText(worldFiles[i]);
                 int x = i;
                 recentButtons[i].button.onClick.RemoveAllListeners();
