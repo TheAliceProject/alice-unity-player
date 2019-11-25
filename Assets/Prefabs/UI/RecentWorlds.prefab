@@ -973,7 +973,6 @@ MonoBehaviour:
   recentButtons:
   - {fileID: 3800933229618088677}
   - {fileID: 5765085760513566687}
-  versionString: {fileID: 0}
   loadInVR: {fileID: 0}
   useVRSizing: 0
 --- !u!1 &7424608408912014162
