@@ -12,16 +12,18 @@ namespace Alice.Tweedle.Parse
     {
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
-        public Canvas uiCanvas;
+        public Transform mainMenu;
         public VRRig uiRig;
         public Button loadNewWorldButton;
 
         public WorldLoaderControl worldLoader;
         public ModalWindow modalWindowPrefab;
-
+        public LoadingControl loadingScreen;
+        
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
         private Routine m_QueueProcessor;
+        private Routine m_LoadRoutine;
         private string m_currentFilePath;
         void Awake()
         {
@@ -64,16 +66,29 @@ namespace Alice.Tweedle.Parse
                 m_QueueProcessor.Stop();
             }
 
+            LoadWorld(zipPath);
+        }
+
+        private void LoadWorld(string path)
+        {
+            m_LoadRoutine.Replace(this, DisplayLoadingAndLoadLevel(path));
+        }
+
+        private IEnumerator DisplayLoadingAndLoadLevel(string path)
+        {
+            yield return loadingScreen.DisplayLoadingScreen(true);
+
             m_System = new TweedleSystem();
-            try{
-                JsonParser.ParseZipFile(m_System, zipPath);
+            try
+            {
+                JsonParser.ParseZipFile(m_System, path);
             }
             catch (TweedleParseException exception)
             {
-                ModalWindow modalWindow = Instantiate(modalWindowPrefab, uiCanvas.transform);
+                ModalWindow modalWindow = Instantiate(modalWindowPrefab, mainMenu);
                 string message = "This world is not compatible with this player.\n<b>Player:</b>\n   " + exception.ExpectedVersion + "\n<b>World:</b>\n   " + exception.DiscoveredVersion;
                 modalWindow.SetData("Oops!", message);
-                return;
+                yield break;
             }
 
             m_System.Link();
@@ -87,6 +102,7 @@ namespace Alice.Tweedle.Parse
             m_System.QueueProgramMain(m_VM);
 
             StartQueueProcessing();
+            yield return loadingScreen.DisplayLoadingScreen(false);
         }
 
         public void ReloadCurrentLevel()
@@ -109,7 +125,7 @@ namespace Alice.Tweedle.Parse
         private void StartQueueProcessing()
         {
             m_QueueProcessor.Replace(this, m_VM.ProcessQueue());
-            uiCanvas.gameObject.SetActive(false);
+            mainMenu.gameObject.SetActive(false);
             WorldObjects.GetVRObjects().SetActive(false);
         }
 
