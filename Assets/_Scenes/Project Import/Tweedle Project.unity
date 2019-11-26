@@ -2943,6 +2943,31 @@ PrefabInstance:
       propertyPath: loadInVR
       value: 
       objectReference: {fileID: 197045846}
+    - target: {fileID: 4203162802620114807, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4203162802620114807, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4203162802620114807, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4203162802620114807, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4203162802620114807, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
 --- !u!1 &800775374 stripped
@@ -8856,7 +8881,7 @@ PrefabInstance:
     - target: {fileID: 1863096887978192017, guid: e779aee77633553488198e6829c380f0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.011076458
+      value: 0.000000032334533
       objectReference: {fileID: 0}
     - target: {fileID: 6567412935307995989, guid: e779aee77633553488198e6829c380f0,
         type: 3}
