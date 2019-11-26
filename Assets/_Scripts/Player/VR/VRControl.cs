@@ -12,6 +12,15 @@ using System.Diagnostics;
 
 public class VRControl : MonoBehaviour
 {
+    public enum VRDevice{
+        None,
+        Vive,
+        OculusRift,
+        OculusS,
+        OculusGo,
+        WindowsMR
+    }
+
     private static VRControl _instance;
 
     public const float INITIAL_CAMERA_ANGLE_CUTOFF = 20f; // Degrees. For desktop worlds, the initial angle is a good idea. In VR, worlds generally look better
@@ -20,10 +29,12 @@ public class VRControl : MonoBehaviour
     public const float WORLD_CANVAS_DISTANCE = 1.5f;
     public Toggle loadInVRToggle;
     public VRRig rig;
+    public Transform landingRig;
     public EventSystem eventSystem;
     public GameObject VRObjects;
 
     private string VRTypeFound = "";
+    private VRDevice deviceType = VRDevice.None;
     private bool loadWorldInVR = false;
     private Routine m_routine;
     private bool lastRightTrigger = false;
@@ -86,6 +97,13 @@ public class VRControl : MonoBehaviour
         }
     }
 
+    internal static VRDevice LoadedVRDevice(){
+        if (_instance == null){
+            return VRDevice.None;
+        }
+        return _instance.deviceType;
+    }
+
     internal static bool IsLoadedInVR() {
         return _instance != null && _instance.loadWorldInVR;
     }
@@ -140,6 +158,16 @@ public class VRControl : MonoBehaviour
                 XRSettings.enabled = true;
                 loadWorldInVR = true;
                 loadInVRToggle.gameObject.SetActive(true);
+
+                // Vive appears to be backwards when using SteamVR. Correct it here so we have identical behavior to Oculus
+                if (XRDevice.model.Contains("Vive")){
+                    deviceType = VRDevice.Vive;
+                    landingRig.localRotation = UnityEngine.Quaternion.Euler(landingRig.localRotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                }
+                    
+                else if (XRDevice.model.Contains("Oculus")){
+                    deviceType = VRDevice.OculusRift;
+                }
             }
         }
         else
