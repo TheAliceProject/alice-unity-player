@@ -1678,6 +1678,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tweedle Project
       objectReference: {fileID: 0}
+    - target: {fileID: 4552720093528031574, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114332211912072098, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: uiRig
@@ -1794,11 +1799,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3696930615225209563, guid: efee6d1d4d595d046a09b11eab729e4c,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4552720093528031574, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2938,6 +2938,11 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2285957451534392159, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: loadInVR
+      value: 
+      objectReference: {fileID: 197045846}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
 --- !u!1 &800775374 stripped
@@ -3281,6 +3286,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1105054019 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3520005908811345824, guid: 57a99d88f3e3d924795a033752aa67d5,
+    type: 3}
+  m_PrefabInstance: {fileID: 853787561}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1116292064
 GameObject:
   m_ObjectHideFlags: 0
@@ -3601,6 +3612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadInVRToggle: {fileID: 197045846}
   rig: {fileID: 1996670126}
+  landingRig: {fileID: 1105054019}
   eventSystem: {fileID: 1116292066}
   VRObjects: {fileID: 583400856}
 --- !u!224 &1376757051 stripped
@@ -8844,7 +8856,7 @@ PrefabInstance:
     - target: {fileID: 1863096887978192017, guid: e779aee77633553488198e6829c380f0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000012855571
+      value: 0.011076458
       objectReference: {fileID: 0}
     - target: {fileID: 6567412935307995989, guid: e779aee77633553488198e6829c380f0,
         type: 3}
