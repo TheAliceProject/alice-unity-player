@@ -75,28 +75,44 @@ public class WorldLoaderControl : MonoBehaviour
 
     void LoadButtons(List<string> worldFiles)
     {
-        for (int i = 0; i < recentButtons.Length; i++)
+        List<string> worldFilesTrimmed = new List<string>();
+
+        int totalFilesFound = 0;
+        for (int i = 0; i < worldFiles.Count; i++)
         {
-            if(i > worldFiles.Count-1)
-            {
-                recentButtons[i].gameObject.SetActive(false);
-            }
-            else if (File.Exists(worldFiles[i]))
+            string uniqueFile = worldFiles[i].Replace("/", "").Replace("\\", "");
+            if(worldFilesTrimmed.Contains(uniqueFile))
+                continue;
+            else
+                worldFilesTrimmed.Add(uniqueFile);
+                
+            if (File.Exists(worldFiles[i]))
             {
                 if (useVRSizing)
                 {
-                    recentButtons[i].ScaleText(1.5f);
-                    recentButtons[i].collider.enabled = true;
+                    recentButtons[totalFilesFound].ScaleText(1.5f);
+                    recentButtons[totalFilesFound].collider.enabled = true;
                 }
-                recentButtons[i].gameObject.SetActive(true);
-                recentButtons[i].SetText(worldFiles[i]);
-                int x = i;
-                recentButtons[i].button.onClick.RemoveAllListeners();
-                recentButtons[i].button.onClick.AddListener(() =>
+                recentButtons[totalFilesFound].gameObject.SetActive(true);
+                recentButtons[totalFilesFound].SetText(worldFiles[i]);
+                int x = totalFilesFound;
+                recentButtons[totalFilesFound].button.onClick.RemoveAllListeners();
+                recentButtons[totalFilesFound].button.onClick.AddListener(() =>
                 {
                     WorldObjects.GetParser().OpenWorld(recentButtons[x].GetFilePath());
                 });
+                totalFilesFound++;
+                if(totalFilesFound == 2)
+                    break;
             }
+        }
+
+        if(totalFilesFound == 0){
+            recentButtons[0].gameObject.SetActive(false);
+            recentButtons[1].gameObject.SetActive(false);
+        }
+        else if(totalFilesFound == 1){
+            recentButtons[1].gameObject.SetActive(false);
         }
     }
 
