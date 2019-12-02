@@ -17,6 +17,7 @@ namespace Alice.Tweedle.Parse
         public Button loadNewWorldButton;
 
         public WorldLoaderControl worldLoader;
+        public VRLoadingControl vrLoadingScreen;
         public ModalWindow modalWindowPrefab;
         public LoadingControl loadingScreen;
         
@@ -76,7 +77,8 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator DisplayLoadingAndLoadLevel(string path)
         {
-            yield return loadingScreen.DisplayLoadingScreen(true);
+            yield return Routine.Combine(loadingScreen.DisplayLoadingScreen(true),
+                        vrLoadingScreen.FadeLoader(true));
             worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
             try
@@ -102,7 +104,8 @@ namespace Alice.Tweedle.Parse
             m_System.QueueProgramMain(m_VM);
 
             StartQueueProcessing();
-            yield return loadingScreen.DisplayLoadingScreen(false);
+            yield return Routine.Combine(loadingScreen.DisplayLoadingScreen(false),
+                                        vrLoadingScreen.FadeLoader(false));
         }
 
         public void ReloadCurrentLevel()
