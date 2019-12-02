@@ -80,12 +80,13 @@ public class WorldLoaderControl : MonoBehaviour
         int totalFilesFound = 0;
         for (int i = 0; i < worldFiles.Count; i++)
         {
+            // Fixes issue where two of the same file exist in our list, but one uses "\" and one uses "/"
             string uniqueFile = worldFiles[i].Replace("/", "").Replace("\\", "");
             if(worldFilesTrimmed.Contains(uniqueFile))
                 continue;
             else
                 worldFilesTrimmed.Add(uniqueFile);
-                
+
             if (File.Exists(worldFiles[i]))
             {
                 if (useVRSizing)
