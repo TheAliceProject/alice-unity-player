@@ -1,9 +1,5 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Alice.Tweedle.Interop;
 using Alice.Tweedle;
-using Alice.Player.Primitives;
 using BeauRoutine;
 
 namespace Alice.Player.Unity {
@@ -27,9 +23,11 @@ namespace Alice.Player.Unity {
         }
 
         protected override void SetSize(UnityEngine.Vector3 inSize) {
-            // Scale the text to match alice size and proportions
+            // Scale the text to match Alice size and proportions
             inSize.y *= .678f; // Constants to match 3D Text plugin with Alice text
-            inSize.x *= .239f;
+            // SGModel & SGTextModel expect the size of the thing in the world, so longer strings would have longer x
+            // values. The TextPivot transform does not adjust x with string length, so this set to y and not multiplied..
+            inSize.x = inSize.y;
             inSize.z *= 15f;
             m_ModelTransform.localScale = inSize;
         }
