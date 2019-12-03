@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using Alice.Tweedle.Parse;
 using TMPro;
 using BeauRoutine;
 
 public class WorldLoaderControl : MonoBehaviour
 {
-    public RecentWorldButton recentWorldButtonPrefab;
-    public Transform contentBox;
-    public UnityObjectParser parser;
-    public TextMeshProUGUI versionString;
+    public RecentWorldButton[] recentButtons;
     public Toggle loadInVR;
     public bool useVRSizing = false; // Set in inspector
 
-    private List<GameObject> activeButtons = new List<GameObject>();
     private List<string> recentWorlds = new List<string>();
     private const string RecentWorldsFileName = "/recentWorlds.txt";
 
@@ -26,9 +21,6 @@ public class WorldLoaderControl : MonoBehaviour
         
         if(loadInVR != null)
             loadInVR.onValueChanged.AddListener(VRControl.Loaded);
-
-        if(versionString)
-            versionString.text = string.Format("Player Ver {0} - Library Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
     }
 
     void OnEnable()
@@ -38,7 +30,6 @@ public class WorldLoaderControl : MonoBehaviour
 
     public void AddWorldToRecents(string file)
     {
-        ClearButtons();
         if(recentWorlds.Contains(file))
             recentWorlds.Remove(file);
         recentWorlds.Insert(0, file);
@@ -48,8 +39,12 @@ public class WorldLoaderControl : MonoBehaviour
 
     void PopulateLevels()
     {
-        if(!File.Exists(Application.persistentDataPath + RecentWorldsFileName))
+        if(!File.Exists(Application.persistentDataPath + RecentWorldsFileName)){
+            for (int i = 0; i < recentButtons.Length; i++)
+                recentButtons[i].gameObject.SetActive(false);
             return;
+        }
+
 
         recentWorlds.Clear();
         var fs = File.OpenText(Application.persistentDataPath + RecentWorldsFileName);
@@ -80,38 +75,46 @@ public class WorldLoaderControl : MonoBehaviour
 
     void LoadButtons(List<string> worldFiles)
     {
-        ClearButtons();
-        RectTransform contentBoxRect = (RectTransform)contentBox;
-        contentBoxRect.SetSizeDelta(0f, Axis.Y);
-        for (int i = 0; i < worldFiles.Count && i <= GetNumRecents(); i++)
-        {    
+        List<string> worldFilesTrimmed = new List<string>();
+
+        int totalFilesFound = 0;
+        for (int i = 0; i < worldFiles.Count; i++)
+        {
+            // Fixes issue where two of the same file exist in our list, but one uses "\" and one uses "/"
+            string uniqueFile = worldFiles[i].Replace("/", "").Replace("\\", "");
+            if(worldFilesTrimmed.Contains(uniqueFile))
+                continue;
+            else
+                worldFilesTrimmed.Add(uniqueFile);
+
             if (File.Exists(worldFiles[i]))
             {
-                RecentWorldButton worldButton = Instantiate(recentWorldButtonPrefab, contentBox);
-                if(useVRSizing){
-                    worldButton.ScaleText(1.5f);
-                    worldButton.collider.enabled = true;
-                }
-                contentBoxRect = (RectTransform)contentBox;
-                float currSize = contentBoxRect.sizeDelta.y;
-                contentBoxRect.SetSizeDelta(currSize + GetSpacing(), Axis.Y);
-                worldButton.SetText(worldFiles[i]);
-                worldButton.button.onClick.AddListener(() =>
+                if (useVRSizing)
                 {
-                    parser.OpenWorld(worldButton.GetFilePath());
+                    recentButtons[totalFilesFound].ScaleText(1.5f);
+                    recentButtons[totalFilesFound].collider.enabled = true;
+                }
+                recentButtons[totalFilesFound].gameObject.SetActive(true);
+                recentButtons[totalFilesFound].SetText(worldFiles[i]);
+                int x = totalFilesFound;
+                recentButtons[totalFilesFound].button.onClick.RemoveAllListeners();
+                recentButtons[totalFilesFound].button.onClick.AddListener(() =>
+                {
+                    WorldObjects.GetParser().OpenWorld(recentButtons[x].GetFilePath());
                 });
-                activeButtons.Add(worldButton.gameObject);
+                totalFilesFound++;
+                if(totalFilesFound == 2)
+                    break;
             }
         }
-    }
 
-    void ClearButtons()
-    {
-        for (int i = 0; i < activeButtons.Count; i++)
-        {
-            Destroy(activeButtons[i]);
+        if(totalFilesFound == 0){
+            recentButtons[0].gameObject.SetActive(false);
+            recentButtons[1].gameObject.SetActive(false);
         }
-        activeButtons.Clear();
+        else if(totalFilesFound == 1){
+            recentButtons[1].gameObject.SetActive(false);
+        }
     }
 
     int GetNumRecents()

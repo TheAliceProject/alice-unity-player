@@ -9,7 +9,7 @@ public class RecentWorldButton : MonoBehaviour
 {
     public Button button;
     public TextMeshProUGUI nameText;
-    public TextMeshProUGUI fullText;
+    public TextMeshProUGUI authorText; // Unused for now
     public Image background;
     public BoxCollider collider;
     
@@ -17,8 +17,7 @@ public class RecentWorldButton : MonoBehaviour
 
     public void SetText(string text)
     {
-        nameText.text = Path.GetFileName(text);
-        fullText.text = text;
+        nameText.text = Path.GetFileNameWithoutExtension(text);
         filePath = text;
 
         string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(Path.GetFileName(text)) + "_thumb.png";
@@ -36,7 +35,6 @@ public class RecentWorldButton : MonoBehaviour
     public void ScaleText(float scaleFactor)
     {
         nameText.fontSize *= scaleFactor;
-        fullText.fontSize *= scaleFactor;
     }
 
     public string GetFilePath()
