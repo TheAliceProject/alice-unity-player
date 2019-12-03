@@ -12,13 +12,15 @@ public class MenuControl : MonoBehaviour
     public Button Settings;
     public Button[] CloseButtons;
     public Button CloseLoadMore;
+    public Button OpenWebsite;
 
     public GameObject MainMenuPanel;
     public GameObject RecentWorldsPanel;
     public GameObject AboutPanel;
     public GameObject LoadMoreWorldsPanel;
     public GameObject SettingsPanel;
-    
+    public GameObject CreditsPanel;
+
     public GameObject[] allPanels;
 
     void Start()
@@ -27,12 +29,17 @@ public class MenuControl : MonoBehaviour
         RecentWorlds.onClick.AddListener(() => { SetOnlyThisPanelActive(RecentWorldsPanel); });
         About.onClick.AddListener(() => { SetOnlyThisPanelActive(AboutPanel); });
         Settings.onClick.AddListener(() => { SetOnlyThisPanelActive(SettingsPanel); });
-        LoadMoreWorlds.onClick.AddListener(() => { SetOnlyThisPanelActive(LoadMoreWorldsPanel); });
+        LoadMoreWorlds.onClick.AddListener(() => { SetOnlyThisPanelActive(LoadMoreWorldsPanel); 
+                                                    CreditsPanel.SetActive(false); });
 
-        CloseLoadMore.onClick.AddListener(() => { SetOnlyThisPanelActive(RecentWorldsPanel);  });
+        CloseLoadMore.onClick.AddListener(() => { SetOnlyThisPanelActive(RecentWorldsPanel); 
+                                                    CreditsPanel.SetActive(true); });
         for (int i = 0; i < CloseButtons.Length; i++){
             CloseButtons[i].onClick.AddListener(() => { SetOnlyThisPanelActive(MainMenuPanel); });
         }
+
+        if(OpenWebsite)
+            OpenWebsite.onClick.AddListener(() => { Application.OpenURL("https://www.alice.org/"); });
     }
 
     private void SetOnlyThisPanelActive(GameObject thisPanel)
