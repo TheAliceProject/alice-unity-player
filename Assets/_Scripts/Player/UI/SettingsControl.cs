@@ -13,7 +13,9 @@ public class SettingsControl : MonoBehaviour
     private string[] supportedResolutions = { "1024 x 768", 
                                             "1280 x 720", 
                                             "1366 x 768", 
-                                            "1440 x 900", 
+                                            "1440 x 900",
+                                            "1536 x 864",
+                                            "1680 x 1050",
                                             "1920 x 1080", 
                                             "1920 x 1200", 
                                             "2560 x 1440"};
