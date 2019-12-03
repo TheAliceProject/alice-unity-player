@@ -23,7 +23,8 @@ namespace Alice.Player.Unity {
                     m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
                     Camera = m_rig.headCamera;
                     Camera.tag = "MainCamera";
-                    m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
+                    if(VRControl.LoadedVRDevice() != VRControl.VRDevice.Vive)
+                        m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
                     VRControl.SetRig(m_rig);
                     vrLoaded = true;
                     routine.Replace(this, CancelOutDefaultVrRotation());
