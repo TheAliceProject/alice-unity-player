@@ -123,13 +123,27 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        public void DecimalNumberShouldNotExplicitlyCastToTextString()
+        public void DecimalNumberShouldImplicitlyCastToTextString()
         {
             Init();
-            LogAssert.Expect(UnityEngine.LogType.Error, new Regex("Cannot cast type DecimalNumber to type TextString"));
-            Assert.Throws<TweedleRuntimeException>(() => {
-                RunStatement("Any x <- 3.5555 as TextString;", scope);
-            });
+            RunStatement("TextString x <- 3.5555;", scope);
+            Assert.AreEqual("3.5555", scope.GetValue("x").ToTextString(), "The value should be \"3.5555\".");
+        }
+
+        [Test]
+        public void DecimalNumberShouldExplicitlyCastToTextString()
+        {
+            Init();
+            RunStatement("TextString x <- 3.5555 as TextString;", scope);
+            Assert.AreEqual("3.5555", scope.GetValue("x").ToTextString(), "The value should be \"3.5555\".");
+        }
+
+        [Test]
+        public void DecimalNumberShouldNotBeInstanceOfString()
+        {
+            Init();
+            RunStatement("Boolean x <- 3.5 instanceof TextString;", scope);
+            Assert.IsFalse(scope.GetValue("x").ToBoolean());
         }
 
         [Test]
@@ -141,12 +155,38 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
+        public void DecimalNumberShouldBeInstanceOfDecimalNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3.5 instanceof DecimalNumber;", scope);
+            
+            Assert.IsTrue(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
         public void DecimalNumberShouldNotBeInstanceOfWholeNumber()
         {
             Init();
             RunStatement("Boolean x <- 3.5 instanceof WholeNumber;", scope);
             
             Assert.IsFalse(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void WholeNumberShouldBeInstanceOfNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3 instanceof Number;", scope);
+            Assert.IsTrue(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void WholeNumberShouldBeInstanceOfWholeNumber()
+        {
+            Init();
+            RunStatement("Boolean x <- 3 instanceof WholeNumber;", scope);
+            
+            Assert.IsTrue(scope.GetValue("x").ToBoolean());
         }
 
         [Test]
