@@ -11,6 +11,7 @@ public class SettingsControl : MonoBehaviour
         public int width;
         public int height;
         public int fullScreen;
+        public string qualityName;
     }
 
     public TMP_Dropdown dropdown;
@@ -60,7 +61,7 @@ public class SettingsControl : MonoBehaviour
         dropdown.ClearOptions();
         dropdown.AddOptions(options);
         ReadSettings();
-        this.enabled = false;
+        this.gameObject.SetActive(false);
     }
 
     private void SaveSettings()
@@ -68,12 +69,14 @@ public class SettingsControl : MonoBehaviour
         PlayerPrefs.SetInt("ScreenWidth", settings.width);
         PlayerPrefs.SetInt("ScreenHeight", settings.height);
         PlayerPrefs.SetInt("Fullscreen", settings.fullScreen > 0 ? 1 : 0);
+        PlayerPrefs.SetString("QualityLevel", settings.qualityName);
     }
     private void ReadSettings()
     {
         settings.fullScreen = PlayerPrefs.GetInt("Fullscreen", 0);
         settings.width = PlayerPrefs.GetInt("ScreenWidth", 1024);
         settings.height = PlayerPrefs.GetInt("ScreenHeight", 768);
+        settings.qualityName = PlayerPrefs.GetString("QualityLevel", "AliceCustom");
 
         fullScreen.isOn = settings.fullScreen > 0;
         string width = settings.width.ToString();
@@ -84,6 +87,17 @@ public class SettingsControl : MonoBehaviour
                 break;
             }
         }
+
+        // Set quality based on name instead of index
+        for (int i = 0; i < QualitySettings.names.Length; i++){
+            if(QualitySettings.names[i] == settings.qualityName){
+                QualitySettings.SetQualityLevel(i, true);
+                Debug.Log("Setting quality to " + QualitySettings.names[i]);
+                break;
+            } 
+        }
+
+        // Set resolution and fullscreen
         Screen.SetResolution(settings.width, settings.height, fullScreen.isOn);
     }
 
