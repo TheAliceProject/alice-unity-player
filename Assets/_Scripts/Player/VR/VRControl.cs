@@ -60,7 +60,10 @@ public class VRControl : MonoBehaviour
 
     void Start()
     {
-    // On mac, there won't be any VR support for now
+        // If target framerate is unconstrained, graphics card will sometimes scream 
+        // while trying to go as fast as possible. 100 FPS should be plenty.
+        Application.targetFrameRate = 100;
+        // On mac, there won't be any VR support for now
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
         Process[] pname = Process.GetProcessesByName("vrserver");
          if(pname != null && pname.Length > 0){
@@ -158,7 +161,7 @@ public class VRControl : MonoBehaviour
                 XRSettings.enabled = true;
                 loadWorldInVR = true;
                 loadInVRToggle.gameObject.SetActive(true);
-
+                Application.targetFrameRate = -1; // Use VR framerate specified by SDK
                 // Vive appears to be backwards when using SteamVR. Correct it here so we have identical behavior to Oculus
                 if (XRDevice.model.Contains("Vive")){
                     deviceType = VRDevice.Vive;

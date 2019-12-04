@@ -25,7 +25,7 @@ public class RecentWorldButton : MonoBehaviour
         {
             byte[] data = File.ReadAllBytes(thumbnailPath);
             Texture2D tex = null;
-            tex = new Texture2D(160, 90);
+            tex = new Texture2D(640, 360);
             tex.LoadImage(data); //..this will auto-resize the texture dimensions.
             background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
         }

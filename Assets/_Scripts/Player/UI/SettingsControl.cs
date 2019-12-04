@@ -3,20 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.IO;
 
 public class SettingsControl : MonoBehaviour
 {
+    private class Settings{
+        public int width;
+        public int height;
+        public int fullScreen;
+        public string qualityName;
+    }
+
     public TMP_Dropdown dropdown;
     public Button applyButton;
     public Toggle fullScreen;
+    private Settings settings = new Settings();
     private bool dirty;
     private string[] supportedResolutions = { "1024 x 768", 
                                             "1280 x 720", 
                                             "1366 x 768", 
-                                            "1440 x 900", 
+                                            "1440 x 900",
+                                            "1536 x 864",
+                                            "1680 x 1050",
                                             "1920 x 1080", 
                                             "1920 x 1200", 
                                             "2560 x 1440"};
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,12 +59,56 @@ public class SettingsControl : MonoBehaviour
 
         dropdown.ClearOptions();
         dropdown.AddOptions(options);
+        ReadSettings();
+        this.gameObject.SetActive(false);
+    }
+
+    private void SaveSettings()
+    {
+        PlayerPrefs.SetInt("ScreenWidth", settings.width);
+        PlayerPrefs.SetInt("ScreenHeight", settings.height);
+        PlayerPrefs.SetInt("Fullscreen", settings.fullScreen > 0 ? 1 : 0);
+        PlayerPrefs.SetString("QualityLevel", settings.qualityName);
+    }
+    private void ReadSettings()
+    {
+        settings.fullScreen = PlayerPrefs.GetInt("Fullscreen", 0);
+        settings.width = PlayerPrefs.GetInt("ScreenWidth", 1024);
+        settings.height = PlayerPrefs.GetInt("ScreenHeight", 768);
+        settings.qualityName = PlayerPrefs.GetString("QualityLevel", "AliceCustom");
+
+        fullScreen.isOn = settings.fullScreen > 0;
+        string width = settings.width.ToString();
+        string height = settings.height.ToString();
+        for(int i = 0; i < dropdown.options.Count; i++){
+            if(dropdown.options[i].text == width + " x " + height){
+                dropdown.value = i;
+                break;
+            }
+        }
+
+        // Set quality based on name instead of index
+        for (int i = 0; i < QualitySettings.names.Length; i++){
+            if(QualitySettings.names[i] == settings.qualityName){
+                QualitySettings.SetQualityLevel(i, true);
+                Debug.Log("Setting quality to " + QualitySettings.names[i]);
+                break;
+            } 
+        }
+
+        // Set resolution and fullscreen
+        Screen.SetResolution(settings.width, settings.height, fullScreen.isOn);
     }
 
     private void ApplySettings()
     {
         string[] parsed = ParseResolution(dropdown.options[dropdown.value].text);
-        Screen.SetResolution(int.Parse(parsed[0]), int.Parse(parsed[1]), fullScreen.isOn);
+        settings.width = int.Parse(parsed[0]);
+        settings.height = int.Parse(parsed[1]);
+        settings.fullScreen = fullScreen.isOn ? 1 : 0;
+
+        Screen.SetResolution(settings.width, settings.height, fullScreen.isOn);
+        SaveSettings();
     }
 
     private string[] ParseResolution(string resolutionString)
