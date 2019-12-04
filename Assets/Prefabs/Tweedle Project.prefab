@@ -682,6 +682,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8652860334785605492, guid: dd172947250e39a45b31c66ec41a516e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dd172947250e39a45b31c66ec41a516e, type: 3}
 --- !u!224 &5635900353912355069 stripped
@@ -697,16 +702,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 224062486590689936}
     m_Modifications:
-    - target: {fileID: 1615187989392429909, guid: 59fadfb40a241b0449e805061aee6fc2,
-        type: 3}
-      propertyPath: m_Name
-      value: LoadMore
-      objectReference: {fileID: 0}
-    - target: {fileID: 1615187989392429909, guid: 59fadfb40a241b0449e805061aee6fc2,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6322042404025047828, guid: 59fadfb40a241b0449e805061aee6fc2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -811,6 +806,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615187989392429909, guid: 59fadfb40a241b0449e805061aee6fc2,
+        type: 3}
+      propertyPath: m_Name
+      value: LoadMore
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615187989392429909, guid: 59fadfb40a241b0449e805061aee6fc2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4889401398819852946, guid: 59fadfb40a241b0449e805061aee6fc2,
         type: 3}
@@ -1232,11 +1237,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 224062486590689936}
     m_Modifications:
-    - target: {fileID: 2520104944271133868, guid: bb537929670dfa642a2c9068305d5c5c,
-        type: 3}
-      propertyPath: m_Name
-      value: Credits Panel
-      objectReference: {fileID: 0}
     - target: {fileID: 7372314821565327049, guid: bb537929670dfa642a2c9068305d5c5c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1341,6 +1341,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2520104944271133868, guid: bb537929670dfa642a2c9068305d5c5c,
+        type: 3}
+      propertyPath: m_Name
+      value: Credits Panel
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb537929670dfa642a2c9068305d5c5c, type: 3}
