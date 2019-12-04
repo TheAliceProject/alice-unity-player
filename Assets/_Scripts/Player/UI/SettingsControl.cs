@@ -28,7 +28,6 @@ public class SettingsControl : MonoBehaviour
                                             "1920 x 1080", 
                                             "1920 x 1200", 
                                             "2560 x 1440"};
-    private const string settingsFile = "settings.txt";
 
     // Start is called before the first frame update
     void Start()
