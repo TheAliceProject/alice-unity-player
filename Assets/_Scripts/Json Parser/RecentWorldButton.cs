@@ -66,7 +66,7 @@ public class RecentWorldButton : MonoBehaviour
             else if(secondsAgo / 60 < 60)
                 lastOpenedText.text = (secondsAgo / 60).ToString() + " minutes ago";
             else if(secondsAgo / 3600 < 24)
-                lastOpenedText.text = (secondsAgo / 360).ToString() + " hours ago";
+                lastOpenedText.text = (secondsAgo / 3600).ToString() + " hours ago";
             else
                 lastOpenedText.text = (secondsAgo / 86400).ToString() + " days ago";
         }
