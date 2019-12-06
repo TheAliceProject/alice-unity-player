@@ -45,8 +45,7 @@ public class RecentWorldButton : MonoBehaviour
     }
 
     public void SetLastOpenedNow(){
-        System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
-        fileData.lastOpened = (long)(System.DateTime.UtcNow - epochStart).TotalSeconds; // The current time
+        fileData.SetLastOpenedNow();
     }
 
     public long GetLastOpened(){
@@ -56,9 +55,7 @@ public class RecentWorldButton : MonoBehaviour
     private void SetLastOpenedText(){
         if(lastOpenedText) // else ignore
         {
-            System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
-            long currentTime = (long)(System.DateTime.UtcNow - epochStart).TotalSeconds; // The current time
-            long secondsAgo = currentTime - fileData.lastOpened;
+            long secondsAgo = fileData.SecondsSinceLastOpened();
             if(fileData.lastOpened < 0)
                 lastOpenedText.text = "";
             else if(secondsAgo < 60)

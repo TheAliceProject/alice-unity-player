@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -68,22 +69,7 @@ public class WorldLoaderControl : MonoBehaviour
                 continue;
 
             string[] parsedFile = line.Split('|');
-            RecentWorldData data = new RecentWorldData();
-
-            // ADD MORE FILE DATA HERE IN THE FUTURE, follow the format...
-            if (parsedFile.Length == 2){ // Great! They have the most recent version of the file cache
-                data.path = parsedFile[0];
-                data.lastOpened = int.Parse(parsedFile[1]);
-                data.author = "unknown";
-            }
-            else if(parsedFile.Length == 1){ // Okay, we probably only have the path
-                data.path = parsedFile[0];
-                data.lastOpened = -1;
-                data.author = "unknown";
-            }
-            else{ // Something went wrong
-                Debug.LogError("Something went wrong parsing the recents file)");
-            }
+            RecentWorldData data = new RecentWorldData(parsedFile);
             recentWorlds.Add(data);
         }
         fs.Close();
@@ -161,6 +147,7 @@ public class RecentWorldData
     public string path;
     public string author;
     public long lastOpened;
+    private static DateTime _epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
 
     public RecentWorldData(){
         path = "";
@@ -170,8 +157,35 @@ public class RecentWorldData
 
     public RecentWorldData(string path){
         this.path = path;
-        System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
-        lastOpened = (long)(System.DateTime.UtcNow - epochStart).TotalSeconds; // The current time
         author = "unknown";
+        SetLastOpenedNow();
+    }
+
+    public RecentWorldData(string[] entries)
+    {
+        author = "unknown";
+        // ADD MORE FILE DATA HERE IN THE FUTURE, follow the format...
+        if (entries.Length == 2){ // Great! They have the most recent version of the file cache
+            path = entries[0];
+            lastOpened = int.Parse(entries[1]);
+        }
+        else if(entries.Length == 1){ // Okay, we probably only have the path
+            path = entries[0];
+            lastOpened = -1;
+        }
+        else{ // Something went wrong
+            Debug.LogError("Something went wrong parsing the recents file)");
+        }
+    }
+
+    public void SetLastOpenedNow()
+    {
+        lastOpened = (long)(System.DateTime.UtcNow - _epochStart).TotalSeconds; // The current time
+    }
+
+    public long SecondsSinceLastOpened()
+    {
+        long currentTime = (long)(System.DateTime.UtcNow - _epochStart).TotalSeconds; // The current time
+        return currentTime - lastOpened;
     }
 }

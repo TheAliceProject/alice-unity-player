@@ -60,25 +60,7 @@ public class LoadMoreControl : MonoBehaviour
                 continue;
 
             string[] parsedFile = line.Split('|');
-            RecentWorldData data = new RecentWorldData();
-
-            // ADD MORE FILE DATA HERE IN THE FUTURE, follow the format...
-            if (parsedFile.Length == 2)
-            { // Great! They have the most recent version of the file cache
-                data.path = parsedFile[0];
-                data.lastOpened = int.Parse(parsedFile[1]);
-                data.author = "unknown";
-            }
-            else if (parsedFile.Length == 1)
-            { // Okay, we probably only have the path
-                data.path = parsedFile[0];
-                data.lastOpened = -1;
-                data.author = "unknown";
-            }
-            else
-            { // Something went wrong
-                Debug.LogError("Something went wrong parsing the recents file)");
-            }
+            RecentWorldData data = new RecentWorldData(parsedFile);
             if (!File.Exists(parsedFile[0]))
                 continue;
             recentWorldsData.Add(data);
