@@ -78,6 +78,8 @@ public class LoadMoreControl : MonoBehaviour
             { // Something went wrong
                 Debug.LogError("Something went wrong parsing the recents file)");
             }
+            if (!File.Exists(parsedFile[0]))
+                continue;
             recentWorldsData.Add(data);
         }
         fs.Close();
@@ -114,7 +116,8 @@ public class LoadMoreControl : MonoBehaviour
 
         Debug.Log("Min y pos: " + minYPos);
 
-        //(buttonParent as RectTransform).sizeDelta = new Vector2(0f, minYPos);
+       // (buttonParent as RectTransform).SetSizeDelta(minYPos, Axis.Y);
+        
     }
 
     private void DestroyCurrentButtons()
