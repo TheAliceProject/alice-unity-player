@@ -20,6 +20,7 @@ public class LoadMoreControl : MonoBehaviour
     }
 
     public RecentWorldButton recentWorldPrefab;
+    public bool useVRSizing; // set in inspector
 
     private const string RecentWorldsFileName = "/recentWorlds.txt";
     private List<RecentWorldButton> recentWorlds = new List<RecentWorldButton>();
@@ -36,9 +37,9 @@ public class LoadMoreControl : MonoBehaviour
         });
     }
 
-    void Update()
+    void OnEnable()
     {
-        // Check if user is at the bottom to add more
+        LoadButtons(GetRecentWorlds());
     }
 
     private List<RecentWorldData> GetRecentWorlds(){
@@ -100,6 +101,7 @@ public class LoadMoreControl : MonoBehaviour
         {
             RecentWorldButton newButton = Instantiate(recentWorldPrefab, buttonParent);
             newButton.SetData(worldFiles[i]);
+            newButton.collider.enabled = useVRSizing;
             recentWorlds.Add(newButton);
             newButton.button.onClick.AddListener(() =>
             {
