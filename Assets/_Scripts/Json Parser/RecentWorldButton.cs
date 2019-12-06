@@ -9,18 +9,19 @@ public class RecentWorldButton : MonoBehaviour
 {
     public Button button;
     public TextMeshProUGUI nameText;
+    public TextMeshProUGUI lastOpenedText;
     public TextMeshProUGUI authorText; // Unused for now
     public Image background;
     public BoxCollider collider;
     
-    private string filePath;
+    private RecentWorldData fileData = new RecentWorldData();
 
-    public void SetText(string text)
+    public void SetData(RecentWorldData worldData)
     {
-        nameText.text = Path.GetFileNameWithoutExtension(text);
-        filePath = text;
+        nameText.text = Path.GetFileNameWithoutExtension(worldData.path);
+        fileData.path = worldData.path;
 
-        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(Path.GetFileName(text)) + "_thumb.png";
+        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(worldData.path) + "_thumb.png";
         if (File.Exists(thumbnailPath))
         {
             byte[] data = File.ReadAllBytes(thumbnailPath);
@@ -30,6 +31,8 @@ public class RecentWorldButton : MonoBehaviour
             background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
         }
 
+        fileData.lastOpened = worldData.lastOpened;
+        SetLastOpenedText();
     }
 
     public void ScaleText(float scaleFactor)
@@ -37,8 +40,35 @@ public class RecentWorldButton : MonoBehaviour
         nameText.fontSize *= scaleFactor;
     }
 
-    public string GetFilePath()
-    {
-        return filePath;
+    public string GetFilePath(){
+        return fileData.path;
+    }
+
+    public void SetLastOpenedNow(){
+        System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+        fileData.lastOpened = (long)(System.DateTime.UtcNow - epochStart).TotalSeconds; // The current time
+    }
+
+    public long GetLastOpened(){
+        return fileData.lastOpened;
+    }
+
+    private void SetLastOpenedText(){
+        if(lastOpenedText) // else ignore
+        {
+            System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+            long currentTime = (long)(System.DateTime.UtcNow - epochStart).TotalSeconds; // The current time
+            long secondsAgo = currentTime - fileData.lastOpened;
+            if(fileData.lastOpened < 0)
+                lastOpenedText.text = "";
+            else if(secondsAgo < 60)
+                lastOpenedText.text = secondsAgo.ToString() + " seconds ago";
+            else if(secondsAgo / 60 < 60)
+                lastOpenedText.text = (secondsAgo / 60).ToString() + " minutes ago";
+            else if(secondsAgo / 3600 < 24)
+                lastOpenedText.text = (secondsAgo / 360).ToString() + " hours ago";
+            else
+                lastOpenedText.text = (secondsAgo / 86400).ToString() + " days ago";
+        }
     }
 }

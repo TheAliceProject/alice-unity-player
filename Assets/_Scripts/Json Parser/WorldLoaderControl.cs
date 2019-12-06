@@ -12,7 +12,7 @@ public class WorldLoaderControl : MonoBehaviour
     public Toggle loadInVR;
     public bool useVRSizing = false; // Set in inspector
 
-    private List<string> recentWorlds = new List<string>();
+    private List<RecentWorldData> recentWorlds = new List<RecentWorldData>();
     private const string RecentWorldsFileName = "/recentWorlds.txt";
 
     void Start()
@@ -30,9 +30,19 @@ public class WorldLoaderControl : MonoBehaviour
 
     public void AddWorldToRecents(string file)
     {
-        if(recentWorlds.Contains(file))
-            recentWorlds.Remove(file);
-        recentWorlds.Insert(0, file);
+        RecentWorldData toRemove = null;
+        for (int i = 0; i < recentWorlds.Count; i++)
+        {
+            if(recentWorlds[i].path == file){
+                toRemove = recentWorlds[i];
+            }
+        }
+        if (toRemove != null){
+            recentWorlds.Remove(toRemove);
+        }
+
+        RecentWorldData newWorld = new RecentWorldData(file);
+        recentWorlds.Insert(0, newWorld);
         SaveLevels();
         LoadButtons(recentWorlds);
     }
@@ -57,7 +67,24 @@ public class WorldLoaderControl : MonoBehaviour
             else if (line.Trim() == "") // Really looking for \n or \r or some combination here. Should never happen in theory unless someone purposefully messes with this file
                 continue;
 
-            recentWorlds.Add(line);
+            string[] parsedFile = line.Split('|');
+            RecentWorldData data = new RecentWorldData();
+
+            // ADD MORE FILE DATA HERE IN THE FUTURE, follow the format...
+            if (parsedFile.Length == 2){ // Great! They have the most recent version of the file cache
+                data.path = parsedFile[0];
+                data.lastOpened = int.Parse(parsedFile[1]);
+                data.author = "unknown";
+            }
+            else if(parsedFile.Length == 1){ // Okay, we probably only have the path
+                data.path = parsedFile[0];
+                data.lastOpened = -1;
+                data.author = "unknown";
+            }
+            else{ // Something went wrong
+                Debug.LogError("Something went wrong parsing the recents file)");
+            }
+            recentWorlds.Add(data);
         }
         fs.Close();
         LoadButtons(recentWorlds);
@@ -68,12 +95,12 @@ public class WorldLoaderControl : MonoBehaviour
         var fs = File.CreateText(Application.persistentDataPath + RecentWorldsFileName);
         for (int i = 0; i < recentWorlds.Count; i++)
         {
-            fs.WriteLine(recentWorlds[i]);
+            fs.WriteLine(recentWorlds[i].path + "|" + recentWorlds[i].lastOpened);
         }
         fs.Close();
     }
 
-    void LoadButtons(List<string> worldFiles)
+    void LoadButtons(List<RecentWorldData> worldFiles)
     {
         List<string> worldFilesTrimmed = new List<string>();
 
@@ -81,13 +108,13 @@ public class WorldLoaderControl : MonoBehaviour
         for (int i = 0; i < worldFiles.Count; i++)
         {
             // Fixes issue where two of the same file exist in our list, but one uses "\" and one uses "/"
-            string uniqueFile = worldFiles[i].Replace("/", "").Replace("\\", "");
+            string uniqueFile = worldFiles[i].path.Replace("/", "").Replace("\\", "");
             if(worldFilesTrimmed.Contains(uniqueFile))
                 continue;
             else
                 worldFilesTrimmed.Add(uniqueFile);
 
-            if (File.Exists(worldFiles[i]))
+            if (File.Exists(worldFiles[i].path))
             {
                 if (useVRSizing)
                 {
@@ -95,11 +122,12 @@ public class WorldLoaderControl : MonoBehaviour
                     recentButtons[totalFilesFound].collider.enabled = true;
                 }
                 recentButtons[totalFilesFound].gameObject.SetActive(true);
-                recentButtons[totalFilesFound].SetText(worldFiles[i]);
+                recentButtons[totalFilesFound].SetData(worldFiles[i]);
                 int x = totalFilesFound;
                 recentButtons[totalFilesFound].button.onClick.RemoveAllListeners();
                 recentButtons[totalFilesFound].button.onClick.AddListener(() =>
                 {
+                    recentButtons[x].SetLastOpenedNow();
                     WorldObjects.GetParser().OpenWorld(recentButtons[x].GetFilePath());
                 });
                 totalFilesFound++;
@@ -125,5 +153,25 @@ public class WorldLoaderControl : MonoBehaviour
     float GetSpacing()
     {
         return useVRSizing ? 100f : 105f;
+    }
+}
+
+public class RecentWorldData
+{
+    public string path;
+    public string author;
+    public long lastOpened;
+
+    public RecentWorldData(){
+        path = "";
+        author = "unknown";
+        lastOpened = -1;
+    }
+
+    public RecentWorldData(string path){
+        this.path = path;
+        System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+        lastOpened = (long)(System.DateTime.UtcNow - epochStart).TotalSeconds; // The current time
+        author = "unknown";
     }
 }
