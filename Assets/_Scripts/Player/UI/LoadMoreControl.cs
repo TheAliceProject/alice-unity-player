@@ -98,9 +98,14 @@ public class LoadMoreControl : MonoBehaviour
 
         for (int i = 0; i < worldFiles.Count; i++)
         {
-            RecentWorldButton button = Instantiate(recentWorldPrefab, buttonParent);
-            button.SetData(worldFiles[i]);
-            recentWorlds.Add(button);
+            RecentWorldButton newButton = Instantiate(recentWorldPrefab, buttonParent);
+            newButton.SetData(worldFiles[i]);
+            recentWorlds.Add(newButton);
+            newButton.button.onClick.AddListener(() =>
+            {
+                newButton.SetLastOpenedNow();
+                WorldObjects.GetParser().OpenWorld(newButton.GetFilePath());
+            });
         }
 
         yield return null;
