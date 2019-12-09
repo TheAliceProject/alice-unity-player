@@ -467,11 +467,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: RecentWorlds
       objectReference: {fileID: 0}
-    - target: {fileID: 5604621202794788236, guid: dd172947250e39a45b31c66ec41a516e,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 869680381624630733, guid: dd172947250e39a45b31c66ec41a516e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -577,21 +572,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 6766093653923785921, guid: dd172947250e39a45b31c66ec41a516e,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6766093653923785921, guid: dd172947250e39a45b31c66ec41a516e,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6766093653923785921, guid: dd172947250e39a45b31c66ec41a516e,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 136
-      objectReference: {fileID: 0}
     - target: {fileID: 5812070446998532900, guid: dd172947250e39a45b31c66ec41a516e,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -680,11 +660,6 @@ PrefabInstance:
     - target: {fileID: 2026200051213970492, guid: dd172947250e39a45b31c66ec41a516e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8652860334785605492, guid: dd172947250e39a45b31c66ec41a516e,
-        type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

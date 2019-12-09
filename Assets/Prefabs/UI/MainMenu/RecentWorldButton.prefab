@@ -404,7 +404,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 30
   m_fontStyle: 1
-  m_textAlignment: 1025
+  m_textAlignment: 1026
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -547,6 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 406250424911039763}
   nameText: {fileID: 9080081127075811294}
+  lastOpenedText: {fileID: 0}
   authorText: {fileID: 0}
   background: {fileID: 1323375171782081529}
   collider: {fileID: 7719640953917604304}
