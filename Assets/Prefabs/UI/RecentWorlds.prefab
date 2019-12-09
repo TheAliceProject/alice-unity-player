@@ -1783,6 +1783,11 @@ PrefabInstance:
       propertyPath: m_margin.z
       value: 19.513916
       objectReference: {fileID: 0}
+    - target: {fileID: 9080081127075811294, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 1026
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b91743378d3629d4e9fcd1b8bea1ac64, type: 3}
 --- !u!224 &3753342444212264478 stripped
@@ -1989,6 +1994,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_margin.z
       value: 19.513916
+      objectReference: {fileID: 0}
+    - target: {fileID: 9080081127075811294, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 1026
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b91743378d3629d4e9fcd1b8bea1ac64, type: 3}
