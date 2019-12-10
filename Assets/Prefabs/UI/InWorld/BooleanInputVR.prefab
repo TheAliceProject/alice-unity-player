@@ -15,6 +15,7 @@ MonoBehaviour:
   label: {fileID: 977144311247465158}
   trueButton: {fileID: 5674408106615822931}
   falseButton: {fileID: 8313027676518383012}
+  rect: {fileID: 3884679790376518324}
 --- !u!65 &5806434601454629955
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -438,6 +439,12 @@ PrefabInstance:
 --- !u!1 &8901256140874203064 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4761171393770823067, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
+    type: 3}
+  m_PrefabInstance: {fileID: 4149092222322876963}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &3884679790376518324 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 900067688660607127, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
     type: 3}
   m_PrefabInstance: {fileID: 4149092222322876963}
   m_PrefabAsset: {fileID: 0}
