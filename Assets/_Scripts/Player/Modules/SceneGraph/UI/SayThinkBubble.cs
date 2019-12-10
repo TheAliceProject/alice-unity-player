@@ -62,7 +62,7 @@ namespace Alice.Player.Unity {
             bubbleText.color = c;
             bubbleText.font = font;
             fontSizeUnscaled = BASE_FONT_SIZE * scale;
-            if(VRControl.IsLoadedInVR())
+            if(!VRControl.IsLoadedInVR())
                 bubbleText.fontSize = fontSizeUnscaled * (Screen.width / FONT_WIDTH_SCALE);
         }
 

@@ -32,7 +32,7 @@ namespace Alice.Player.Unity {
         private float m_lastWidth;
         private float m_lastHeight;
         private const float BUBBLE_SPACING = 50f;
-        private const float VR_WIDTH_SCALE_FACTOR = 2f;
+        private const float VR_WIDTH_SCALE_FACTOR = 3.5f;
         void Update()
         {
             if (Screen.width != m_lastWidth)
