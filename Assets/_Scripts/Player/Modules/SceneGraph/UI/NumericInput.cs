@@ -12,6 +12,7 @@ public class NumericInput : MonoBehaviour
 {
     public TextMeshProUGUI label;
     public InputField inputField;
+    public RectTransform rect;
     public Button okButton;
     public Button[] numericButtons;
     public Button plusMinusButton;
@@ -57,6 +58,9 @@ public class NumericInput : MonoBehaviour
                 inputField.text = inputText.Substring(0, inputText.Length-1);
             }
         });
+
+        if(!VRControl.IsLoadedInVR())
+            rect.SetScale(Screen.height / 800f, Axis.XYZ);
     }
 
     public void Spawn(string label, AsyncReturn<double> returnDouble)

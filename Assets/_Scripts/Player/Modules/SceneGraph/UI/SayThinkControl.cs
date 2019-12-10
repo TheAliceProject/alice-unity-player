@@ -31,7 +31,7 @@ namespace Alice.Player.Unity {
         private Dictionary<SayThinkBubble, AsyncReturn> bubbleReturns = new Dictionary<SayThinkBubble, AsyncReturn>();
         private float m_lastWidth;
         private float m_lastHeight;
-        private const float BUBBLE_SPACING = 100f;
+        private const float BUBBLE_SPACING = 50f;
         private const float VR_WIDTH_SCALE_FACTOR = 2f;
         void Update()
         {
