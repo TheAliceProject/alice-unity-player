@@ -100,7 +100,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 30
   m_fontStyle: 1
-  m_textAlignment: 1026
+  m_textAlignment: 1025
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 30, y: 0, z: 29.429565, w: -78.8}
+  m_margin: {x: 0, y: 0, z: 0, w: -78.8}
   m_textInfo:
     textComponent: {fileID: 6562699645176871877}
     characterCount: 6
@@ -178,6 +178,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5730807624979998085, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_Name
+      value: RecentWorldButton Variant
+      objectReference: {fileID: 0}
     - target: {fileID: 7049681677280391403, guid: b91743378d3629d4e9fcd1b8bea1ac64,
         type: 3}
       propertyPath: lastOpenedText
@@ -218,10 +223,20 @@ PrefabInstance:
       propertyPath: m_textInfo.lineCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5730807624979998085, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+    - target: {fileID: 9080081127075811294, guid: b91743378d3629d4e9fcd1b8bea1ac64,
         type: 3}
-      propertyPath: m_Name
-      value: RecentWorldButton Variant
+      propertyPath: m_margin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9080081127075811294, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 9080081127075811294, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_margin.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 415104977314859306, guid: b91743378d3629d4e9fcd1b8bea1ac64,
         type: 3}
@@ -328,6 +343,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 3739184584562626698, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3299644154036812552, guid: b91743378d3629d4e9fcd1b8bea1ac64,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -336,6 +356,16 @@ PrefabInstance:
     - target: {fileID: 3299644154036812552, guid: b91743378d3629d4e9fcd1b8bea1ac64,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3299644154036812552, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3299644154036812552, guid: b91743378d3629d4e9fcd1b8bea1ac64,
+        type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
