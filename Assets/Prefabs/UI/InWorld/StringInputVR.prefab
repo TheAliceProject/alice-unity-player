@@ -6775,6 +6775,7 @@ MonoBehaviour:
   label: {fileID: 3754606767596030181}
   inputField: {fileID: 5556377539936690009}
   doneButton: {fileID: 8586963159184242800}
+  rect: {fileID: 900067688660607127}
   keyboardButtons:
   - {fileID: 4260191846954215667}
   - {fileID: 8787335834902003524}

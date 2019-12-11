@@ -12,6 +12,7 @@ public class UserInput : MonoBehaviour
     public TextMeshProUGUI label;
     public InputField inputField;
     public Button doneButton;
+    public RectTransform rect;
 
     private Routine m_Routine;
     private bool userInputDone = false;
@@ -21,6 +22,9 @@ public class UserInput : MonoBehaviour
         doneButton.onClick.AddListener(()=>{
             UserClickedButton();
         });
+
+        if (!VRControl.IsLoadedInVR())
+            rect.SetScale(Screen.height / 800f, Axis.XYZ);
     }
 
     void Update()
@@ -46,7 +50,10 @@ public class UserInput : MonoBehaviour
 
     public string GetUserInput()
     {
-        return inputField.text;
+        if(inputField.text == "")
+            return " "; // Null or empty string results in too narrow of a bubble
+        else
+            return inputField.text;
     }
 
     public void UserClickedButton()
