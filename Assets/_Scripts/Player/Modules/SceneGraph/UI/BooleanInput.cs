@@ -12,6 +12,7 @@ public class BooleanInput : MonoBehaviour
     public TextMeshProUGUI label;
     public Button trueButton;
     public Button falseButton;
+    public RectTransform rect;
 
     private Routine m_Routine;
     private BoolState boolState = BoolState.None;
@@ -29,6 +30,9 @@ public class BooleanInput : MonoBehaviour
         falseButton.onClick.AddListener(()=>{
             UserClickedButton(false);
         });
+
+        if (!VRControl.IsLoadedInVR())
+            rect.SetScale(Screen.height / 800f, Axis.XYZ);
     }
 
     public void Spawn(string label, AsyncReturn<bool> boolReturn)

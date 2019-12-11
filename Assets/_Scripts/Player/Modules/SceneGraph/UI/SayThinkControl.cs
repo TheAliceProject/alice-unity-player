@@ -31,13 +31,13 @@ namespace Alice.Player.Unity {
         private Dictionary<SayThinkBubble, AsyncReturn> bubbleReturns = new Dictionary<SayThinkBubble, AsyncReturn>();
         private float m_lastWidth;
         private float m_lastHeight;
-        private const float BUBBLE_SPACING = 100f;
-        private const float VR_WIDTH_SCALE_FACTOR = 2f;
+        private const float BUBBLE_SPACING = 50f;
+        private const float VR_WIDTH = 800f;
         void Update()
         {
             if (Screen.width != m_lastWidth)
             {
-                float screenWidth = VRControl.IsLoadedInVR() ? Screen.width / VR_WIDTH_SCALE_FACTOR : Screen.width;
+                float screenWidth = VRControl.IsLoadedInVR() ? VR_WIDTH : Screen.width;
                 Vector2 currDelta = leftBubbles.sizeDelta;
                 Vector2 currPos = leftBubbles.anchoredPosition;
                 currPos.x = -(screenWidth - BUBBLE_SPACING) / 2f;
