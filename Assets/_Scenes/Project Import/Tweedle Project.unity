@@ -1593,18 +1593,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &197045846 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2496780859973947244, guid: efee6d1d4d595d046a09b11eab729e4c,
-    type: 3}
-  m_PrefabInstance: {fileID: 800775373}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &200195108 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1103247595515362017, guid: efee6d1d4d595d046a09b11eab729e4c,
@@ -3047,7 +3035,7 @@ PrefabInstance:
         type: 3}
       propertyPath: loadInVR
       value: 
-      objectReference: {fileID: 197045846}
+      objectReference: {fileID: 0}
     - target: {fileID: 6532966961854650335, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -3732,6 +3720,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Title
+      objectReference: {fileID: 0}
+    - target: {fileID: 3220653713093812280, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
@@ -4456,7 +4449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3db9526081f618849a1f38d34c53cee7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadInVRToggle: {fileID: 197045846}
+  loadInVRToggle: {fileID: 0}
   rig: {fileID: 1996670126}
   landingRig: {fileID: 1105054019}
   eventSystem: {fileID: 1116292066}
@@ -9774,7 +9767,7 @@ PrefabInstance:
     - target: {fileID: 1863096887978192017, guid: e779aee77633553488198e6829c380f0,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000015875645
+      value: 0.000037725003
       objectReference: {fileID: 0}
     - target: {fileID: 6567412935307995989, guid: e779aee77633553488198e6829c380f0,
         type: 3}
