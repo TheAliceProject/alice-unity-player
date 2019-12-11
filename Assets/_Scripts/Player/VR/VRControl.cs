@@ -27,7 +27,6 @@ public class VRControl : MonoBehaviour
                                                           // if the player is completely upright. We'll still let them turn the camera by large amounts, but filter out little (unintentional) ones
     public const float TRIGGER_SENSITIVITY = 0.5f;
     public const float WORLD_CANVAS_DISTANCE = 1.5f;
-    public Toggle loadInVRToggle;
     public VRRig rig;
     public Transform landingRig;
     public EventSystem eventSystem;
@@ -160,7 +159,7 @@ public class VRControl : MonoBehaviour
                 VRObjects.SetActive(true);
                 XRSettings.enabled = true;
                 loadWorldInVR = true;
-                loadInVRToggle.gameObject.SetActive(true);
+                // ToDo: Allow worlds to run not in VR
                 Application.targetFrameRate = -1; // Use VR framerate specified by SDK
                 // Vive appears to be backwards when using SteamVR. Correct it here so we have identical behavior to Oculus
                 if (XRDevice.model.Contains("Vive")){
