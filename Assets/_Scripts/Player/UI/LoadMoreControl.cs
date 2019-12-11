@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using System.IO;
 using BeauRoutine;
+using System.Linq;
 
 public class LoadMoreControl : MonoBehaviour
 {
@@ -67,6 +68,26 @@ public class LoadMoreControl : MonoBehaviour
         }
         fs.Close();
         return recentWorldsData;
+    }
+//This is the function SortWorldByName
+    private List<RecentWorldData> SortWorldByName(List<RecentWorldData> ListNeedSort)
+    {
+        int value;
+        Dictionary<RecentWorldData, int> newDic = new Dictionary<RecentWorldData, int>();
+        foreach(RecentWorldData world in ListNeedSort)
+        {
+            value = ConvertAsciiHelper((int)(Path.GetFileNameWithoutExtension(world.path)[0]));
+            newDic.Add(world, value);
+        }
+        //sort the dic and we can get a dic to use;
+        List<KeyValuePair<RecentWorldData, int>> newlist = newDic.ToList();
+        newlist.Sort((x, y) => x.Value.CompareTo(y.Value));
+        List<RecentWorldData> res = (from e in newlist select e.Key).ToList();
+        return res;
+    }   
+    int ConvertAsciiHelper(int number)
+    {
+        return (number <= 122 && number >= 97) ? (number - 32) : number;
     }
 
     void LoadButtons(List<RecentWorldData> worldFiles)

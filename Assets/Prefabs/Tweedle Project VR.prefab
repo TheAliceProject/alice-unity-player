@@ -63,7 +63,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 411.94, y: 94.68, z: 2}
+  m_Size: {x: 780.52, y: 94.68, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6306922043066496060
 BoxCollider:
@@ -76,7 +76,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 411.94, y: 94.68, z: 2}
+  m_Size: {x: 780.52, y: 94.68, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &289809781467289666
 BoxCollider:
@@ -89,7 +89,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 411.94, y: 94.68, z: 2}
+  m_Size: {x: 780.52, y: 94.68, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7744134068592596298
 PrefabInstance:
@@ -355,7 +355,7 @@ PrefabInstance:
     - target: {fileID: 7485807535824942553, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 63
+      value: -67
       objectReference: {fileID: 0}
     - target: {fileID: 4713270142654873958, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
@@ -795,6 +795,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3385924247799947698, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 72
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
