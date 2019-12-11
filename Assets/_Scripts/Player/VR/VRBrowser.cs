@@ -24,7 +24,6 @@ public class VRBrowser : MonoBehaviour
         {
             pwd = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
             LoadFilesInPath(pwd);
-            VRControl.Rig().EnablePointersForUI(true);
         }
 
         void Update()

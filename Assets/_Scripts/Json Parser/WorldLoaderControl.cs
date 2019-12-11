@@ -22,6 +22,9 @@ public class WorldLoaderControl : MonoBehaviour
         
         if(loadInVR != null)
             loadInVR.onValueChanged.AddListener(VRControl.Loaded);
+
+        if(useVRSizing)
+            VRControl.Rig().EnablePointersForUI(true);
     }
 
     void OnEnable()

@@ -13,7 +13,6 @@ namespace Alice.Tweedle.Parse
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
-        public VRRig uiRig;
         public Button loadNewWorldButton;
 
         public WorldLoaderControl worldLoader;
