@@ -16,6 +16,12 @@ public class WorldControl : MonoBehaviour
     public Button pauseButton;
     public TextMeshProUGUI status;
 
+    public Image playPauseImage;
+    public Sprite playSprite;
+    public Sprite pauseSprite;
+
+    private const float minimiumTimeScale = 1f / 64f;
+    private const float maximumTimeScale = 64f;
     private static float currentTimeScale = 1f;
     private static bool paused = false;
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
@@ -51,16 +57,23 @@ public class WorldControl : MonoBehaviour
 
         speedUpButton.onClick.AddListener(() =>
         {
-            if(!paused)
+            if(!paused){
+                if(currentTimeScale >= maximumTimeScale)
+                    return;
                 currentTimeScale *= 2f;
-            else
+            }
+            else{
                 paused = false;
+            }
             Time.timeScale = currentTimeScale;
             UpdateStatus();
         });
 
         slowDownButton.onClick.AddListener(() =>
         {
+            if(currentTimeScale <= minimiumTimeScale)
+                return;
+
             currentTimeScale /= 2f;
             Time.timeScale = currentTimeScale;
             UpdateStatus();
@@ -102,13 +115,13 @@ public class WorldControl : MonoBehaviour
 
     void UpdateUI()
     {
-        string statusString;
-        if (Time.timeScale == 0.0f)
-            statusString = "Paused";
-        else
-            statusString = string.Format("{0:0.0}x", Time.timeScale);
-
-        status.text = string.Format("Speed: " + statusString);
-
+        if (Time.timeScale == 0.0f){
+            playPauseImage.sprite = playSprite;
+            status.text = "Paused";
+        }
+        else{
+            playPauseImage.sprite = pauseSprite;
+            status.text = string.Format("{0:0.0}x", Time.timeScale);
+        }
     }
 }
