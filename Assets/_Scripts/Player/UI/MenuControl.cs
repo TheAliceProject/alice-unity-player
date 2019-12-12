@@ -13,6 +13,7 @@ public class MenuControl : MonoBehaviour
     public Button About;
     public Button Settings;
     public Button OpenWebsite;
+    public Button loadNewWorldButton;
 
     public GameObject MainMenuPanel;
     public GameObject RecentWorldsPanel;
@@ -38,7 +39,8 @@ public class MenuControl : MonoBehaviour
         RecentWorlds.onClick.AddListener(() => { ShowRecentWorlds(); });
         About.onClick.AddListener(() => { SetTopPanel(AboutPanel); });
         Settings.onClick.AddListener(() => { SetTopPanel(SettingsPanel); });
-        
+
+        LinkOpenWorldButton();
         // Button from Recent Worlds
         LoadMoreWorlds.onClick.AddListener(() =>
         {
@@ -52,7 +54,15 @@ public class MenuControl : MonoBehaviour
             OpenWebsite.onClick.AddListener(() => { Application.OpenURL("https://www.alice.org/"); });
     }
 
-    private void ShowMenu()
+    public virtual void LinkOpenWorldButton()
+    {
+        loadNewWorldButton.onClick.AddListener(() =>
+        {
+            WorldObjects.GetParser().OpenWorld();
+        });
+    }
+
+    protected void ShowMenu()
     {
         SetTopPanel(LogoWithMenuPanel);
         MainMenu.image.sprite = homeSprite;
@@ -70,7 +80,7 @@ public class MenuControl : MonoBehaviour
         _isMenuOpen = false;
     }
 
-    private void SetTopPanel(GameObject thisPanel)
+    protected virtual void SetTopPanel(GameObject thisPanel)
     {
         // Disable this, which does not show credits
         LoadMoreWorldsPanel.SetActive(false);
