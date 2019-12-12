@@ -13,7 +13,6 @@ namespace Alice.Tweedle.Parse
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
-        public Button loadNewWorldButton;
 
         public WorldLoaderControl worldLoader;
         public VRLoadingControl vrLoadingScreen;
@@ -28,10 +27,6 @@ namespace Alice.Tweedle.Parse
         void Awake()
         {
             DeleteTemporaryAudioFiles();
-            loadNewWorldButton.onClick.AddListener(() =>
-            {
-                OpenWorld();
-            });
         }
 
         void OnDestroy()
