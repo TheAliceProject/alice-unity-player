@@ -13,7 +13,6 @@ public class VRBrowser : MonoBehaviour
         public VRBrowserButton fileButton;
         public Transform root;
         public TextMeshProUGUI currentDirectory;
-        public UnityObjectParser parser;
         public ScrollRect rect;
         public Sprite worldSprite;
 
@@ -24,7 +23,6 @@ public class VRBrowser : MonoBehaviour
         {
             pwd = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
             LoadFilesInPath(pwd);
-            VRControl.Rig().EnablePointersForUI(true);
         }
 
         void Update()
@@ -133,7 +131,7 @@ public class VRBrowser : MonoBehaviour
             if (path.Contains("/") || path.Contains("\\") || path.Contains(".."))
                 Navigate(path);
             else if(path.Contains(".a3w") || path.Contains(".A3W"))
-                parser.OpenWorld(pwd + "/" + path);
+                WorldObjects.GetParser().OpenWorld(pwd + "/" + path);
             else
                 Debug.LogError("Invalid path: " + path);
         }
