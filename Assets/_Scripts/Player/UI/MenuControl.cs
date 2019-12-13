@@ -6,6 +6,7 @@ public class MenuControl : MonoBehaviour
     public Button MainMenu;
     
     public Sprite menuSprite;
+    public Sprite closeSprite;
     public Sprite homeSprite;
 
     public Button LoadMoreWorlds;
@@ -35,8 +36,15 @@ public class MenuControl : MonoBehaviour
         });
 
         // Menu items
-        About.onClick.AddListener(() => { SetTopPanel(AboutPanel); });
-        Settings.onClick.AddListener(() => { SetTopPanel(SettingsPanel); });
+        About.onClick.AddListener(() =>
+        {
+            SetTopPanel(AboutPanel);
+            MainMenu.image.sprite = homeSprite;
+        });
+        Settings.onClick.AddListener(() => {
+            SetTopPanel(SettingsPanel);
+            MainMenu.image.sprite = homeSprite;
+        });
 
         LinkOpenWorldButton();
         // Button from Recent Worlds
@@ -63,7 +71,7 @@ public class MenuControl : MonoBehaviour
     protected void ShowMenu()
     {
         SetTopPanel(LogoWithMenuPanel);
-        MainMenu.image.sprite = homeSprite;
+        MainMenu.image.sprite = closeSprite;
         MainMenuPanel.SetActive(true);
         RecentWorldsPanel.SetActive(false);
         _isMenuOpen = true;
