@@ -6,9 +6,9 @@ public class MenuControl : MonoBehaviour
     public Button MainMenu;
     
     public Sprite menuSprite;
+    public Sprite closeSprite;
     public Sprite homeSprite;
 
-    public Button RecentWorlds;
     public Button LoadMoreWorlds;
     public Button About;
     public Button Settings;
@@ -36,9 +36,15 @@ public class MenuControl : MonoBehaviour
         });
 
         // Menu items
-        RecentWorlds.onClick.AddListener(() => { ShowRecentWorlds(); });
-        About.onClick.AddListener(() => { SetTopPanel(AboutPanel); });
-        Settings.onClick.AddListener(() => { SetTopPanel(SettingsPanel); });
+        About.onClick.AddListener(() =>
+        {
+            SetTopPanel(AboutPanel);
+            MainMenu.image.sprite = homeSprite;
+        });
+        Settings.onClick.AddListener(() => {
+            SetTopPanel(SettingsPanel);
+            MainMenu.image.sprite = homeSprite;
+        });
 
         LinkOpenWorldButton();
         // Button from Recent Worlds
@@ -65,7 +71,7 @@ public class MenuControl : MonoBehaviour
     protected void ShowMenu()
     {
         SetTopPanel(LogoWithMenuPanel);
-        MainMenu.image.sprite = homeSprite;
+        MainMenu.image.sprite = closeSprite;
         MainMenuPanel.SetActive(true);
         RecentWorldsPanel.SetActive(false);
         _isMenuOpen = true;
@@ -82,14 +88,17 @@ public class MenuControl : MonoBehaviour
 
     protected virtual void SetTopPanel(GameObject thisPanel)
     {
-        // Disable this, which does not show credits
+        // Disable this, which is not a top panel with credits
         LoadMoreWorldsPanel.SetActive(false);
+
         // Enable parent of credits and top panel
         CreditedPanel.SetActive(true);
+
         // Disable all children of the top panel
         LogoWithMenuPanel.SetActive(false);
         SettingsPanel.SetActive(false);
         AboutPanel.SetActive(false);
+
         // Enable the selected panel
         thisPanel.SetActive(true);
     }

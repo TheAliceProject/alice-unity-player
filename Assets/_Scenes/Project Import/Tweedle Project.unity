@@ -120,18 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &6513594 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8772767536600374300, guid: efee6d1d4d595d046a09b11eab729e4c,
-    type: 3}
-  m_PrefabInstance: {fileID: 800775373}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &23517765 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1728189243088215428, guid: ace8ecf4f53fb65419c88aada87bfc0e,
@@ -470,8 +458,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MainMenu: {fileID: 1646730237}
   menuSprite: {fileID: 21300000, guid: 692b5db3645b5ec46ae1f2e08518de23, type: 3}
+  closeSprite: {fileID: 0}
   homeSprite: {fileID: 21300000, guid: ce24e8438b26a3a4389f69d5e21f157d, type: 3}
-  RecentWorlds: {fileID: 1122401688}
   LoadMoreWorlds: {fileID: 1739445376}
   About: {fileID: 822747056}
   Settings: {fileID: 1166784850}
@@ -2525,18 +2513,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1122401688 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6704383902477947715, guid: ace8ecf4f53fb65419c88aada87bfc0e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1487119729}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1122638179
 GameObject:
   m_ObjectHideFlags: 0
@@ -2722,8 +2698,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MainMenu: {fileID: 1926746026}
   menuSprite: {fileID: 21300000, guid: 692b5db3645b5ec46ae1f2e08518de23, type: 3}
+  closeSprite: {fileID: 21300000, guid: b135c73789e7f495ba075f78d335fe1f, type: 3}
   homeSprite: {fileID: 21300000, guid: ce24e8438b26a3a4389f69d5e21f157d, type: 3}
-  RecentWorlds: {fileID: 6513594}
   LoadMoreWorlds: {fileID: 1977862105}
   About: {fileID: 239271556}
   Settings: {fileID: 827648710}
