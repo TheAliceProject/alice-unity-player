@@ -101,7 +101,7 @@ public class WorldControl : MonoBehaviour
     public void SetNormalTimescale(){
         Time.timeScale = 1f;
     }
-    public void ResumeUserTImescale(){
+    public void ResumeUserTimescale(){
         Time.timeScale = paused ? 0f : currentTimeScale;
         UpdateStatus();
     }
@@ -115,7 +115,7 @@ public class WorldControl : MonoBehaviour
 
     void UpdateUI()
     {
-        if (Time.timeScale == 0.0f){
+        if (Time.timeScale == 0.0f){ // if(paused) ?
             playPauseImage.sprite = playSprite;
             status.text = "Paused";
         }

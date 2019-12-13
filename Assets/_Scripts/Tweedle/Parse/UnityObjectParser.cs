@@ -103,7 +103,7 @@ namespace Alice.Tweedle.Parse
             yield return Routine.Combine(loadingScreen.DisplayLoadingScreen(false),
                                         vrLoadingScreen.FadeLoader(false));
                                         
-            desktopWorldControl.ResumeUserTImescale();
+            desktopWorldControl.ResumeUserTimescale();
         }
 
         public void ReloadCurrentLevel()
