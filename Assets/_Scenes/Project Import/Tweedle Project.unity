@@ -458,7 +458,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MainMenu: {fileID: 1646730237}
   menuSprite: {fileID: 21300000, guid: 692b5db3645b5ec46ae1f2e08518de23, type: 3}
-  closeSprite: {fileID: 0}
+  closeSprite: {fileID: 21300000, guid: b135c73789e7f495ba075f78d335fe1f, type: 3}
   homeSprite: {fileID: 21300000, guid: ce24e8438b26a3a4389f69d5e21f157d, type: 3}
   LoadMoreWorlds: {fileID: 1739445376}
   About: {fileID: 822747056}
