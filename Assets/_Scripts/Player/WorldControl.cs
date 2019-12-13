@@ -16,11 +16,21 @@ public class WorldControl : MonoBehaviour
     public Button pauseButton;
     public TextMeshProUGUI status;
 
-    private float currentTimeScale = 1f;
-    private bool paused = false;
+    public Image playPauseImage;
+    public Sprite playSprite;
+    public Sprite pauseSprite;
+
+    private const float minimiumTimeScale = 1f / 64f;
+    private const float maximumTimeScale = 64f;
+    private static float currentTimeScale = 1f;
+    private static bool paused = false;
+    private static List<WorldControl> currentWorldControls = new List<WorldControl>();
 
     void Start()
     {
+        if(!currentWorldControls.Contains(this))
+            currentWorldControls.Add(this);
+
         mainMenuButton.onClick.AddListener(() =>
         {
             Destroy(GameObject.Find("SceneGraph"));
@@ -47,13 +57,23 @@ public class WorldControl : MonoBehaviour
 
         speedUpButton.onClick.AddListener(() =>
         {
-            currentTimeScale *= 2f;
+            if(!paused){
+                if(currentTimeScale >= maximumTimeScale)
+                    return;
+                currentTimeScale *= 2f;
+            }
+            else{
+                paused = false;
+            }
             Time.timeScale = currentTimeScale;
             UpdateStatus();
         });
 
         slowDownButton.onClick.AddListener(() =>
         {
+            if(currentTimeScale <= minimiumTimeScale)
+                return;
+
             currentTimeScale /= 2f;
             Time.timeScale = currentTimeScale;
             UpdateStatus();
@@ -72,8 +92,36 @@ public class WorldControl : MonoBehaviour
         });
     }
 
+    void OnDestroy()
+    {
+        if(currentWorldControls != null)
+            currentWorldControls.Remove(this);
+    }
+
+    public void SetNormalTimescale(){
+        Time.timeScale = 1f;
+    }
+    public void ResumeUserTimescale(){
+        Time.timeScale = paused ? 0f : currentTimeScale;
+        UpdateStatus();
+    }
+
     void UpdateStatus()
     {
-        status.text = string.Format("Speed: {0:0.0}x", Time.timeScale);
+        foreach(WorldControl wc in currentWorldControls){
+            wc.UpdateUI();
+        }
+    }
+
+    void UpdateUI()
+    {
+        if (Time.timeScale == 0.0f){ // if(paused) ?
+            playPauseImage.sprite = playSprite;
+            status.text = "Paused";
+        }
+        else{
+            playPauseImage.sprite = pauseSprite;
+            status.text = string.Format("{0:0.0}x", Time.timeScale);
+        }
     }
 }
