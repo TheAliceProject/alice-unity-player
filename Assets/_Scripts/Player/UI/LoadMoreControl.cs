@@ -1,15 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.IO;
 using BeauRoutine;
 using System.Linq;
+using UnityEngine.UI;
 
 public class LoadMoreControl : MonoBehaviour
 {
     public TMP_Dropdown filter;
     public Transform buttonParent;
+    public GridLayoutGroup buttonLayout;
     
     public enum WorldListLocation{
         LocalRecent,
@@ -26,6 +29,9 @@ public class LoadMoreControl : MonoBehaviour
     private const string RecentWorldsFileName = "/recentWorlds.txt";
     private List<RecentWorldButton> recentWorlds = new List<RecentWorldButton>();
     private Routine m_routine;
+    
+    private const float MinCellWidth = 350;
+    private const float CellAspectRatio = 0.85f;
 
     void Start()
     {
@@ -41,6 +47,25 @@ public class LoadMoreControl : MonoBehaviour
     void OnEnable()
     {
         LoadButtons(GetRecentWorlds());
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        ResizeGrid();
+    }
+
+    void ResizeGrid()
+    {
+        RectTransform parent = buttonLayout.GetComponentInParent<RectTransform>();
+        var parentWidth = parent.rect.width;
+        var margin = buttonLayout.spacing.x;
+ 
+        var cellsPerRow = (float) Math.Floor((parentWidth + margin) / (MinCellWidth + margin));
+        var baseWidth = (cellsPerRow * (MinCellWidth + margin)) - margin;
+        var spareWidth = parentWidth - baseWidth;
+        var cellWidth = MinCellWidth + spareWidth / cellsPerRow;
+
+        buttonLayout.cellSize = new Vector2(cellWidth, cellWidth * CellAspectRatio);
     }
 
     private List<RecentWorldData> GetRecentWorlds(){
@@ -128,6 +153,7 @@ public class LoadMoreControl : MonoBehaviour
 
        // (buttonParent as RectTransform).SetSizeDelta(minYPos, Axis.Y);
         
+       ResizeGrid();
     }
 
     private void DestroyCurrentButtons()
