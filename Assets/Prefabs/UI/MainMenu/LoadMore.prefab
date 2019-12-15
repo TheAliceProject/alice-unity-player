@@ -298,6 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   filter: {fileID: 4827618543892086494}
   buttonParent: {fileID: 6577906833547195118}
+  buttonLayout: {fileID: 1515319148532782613}
   recentWorldPrefab: {fileID: 1229688400305889199, guid: 282caf5111913914d9c60ff81f8bf7c6,
     type: 3}
   useVRSizing: 0
@@ -681,8 +682,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.05, y: 0.05}
   m_AnchorMax: {x: 0.95, y: 0.85}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 6, y: 0}
+  m_SizeDelta: {x: 12, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &105801594863680204
 CanvasRenderer:
@@ -1795,7 +1796,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 22.6
+  m_fontSize: 25.9
   m_fontSizeBase: 26.3
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3143,7 +3144,7 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1515319148532782613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3219,7 +3220,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 32, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_SizeDelta: {x: 15, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &4746925657580586926
 CanvasRenderer:
