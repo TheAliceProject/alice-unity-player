@@ -111,7 +111,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 32.25
+  m_fontSize: 51.35
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -157,7 +157,7 @@ MonoBehaviour:
     spaceCount: 235
     wordCount: 231
     linkCount: 0
-    lineCount: 34
+    lineCount: 36
     pageCount: 1
     materialCount: 2
   m_isUsingLegacyAnimationComponent: 0
@@ -506,9 +506,9 @@ MonoBehaviour:
     This inspires our efforts to make something as complex as computer programming
     easy and fun.\r\n\r\nThe name is also a very practical choice. The artwork associated
     with the Alice books is now in the public domain, its copyright having lapsed.
-    Also, the name \"Alice\" has several other advantages:\r\n\r\n<indent=15%>\n-
-    It's easy to spell.\r\n- It's easy to pronounce.\r\n- It shows up near the top
-    of alphabetical lists.\"\n\n<indent=0%>\nRandy Pausch\n"
+    Also, the name \"Alice\" has several other advantages:\r\n\r\n- It's easy to spell.\r\n-
+    It's easy to pronounce.\r\n- It shows up near the top of alphabetical lists.\"\n\nRandy
+    Pausch\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1ce3705934308e44684824e2580bca5a, type: 2}
   m_sharedMaterial: {fileID: -6883131199674226166, guid: 1ce3705934308e44684824e2580bca5a,
@@ -537,7 +537,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 35.05
+  m_fontSize: 58.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -578,9 +578,9 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 5027792717019390935}
-    characterCount: 1006
+    characterCount: 1004
     spriteCount: 0
-    spaceCount: 175
+    spaceCount: 173
     wordCount: 167
     linkCount: 0
     lineCount: 34
@@ -786,7 +786,7 @@ PrefabInstance:
     - target: {fileID: 3481163960139846647, guid: fc09e1a615333834585eb0563995ae02,
         type: 3}
       propertyPath: m_fontSize
-      value: 20.6
+      value: 34.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc09e1a615333834585eb0563995ae02, type: 3}
