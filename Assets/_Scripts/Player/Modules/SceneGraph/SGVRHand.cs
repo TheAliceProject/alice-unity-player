@@ -10,6 +10,7 @@ namespace Alice.Player.Unity {
             m_camera = camera;
             vehicle = camera;
             transform.SetParent(camera.GetHandFor(gameObject.name));
+            transform.localPosition = UnityEngine.Vector3.zero;
         }
 
         public SGCamera GetCamera(){
