@@ -34,6 +34,13 @@ namespace Alice.Player.Modules
             return canvas.UserInputControl.spawnIntegerInput(message);
         }
 
+        [PInteropMethod]
+        public static AsyncReturn<bool> spawnErrorDialog(string message)
+        {
+            SceneCanvas canvas = GetSceneCanvas();
+            return canvas.UserInputControl.spawnErrorDialog(message);
+        }
+
         private static SceneCanvas GetSceneCanvas()
         {
             SceneCanvas canvas;

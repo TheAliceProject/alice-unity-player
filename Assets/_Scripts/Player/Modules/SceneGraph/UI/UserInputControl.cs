@@ -17,6 +17,8 @@ namespace Alice.Player.Unity {
         private NumericInput doubleInputPrefab = null;
         [SerializeField]
         private NumericInput intReturnPrefab = null;
+        [SerializeField]
+        private ErrorDialog errorDialogPrefab = null;
 
         public AsyncReturn<string> spawnStringInput(string message)
         {
@@ -24,6 +26,14 @@ namespace Alice.Player.Unity {
             UserInput input = GameObject.Instantiate(stringInputPrefab, this.transform.parent);
             input.Spawn(message, stringReturn);
             return stringReturn;
+        }
+
+        public AsyncReturn<bool> spawnErrorDialog(string message)
+        {
+            AsyncReturn<bool> errorReturn = new AsyncReturn<bool>();
+            ErrorDialog diag = GameObject.Instantiate(errorDialogPrefab, this.transform.parent);
+            diag.Spawn(message, errorReturn);
+            return errorReturn;
         }
 
         public AsyncReturn<bool> spawnBooleanInput(string message)
