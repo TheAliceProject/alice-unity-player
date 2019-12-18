@@ -127,7 +127,7 @@ namespace Alice.Tweedle.Parse
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
         {
-            var dialog = DialogModule.getBooleanFromUser("There was an error executing this world.\n" + tre.Message + "\n Should execution continue?");
+            var dialog = DialogModule.spawnErrorDialog("There was an error executing this world.\n" + tre.Message + "\n\n Should execution continue?");
             dialog.OnReturn(keepTrying =>
             {
                 if (keepTrying)

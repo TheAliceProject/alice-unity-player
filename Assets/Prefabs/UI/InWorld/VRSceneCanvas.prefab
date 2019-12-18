@@ -581,6 +581,8 @@ MonoBehaviour:
     type: 3}
   intReturnPrefab: {fileID: 2927328005028497503, guid: 2e1761557999f934698ec229b6ec8a0c,
     type: 3}
+  errorDialogPrefab: {fileID: 6811887613486734735, guid: fc1e3a7080bae5e4090487d8c848e1b1,
+    type: 3}
 --- !u!1 &7081203371689578512
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,17 +842,17 @@ PrefabInstance:
     - target: {fileID: 5961744192171126778, guid: 2691b1fcc3d89f343978187ec7df7027,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 11
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5961744192171126778, guid: 2691b1fcc3d89f343978187ec7df7027,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5961744192171126778, guid: 2691b1fcc3d89f343978187ec7df7027,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5961744192171126778, guid: 2691b1fcc3d89f343978187ec7df7027,
         type: 3}
