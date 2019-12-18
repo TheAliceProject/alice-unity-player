@@ -31,20 +31,7 @@ public class WorldControl : MonoBehaviour
         if(!currentWorldControls.Contains(this))
             currentWorldControls.Add(this);
 
-        mainMenuButton.onClick.AddListener(() =>
-        {
-            Destroy(GameObject.Find("SceneGraph"));
-            WorldObjects.GetIntroCanvas().SetActive(true);
-            if(XRSettings.enabled)
-            {
-                WorldObjects.GetVRObjects().SetActive(true);
-            }
-            Camera newCamera = Instantiate(CameraPrefab);
-            newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
-            newCamera.tag = "MainCamera";
-            Time.timeScale = currentTimeScale = 1f;
-            uISlidedown.ForceSlide(false);
-        });
+        mainMenuButton.onClick.AddListener(ShowMainMenu);
 
         restartButton.onClick.AddListener(() =>
         {
@@ -92,6 +79,22 @@ public class WorldControl : MonoBehaviour
         });
     }
 
+    private void ShowMainMenu()
+    {
+        Destroy(GameObject.Find("SceneGraph"));
+        WorldObjects.GetIntroCanvas().SetActive(true);
+        if (XRSettings.enabled)
+        {
+            WorldObjects.GetVRObjects().SetActive(true);
+        }
+
+        Camera newCamera = Instantiate(CameraPrefab);
+        newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
+        newCamera.tag = "MainCamera";
+        Time.timeScale = currentTimeScale = 1f;
+        uISlidedown.ForceSlide(false);
+    }
+
     void OnDestroy()
     {
         if(currentWorldControls != null)
@@ -122,6 +125,13 @@ public class WorldControl : MonoBehaviour
         else{
             playPauseImage.sprite = pauseSprite;
             status.text = string.Format("{0:0.0}x", Time.timeScale);
+        }
+    }
+
+    public static void ReturnToMainMenu()
+    {
+        foreach(WorldControl wc in currentWorldControls){
+            wc.ShowMainMenu();
         }
     }
 }
