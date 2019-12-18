@@ -116,6 +116,19 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void createVrHandEntity(TValue hand) {
+            var entity = SGEntity.Create<SGVRHand>(hand);
+            SceneGraph.Current.AddEntity(entity);
+        }
+
+        [PInteropMethod]
+        public static void connectVrHandToCamera(TValue hand, TValue camera) {
+            var hnd = SceneGraph.Current.FindEntity<SGVRHand>(hand);
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            hnd.SetCamera(cam);
+        }
+
+        [PInteropMethod]
         public static void createGroundEntity(TValue ground) {
             var entity = SGEntity.Create<SGGround>(ground);
             SceneGraph.Current.AddEntity(entity);
