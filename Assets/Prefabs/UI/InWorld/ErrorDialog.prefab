@@ -16,6 +16,55 @@ MonoBehaviour:
   trueButton: {fileID: 5674408106615822931}
   falseButton: {fileID: 8313027676518383012}
   rect: {fileID: 3884679790376518324}
+--- !u!114 &2689750427067273807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8901256140874203064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 1
+--- !u!222 &230569131998719449
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8901256140874203064}
+  m_CullTransparentMesh: 0
+--- !u!114 &2533484945904205255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8901256140874203064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7bd1be24c9ba85c44a1f62ad2af7e7fa, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4435465150577261782
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,12 +340,12 @@ PrefabInstance:
     - target: {fileID: 900067688660607127, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 401.6
       objectReference: {fileID: 0}
     - target: {fileID: 900067688660607127, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 229
       objectReference: {fileID: 0}
     - target: {fileID: 900067688660607127, guid: 780a58cb0e22a0d46ab1cbce382c3d23,
         type: 3}

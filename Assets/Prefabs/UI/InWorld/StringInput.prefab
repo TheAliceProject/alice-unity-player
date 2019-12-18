@@ -457,6 +457,9 @@ GameObject:
   m_Component:
   - component: {fileID: 900067688660607127}
   - component: {fileID: 7966229941131597301}
+  - component: {fileID: 1249240544123624203}
+  - component: {fileID: 583520755061173194}
+  - component: {fileID: 6911553418495762059}
   m_Layer: 5
   m_Name: StringInput
   m_TagString: Untagged
@@ -482,7 +485,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 293.8, y: 101.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7966229941131597301
 MonoBehaviour:
@@ -500,6 +503,55 @@ MonoBehaviour:
   inputField: {fileID: 5556377539936690009}
   doneButton: {fileID: 8586963159184242800}
   rect: {fileID: 900067688660607127}
+--- !u!114 &1249240544123624203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4761171393770823067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 1
+--- !u!222 &583520755061173194
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4761171393770823067}
+  m_CullTransparentMesh: 0
+--- !u!114 &6911553418495762059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4761171393770823067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 95dc7fe0f549ee944857383dc0c1f4a2, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &5705262017667557727
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +651,7 @@ MonoBehaviour:
   m_fontSizeMin: 12
   m_fontSizeMax: 28.21
   m_fontStyle: 0
-  m_textAlignment: 257
+  m_textAlignment: 513
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
