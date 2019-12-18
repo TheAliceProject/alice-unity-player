@@ -40,6 +40,23 @@ namespace Alice.Player.Unity {
             }
         }
 
+        public Transform GetHandFor(string handName)
+        {
+            if (m_rig == null)
+            {
+                return Camera.transform;
+            }
+            if (handName.Contains("Left"))
+            {
+                return m_rig.leftController;
+            }
+            if (handName.Contains("Right"))
+            {
+                return m_rig.rightController;
+            }
+            throw new ArgumentException("No recognized hand in " + handName);
+        }
+
         private IEnumerator CancelOutDefaultVrRotation()
         {
             // See comment in VRControl about this function
