@@ -1,8 +1,10 @@
+using System;
 using System.IO;
 using UnityEngine;
 using Alice.Tweedle.VM;
 using UnityEngine.UI;
 using System.Collections;
+using Alice.Player.Modules;
 using BeauRoutine;
 using SFB;
 
@@ -120,7 +122,23 @@ namespace Alice.Tweedle.Parse
         // Use this for MonoBehaviour initialization
         void Start()
         {
-            m_VM = new VirtualMachine();
+            m_VM = new VirtualMachine {ErrorHandler = NotifyUserOfError};
+        }
+
+        private void NotifyUserOfError(TweedleRuntimeException tre)
+        {
+            var dialog = DialogModule.getBooleanFromUser("There was an error executing this world.\n" + tre.Message + "\n Should execution continue?");
+            dialog.OnReturn(keepTrying =>
+            {
+                if (keepTrying)
+                {
+                    m_VM.Resume();
+                }
+                else
+                {
+                    WorldControl.ReturnToMainMenu();
+                }
+            });
         }
 
         private void StartQueueProcessing()
