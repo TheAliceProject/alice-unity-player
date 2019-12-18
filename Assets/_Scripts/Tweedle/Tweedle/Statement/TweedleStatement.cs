@@ -19,19 +19,7 @@ namespace Alice.Tweedle
         {
             if (enabled)
             {
-                try
-                {
-                    AsStepToNotify(scope, next).Queue();
-                }
-                catch (TweedleRuntimeException tre)
-                {
-                    using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc())
-                    {
-                        scope.StackWith(stackBuilder.Builder);
-                        UnityEngine.Debug.LogErrorFormat("Statement {0} triggered error {1}\nTweedle stack:{2}\n", this, tre, stackBuilder.ToString());
-                    }
-                    throw tre;
-                }
+                AsStepToNotify(scope, next).Queue();
             }
             else if (next != null)
             {

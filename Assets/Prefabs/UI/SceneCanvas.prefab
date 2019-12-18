@@ -491,3 +491,5 @@ MonoBehaviour:
     type: 3}
   intReturnPrefab: {fileID: 2927328005028497503, guid: a6cb85f2d84892140a0db6244b1ca138,
     type: 3}
+  errorDialogPrefab: {fileID: 6811887613486734735, guid: ebcba85bba4d5964f9e3853c66cb112b,
+    type: 3}
