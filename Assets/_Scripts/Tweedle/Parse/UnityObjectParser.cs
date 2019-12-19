@@ -75,8 +75,7 @@ namespace Alice.Tweedle.Parse
         private IEnumerator DisplayLoadingAndLoadLevel(string path)
         {
             desktopWorldControl.SetNormalTimescale();
-            yield return Routine.Combine(loadingScreen.DisplayLoadingScreen(true),
-                        vrLoadingScreen.FadeLoader(true));
+            yield return YieldLoadingScreens(true);
             worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
             try
@@ -88,6 +87,7 @@ namespace Alice.Tweedle.Parse
                 ModalWindow modalWindow = Instantiate(modalWindowPrefab, mainMenu);
                 string message = "This world is not compatible with this player.\n<b>Player:</b>\n   " + exception.ExpectedVersion + "\n<b>World:</b>\n   " + exception.DiscoveredVersion;
                 modalWindow.SetData("Oops!", message);
+                FadeLoadingScreens(false); // Cannot yield in a catch statement. So just get out of there.
                 yield break;
             }
 
@@ -102,12 +102,21 @@ namespace Alice.Tweedle.Parse
             m_System.QueueProgramMain(m_VM);
 
             StartQueueProcessing();
-            yield return Routine.Combine(loadingScreen.DisplayLoadingScreen(false),
-                                        vrLoadingScreen.FadeLoader(false));
-                                        
+            yield return YieldLoadingScreens(false);
+
             desktopWorldControl.ResumeUserTimescale();
         }
 
+        private void FadeLoadingScreens(bool on)
+        {
+            loadingScreen.DisplayLoadingScreen(false);
+            vrLoadingScreen.FadeLoader(false);
+        }
+        private IEnumerator YieldLoadingScreens(bool on)
+        {
+            yield return Routine.Combine(loadingScreen.DisplayLoadingScreenRoutine(on),
+                        vrLoadingScreen.FadeLoaderRoutine(on));
+        }
         public void ReloadCurrentLevel()
         {
             Routine.Start(ReloadDelayed());

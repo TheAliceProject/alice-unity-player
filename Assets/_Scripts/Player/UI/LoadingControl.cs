@@ -10,7 +10,12 @@ public class LoadingControl : MonoBehaviour
 
     private Routine routine;
 
-    public IEnumerator DisplayLoadingScreen(bool enable)
+    public void DisplayLoadingScreen(bool enable)
+    {
+        routine.Replace(this, DisplayLoadingScreenRoutine(enable));
+    }
+
+    public IEnumerator DisplayLoadingScreenRoutine(bool enable)
     {
         yield return (fader.FadeTo(enable ? 1f : 0f, 0.25f));
     }
