@@ -1,9 +1,6 @@
-using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
-using System.Collections;
 using UnityEngine.XR;
-using UnityEngine;
 
 namespace Alice.Player.Modules
 {
@@ -46,12 +43,12 @@ namespace Alice.Player.Modules
             SceneCanvas canvas;
             if (XRSettings.enabled)
             {
-                canvas = SceneGraph.Current.Scene.CreateNewWorldCanvas();
+                canvas = SceneGraph.Current.CreateNewWorldCanvas();
                 VRControl.Rig().EnablePointersForUI(true);
             }
             else
             {
-                canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+                canvas = SceneGraph.Current.GetCurrentCanvas();
             }
             return canvas;
         }

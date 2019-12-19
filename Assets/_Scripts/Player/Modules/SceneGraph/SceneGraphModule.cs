@@ -315,7 +315,7 @@ namespace Alice.Player.Modules {
 
             AsyncReturn asyncReturn = new AsyncReturn();
 
-            SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+            SceneCanvas canvas = SceneGraph.Current.GetCurrentCanvas();
             var sgEntity = SceneGraph.Current.FindEntity(entity);
             canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, true, 
                                                 (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
@@ -340,7 +340,7 @@ namespace Alice.Player.Modules {
 
             AsyncReturn asyncReturn = new AsyncReturn();
 
-            SceneCanvas canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+            SceneCanvas canvas = SceneGraph.Current.GetCurrentCanvas();
             var sgEntity = SceneGraph.Current.FindEntity(entity);
             canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, false, 
                                                 (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
