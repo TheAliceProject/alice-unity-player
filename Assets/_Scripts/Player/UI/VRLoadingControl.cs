@@ -11,8 +11,14 @@ public class VRLoadingControl : MonoBehaviour
     public Color loadingColor;
 
     private Material boxMat;
+    private Routine routine;
 
-    public IEnumerator FadeLoader(bool toOn)
+    public void FadeLoader(bool toOn)
+    {
+        routine.Replace(this, FadeLoaderRoutine(toOn));
+    }
+
+    public IEnumerator FadeLoaderRoutine(bool toOn)
     {
         boxMat = boxRenderer.material;
         if(toOn){
