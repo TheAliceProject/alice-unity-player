@@ -1,14 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Alice.Player.Modules;
-using Alice.Player.Primitives;
 using Alice.Tweedle;
-using Alice.Tweedle.Parse;
 using Alice.Tweedle.Interop;
 using System;
+using UnityEngine.XR;
 
 namespace Alice.Player.Unity {
     public sealed class SceneGraph : MonoBehaviour {
+
+        private SceneCanvas m_SceneCanvas;
 
         private interface IWaitReturn : IDisposable {
             bool Step(float time);
@@ -135,6 +135,8 @@ namespace Alice.Player.Unity {
             TextureCache = new TextureCache();
             AudioCache = new AudioCache();
             ModelCache = new ModelCache(m_ModelCacheRoot);
+
+            m_SceneCanvas = CreateCanvas();
         }
 
         private void Update() {
@@ -158,6 +160,64 @@ namespace Alice.Player.Unity {
             }
 
             m_IsUpdating = false;
+        }
+
+        private SceneCanvas CreateCanvas()
+        {
+            SceneCanvas canvas = null;
+            if(XRSettings.enabled)
+            {
+                canvas = Instantiate(InternalResources.VRSceneCanvas);
+                canvas.transform.SetParent(VRControl.Rig().canvasRoot);
+                InitializeVrCanvas(canvas);
+            }
+            else
+            {
+                canvas = Instantiate(InternalResources.SceneCanvas);
+                AttachToScene(canvas);
+            }
+
+            return canvas;
+        }
+
+        public SceneCanvas CreateNewWorldCanvas()
+        {
+            // We want to spawn this in the direction the player is looking, but at a certain distance
+            var canvas = Instantiate(InternalResources.WorldCanvas);
+            InitializeVrCanvas(canvas);
+            AttachToScene(canvas);
+            return canvas;
+        }
+
+        private static void InitializeVrCanvas(SceneCanvas canvas)
+        {
+            var headTransform = VRControl.Rig().head;
+
+            // Get player facing direction
+            UnityEngine.Vector3 facingDirection = headTransform.position + headTransform.forward;
+            // Reset height to player height
+            facingDirection.y = headTransform.position.y;
+            // Get direction vector of head
+            UnityEngine.Vector3 directionVector = facingDirection - headTransform.position;
+            // Normalize and set a certain distance away
+            canvas.transform.position = headTransform.position + (directionVector.normalized * VRControl.WORLD_CANVAS_DISTANCE);
+
+            // Rotate the canvas correctly
+            canvas.transform.LookAt(headTransform);
+            canvas.transform.Rotate(0f, 180f, 0f, Space.Self);
+        }
+
+        private void AttachToScene(SceneCanvas canvas)
+        {
+            if (Scene != null && Scene.cachedTransform != null)
+            {
+                canvas.transform.SetParent(Scene.cachedTransform);
+            }
+        }
+
+        public SceneCanvas GetCurrentCanvas()
+        {
+            return m_SceneCanvas;
         }
         
         internal void QueueFrameReturn(AsyncReturn inReturn, int inFrames) {
