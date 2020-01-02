@@ -136,10 +136,7 @@ namespace Alice.Player.Unity {
             AudioCache = new AudioCache();
             ModelCache = new ModelCache(m_ModelCacheRoot);
 
-        }
-
-        private void Start(){
-            m_SceneCanvas = CreateCanvas();
+            CreateCanvas();
         }
 
         private void Update() {
@@ -165,22 +162,27 @@ namespace Alice.Player.Unity {
             m_IsUpdating = false;
         }
 
-        private SceneCanvas CreateCanvas()
+        private void CreateCanvas()
         {
-            SceneCanvas canvas = null;
-            if(XRSettings.enabled)
+            if(!XRSettings.enabled)
             {
+                SceneCanvas canvas = null;
+                canvas = Instantiate(InternalResources.SceneCanvas);
+                AttachToScene(canvas);
+                m_SceneCanvas = canvas;
+            }
+        }
+
+        public void CreateVRCanvas()
+        {
+            if (XRSettings.enabled)
+            {
+                SceneCanvas canvas = null;
                 canvas = Instantiate(InternalResources.VRSceneCanvas);
                 canvas.transform.SetParent(VRControl.Rig().canvasRoot);
                 InitializeVrCanvas(canvas);
+                m_SceneCanvas = canvas;
             }
-            else
-            {
-                canvas = Instantiate(InternalResources.SceneCanvas);
-                AttachToScene(canvas);
-            }
-
-            return canvas;
         }
 
         public SceneCanvas CreateNewWorldCanvas()
