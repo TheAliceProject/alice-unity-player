@@ -136,6 +136,9 @@ namespace Alice.Player.Unity {
             AudioCache = new AudioCache();
             ModelCache = new ModelCache(m_ModelCacheRoot);
 
+        }
+
+        private void Start(){
             m_SceneCanvas = CreateCanvas();
         }
 
