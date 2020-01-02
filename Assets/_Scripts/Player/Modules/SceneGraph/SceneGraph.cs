@@ -209,10 +209,7 @@ namespace Alice.Player.Unity {
 
         private void AttachToScene(SceneCanvas canvas)
         {
-            if (Scene != null && Scene.cachedTransform != null)
-            {
-                canvas.transform.SetParent(Scene.cachedTransform);
-            }
+            canvas.transform.SetParent(transform);
         }
 
         public SceneCanvas GetCurrentCanvas()
