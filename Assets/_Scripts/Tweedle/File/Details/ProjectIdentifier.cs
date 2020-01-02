@@ -42,8 +42,13 @@
 
         public bool VersionEqualOrGreater(string libraryVersion, string testVersion)
         {
+            int frontLib = int.Parse(libraryVersion.Substring(0, libraryVersion.IndexOf('.')));
+            int frontTest = int.Parse(testVersion.Substring(0, testVersion.IndexOf('.')));
             int libVer = int.Parse(libraryVersion.Substring(libraryVersion.IndexOf('.') + 1));
             int testVer = int.Parse(testVersion.Substring(testVersion.IndexOf('.') + 1));
+
+            if (frontTest > frontLib)
+                return false;
 
             return libVer >= testVer;
         }

@@ -26,6 +26,7 @@ namespace Alice.Player.Unity {
                     if(VRControl.LoadedVRDevice() != VRControl.VRDevice.Vive)
                         m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
                     VRControl.SetRig(m_rig);
+                    SceneGraph.Current.CreateVRCanvas();
                     vrLoaded = true;
                     routine.Replace(this, CancelOutDefaultVrRotation());
                 }
