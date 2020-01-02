@@ -11,6 +11,7 @@ public class ModalWindow : MonoBehaviour
     public TextMeshProUGUI bodyText;
     public Button okButton;
 
+    private ModalWindow linkedWindow;
     private Routine m_routine;
     // Start is called before the first frame update
     void Start()
@@ -26,14 +27,21 @@ public class ModalWindow : MonoBehaviour
         bodyText.SetText(modalText);
     }
 
+    // To make sure the VR and desktop stay in sync
+    public void LinkWindow(ModalWindow window)
+    {
+        linkedWindow = window;
+    }
+
     IEnumerator PopRoutine(bool popIn)
     {
-        if(popIn)
-        {
+        if(popIn){
             yield return dialog.ScaleTo(1f, 0.4f, Axis.XY).Ease(Curve.CubeInOut);
         }
         else{
             yield return dialog.ScaleTo(0f, 0.4f, Axis.XY).Ease(Curve.CubeInOut);
+            if(linkedWindow != null)
+                Destroy(linkedWindow.gameObject);
             Destroy(this.gameObject);
         }
     }
