@@ -750,11 +750,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 616136228}
     m_Modifications:
-    - target: {fileID: 3741387354036675831, guid: efee6d1d4d595d046a09b11eab729e4c,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1393066979762664, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
       propertyPath: m_Name
       value: Launcher
@@ -762,6 +757,11 @@ PrefabInstance:
     - target: {fileID: 4552720093528031574, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3741387354036675831, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224062486590689936, guid: efee6d1d4d595d046a09b11eab729e4c,
@@ -2659,9 +2659,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dumpTypeOutlines: 0
   mainMenu: {fileID: 1234680187}
+  mainMenuVr: {fileID: 2035864318}
   worldLoader: {fileID: 965266421}
   vrLoadingScreen: {fileID: 1522420936}
   modalWindowPrefab: {fileID: 7627015889440884549, guid: dee85d91b48f0ef4bbe006aea37fe262,
+    type: 3}
+  modalWindowPrefabVR: {fileID: 424805386289971122, guid: d30b423a867eef54d9cf3451704dc1fe,
     type: 3}
   loadingScreen: {fileID: 1877518932}
   desktopWorldControl: {fileID: 659132451}

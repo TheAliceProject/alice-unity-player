@@ -15,10 +15,12 @@ namespace Alice.Tweedle.Parse
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
+        public Transform mainMenuVr;
 
         public WorldLoaderControl worldLoader;
         public VRLoadingControl vrLoadingScreen;
         public ModalWindow modalWindowPrefab;
+        public ModalWindow modalWindowPrefabVR;
         public LoadingControl loadingScreen;
         public WorldControl desktopWorldControl;
 
@@ -85,8 +87,16 @@ namespace Alice.Tweedle.Parse
             catch (TweedleParseException exception)
             {
                 ModalWindow modalWindow = Instantiate(modalWindowPrefab, mainMenu);
+
                 string message = "This world is not compatible with this player.\n<b>Player:</b>\n   " + exception.ExpectedVersion + "\n<b>World:</b>\n   " + exception.DiscoveredVersion;
                 modalWindow.SetData("Oops!", message);
+                if (VRControl.IsLoadedInVR()){
+                    ModalWindow modalWindowVr = Instantiate(modalWindowPrefabVR, mainMenuVr);
+                    modalWindowVr.SetData("Oops!", message);
+                    // Make sure when one closes, to close the other as well
+                    modalWindowVr.LinkWindow(modalWindow);
+                    modalWindow.LinkWindow(modalWindowVr);
+                }
                 FadeLoadingScreens(false); // Cannot yield in a catch statement. So just get out of there.
                 yield break;
             }
