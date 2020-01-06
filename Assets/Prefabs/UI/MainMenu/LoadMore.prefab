@@ -299,6 +299,7 @@ MonoBehaviour:
   filter: {fileID: 4827618543892086494}
   buttonParent: {fileID: 6577906833547195118}
   buttonLayout: {fileID: 1515319148532782613}
+  rect: {fileID: 9210185682868957368}
   recentWorldPrefab: {fileID: 1229688400305889199, guid: 282caf5111913914d9c60ff81f8bf7c6,
     type: 3}
   useVRSizing: 0
