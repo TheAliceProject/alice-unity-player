@@ -13,7 +13,8 @@ public class LoadMoreControl : MonoBehaviour
     public TMP_Dropdown filter;
     public Transform buttonParent;
     public GridLayoutGroup buttonLayout;
-    
+    public ScrollRect rect;
+
     public enum WorldListLocation{
         LocalRecent,
         LocalName,
@@ -42,6 +43,16 @@ public class LoadMoreControl : MonoBehaviour
         {
             LoadButtons(GetRecentWorlds());
         });
+    }
+
+    void Update()
+    {
+        if(VRControl.IsLoadedInVR()){
+            if (Input.GetAxis("RightThumbstickUpDown") > 0.75f)
+                rect.verticalNormalizedPosition += 0.01f;
+            else if (Input.GetAxis("RightThumbstickUpDown") < -0.75f)
+                rect.verticalNormalizedPosition -= 0.01f;
+        }
     }
 
     void OnEnable()
