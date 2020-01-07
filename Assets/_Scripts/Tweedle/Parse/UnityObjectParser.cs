@@ -146,6 +146,11 @@ namespace Alice.Tweedle.Parse
             // This code will open a world directly in the unity app.
             // On windows, right click and Open With... the Alice Player executable
             string[] args = System.Environment.GetCommandLineArgs();
+            Debug.LogError("Full line: " + System.Environment.CommandLine);
+            Debug.LogError("NUM ARGS: " + args.Length);
+            for(int i = 0; i < args.Length; i++)
+                Debug.LogError(args[i]);
+
             if(args.Length > 1)
             {
                 if(args[1].ToLower().Contains(".a3w")){
