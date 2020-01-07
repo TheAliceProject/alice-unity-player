@@ -142,6 +142,17 @@ namespace Alice.Tweedle.Parse
         void Start()
         {
             m_VM = new VirtualMachine {ErrorHandler = NotifyUserOfError};
+
+            // This code will open a world directly in the unity app.
+            // On windows, right click and Open With... the Alice Player executable
+            string[] args = System.Environment.GetCommandLineArgs();
+            if(args.Length > 1)
+            {
+                if(args[1].ToLower().Contains(".a3w")){
+                    loadingScreen.fader.alpha = 1f;
+                    OpenWorld(args[1]);
+                }
+            }
         }
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
