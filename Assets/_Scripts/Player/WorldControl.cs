@@ -25,6 +25,7 @@ public class WorldControl : MonoBehaviour
     private static float currentTimeScale = 1f;
     private static bool paused = false;
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
+    private static bool isDisabledForThisInstance = false;
 
     void Start()
     {
@@ -77,6 +78,10 @@ public class WorldControl : MonoBehaviour
             paused = !paused;
             UpdateStatus();
         });
+
+        // Disable main menu button when restarting from a bundled world app
+        if(isDisabledForThisInstance)
+            mainMenuButton.gameObject.SetActive(false);
     }
 
     private void ShowMainMenu()
@@ -128,7 +133,13 @@ public class WorldControl : MonoBehaviour
         uISlidedown.ShowBriefly();
     }
 
-
+    public static void DisableMainMenu()
+    {
+        foreach (WorldControl wc in currentWorldControls){
+            wc.mainMenuButton.gameObject.SetActive(false);
+        }
+        isDisabledForThisInstance = true;
+    }
 
     void UpdateUI()
     {
