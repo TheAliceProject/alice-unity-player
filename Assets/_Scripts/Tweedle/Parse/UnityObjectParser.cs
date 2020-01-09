@@ -12,6 +12,12 @@ namespace Alice.Tweedle.Parse
 {
     public class UnityObjectParser : MonoBehaviour
     {
+        public enum MainMenuControl
+        {
+            Normal,
+            Disabled
+        }
+
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
@@ -39,7 +45,7 @@ namespace Alice.Tweedle.Parse
             DeleteTemporaryAudioFiles();
         }
 
-        public void OpenWorld(string fileName = "") {
+        public void OpenWorld(string fileName = "", MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
             string zipPath = fileName;
             if (zipPath == "") {
                 var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", project_ext, false);
@@ -66,15 +72,15 @@ namespace Alice.Tweedle.Parse
                 m_QueueProcessor.Stop();
             }
 
-            LoadWorld(zipPath);
+            LoadWorld(zipPath, mainMenuCtrl);
         }
 
-        private void LoadWorld(string path)
+        private void LoadWorld(string path, MainMenuControl mainMenuCtrl)
         {
-            m_LoadRoutine.Replace(this, DisplayLoadingAndLoadLevel(path));
+            m_LoadRoutine.Replace(this, DisplayLoadingAndLoadLevel(path, mainMenuCtrl));
         }
 
-        private IEnumerator DisplayLoadingAndLoadLevel(string path)
+        private IEnumerator DisplayLoadingAndLoadLevel(string path, MainMenuControl mainMenuCtrl)
         {
             desktopWorldControl.SetNormalTimescale();
             yield return YieldLoadingScreens(true);
@@ -115,6 +121,8 @@ namespace Alice.Tweedle.Parse
             yield return YieldLoadingScreens(false);
 
             WorldControl.ShowWorldControlsBriefly();
+            if(mainMenuCtrl == MainMenuControl.Disabled)
+                WorldControl.DisableMainMenu();
             desktopWorldControl.ResumeUserTimescale();
         }
 
@@ -171,7 +179,7 @@ namespace Alice.Tweedle.Parse
                     if(!info[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
                     {
                         loadingScreen.fader.alpha = 1f;
-                        OpenWorld(info[i].FullName);
+                        OpenWorld(info[i].FullName, MainMenuControl.Disabled);
                     }
                 }
             }
