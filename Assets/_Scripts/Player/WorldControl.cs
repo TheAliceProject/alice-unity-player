@@ -116,6 +116,20 @@ public class WorldControl : MonoBehaviour
         }
     }
 
+    public static void ShowWorldControlsBriefly()
+    {
+        foreach (WorldControl wc in currentWorldControls)
+        {
+            wc.ShowWorldControlBriefly();
+        }
+    }
+
+    private void ShowWorldControlBriefly(){
+        uISlidedown.ShowBriefly();
+    }
+
+
+
     void UpdateUI()
     {
         if (Time.timeScale == 0.0f){ // if(paused) ?

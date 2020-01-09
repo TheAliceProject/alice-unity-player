@@ -114,6 +114,7 @@ namespace Alice.Tweedle.Parse
             StartQueueProcessing();
             yield return YieldLoadingScreens(false);
 
+            WorldControl.ShowWorldControlsBriefly();
             desktopWorldControl.ResumeUserTimescale();
         }
 
