@@ -156,10 +156,12 @@ namespace Alice.Tweedle.Parse
                     {
                         loadingScreen.fader.alpha = 1f;
                         OpenWorld(args[1]);
+                        return;
                     }
                 }
             }
 
+            // This code will automatically launch a world if there is a .a3w in the StreamingAssets subdirectory
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
             FileInfo[] info = dir.GetFiles("*.a3w");
             if (info.Length > 1)
