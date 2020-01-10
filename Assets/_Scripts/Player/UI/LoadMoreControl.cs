@@ -15,7 +15,7 @@ public class LoadMoreControl : MonoBehaviour
     public GridLayoutGroup buttonLayout;
     public ScrollRect rect;
 
-    public enum WorldListLocation{
+    public enum WorldListSort{
         LocalRecent,
         LocalName,
         // LocalAuthor,
@@ -33,15 +33,16 @@ public class LoadMoreControl : MonoBehaviour
     
     private const float MinCellWidth = 350;
     private const float CellAspectRatio = 0.85f;
+    private static bool useBundledWorlds = false;
 
     void Start()
     {
         DestroyCurrentButtons();
-        LoadButtons(GetRecentWorlds());
+        LoadButtons(useBundledWorlds ? GetBundledWorlds() : GetRecentWorlds());
 
         filter.onValueChanged.AddListener(delegate
         {
-            LoadButtons(GetRecentWorlds());
+            LoadButtons(GetRecentWorlds((WorldListSort)filter.value));
         });
     }
 
@@ -57,12 +58,19 @@ public class LoadMoreControl : MonoBehaviour
 
     void OnEnable()
     {
-        LoadButtons(GetRecentWorlds());
+        LoadButtons(useBundledWorlds ? GetBundledWorlds() : GetRecentWorlds());
     }
 
     private void OnRectTransformDimensionsChange()
     {
         ResizeGrid();
+    }
+
+    public void SetAsStandalone()
+    {
+        useBundledWorlds = true;
+        filter.gameObject.SetActive(false);
+        LoadButtons(GetBundledWorlds());
     }
 
     void ResizeGrid()
@@ -79,7 +87,27 @@ public class LoadMoreControl : MonoBehaviour
         buttonLayout.cellSize = new Vector2(cellWidth, cellWidth * CellAspectRatio);
     }
 
-    private List<RecentWorldData> GetRecentWorlds(){
+    private List<RecentWorldData> GetBundledWorlds(WorldListSort sortType=WorldListSort.LocalRecent){
+        List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
+        recentWorldsData.Clear();
+
+        DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
+        FileInfo[] files = dir.GetFiles("*.a3w");
+        for(int i = 0; i < files.Length; i++)
+        {
+            if (!File.Exists(files[i].FullName) || files[i].FullName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
+                continue;
+            RecentWorldData data = new RecentWorldData(files[i].FullName);
+            recentWorldsData.Add(data);
+        }
+
+        if(sortType == WorldListSort.LocalName)
+            return SortWorldByName(recentWorldsData);
+        // Else by recents
+        return recentWorldsData;
+    }
+
+    private List<RecentWorldData> GetRecentWorlds(WorldListSort sortType=WorldListSort.LocalRecent){
         if (!File.Exists(Application.persistentDataPath + RecentWorldsFileName)){
             return null;
         }
@@ -103,9 +131,14 @@ public class LoadMoreControl : MonoBehaviour
             recentWorldsData.Add(data);
         }
         fs.Close();
+
+        if(sortType == WorldListSort.LocalName)
+            return SortWorldByName(recentWorldsData);
+        // Else by recents
         return recentWorldsData;
     }
-//This is the function SortWorldByName
+
+    //This is the function SortWorldByName
     private List<RecentWorldData> SortWorldByName(List<RecentWorldData> ListNeedSort)
     {
         int value;
@@ -159,8 +192,6 @@ public class LoadMoreControl : MonoBehaviour
             if (trans.anchoredPosition.y < minYPos)
                 minYPos = trans.anchoredPosition.y;
         }
-
-        Debug.Log("Min y pos: " + minYPos);
 
        // (buttonParent as RectTransform).SetSizeDelta(minYPos, Axis.Y);
         

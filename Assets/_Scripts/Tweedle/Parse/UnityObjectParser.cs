@@ -27,6 +27,8 @@ namespace Alice.Tweedle.Parse
         public VRLoadingControl vrLoadingScreen;
         public ModalWindow modalWindowPrefab;
         public ModalWindow modalWindowPrefabVR;
+        public LoadMoreControl[] loadMoreControl;
+        public MenuControl[] menuControls;
         public LoadingControl loadingScreen;
         public WorldControl desktopWorldControl;
 
@@ -171,16 +173,29 @@ namespace Alice.Tweedle.Parse
 
             // This code will automatically launch a world if there is a .a3w in the StreamingAssets subdirectory
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
-            FileInfo[] info = dir.GetFiles("*.a3w");
-            if (info.Length > 1)
+            FileInfo[] files = dir.GetFiles("*.a3w");
+            if (files.Length == 2) // Really 1, but ignore SceneGraphLibrary
             {
-                for (int i = 0; i < info.Length; i++)
+                for (int i = 0; i < files.Length; i++)
                 {
-                    if(!info[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
+                    if(!files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
                     {
                         loadingScreen.fader.alpha = 1f;
-                        OpenWorld(info[i].FullName, MainMenuControl.Disabled);
+                        OpenWorld(files[i].FullName, MainMenuControl.Disabled);
                     }
+                }
+            }
+            else if(files.Length > 2)
+            {
+                // If bundled with multiple files, we will put them on the "Load More" screen as a hub for their worlds
+                for(int i = 0; i < menuControls.Length; i++)
+                {
+                    menuControls[i].DeactivateMainMenu();
+                }
+                for(int i = 0; i < loadMoreControl.Length; i++)
+                {
+                    loadMoreControl[i].gameObject.SetActive(true);
+                    loadMoreControl[i].SetAsStandalone();
                 }
             }
         }
