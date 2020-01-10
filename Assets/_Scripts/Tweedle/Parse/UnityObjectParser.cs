@@ -158,16 +158,13 @@ namespace Alice.Tweedle.Parse
             // On windows, right click and Open With... the Alice Player executable
             string[] args = System.Environment.GetCommandLineArgs();
 
-            if(args.Length > 1)
+            for (int i = 0; i < args.Length; i++)
             {
-                for (int i = 0; i < args.Length; i++)
+                if (args[i].ToLower().Contains(".a3w"))
                 {
-                    if (args[i].ToLower().Contains(".a3w"))
-                    {
-                        loadingScreen.fader.alpha = 1f;
-                        OpenWorld(args[1]);
-                        return;
-                    }
+                    loadingScreen.fader.alpha = 1f;
+                    OpenWorld(args[1]);
+                    return;
                 }
             }
 
