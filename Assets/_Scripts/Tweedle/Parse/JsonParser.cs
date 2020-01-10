@@ -16,7 +16,7 @@ namespace Alice.Tweedle.Parse
                 using (ZipFile zipFile = new ZipFile(stream))
                 {
                     JsonParser reader = new JsonParser(inSystem, zipFile);
-                    if(!inZipPath.Contains("SceneGraphLibrary"))
+                    if(!inZipPath.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME))
                         reader.CacheThumbnail(inZipPath);
                     reader.Parse();
                 }
@@ -106,7 +106,7 @@ namespace Alice.Tweedle.Parse
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
                         ParseZipFile(m_System, libRef.path.fullPath);
                     } else {
-                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].name, "SceneGraphLibrary " + PlayerLibraryManifest.Instance.GetLibraryVersion(), "SceneGraphLibrary " + prerequisites[i].version);
+                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].name, WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(), WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + prerequisites[i].version);
                     }
                 }
             }

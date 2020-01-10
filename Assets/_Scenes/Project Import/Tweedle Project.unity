@@ -268,6 +268,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1487119729}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &359656469 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4355773503912821338, guid: ace8ecf4f53fb65419c88aada87bfc0e,
+    type: 3}
+  m_PrefabInstance: {fileID: 1487119729}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359656467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc3feb5ea897294cbde2fe03dee8d46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &448281127 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5961744192874826453, guid: 2691b1fcc3d89f343978187ec7df7027,
@@ -753,6 +765,10 @@ PrefabInstance:
     - target: {fileID: 1393066979762664, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
       propertyPath: m_Name
       value: Launcher
+      objectReference: {fileID: 0}
+    - target: {fileID: 1393066979762664, guid: efee6d1d4d595d046a09b11eab729e4c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4552720093528031574, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
@@ -2218,6 +2234,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 800775373}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &800775376 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1785449481478016261, guid: efee6d1d4d595d046a09b11eab729e4c,
+    type: 3}
+  m_PrefabInstance: {fileID: 800775373}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800775374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc3feb5ea897294cbde2fe03dee8d46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &801788525 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1989292472297770505, guid: ace8ecf4f53fb65419c88aada87bfc0e,
@@ -2666,6 +2694,12 @@ MonoBehaviour:
     type: 3}
   modalWindowPrefabVR: {fileID: 424805386289971122, guid: d30b423a867eef54d9cf3451704dc1fe,
     type: 3}
+  loadMoreControl:
+  - {fileID: 800775376}
+  - {fileID: 359656469}
+  menuControls:
+  - {fileID: 1216540232}
+  - {fileID: 583400859}
   loadingScreen: {fileID: 1877518932}
   desktopWorldControl: {fileID: 659132451}
 --- !u!114 &1216540230
