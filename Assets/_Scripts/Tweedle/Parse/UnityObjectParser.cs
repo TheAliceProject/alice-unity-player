@@ -12,6 +12,12 @@ namespace Alice.Tweedle.Parse
 {
     public class UnityObjectParser : MonoBehaviour
     {
+        public enum MainMenuControl
+        {
+            Normal,
+            Disabled
+        }
+
         static string project_ext = "a3w";
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
@@ -21,6 +27,8 @@ namespace Alice.Tweedle.Parse
         public VRLoadingControl vrLoadingScreen;
         public ModalWindow modalWindowPrefab;
         public ModalWindow modalWindowPrefabVR;
+        public LoadMoreControl[] loadMoreControl;
+        public MenuControl[] menuControls;
         public LoadingControl loadingScreen;
         public WorldControl desktopWorldControl;
 
@@ -39,7 +47,7 @@ namespace Alice.Tweedle.Parse
             DeleteTemporaryAudioFiles();
         }
 
-        public void OpenWorld(string fileName = "") {
+        public void OpenWorld(string fileName = "", MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
             string zipPath = fileName;
             if (zipPath == "") {
                 var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", project_ext, false);
@@ -66,15 +74,15 @@ namespace Alice.Tweedle.Parse
                 m_QueueProcessor.Stop();
             }
 
-            LoadWorld(zipPath);
+            LoadWorld(zipPath, mainMenuCtrl);
         }
 
-        private void LoadWorld(string path)
+        private void LoadWorld(string path, MainMenuControl mainMenuCtrl)
         {
-            m_LoadRoutine.Replace(this, DisplayLoadingAndLoadLevel(path));
+            m_LoadRoutine.Replace(this, DisplayLoadingAndLoadLevel(path, mainMenuCtrl));
         }
 
-        private IEnumerator DisplayLoadingAndLoadLevel(string path)
+        private IEnumerator DisplayLoadingAndLoadLevel(string path, MainMenuControl mainMenuCtrl)
         {
             desktopWorldControl.SetNormalTimescale();
             yield return YieldLoadingScreens(true);
@@ -114,6 +122,9 @@ namespace Alice.Tweedle.Parse
             StartQueueProcessing();
             yield return YieldLoadingScreens(false);
 
+            WorldControl.ShowWorldControlsBriefly();
+            if(mainMenuCtrl == MainMenuControl.Disabled)
+                WorldControl.DisableMainMenu();
             desktopWorldControl.ResumeUserTimescale();
         }
 
@@ -142,6 +153,48 @@ namespace Alice.Tweedle.Parse
         void Start()
         {
             m_VM = new VirtualMachine {ErrorHandler = NotifyUserOfError};
+
+            // This code will open a world directly in the unity app.
+            // On windows, right click and Open With... the Alice Player executable
+            string[] args = System.Environment.GetCommandLineArgs();
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i].ToLower().Contains(".a3w"))
+                {
+                    loadingScreen.fader.alpha = 1f;
+                    OpenWorld(args[1]);
+                    return;
+                }
+            }
+
+            // This code will automatically launch a world if there is a .a3w in the StreamingAssets subdirectory
+            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
+            FileInfo[] files = dir.GetFiles("*.a3w");
+            if (files.Length == 2) // Really 1, but ignore SceneGraphLibrary
+            {
+                for (int i = 0; i < files.Length; i++)
+                {
+                    if(!files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
+                    {
+                        loadingScreen.fader.alpha = 1f;
+                        OpenWorld(files[i].FullName, MainMenuControl.Disabled);
+                    }
+                }
+            }
+            else if(files.Length > 2)
+            {
+                // If bundled with multiple files, we will put them on the "Load More" screen as a hub for their worlds
+                for(int i = 0; i < menuControls.Length; i++)
+                {
+                    menuControls[i].DeactivateMainMenu();
+                }
+                for(int i = 0; i < loadMoreControl.Length; i++)
+                {
+                    loadMoreControl[i].gameObject.SetActive(true);
+                    loadMoreControl[i].SetAsStandalone();
+                }
+            }
         }
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
