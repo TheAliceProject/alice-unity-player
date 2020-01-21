@@ -2,10 +2,14 @@ using UnityEngine;
 using Alice.Tweedle;
 using System.Collections.Generic;
 using System;
+using Alice.Player.Modules;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
-        
+
+        private const float RootCapsuleRadius = 0.6f;
+        private const float CapsuleThinningFactor = 0.91f;
+
         private string m_ResourceId;
         private Bounds m_modelBounds;
         private Renderer[] m_Renderers;
@@ -111,6 +115,30 @@ namespace Alice.Player.Unity {
                 );
             }
         }
+        public override void AddCollider() {
+            var root = FindInHierarchy(m_ModelTransform, "ROOT");
+            AddJointColliders(root.transform, RootCapsuleRadius);
+        }
+
+        private void AddJointColliders(Transform inTransform, float radius, Transform parent = null) {
+            if (parent != null) {
+                var jointLength = inTransform.localPosition.magnitude;
+                if (jointLength > Single.Epsilon)
+                {
+                    CapsuleCollider jointCollider = parent.gameObject.AddComponent<CapsuleCollider>();
+                    jointCollider.radius = jointLength * radius;
+                    jointCollider.height = jointLength * (1f + 2f * radius);
+                    jointCollider.direction = 2; // The Z-Axis, which aims at the next joint
+                    jointCollider.isTrigger = true;
+                    CollisionBroadcaster broadcaster = parent.gameObject.AddComponent<CollisionBroadcaster>();
+                    broadcaster.SetColliderTarget(this);
+                }
+            }
+            foreach (Transform child in inTransform) {
+                AddJointColliders(child, radius * CapsuleThinningFactor, inTransform);
+            }
+        }
+        
 
         private void CollectInHierarchy(Transform inTransform, string start, List<string> matches) {
             foreach (Transform child in inTransform) {
