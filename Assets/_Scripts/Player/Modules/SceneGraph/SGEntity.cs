@@ -1,15 +1,10 @@
 using UnityEngine;
-using Alice.Player.Modules;
-using Alice.Player.Primitives;
-using Alice.Tweedle.Interop;
 using Alice.Tweedle;
-using System;
 using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     
     public abstract class SGEntity : MonoBehaviour {
-        private UnityEngine.Vector3 m_DefaultColliderSize = new UnityEngine.Vector3(0.1f, 0.1f, 0.1f);
         
         public delegate void UpdatePropertyDelegate(TValue inValue);
 
@@ -60,53 +55,9 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public virtual void AddCollider()
-        {
-            MeshRenderer[] meshRenderers = transform.GetComponentsInChildren<MeshRenderer>();
-            SkinnedMeshRenderer[] skinnedMeshRenderers =transform.GetComponentsInChildren<SkinnedMeshRenderer>();
+        public abstract void AddEntityCollider();
 
-            if (!((meshRenderers == null || meshRenderers.Length <= 0) &&
-                  (skinnedMeshRenderers == null ||  skinnedMeshRenderers.Length <= 0)))
-            {
-                foreach (MeshRenderer meshRenderer in meshRenderers)
-                {
-                    if (meshRenderer.transform.GetComponent<MeshCollider>() != null) continue;
-
-                    MeshCollider meshCollider = meshRenderer.gameObject.AddComponent<MeshCollider>();
-                    Rigidbody rigidBody = meshRenderer.gameObject.AddComponent<Rigidbody>(); // Rigidbody is required for collision detection
-                    rigidBody.isKinematic = true;
-                    meshCollider.convex = true;
-                    meshCollider.isTrigger = true;
-                    meshRenderer.gameObject.AddComponent<CollisionBroadcaster>();
-                }
-
-                foreach (SkinnedMeshRenderer skinnedMeshRenderer in skinnedMeshRenderers)
-                {
-                    if (skinnedMeshRenderer.transform.GetComponent<MeshCollider>() != null) continue;
-
-                    MeshCollider meshCollider = skinnedMeshRenderer.gameObject.AddComponent<MeshCollider>();
-                    Mesh colliderMesh = new Mesh();
-                    skinnedMeshRenderer.BakeMesh(colliderMesh);
-                    meshCollider.sharedMesh = colliderMesh;
-
-                    meshCollider.convex = true;
-                    meshCollider.isTrigger = true;
-                    skinnedMeshRenderer.gameObject.AddComponent<CollisionBroadcaster>();
-                }
-            }
-            else // Add box collider if no renderer exists
-            {
-                if (gameObject.GetComponent<BoxCollider>() != null) return;
-
-                Rigidbody rigidBody = gameObject.AddComponent<Rigidbody>();
-                rigidBody.isKinematic = true;
-                BoxCollider boxCollider = gameObject.AddComponent<BoxCollider>();
-                boxCollider.size = m_DefaultColliderSize;
-                boxCollider.isTrigger = true;
-                gameObject.AddComponent<CollisionBroadcaster>();
-            }
-        }
-
+        public abstract void AddMouseCollider();
 
         public void SetName(string inName) {
             gameObject.name = string.Format("{0} ({1})", inName, GetType().Name);
