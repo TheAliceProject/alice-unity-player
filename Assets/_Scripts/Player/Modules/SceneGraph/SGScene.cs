@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
@@ -45,6 +46,16 @@ namespace Alice.Player.Unity {
         private Plane movementPlane = new Plane(UnityEngine.Vector3.up, UnityEngine.Vector3.zero);
         private UnityEngine.Vector3 objectOriginPoint = UnityEngine.Vector3.zero;
         private UnityEngine.Vector3 planeOriginPoint = UnityEngine.Vector3.zero;
+
+        public override void AddEntityCollider()
+        {
+            throw new NotSupportedException("No colliders at the Scene level");
+        }
+
+        public override void AddMouseCollider()
+        {
+            throw new NotSupportedException("No colliders at the Scene level");
+        }
 
         protected override void Awake() {
             base.Awake();
@@ -131,7 +142,7 @@ namespace Alice.Player.Unity {
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             if (XRSettings.enabled)
                 VRControl.EnablePointersForObjects(true);
-            AddColliders(clickedObjects);
+            AddMouseColliders(clickedObjects);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
 
@@ -180,11 +191,19 @@ namespace Alice.Player.Unity {
             m_InteractionHandler.AddOcclusionListener(new OcclusionEventListenerProxy(listener, overlappingEventPolicy, setA, setB, interactionType));
         }
         
-        public void AddColliders(SGEntity[] models)
+        public void AddMouseColliders(SGEntity[] models)
         {
             foreach (var model in models)
             {
-                model.AddCollider();
+                model.AddMouseCollider();
+            }
+        }
+        
+        public void AddEntityColliders(SGEntity[] models)
+        {
+            foreach (var model in models)
+            {
+                model.AddEntityCollider();
             }
         }
 
