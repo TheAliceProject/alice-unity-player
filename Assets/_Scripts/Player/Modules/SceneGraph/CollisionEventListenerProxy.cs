@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Player.Modules;
 using Alice.Tweedle;
-using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public class CollisionEventListenerProxy{
@@ -14,7 +13,6 @@ namespace Alice.Player.Unity {
         private InteractionSet interactingObjects;
         private bool onEnter = false;
         private bool callActive = false;
-        private List<OverlappingPair> overlapCounts = new List<OverlappingPair>();
         private int queuedCalls = 0;
 
         public CollisionEventListenerProxy(PAction<TValue, TValue> listener, OverlappingEventPolicy policy, SGEntity[] setA, SGEntity[] setB, InteractionModule.InteractionType interactionType)
@@ -33,31 +31,14 @@ namespace Alice.Player.Unity {
 
         public void NotifyEvent(SGEntity object1, SGEntity object2, bool entered)
         {
-            OverlappingPair overlappingPair = null;
-            for (int i = 0; i < overlapCounts.Count; i++)
-            {
-                if(overlapCounts[i].ContainsBoth(object1, object2))
-                {
-                    overlapCounts[i].numOverlaps += entered ? 1 : -1;
-                    overlappingPair = overlapCounts[i];
-                    break;
-                }
-            }
-
-            if(overlappingPair == null)
-            {
-                overlappingPair = new OverlappingPair(object1, object2);
-                overlapCounts.Add(overlappingPair);
-            }
-
             if(onEnter != entered)
                 return;
+            
+            if(interactingObjects.set1.Contains(object1) && interactingObjects.set2.Contains(object2))
+                CallEvent(object1.owner, object2.owner);
 
-            if(interactingObjects.IsThereOverlap(object1, object2))
-            {
-                if((entered && overlappingPair.numOverlaps == 1) || (!entered && overlappingPair.numOverlaps == 0))
-                    CallEvent(object1.owner, object2.owner);
-            }
+            if(interactingObjects.set1.Contains(object2) && interactingObjects.set2.Contains(object1))
+                CallEvent(object2.owner, object1.owner);
         }
         
         public void CallEvent(TValue x, TValue y){
@@ -94,8 +75,8 @@ namespace Alice.Player.Unity {
     {
         public SGEntity entity1;
         public SGEntity entity2;
-        public int numOverlaps;
 
+        private int numOverlaps;
         private bool entity1HasBounds = false;
         private bool entity2HasBounds = false;
         private Bounds bounds1;
@@ -123,13 +104,8 @@ namespace Alice.Player.Unity {
 
         public bool ContainsBoth(SGEntity ent1, SGEntity ent2)
         {
-            if(ent1 != entity1 && ent1 != entity2)
-                return false;
-
-            if(ent2 != entity1 && ent2 != entity2)
-                return false;
-
-            return true;
+            return ent1 == entity1 && ent2 == entity2 ||
+                   ent1 == entity2 && ent2 == entity1;
         }
 
         public float GetDistance()
@@ -157,6 +133,21 @@ namespace Alice.Player.Unity {
             // Uncomment to see distance visualized
             //Debug.DrawLine(point1, point2, UnityEngine.Color.red, 0.5f);
             return UnityEngine.Vector3.Distance(point1, point2);
+        }
+
+        public bool IsEnter()
+        {
+            return numOverlaps == 1;
+        }
+
+        public bool IsExit()
+        {
+            return numOverlaps == 0;
+        }
+
+        public void UpdateOverlaps(bool entered)
+        {
+            numOverlaps += entered ? 1 : -1;
         }
     }
 

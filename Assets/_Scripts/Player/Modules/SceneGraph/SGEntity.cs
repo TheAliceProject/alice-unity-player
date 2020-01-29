@@ -1,9 +1,5 @@
 using UnityEngine;
-using Alice.Player.Modules;
-using Alice.Player.Primitives;
-using Alice.Tweedle.Interop;
 using Alice.Tweedle;
-using System;
 using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
@@ -58,6 +54,10 @@ namespace Alice.Player.Unity {
                 }
             }
         }
+
+        public abstract void AddEntityCollider();
+
+        public abstract void AddMouseCollider();
 
         public void SetName(string inName) {
             gameObject.name = string.Format("{0} ({1})", inName, GetType().Name);
