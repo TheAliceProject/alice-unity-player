@@ -42,7 +42,7 @@ public class LoadMoreControl : MonoBehaviour
 
         filter.onValueChanged.AddListener(delegate
         {
-            LoadButtons(GetRecentWorlds((WorldListSort)filter.value));
+            LoadButtons(GetRecentWorlds());
         });
     }
 
@@ -87,7 +87,7 @@ public class LoadMoreControl : MonoBehaviour
         buttonLayout.cellSize = new Vector2(cellWidth, cellWidth * CellAspectRatio);
     }
 
-    private List<RecentWorldData> GetBundledWorlds(WorldListSort sortType=WorldListSort.LocalRecent){
+    private List<RecentWorldData> GetBundledWorlds(){
         List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
         recentWorldsData.Clear();
 
@@ -100,14 +100,10 @@ public class LoadMoreControl : MonoBehaviour
             RecentWorldData data = new RecentWorldData(files[i].FullName);
             recentWorldsData.Add(data);
         }
-
-        if(sortType == WorldListSort.LocalName)
-            return SortWorldByName(recentWorldsData);
-        // Else by recents
-        return recentWorldsData;
+        return SortWorlds(recentWorldsData);
     }
 
-    private List<RecentWorldData> GetRecentWorlds(WorldListSort sortType=WorldListSort.LocalRecent){
+    private List<RecentWorldData> GetRecentWorlds(){
         if (!File.Exists(Application.persistentDataPath + RecentWorldsFileName)){
             return null;
         }
@@ -131,32 +127,19 @@ public class LoadMoreControl : MonoBehaviour
             recentWorldsData.Add(data);
         }
         fs.Close();
-
-        if(sortType == WorldListSort.LocalName)
-            return SortWorldByName(recentWorldsData);
-        // Else by recents
-        return recentWorldsData;
+        return SortWorlds(recentWorldsData);
     }
 
-    //This is the function SortWorldByName
-    private List<RecentWorldData> SortWorldByName(List<RecentWorldData> ListNeedSort)
+    private List<RecentWorldData> SortWorlds(List<RecentWorldData> listToSort) {
+        if((WorldListSort) filter.value == WorldListSort.LocalName)
+            listToSort.Sort((a, b) => String.Compare(GetSortName(a), GetSortName(b), StringComparison.Ordinal));
+        // Else take default ordering, by recent use
+        return listToSort;
+    }
+
+    private String GetSortName(RecentWorldData world)
     {
-        int value;
-        Dictionary<RecentWorldData, int> newDic = new Dictionary<RecentWorldData, int>();
-        foreach(RecentWorldData world in ListNeedSort)
-        {
-            value = ConvertAsciiHelper((int)(Path.GetFileNameWithoutExtension(world.path)[0]));
-            newDic.Add(world, value);
-        }
-        //sort the dic and we can get a dic to use;
-        List<KeyValuePair<RecentWorldData, int>> newlist = newDic.ToList();
-        newlist.Sort((x, y) => x.Value.CompareTo(y.Value));
-        List<RecentWorldData> res = (from e in newlist select e.Key).ToList();
-        return res;
-    }   
-    int ConvertAsciiHelper(int number)
-    {
-        return (number <= 122 && number >= 97) ? (number - 32) : number;
+        return Path.GetFileNameWithoutExtension(world.path);
     }
 
     void LoadButtons(List<RecentWorldData> worldFiles)
