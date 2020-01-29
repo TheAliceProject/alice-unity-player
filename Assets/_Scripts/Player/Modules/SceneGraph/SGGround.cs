@@ -1,7 +1,6 @@
+using System;
+using Alice.Player.Modules;
 using UnityEngine;
-using Alice.Tweedle.Interop;
-using Alice.Tweedle;
-using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public sealed class SGGround : SGShape {
@@ -17,6 +16,20 @@ namespace Alice.Player.Unity {
             GetPropertyBlock(m_Renderer, ref m_PropertyBlock);
             m_PropertyBlock.SetVector("_MainTex_ST", new Vector4(100,100,0,0));
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
+        }
+
+        protected override void CreateEntityCollider()
+        {
+            if (m_Renderer.gameObject.GetComponent<BoxCollider>() != null) return;
+            var boxCollider = gameObject.AddComponent<BoxCollider>();
+            var bounds = GetBounds(true);
+            boxCollider.size = bounds.size;
+            gameObject.AddComponent<CollisionBroadcaster>();
+        }
+
+        protected override void CreateMouseCollider()
+        {
+            throw new NotSupportedException("No mouse clicks recognized on the ground");
         }
     }
 }

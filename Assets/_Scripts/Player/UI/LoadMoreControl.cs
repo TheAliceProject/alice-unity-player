@@ -177,8 +177,12 @@ public class LoadMoreControl : MonoBehaviour
             recentWorlds.Add(newButton);
             newButton.button.onClick.AddListener(() =>
             {
+                var parser = WorldObjects.GetParser();
+                if (parser == null) {
+                    return;
+                }
                 newButton.SetLastOpenedNow();
-                WorldObjects.GetParser().OpenWorld(newButton.GetFilePath());
+                parser.OpenWorld(newButton.GetFilePath());
             });
         }
 
