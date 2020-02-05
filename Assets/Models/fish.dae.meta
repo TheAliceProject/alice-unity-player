@@ -1,0 +1,147 @@
+fileFormatVersion: 2
+guid: ff356d212e2569b4883403d755e6b740
+timeCreated: 1517366777
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: clownFish_eye_L
+    100002: clownFish_eye_R
+    100004: clownFish_eyeLid_L
+    100006: clownFish_eyeLid_R
+    100008: clownFish_skin
+    100010: eye_L
+    100012: eye_R
+    100014: eyeLid_L
+    100016: eyeLid_R
+    100018: fin_FL
+    100020: fin_FR
+    100022: finTip_BB
+    100024: finTip_BT
+    100026: finTip_FL
+    100028: finTip_FR
+    100030: //RootNode
+    100032: head
+    100034: jaw
+    100036: jawTip
+    100038: neck
+    100040: root
+    100042: spine1
+    100044: spine2
+    100046: tail
+    400000: clownFish_eye_L
+    400002: clownFish_eye_R
+    400004: clownFish_eyeLid_L
+    400006: clownFish_eyeLid_R
+    400008: clownFish_skin
+    400010: eye_L
+    400012: eye_R
+    400014: eyeLid_L
+    400016: eyeLid_R
+    400018: fin_FL
+    400020: fin_FR
+    400022: finTip_BB
+    400024: finTip_BT
+    400026: finTip_FL
+    400028: finTip_FR
+    400030: //RootNode
+    400032: head
+    400034: jaw
+    400036: jawTip
+    400038: neck
+    400040: root
+    400042: spine1
+    400044: spine2
+    400046: tail
+    2100000: clownFish_clownFish_shader
+    4300000: clownFish_eye_R
+    4300002: clownFish_eye_L
+    4300004: clownFish_skin
+    4300006: clownFish_eyeLid_L
+    4300008: clownFish_eyeLid_R
+    9500000: //RootNode
+    13700000: clownFish_eye_L
+    13700002: clownFish_eye_R
+    13700004: clownFish_eyeLid_L
+    13700006: clownFish_eyeLid_R
+    13700008: clownFish_skin
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

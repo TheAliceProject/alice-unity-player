@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94ec8c26612990049bbe5abeb50f5c12, type: 3}
+  m_Name: PlayerResources
+  m_EditorClassIdentifier: 
+  m_OpaqueMaterial: {fileID: 2100000, guid: 968faae8520e123408e90b5d94e5c87d, type: 2}
+  m_TransparentMaterial: {fileID: 2100000, guid: f0f7e44c346155b43a79f863c3ba12f9,
+    type: 2}
+  m_TransparentMultipassMaterial: {fileID: 2100000, guid: 045fe162716fc2a4db46211c973ffacd,
+    type: 2}
+  m_OpaqueTorusMaterial: {fileID: 2100000, guid: fdad6720e29d5d3408d531f012527636,
+    type: 2}
+  m_TransparentTorusMaterial: {fileID: 2100000, guid: 822416802eafe2e4caec2ed8e17fe047,
+    type: 2}
+  m_BoxMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_SphereMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_CylinderMesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  m_ConeMesh: {fileID: 4300000, guid: bce710460135b6549a4f01a69997fa8d, type: 3}
+  m_TorusMesh: {fileID: 4300000, guid: f43e91053deeef64abf47f88f662c01c, type: 3}
+  m_BillboardMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_DiscMesh: {fileID: 4300004, guid: feec5fa165df30647b74424b455bcce6, type: 3}
+  m_GroundMesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+  m_WallMesh: {fileID: 4300002, guid: d1b8941baf535bc46b8f40fbdb9a6442, type: 3}
+  m_AxesModel: {fileID: 114812418435751640, guid: 218ae427f5e998c4a86d3896c93ae513,
+    type: 3}
+  m_FlyingText: {fileID: 7801169308338121330, guid: 38dd5eae6afbaeb45932f2a6c836397d,
+    type: 3}
+  m_VRRig: {fileID: 7811638191363421627, guid: 57a99d88f3e3d924795a033752aa67d5, type: 3}
+  m_SceneCanvas: {fileID: 773480886470413249, guid: 5cfb8ef305475774184a722dace45635,
+    type: 3}
+  m_TweedleAudioSource: {fileID: 6945351565470147520, guid: ee2097cc29c22c14ab38e7dfe3ff7fb7,
+    type: 3}
