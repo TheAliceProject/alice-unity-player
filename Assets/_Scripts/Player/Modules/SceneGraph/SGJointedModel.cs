@@ -1,11 +1,13 @@
 using UnityEngine;
 using Alice.Tweedle;
 using System.Collections.Generic;
+using System;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
         
         private string m_ResourceId;
+        private Bounds m_modelBounds;
         private Renderer[] m_Renderers;
         private MaterialPropertyBlock[] m_PropertyBlocks;
         public List<Transform> m_vehicledList = new List<Transform>();
@@ -26,6 +28,7 @@ namespace Alice.Player.Unity {
 
             if (prefab) {
                 var model = Instantiate(prefab, cachedTransform, false);
+                m_modelBounds = SceneGraph.Current.ModelCache.GetBoundingBoxFromModel(inIdentifier);
                 m_ModelTransform = model.transform;
                 m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
                 m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
@@ -60,26 +63,7 @@ namespace Alice.Player.Unity {
         }
 
         protected override Bounds GetMeshBounds() {
-            if (m_Renderers.Length == 0)
-                return new Bounds(Vector3.zero, Vector3.zero);
-
-            Bounds compoundBounds = GetBoundsFor(m_Renderers[0]);
-            for (int i = 1; i < m_Renderers.Length; ++i) {
-                compoundBounds.Encapsulate(GetBoundsFor(m_Renderers[i]));
-            }
-            return compoundBounds;
-        }
-
-        private Bounds GetBoundsFor(Renderer ren) {
-            if (ren is SkinnedMeshRenderer) {
-                return ((SkinnedMeshRenderer)ren).localBounds;
-            }
-            if (ren is MeshRenderer) {
-                var localize = ren.worldToLocalMatrix;
-                var localCenter = localize.MultiplyPoint(ren.bounds.center);
-                return new Bounds(localCenter, ren.bounds.size);
-            }
-            return ren.bounds;
+            return m_modelBounds;
         }
 
         protected override void OnPaintChanged() {
@@ -104,6 +88,12 @@ namespace Alice.Player.Unity {
             return joint;
         }
 
+        internal string[] FindJointsBeginningWith(string start) {
+            List<string> matches = new List<string>();
+            CollectInHierarchy(m_ModelTransform, start, matches);
+            return matches.ToArray();
+        }
+
         protected override void SetSize(Vector3 inSize) {
             var meshSize = m_CachedMeshBounds.size;
             m_ModelTransform.localScale = new UnityEngine.Vector3(
@@ -121,7 +111,15 @@ namespace Alice.Player.Unity {
                 );
             }
         }
-            
+
+        private void CollectInHierarchy(Transform inTransform, string start, List<string> matches) {
+            foreach (Transform child in inTransform) {
+                if (child.gameObject.name.StartsWith(start, StringComparison.Ordinal)) {
+                    matches.Add(child.gameObject.name);
+                }
+                CollectInHierarchy(child, start, matches);
+            }
+        }
 
         private GameObject FindInHierarchy(Transform inTransform, string inName) {
             foreach (Transform child in inTransform) {

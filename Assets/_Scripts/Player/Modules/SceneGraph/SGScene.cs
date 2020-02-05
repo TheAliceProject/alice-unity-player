@@ -12,13 +12,13 @@ namespace Alice.Player.Unity {
     
     public sealed class SGScene : SGEntity {
 
+        public static bool UIActive = false;
         public const string FOG_DENSITY_PROPERTY_NAME = "FogDensity";
         public const string ATMOSPHERE_COLOR_PROPERTY_NAME = "AtmosphereColor";
         public const string GLOBAL_BRIGHTNESS_PROPERTY_NAME = "Brightness";
         public const string AMBIENT_LIGHT_COLOR_PROPERTY_NAME = "AmbientLightColor";
         public const string ABOVE_LIGHT_COLOR_PROPERTY_NAME = "AboveLightColor";
         public const string BELOW_LIGHT_COLOR_PROPERTY_NAME = "BelowLightColor";
-        public static bool defaultModelManipulationActive = false;
         private List<PAction> m_ActivationListeners = new List<PAction>();
         private List<TimeEventListenerProxy> m_TimeListeners = new List<TimeEventListenerProxy>();
         private KeyboardEventHandler m_KeyboardEventHandler = new KeyboardEventHandler();
@@ -34,12 +34,13 @@ namespace Alice.Player.Unity {
         private Light m_AboveLightA;
         private Light m_AboveLightB;
         private Light m_AboveLightC;
-        private const float k_AboveLightIntensity = 0.533f;
+        private const float k_AboveLightIntensity = 0.25f;
         private const float k_AboveLightPitch = 45f;
         private Light m_BelowLight;
         private const float k_BelowLightIntensity = 1f;
         private const float k_BelowLightPitch = -90f;
         private UnityEngine.Vector3 m_DefaultColliderSize = new UnityEngine.Vector3(0.1f, 0.1f, 0.1f);
+        private bool lastUiActive = false;
 
         private UnityEngine.Vector3 dragOrigin;
         private UnityEngine.Vector3 shiftOrigin;
@@ -59,7 +60,7 @@ namespace Alice.Player.Unity {
             m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
 
             m_SceneCanvas = CreateCanvas();
-            RenderSettings.fogMode = FogMode.Linear;
+            RenderSettings.fogMode = FogMode.Exponential;
 
             RegisterPropertyDelegate(FOG_DENSITY_PROPERTY_NAME, OnUpdateFogDensity);
             RegisterPropertyDelegate(ATMOSPHERE_COLOR_PROPERTY_NAME, OnUpdateAtmosphereColor);
@@ -78,6 +79,15 @@ namespace Alice.Player.Unity {
 
         // Time, Mouse, and Keyboard intercepting
         void Update(){
+            // When spawning a UI window, force release all keys being held
+            if(!lastUiActive && SGScene.UIActive)
+                m_KeyboardEventHandler.ReleaseAllKeys();
+
+            // UI Should block input events
+            lastUiActive = SGScene.UIActive;
+            if(SGScene.UIActive)
+                return;
+
             CheckTimeListeners();
             m_MouseEventHandler.HandleMouseEvents(); 
             m_KeyboardEventHandler.HandleKeyboardEvents();
@@ -95,7 +105,7 @@ namespace Alice.Player.Unity {
         public void SetDefaultModelManipulationActive(bool active)
         {
             if (XRSettings.enabled)
-                VRControl.EnableLaserPointers(true);
+                VRControl.EnablePointersForObjects(true);
             m_MouseEventHandler.SetModelManipulation(active);
         }
     
@@ -113,14 +123,60 @@ namespace Alice.Player.Unity {
 
         private SceneCanvas CreateCanvas()
         {
-            var canvas = Instantiate(SceneGraph.Current.InternalResources.SceneCanvas);
-            canvas.transform.SetParent(cachedTransform);
+            SceneCanvas canvas = null;
+            if(XRSettings.enabled)
+            {
+                canvas = Instantiate(SceneGraph.Current.InternalResources.VRSceneCanvas);
+                canvas.transform.SetParent(VRControl.Rig().canvasRoot);
+                var headTransform = VRControl.Rig().head;
+
+                // Get player facing direction
+                UnityEngine.Vector3 facingDirection = headTransform.position + headTransform.forward;
+                // Reset height to player height
+                facingDirection.y = headTransform.position.y;
+                // Get direction vector of head
+                UnityEngine.Vector3 directionVector = facingDirection - headTransform.position;
+                // Normalize and set a certain distance away
+                canvas.transform.position = headTransform.position + (directionVector.normalized * VRControl.WORLD_CANVAS_DISTANCE);
+
+                // Rotate the canvas correctly
+                canvas.transform.LookAt(headTransform);
+                canvas.transform.Rotate(0f, 180f, 0f, Space.Self);
+            }
+            else
+            {
+                canvas = Instantiate(SceneGraph.Current.InternalResources.SceneCanvas);
+                canvas.transform.SetParent(cachedTransform);
+            }
+
             return canvas;
         }
 
         public SceneCanvas GetCurrentCanvas()
         {
             return m_SceneCanvas;
+        }
+
+        public SceneCanvas CreateNewWorldCanvas()
+        {
+            // We want to spawn this in the direction the player is looking, but at a certain distance
+            var canvas = Instantiate(SceneGraph.Current.InternalResources.WorldCanvas);
+            var headTransform = VRControl.Rig().head;
+
+            // Get player facing direction
+            UnityEngine.Vector3 facingDirection = headTransform.position + headTransform.forward;
+            // Reset height to player height
+            facingDirection.y = headTransform.position.y;
+            // Get direction vector of head
+            UnityEngine.Vector3 directionVector = facingDirection - headTransform.position;
+            // Normalize and set a certain distance away
+            canvas.transform.position = headTransform.position + (directionVector.normalized * VRControl.WORLD_CANVAS_DISTANCE);
+
+            // Rotate the canvas correctly
+            canvas.transform.LookAt(headTransform);
+            canvas.transform.Rotate(0f, 180f, 0f, Space.Self);
+            canvas.transform.SetParent(cachedTransform);
+            return canvas;
         }
         
         public void  AddActivationListener(PAction inListener) {
@@ -137,7 +193,7 @@ namespace Alice.Player.Unity {
 
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             if (XRSettings.enabled)
-                VRControl.EnableLaserPointers(true);
+                VRControl.EnablePointersForObjects(true);
             AddColliders(clickedObjects);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }

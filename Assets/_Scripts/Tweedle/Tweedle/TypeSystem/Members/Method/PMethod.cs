@@ -16,5 +16,9 @@ namespace Alice.Tweedle
             : base(inAssembly, inMethod, inMethod.ReturnType, MemberFlags.None)
         {
         }
+
+        public object InvokeNow(object thisVal, object[] inCachedArgs) {
+            return Invoke(thisVal, inCachedArgs);
+        }
     }
 }

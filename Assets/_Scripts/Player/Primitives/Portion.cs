@@ -34,6 +34,11 @@ namespace Alice.Player.Primitives
         }
 
         [PInteropMethod]
+        public double toDecimalNumber() {
+            return Value;
+        }
+
+        [PInteropMethod]
         public Portion add(Portion other) {
             return new Portion(System.Math.Min(Value + other, 1));
         }
