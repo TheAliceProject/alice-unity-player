@@ -1,0 +1,54 @@
+{
+  "name": "Alien",
+  "identifier": {
+    "aliceVersion": "3.4.1.0",
+    "type": "Model",
+    "id": "Alien",
+    "version": "1.0",
+    "formatVersion":  "0.1"
+  },
+  "creationYear": "2011",
+  "creator": "Laura Paoletti",
+  "icon": "thumbnail.png",
+  "boundingBox": {
+    "min": [ -0.28161698603967755, 7.213192000422632E-4, -0.1824470825765487 ],
+    "max": [ 0.28466150416954694, 1.4431625794871028, 0.3956275572385336 ]
+  },
+  "tags": [ "alien", "space" ],
+  "groupTags": [ "characters" ],
+  "themeTags": [ "*outer space" ],
+  "extends": "SBiped",
+  "rootJoints": [ "ROOT" ],
+  "additionalJoints": [],
+  "additionalJointArrays": [],
+  "poses": [],
+  "textureSets": [
+    {
+      "name": "default",
+      "fileType": "png",
+      "files": [ "alien_diffuse.png" ]
+    }
+  ],
+  "models": [
+    {
+      "name": "default",
+      "fileType": "collada",
+      "files": [ "alien.dae" ],
+      "boundingBox": {
+        "min": [ -0.28161698603967755, 7.213192000422632E-4, -0.1824470825765487 ],
+        "max": [ 0.28466150416954694, 1.4431625794871028, 0.3956275572385336 ]
+      }
+    }
+  ],
+  "texturedModels": [
+    {
+      "model": "default",
+      "textureSet": "default",
+      "icon": "thumbnail.png"
+    }
+  ]
+}
+
+
+
+

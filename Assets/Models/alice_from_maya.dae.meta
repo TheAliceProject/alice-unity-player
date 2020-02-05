@@ -1,0 +1,247 @@
+fileFormatVersion: 2
+guid: 645549ce587d11d499e449f3b7dd55bb
+timeCreated: 1528472018
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: alice_skinRig_alice_eye_L
+    100004: alice_skinRig_alice_eye_R
+    100006: ankle_L
+    100008: ankle_R
+    100010: clavicle_L
+    100012: clavicle_R
+    100014: elbow_L
+    100016: elbow_R
+    100018: eye_L
+    100020: eye_R
+    100022: eyeLid_L
+    100024: eyeLid_R
+    100026: foot_L
+    100028: foot_R
+    100030: hand_L
+    100032: hand_R
+    100034: head
+    100036: hip_L
+    100038: hip_R
+    100040: index1_L
+    100042: index1_R
+    100044: index2_L
+    100046: index2_R
+    100048: index3_L
+    100050: index3_R
+    100052: jaw
+    100054: jawTip
+    100056: knee_L
+    100058: knee_R
+    100060: middle1_L
+    100062: middle1_R
+    100064: middle2_L
+    100066: middle2_R
+    100068: middle3_L
+    100070: middle3_R
+    100072: neck
+    100074: pelvis
+    100076: pinky1_L
+    100078: pinky1_R
+    100080: pinky2_L
+    100082: pinky2_R
+    100084: pinky3_L
+    100086: pinky3_R
+    100088: ring1_L
+    100090: ring1_R
+    100092: ring2_L
+    100094: ring2_R
+    100096: ring3_L
+    100098: ring3_R
+    100100: root
+    100102: shoulder_L
+    100104: shoulder_R
+    100106: skin
+    100108: skirtBack
+    100110: skirtBackTip
+    100112: skirtBase
+    100114: skirtFront
+    100116: skirtFrontTip
+    100118: skirtLeft
+    100120: skirtLeftTip
+    100122: skirtRight
+    100124: skirtRightTip
+    100126: spine1
+    100128: spine2
+    100130: spine3
+    100132: thumb1_L
+    100134: thumb1_R
+    100136: thumb2_L
+    100138: thumb2_R
+    100140: thumb3_L
+    100142: thumb3_R
+    100144: toes_L
+    100146: toes_R
+    100148: wrist_L
+    100150: wrist_R
+    400000: //RootNode
+    400002: alice_skinRig_alice_eye_L
+    400004: alice_skinRig_alice_eye_R
+    400006: ankle_L
+    400008: ankle_R
+    400010: clavicle_L
+    400012: clavicle_R
+    400014: elbow_L
+    400016: elbow_R
+    400018: eye_L
+    400020: eye_R
+    400022: eyeLid_L
+    400024: eyeLid_R
+    400026: foot_L
+    400028: foot_R
+    400030: hand_L
+    400032: hand_R
+    400034: head
+    400036: hip_L
+    400038: hip_R
+    400040: index1_L
+    400042: index1_R
+    400044: index2_L
+    400046: index2_R
+    400048: index3_L
+    400050: index3_R
+    400052: jaw
+    400054: jawTip
+    400056: knee_L
+    400058: knee_R
+    400060: middle1_L
+    400062: middle1_R
+    400064: middle2_L
+    400066: middle2_R
+    400068: middle3_L
+    400070: middle3_R
+    400072: neck
+    400074: pelvis
+    400076: pinky1_L
+    400078: pinky1_R
+    400080: pinky2_L
+    400082: pinky2_R
+    400084: pinky3_L
+    400086: pinky3_R
+    400088: ring1_L
+    400090: ring1_R
+    400092: ring2_L
+    400094: ring2_R
+    400096: ring3_L
+    400098: ring3_R
+    400100: root
+    400102: shoulder_L
+    400104: shoulder_R
+    400106: skin
+    400108: skirtBack
+    400110: skirtBackTip
+    400112: skirtBase
+    400114: skirtFront
+    400116: skirtFrontTip
+    400118: skirtLeft
+    400120: skirtLeftTip
+    400122: skirtRight
+    400124: skirtRightTip
+    400126: spine1
+    400128: spine2
+    400130: spine3
+    400132: thumb1_L
+    400134: thumb1_R
+    400136: thumb2_L
+    400138: thumb2_R
+    400140: thumb3_L
+    400142: thumb3_R
+    400144: toes_L
+    400146: toes_R
+    400148: wrist_L
+    400150: wrist_R
+    2100000: alice_skinRig_alice_alice_shader
+    4300000: alice_skinRig_alice_eye_R
+    4300002: alice_skinRig_alice_eye_L
+    4300004: skin
+    9500000: //RootNode
+    13700000: alice_skinRig_alice_eye_L
+    13700002: alice_skinRig_alice_eye_R
+    13700004: skin
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
