@@ -35,6 +35,9 @@ namespace Alice.Player.Unity
         }
 
         public void HandleMouseEvents(){
+            if(XRSettings.enabled && VRControl.Rig().IsEnabledForUI())
+                return;
+                
             if (IsMouseOrTriggerDown()){ // Left mouse click
                 lastMouseDownTime = Time.time;
                 RaycastHit hit;
@@ -42,18 +45,21 @@ namespace Alice.Player.Unity
                 if (Physics.Raycast(ray, out hit, 100.0f)){
                     if (defaultModelManipulationActive){
                         sgObject = hit.transform.GetComponentInParent<SGModel>();
-                        objectToMove = sgObject.transform;
-                        objectOriginPoint = hit.transform.position;
+                        if(sgObject != null)
+                        {
+                            objectToMove = sgObject.transform;
+                            objectOriginPoint = hit.transform.position;
 
-                        verticalMovementPlane = new Plane(UnityEngine.Vector3.forward, objectOriginPoint);
-                        yClickOffset = hit.point.y - objectOriginPoint.y;
+                            verticalMovementPlane = new Plane(UnityEngine.Vector3.forward, objectOriginPoint);
+                            yClickOffset = hit.point.y - objectOriginPoint.y;
 
-                        // Use hit.point.y to base movement plane on mouse click, not model origin
-                        UnityEngine.Vector3 clickOriginPoint = new UnityEngine.Vector3(objectOriginPoint.x, hit.point.y , objectOriginPoint.z);
-                        movementPlane = new Plane(UnityEngine.Vector3.up, clickOriginPoint);
-                        float distance;
-                        if (movementPlane.Raycast(ray, out distance))
-                            planeOriginPoint = ray.origin + (ray.direction * distance);
+                            // Use hit.point.y to base movement plane on mouse click, not model origin
+                            UnityEngine.Vector3 clickOriginPoint = new UnityEngine.Vector3(objectOriginPoint.x, hit.point.y, objectOriginPoint.z);
+                            movementPlane = new Plane(UnityEngine.Vector3.up, clickOriginPoint);
+                            float distance;
+                            if (movementPlane.Raycast(ray, out distance))
+                                planeOriginPoint = ray.origin + (ray.direction * distance);
+                        }
                     }
                 }
             }

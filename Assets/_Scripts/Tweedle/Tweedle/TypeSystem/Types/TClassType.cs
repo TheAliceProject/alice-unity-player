@@ -81,6 +81,11 @@ namespace Alice.Tweedle
 
         #region Tweedle Casting
 
+        public override string ConvertToString(ref TValue inValue) {
+            AssertValueIsType(ref inValue);
+            return inValue.ToString();
+        }
+
         #endregion // Tweedle Casting
 
         #region Conversion Semantics

@@ -38,8 +38,7 @@ namespace Alice.Player.Unity
             // Get our bounding box points
             projectedOnPlane.Clear();
             for (int i = 0; i < objectsToWatch.Count; i++){
-                Bounds bounds = objectsToWatch[i].GetBounds(true);
-                bounds.center = objectsToWatch[i].transform.position + new UnityEngine.Vector3(0f, objectsToWatch[i].GetSize(false).y/2f, 0f);
+                Bounds bounds = objectsToWatch[i].GetBoundsInWorldSpace(true);
 
                 boundingBoxPoints.points[0] = bounds.min;
                 boundingBoxPoints.points[1] = bounds.max;

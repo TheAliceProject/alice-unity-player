@@ -12,6 +12,7 @@ public class NumericInput : MonoBehaviour
 {
     public TextMeshProUGUI label;
     public InputField inputField;
+    public RectTransform rect;
     public Button okButton;
     public Button[] numericButtons;
     public Button plusMinusButton;
@@ -57,16 +58,21 @@ public class NumericInput : MonoBehaviour
                 inputField.text = inputText.Substring(0, inputText.Length-1);
             }
         });
+
+        if(!VRControl.IsLoadedInVR())
+            rect.SetScale(Screen.height / 800f, Axis.XYZ);
     }
 
     public void Spawn(string label, AsyncReturn<double> returnDouble)
     {
+        SGScene.UIActive = true;
         SetLabel(label);
         m_Routine.Replace(this, WaitForUserToPopulate(returnDouble));
     }
 
     public void Spawn(string label, AsyncReturn<int> returnInt)
     {
+        SGScene.UIActive = true;
         SetLabel(label);
         m_Routine.Replace(this, WaitForUserToPopulate(returnInt));
     }
@@ -90,20 +96,24 @@ public class NumericInput : MonoBehaviour
     public void ClickedOkayButton()
     {
         userInputDone = true;
+        if (VRControl.IsLoadedInVR())
+        {
+            VRControl.Rig().EnablePointersForUI(false);
+        }
     }
 
     private IEnumerator WaitForUserToPopulate(AsyncReturn<int> returnInt)
     {
         yield return DoneWithValidInput();
         returnInt.Return(Convert.ToInt32(GetUserInput()));
-        Destroy(this.gameObject);
+        DestroyMe();
     }
 
     private IEnumerator WaitForUserToPopulate(AsyncReturn<double> returnDouble)
     {
         yield return DoneWithValidInput();
         returnDouble.Return(Convert.ToDouble(GetUserInput()));
-        Destroy(this.gameObject);
+        DestroyMe();
     }
 
     private IEnumerator DoneWithValidInput()
@@ -121,6 +131,19 @@ public class NumericInput : MonoBehaviour
             else{
                 validInput = true;
             }
+        }
+    }  
+
+    private void DestroyMe()
+    {
+        SGScene.UIActive = false;
+        if (VRControl.IsLoadedInVR())
+        {
+            Destroy(this.transform.parent.gameObject); // Delete the whole canvas in VR space
+        }
+        else
+        {
+            Destroy(this.gameObject);
         }
     }
 }

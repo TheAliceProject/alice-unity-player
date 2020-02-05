@@ -3,26 +3,69 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
 
 public class RecentWorldButton : MonoBehaviour
 {
     public Button button;
     public TextMeshProUGUI nameText;
-    public TextMeshProUGUI fullText;
+    public TextMeshProUGUI lastOpenedText;
+    public TextMeshProUGUI authorText; // Unused for now
+    public Image background;
+    public BoxCollider collider;
+    
+    private RecentWorldData fileData = new RecentWorldData();
 
-    private string filePath;
-
-    public void SetText(string text)
+    public void SetData(RecentWorldData worldData)
     {
-        int lastSlash = -1;
-        lastSlash = Mathf.Max(text.LastIndexOf("/"), text.LastIndexOf("\\"));
-        nameText.text = text.Substring(lastSlash + 1);
-        fullText.text = text;
-        filePath = text;
+        nameText.text = Path.GetFileNameWithoutExtension(worldData.path);
+        fileData.path = worldData.path;
+
+        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(worldData.path) + "_thumb.png";
+        if (File.Exists(thumbnailPath))
+        {
+            byte[] data = File.ReadAllBytes(thumbnailPath);
+            Texture2D tex = null;
+            tex = new Texture2D(640, 360);
+            tex.LoadImage(data); //..this will auto-resize the texture dimensions.
+            background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
+        }
+
+        fileData.lastOpened = worldData.lastOpened;
+        SetLastOpenedText();
     }
 
-    public string GetFilePath()
+    public void ScaleText(float scaleFactor)
     {
-        return filePath;
+        nameText.fontSize *= scaleFactor;
+    }
+
+    public string GetFilePath(){
+        return fileData.path;
+    }
+
+    public void SetLastOpenedNow(){
+        fileData.SetLastOpenedNow();
+    }
+
+    public long GetLastOpened(){
+        return fileData.lastOpened;
+    }
+
+    private void SetLastOpenedText(){
+        if(lastOpenedText) // else ignore
+        {
+            long secondsAgo = fileData.SecondsSinceLastOpened();
+            if(fileData.lastOpened < 0)
+                lastOpenedText.text = "";
+            else if(secondsAgo < 60)
+                lastOpenedText.text = secondsAgo.ToString() + " seconds ago";
+            else if(secondsAgo / 60 < 60)
+                lastOpenedText.text = (secondsAgo / 60).ToString() + " minutes ago";
+            else if(secondsAgo / 3600 < 24)
+                lastOpenedText.text = (secondsAgo / 3600).ToString() + " hours ago";
+            else
+                lastOpenedText.text = (secondsAgo / 86400).ToString() + " days ago";
+        }
     }
 }

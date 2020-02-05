@@ -4,12 +4,13 @@ using UnityEngine;
 using Alice.Player.Modules;
 using UnityEngine.XR;
 using BeauRoutine;
+using System;
 
-namespace Alice.Player.Unity 
+namespace Alice.Player.Unity
 {
     public class KeyboardEventHandler
     {
-        
+
         public enum KeyAction{
             Press,
             Repeat,
@@ -17,11 +18,10 @@ namespace Alice.Player.Unity
         }
 
         private List<KeyEventListenerProxy> m_KeyPressListeners = new List<KeyEventListenerProxy>();
-        private HashSet<KeyCode> m_heldKeys = new HashSet<KeyCode>();
-        private List<string> m_heldKeyCodes = new List<string>();
         private ObjectKeyboardMover m_objectMover = new ObjectKeyboardMover();
-        private List<KeyCode> m_keysToRemove = new List<KeyCode>();
-        private List<string> m_vrKeysToRemove = new List<string>();
+        private HashSet<KeyCode> m_heldKeyCodes = new HashSet<KeyCode>();
+        private HashSet<Key> m_heldKeys = new HashSet<Key>();
+        private HashSet<Key> m_releasedKeys = new HashSet<Key>();
 
         private Routine m_repeat_key_routine;
 
@@ -36,149 +36,153 @@ namespace Alice.Player.Unity
         }
 
         public void RemoveAllKeys(){
-            m_heldKeys.Clear();
             m_heldKeyCodes.Clear();
+            m_heldKeys.Clear();
+            m_releasedKeys.Clear();
         }
 
-        public void HandleKeyboardEvents() {
-            if (m_KeyPressListeners.Count <= 0 && !m_objectMover.HasObjects()) {
+        public void HandleKeyboardEvents(){
+            if (m_KeyPressListeners.Count <= 0 && !m_objectMover.HasObjects())
                 return;
-            }
-            // Check for key down
-            if (Input.anyKeyDown) {
-                foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode))) {
-                    if (Input.GetKeyDown(vKey)) {
-                        m_heldKeys.Add(vKey);
-                        if (KeyMap.TweedleKeyLookup.ContainsKey(vKey))
-                            NotifyKeyboardEvents(KeyMap.TweedleKeyLookup[vKey], KeyAction.Press);
-                        //ToDo: Would be nice to not need to check every key here. But we want to support more than one key press at a time, so no break;
+            AddPressedKeys();
+            if (XRSettings.enabled)
+                UpdateControllerEvents();
+            RemoveReleasedKeys();
+        }
+
+        private void AddPressedKeys(){
+            if (Input.anyKeyDown){
+                foreach (KeyCode vKey in Enum.GetValues(typeof(KeyCode))){
+                    if (Input.GetKeyDown(vKey) && KeyMap.TweedleKeyLookup.ContainsKey(vKey) && m_heldKeyCodes.Add(vKey)){
+                        Press(KeyMap.TweedleKeyLookup[vKey]);
+                        //Would be nice to not need to check every key here. But we want to support more than one key press at a time, so no break;
                     }
-                }
-
-                // Check for VR Buttons
-                if (XRSettings.enabled) {
-                    foreach (string buttonString in KeyMap.VRButtonStrings) {
-                        if (Input.GetButtonDown(buttonString)) {
-                            Key vrKey = KeyMap.VRButtonLookup[buttonString];
-                            m_heldKeyCodes.Add(buttonString);
-                            NotifyKeyboardEvents(vrKey, KeyAction.Press);
-                        }
-                    }
-                }
-            }
-
-            // Check for VR Axes
-            // TODO: Verify functionality with overlapping key policy
-            if (XRSettings.enabled) {
-                foreach (string axisString in KeyMap.VRAxisStrings) {
-                    if (Input.GetAxis(axisString) > VRControl.TRIGGER_SENSITIVITY) {
-                        string posString = axisString + "_P";
-                        if (!m_heldKeyCodes.Contains(posString)) {
-                            m_heldKeyCodes.Add(posString);
-                            NotifyKeyboardEvents(KeyMap.VRAxisLookup[posString], KeyAction.Press);
-                        }
-                    } else if (Input.GetAxis(axisString) < -VRControl.TRIGGER_SENSITIVITY) {
-                        string negString = axisString + "_N";
-                        if (!m_heldKeyCodes.Contains(negString)) {
-                            m_heldKeyCodes.Add(negString);
-                            NotifyKeyboardEvents(KeyMap.VRAxisLookup[negString], KeyAction.Press);
-                        }
-                    }
-                }
-
-                if (VRControl.IsLeftTriggerDown()) {
-                    m_heldKeyCodes.Add("LeftTrigger");
-                    NotifyKeyboardEvents(Key.LEFT_TRIGGER, KeyAction.Press);
-                }
-                if (VRControl.IsRightTriggerDown()) {
-                    m_heldKeyCodes.Add("RightTrigger");
-                    NotifyKeyboardEvents(Key.RIGHT_TRIGGER, KeyAction.Press);
-                }
-            }
-
-
-            // Check for key up if we've pressed one down in the past
-            if (m_heldKeys.Count > 0) {
-                m_keysToRemove.Clear();
-                foreach (KeyCode vKey in m_heldKeys) {
-                    if (Input.GetKeyUp(vKey)) {
-                        m_keysToRemove.Add(vKey);
-                        if (KeyMap.TweedleKeyLookup.ContainsKey(vKey))
-                            NotifyKeyboardEvents(KeyMap.TweedleKeyLookup[vKey], KeyAction.Release);
-                    }
-                }
-
-                // Remove keys from held key list, but not while we're iterating over said list
-                foreach (KeyCode vKey in m_keysToRemove) {
-                    m_heldKeys.Remove(vKey);
-                }
-                m_keysToRemove.Clear();
-            }
-
-            if (XRSettings.enabled) {
-                if (m_heldKeyCodes.Count > 0) {
-                    m_vrKeysToRemove.Clear();
-                    foreach (string vrKey in m_heldKeyCodes) {
-                        if (vrKey.Substring(vrKey.Length - 2) == "_P") {
-                            if (Input.GetAxis(vrKey.Substring(0, vrKey.Length - 2)) < VRControl.TRIGGER_SENSITIVITY) {
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents(KeyMap.VRAxisLookup[vrKey], KeyAction.Release);
-                            }
-                        } else if (vrKey.Substring(vrKey.Length - 2) == "_N") {
-                            if (Input.GetAxis(vrKey.Substring(0, vrKey.Length - 2)) > -VRControl.TRIGGER_SENSITIVITY) {
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents(KeyMap.VRAxisLookup[vrKey], KeyAction.Release);
-                            }
-                        } else {
-                            // Button
-                            if (Input.GetButtonUp(vrKey)) {
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents(KeyMap.VRButtonLookup[vrKey], KeyAction.Release);
-                            }
-                            if (KeyMap.VRButtonLookup[vrKey] == Key.LEFT_TRIGGER && VRControl.IsLeftTriggerUp()) {
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents(Key.LEFT_TRIGGER, KeyAction.Release);
-                            }
-                            if (KeyMap.VRButtonLookup[vrKey] == Key.RIGHT_TRIGGER && VRControl.IsRightTriggerUp()) {
-                                m_vrKeysToRemove.Add(vrKey);
-                                NotifyKeyboardEvents(Key.RIGHT_TRIGGER, KeyAction.Release);
-                            }
-                        }
-                    }
-
-                    foreach (string vKey in m_vrKeysToRemove) {
-                        m_heldKeyCodes.Remove(vKey);
-                    }
-                    m_vrKeysToRemove.Clear();
                 }
             }
         }
 
-        private void NotifyKeyboardEvents(Key theKey, KeyAction keyAction){
-            // Notify keypress listeners
-            for(int i = 0; i < m_KeyPressListeners.Count; i++){
+        private void RemoveReleasedKeys(){
+            if (m_heldKeyCodes.Count > 0){
+                HashSet<KeyCode> releasedKeyCodes = new HashSet<KeyCode>();
+                foreach (KeyCode vKey in m_heldKeyCodes){
+                    if (Input.GetKeyUp(vKey)){
+                        if (KeyMap.TweedleKeyLookup.ContainsKey(vKey))
+                            releasedKeyCodes.Add(vKey);
+                        Release(KeyMap.TweedleKeyLookup[vKey]);
+                    }
+                }
+                foreach (KeyCode vKey in releasedKeyCodes){
+                    m_heldKeyCodes.Remove(vKey);
+                }
+            }
+        }
+
+        public void ReleaseAllKeys(){
+            if (m_heldKeyCodes.Count > 0)
+            {
+                HashSet<KeyCode> releasedKeyCodes = new HashSet<KeyCode>();
+                foreach (KeyCode vKey in m_heldKeyCodes)
+                {
+                    if (KeyMap.TweedleKeyLookup.ContainsKey(vKey))
+                        releasedKeyCodes.Add(vKey);
+                    Release(KeyMap.TweedleKeyLookup[vKey]);
+                }
+                foreach (KeyCode vKey in releasedKeyCodes)
+                {
+                    m_heldKeyCodes.Remove(vKey);
+                }
+            }
+            foreach (string axisString in KeyMap.AxisKeyPairs.Keys)
+            {
+                float axisValue = Input.GetAxis(axisString);
+                Tuple<Key, Key> keys;
+                if (KeyMap.AxisKeyPairs.TryGetValue(axisString, out keys))
+                {
+                    Release(keys.Item1);
+                    Release(keys.Item2);
+                }
+            }
+            Release(Key.LEFT_TRIGGER);
+            Release(Key.RIGHT_TRIGGER);
+
+            RemoveReleasedKeys();
+        }
+
+        private void UpdateControllerEvents(){
+            if (Input.anyKeyDown){
+                foreach (string buttonString in KeyMap.VRButtonLookup.Keys){
+                    if (Input.GetButtonDown(buttonString)){
+                        Press(KeyMap.VRButtonLookup[buttonString]);
+                    }
+                }
+            }
+            foreach (string buttonString in KeyMap.VRButtonLookup.Keys){
+                if (Input.GetButtonUp(buttonString)){
+                    Release(KeyMap.VRButtonLookup[buttonString]);
+                }
+            }
+            foreach (string axisString in KeyMap.AxisKeyPairs.Keys){
+                float axisValue = Input.GetAxis(axisString);
+                Tuple<Key, Key> keys;
+                if (KeyMap.AxisKeyPairs.TryGetValue(axisString, out keys)){
+                    if (axisValue > VRControl.TRIGGER_SENSITIVITY){
+                        Press(keys.Item2);
+                        Release(keys.Item1);
+                    } else if (axisValue < -VRControl.TRIGGER_SENSITIVITY){
+                        Press(keys.Item1);
+                        Release(keys.Item2);
+                    } else{
+                        Release(keys.Item1);
+                        Release(keys.Item2);
+                    }
+                }
+            }
+
+            if (VRControl.IsLeftTriggerDown())
+                Press(Key.LEFT_TRIGGER);
+            if (VRControl.IsRightTriggerDown())
+                Press(Key.RIGHT_TRIGGER);
+            if (VRControl.IsLeftTriggerUp())
+                Release(Key.LEFT_TRIGGER);
+            if (VRControl.IsRightTriggerUp())
+                Release(Key.RIGHT_TRIGGER);
+        }
+
+        private void Press(Key key){
+            if (m_heldKeys.Add(key))
+                NotifyListeners(key, KeyAction.Press);
+        }
+
+        private void Release(Key key){
+            if (m_heldKeys.Contains(key) && m_releasedKeys.Add(key))
+                NotifyListeners(key, KeyAction.Release);
+        }
+
+        private void StartKeyRepeater(){
+            if (!m_repeat_key_routine)
+                m_repeat_key_routine = Routine.Start(FireMultipleRoutine());
+        }
+
+        private IEnumerator FireMultipleRoutine(){
+            while (true){
+                foreach (Key key in m_heldKeys){
+                    if (!m_releasedKeys.Contains(key))
+                        NotifyListeners(key, KeyAction.Repeat);
+                }
+                foreach (Key key in m_releasedKeys){
+                    m_heldKeys.Remove(key);
+                }
+                m_releasedKeys.Clear();
+                yield return null;
+            }
+        }
+
+        private void NotifyListeners(Key theKey, KeyAction keyAction){
+            for (int i = 0; i < m_KeyPressListeners.Count; i++){
                 m_KeyPressListeners[i].NotifyEvent(theKey, keyAction);
             }
-            if (m_objectMover.HasObjects() && keyAction != KeyAction.Release) {
+            if (m_objectMover.HasObjects() && keyAction != KeyAction.Release)
                 m_objectMover.NotifyEvent(theKey);
-            }
         }
-
-        private void StartKeyRepeater() {
-            if (!m_repeat_key_routine) {
-                m_repeat_key_routine = Routine.Start(FireMultipleRoutine());
-            }
-        }
-
-        private IEnumerator FireMultipleRoutine() {
-            while (true) {
-                foreach (KeyCode vKey in m_heldKeys) {
-                    if (KeyMap.TweedleKeyLookup.ContainsKey(vKey))
-                        NotifyKeyboardEvents(KeyMap.TweedleKeyLookup[vKey], KeyAction.Repeat);
-                }
-                yield return 0.02f;
-            }
-        }
-
     }
 }

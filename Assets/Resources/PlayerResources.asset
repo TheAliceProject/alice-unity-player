@@ -37,5 +37,9 @@ MonoBehaviour:
   m_VRRig: {fileID: 7811638191363421627, guid: 57a99d88f3e3d924795a033752aa67d5, type: 3}
   m_SceneCanvas: {fileID: 773480886470413249, guid: 5cfb8ef305475774184a722dace45635,
     type: 3}
+  m_VRCanvas: {fileID: 122004904373429333, guid: a28e3e6caa513e34c8125ed82d6c8599,
+    type: 3}
+  m_WorldCanvas: {fileID: 122004904373429333, guid: 7d731f5ceda5f664293821bf3f89c2f3,
+    type: 3}
   m_TweedleAudioSource: {fileID: 6945351565470147520, guid: ee2097cc29c22c14ab38e7dfe3ff7fb7,
     type: 3}

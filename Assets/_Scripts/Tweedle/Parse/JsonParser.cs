@@ -16,6 +16,8 @@ namespace Alice.Tweedle.Parse
                 using (ZipFile zipFile = new ZipFile(stream))
                 {
                     JsonParser reader = new JsonParser(inSystem, zipFile);
+                    if(!inZipPath.Contains("SceneGraphLibrary"))
+                        reader.CacheThumbnail(inZipPath);
                     reader.Parse();
                 }
             }
@@ -36,6 +38,15 @@ namespace Alice.Tweedle.Parse
             m_System = inSystem;
             m_ZipFile = inZipFile;
             m_Parser = new TweedleParser();
+        }
+
+        public void CacheThumbnail(string fileName)
+        {
+            // Save thumbnail
+            byte[] data = m_ZipFile.ReadDataEntry("thumbnail.png");
+            if(data == null)
+                return;
+            System.IO.File.WriteAllBytes(Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png", data);
         }
 
         private void Parse()
@@ -269,7 +280,12 @@ namespace Alice.Tweedle.Parse
                             GameObject loadedModel = assetLoader.LoadFromMemoryWithTextures(data, meshRef.file, options, null, System.IO.Path.GetDirectoryName(cachePath));
 
                             var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
-                            SceneGraph.Current.ModelCache.Add(cacheID, loadedModel);
+
+                            Utils.BoundingBox boundingBox = (meshRef is StructureReference) ? ((StructureReference) meshRef).boundingBox : inManifest.boundingBox;
+                            Bounds boundsConverted = new Bounds(Vector3.zero, new Vector3(-boundingBox.min[0] + boundingBox.max[0],
+                                                                                        -boundingBox.min[1] + boundingBox.max[1],
+                                                                                        -boundingBox.min[2] + boundingBox.max[2]));
+                            SceneGraph.Current.ModelCache.Add(cacheID, loadedModel, boundsConverted);
                         }
                     }
                 }

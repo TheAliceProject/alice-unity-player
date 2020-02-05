@@ -85,6 +85,13 @@ namespace Alice.Player.Unity {
             return bounds;
         }
 
+        public Bounds GetBoundsInWorldSpace(bool inDynamic)
+        {
+            Bounds bounds = GetBounds(inDynamic);
+            bounds.center = this.cachedTransform.position + new UnityEngine.Vector3(0f, GetSize(false).y / 2f, 0f);
+            return bounds;
+        }
+
         protected void CacheMeshBounds() {
             m_CachedMeshBounds = GetMeshBounds();
         }
@@ -102,6 +109,11 @@ namespace Alice.Player.Unity {
                 meshSize.y == 0 ? 1 : inSize.y/meshSize.y,
                 meshSize.z == 0 ? 1 : inSize.z/meshSize.z
             );
+        }
+
+        public virtual Scale GetScale(){
+            UnityEngine.Vector3 scale = transform.GetChild(0).localScale;
+            return new Scale(scale.x, scale.y, scale.z);
         }
 
         private void OnPaintPropertyChanged(TValue inValue) {
