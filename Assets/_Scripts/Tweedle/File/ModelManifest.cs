@@ -7,6 +7,7 @@ namespace Alice.Tweedle.File
     public class ModelManifest : Manifest
     {
         public List<string> rootJoints;
+        public List<JointBounds> jointBounds;
         public List<Joint> additionalJoints;
         public List<Joint> additionalJointArrays;
         public List<string> poses; // TODO
