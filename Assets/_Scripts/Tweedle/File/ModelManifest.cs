@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Alice.Utils;
+using UnityEngine;
 
 namespace Alice.Tweedle.File
 {
@@ -7,6 +9,7 @@ namespace Alice.Tweedle.File
     public class ModelManifest : Manifest
     {
         public List<string> rootJoints;
+        public List<JointBounds> jointBounds;
         public List<Joint> additionalJoints;
         public List<Joint> additionalJointArrays;
         public List<string> poses; // TODO
@@ -23,6 +26,11 @@ namespace Alice.Tweedle.File
         public ModelManifest(Manifest asset) 
             : base(asset)
         {
+        }
+
+        public StructureReference GetStructure(string structureName)
+        {
+            return resources.FirstOrDefault(resource => resource.name == structureName) as StructureReference;
         }
     }
 }

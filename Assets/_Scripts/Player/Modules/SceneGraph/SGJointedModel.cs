@@ -6,20 +6,12 @@ using Alice.Player.Modules;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
-
-        private const float RootCapsuleRadius = 0.6f;
-        private const float CapsuleThinningFactor = 0.91f;
-
         private string m_ResourceId;
-        private Bounds m_modelBounds;
+        private ModelSpec m_ModelSpec;
         private Renderer[] m_Renderers;
         private MaterialPropertyBlock[] m_PropertyBlocks;
         private Dictionary<Renderer, Mesh> bakedMeshes = new Dictionary<Renderer, Mesh>();
         public List<Transform> m_vehicledList = new List<Transform>();
-
-        // At most one of these can be true. If both are false it will use Mesh Colliders
-        private const bool UseBoxColliders = true;
-        private const bool UseJointColliders = false;
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -33,14 +25,15 @@ namespace Alice.Player.Unity {
                 m_ModelTransform = null;
             }
 
-            var prefab = SceneGraph.Current.ModelCache.Get(inIdentifier);
-
-            if (prefab) {
-                var model = Instantiate(prefab, cachedTransform, false);
-                m_modelBounds = SceneGraph.Current.ModelCache.GetBoundingBoxFromModel(inIdentifier);
+            m_ModelSpec = SceneGraph.Current.ModelCache.Get(inIdentifier);
+            
+            if (m_ModelSpec is null) {
+                m_Renderers = null;
+            } else {
+                var model = Instantiate(m_ModelSpec.Model, cachedTransform, false);
                 m_ModelTransform = model.transform;
-                m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
-                m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
+                m_ModelTransform.localRotation = Quaternion.identity;
+                m_ModelTransform.localPosition = Vector3.zero;
 
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
@@ -64,9 +57,6 @@ namespace Alice.Player.Unity {
                 }
                 CacheMeshBounds();
             }
-            else {
-                m_Renderers = null;
-            }
         }
 
         public void AddToVehicleList(Transform t)
@@ -75,7 +65,7 @@ namespace Alice.Player.Unity {
         }
 
         protected override Bounds GetMeshBounds() {
-            return m_modelBounds;
+            return m_ModelSpec.InitialBounds;
         }
 
         protected override void OnPaintChanged() {
@@ -126,22 +116,12 @@ namespace Alice.Player.Unity {
 
         protected override void CreateEntityCollider()
         {
-            // First option, boxes to match Alice behavior
-            if (UseBoxColliders)
-            {
-                CreateBoxCollider();
-                return;
-            }
-                
-            // Second option, joint based colliders, is dynamic, different from Alice and requires refinement
             var root = FindInHierarchy(m_ModelTransform, "ROOT");
-            if (UseJointColliders && root != null)
-            {
-                CreateJointColliders(root.transform, RootCapsuleRadius);
+            if (root != null && CreateJointColliders(root.transform)) {
                 return;
             }
 
-            // Third option, create colliders from meshes
+            // If no joint colliders were created, create colliders from meshes
             var skinnedMeshRenderers = transform.GetComponentsInChildren<SkinnedMeshRenderer>();
             if (skinnedMeshRenderers != null)
             {
@@ -153,43 +133,28 @@ namespace Alice.Player.Unity {
             base.CreateEntityCollider();
         }
 
-        private void CreateBoxCollider()
-        {
-            if (gameObject.GetComponent<BoxCollider>() != null) return;
-
-            var rigidBody = gameObject.AddComponent<Rigidbody>();
-            rigidBody.isKinematic = true;
-            var boxCollider = gameObject.AddComponent<BoxCollider>();
-            var bounds = GetBounds(true);
-            boxCollider.size = bounds.size;
-            boxCollider.center = new Vector3(0f, bounds.size.y / 2f, 0f);
-            boxCollider.isTrigger = true;
-            gameObject.AddComponent<CollisionBroadcaster>();
-        }
-
-        private void CreateJointColliders(Transform inTransform, float radius, Transform parent = null) {
-            if (parent != null) {
-                var jointLength = inTransform.localPosition.magnitude;
-                if (jointLength > Single.Epsilon)
-                {
-                    if (parent.gameObject.GetComponent<Rigidbody>() == null)
-                    {
-                        // Rigid body is required for collision detection between meshes
-                        var rigidBody = parent.gameObject.AddComponent<Rigidbody>();
-                        rigidBody.isKinematic = true;
-                    }
-                    var jointCollider = parent.gameObject.AddComponent<CapsuleCollider>();
-                    jointCollider.radius = jointLength * radius;
-                    jointCollider.height = jointLength * (1f + 2f * radius);
-                    jointCollider.direction = 2; // The Z-Axis, which aims at the next joint
-                    jointCollider.isTrigger = true;
-                    var broadcaster = parent.gameObject.AddComponent<CollisionBroadcaster>();
-                    broadcaster.SetColliderTarget(this);
+        private bool CreateJointColliders(Transform inTransform) {
+            var createdAny = false;
+            if (m_ModelSpec.BoundsForJoint(inTransform.name, out var jointSize)) {
+                if (inTransform.gameObject.GetComponent<Rigidbody>() is null) {
+                    // Rigid body is required for collision detection between meshes
+                    var rigidBody = inTransform.gameObject.AddComponent<Rigidbody>();
+                    rigidBody.isKinematic = true;
                 }
+                var jointCollider = inTransform.gameObject.AddComponent<BoxCollider>();
+                jointCollider.center = jointSize.center;
+                jointCollider.size = jointSize.size;
+                jointCollider.isTrigger = true;
+                var broadcaster = inTransform.gameObject.AddComponent<CollisionBroadcaster>();
+                broadcaster.SetColliderTarget(this);
+                createdAny = true;
             }
             foreach (Transform child in inTransform) {
-                CreateJointColliders(child, radius * CapsuleThinningFactor, inTransform);
+                if (CreateJointColliders(child)) {
+                    createdAny = true;
+                }
             }
+            return createdAny;
         }
 
         private void CreateMeshEntityCollider(SkinnedMeshRenderer skinnedMeshRenderer)
