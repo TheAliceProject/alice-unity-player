@@ -58,6 +58,30 @@ namespace Alice.Player.Unity
         
         public void NotifyObjectsCollided(SGEntity object1, SGEntity object2, bool enter)
         {
+            var parent1 = ParentOf(object1);
+            var parent2 = ParentOf(object2);
+            TrackOverlappingPair(object1, object2, enter);
+            if (parent1 != null)
+            {
+                TrackOverlappingPair(parent1, object2, enter);
+            }
+            if (parent2 != null)
+            {
+                TrackOverlappingPair(object1, parent2, enter);
+                if (parent1 != null)
+                {
+                    TrackOverlappingPair(parent1, parent2, enter);
+                }
+            }
+        }
+
+        private SGEntity ParentOf(SGEntity entity)
+        {
+            return entity is SGJoint joint ? joint.GetParentJointedModel() : null;
+        }
+
+        private void TrackOverlappingPair(SGEntity object1, SGEntity object2, bool enter)
+        {
             var pair = m_Collisions.FirstOrDefault(p => p.ContainsBoth(object1, object2));
             if (pair != null)
             {
@@ -69,12 +93,12 @@ namespace Alice.Player.Unity
                 m_Collisions.Add(pair);
             }
 
-            if(!pair.IsEnter() && !pair.IsExit())
+            if (!pair.IsEnter() && !pair.IsExit())
                 return;
 
             foreach (var listener in m_CollisionListeners)
             {
-                listener.NotifyEvent(object1,  object2, enter);
+                listener.NotifyEvent(object1, object2, enter);
             }
         }
 

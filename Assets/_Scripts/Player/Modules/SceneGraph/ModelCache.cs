@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Alice.Tweedle.File;
 
 namespace Alice.Player.Unity {
-    public sealed class ModelCache : ResourceCache<GameObject> {
+    public sealed class ModelCache : ResourceCache<ModelSpec> {
 
         private Transform m_Root;
-        private Dictionary<string, Bounds> m_initialBoundingBoxes = new Dictionary<string, Bounds>();
 
         public ModelCache(Transform inRoot) : base() {
             m_Root = inRoot;
@@ -14,19 +14,13 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public bool Add(string inIdentifier, GameObject inModel, Bounds inBounds) {
-            bool success = base.Add(inIdentifier, inModel);
+        public bool Add(string inIdentifier, GameObject inModel, Bounds inBounds, List<JointBounds> jointBounds) {
+            var success = base.Add(inIdentifier, new ModelSpec(inModel, inBounds, jointBounds));
             NormalizeWeightsInModel(inModel);
             if (success && m_Root) {
                 inModel.transform.SetParent(m_Root, false);
             }
-            m_initialBoundingBoxes[inIdentifier] = inBounds;
             return success;
-        }
-
-        public Bounds GetBoundingBoxFromModel(string inIdentifier)
-        {
-            return m_initialBoundingBoxes[inIdentifier];
         }
 
         private void NormalizeWeightsInMesh(Mesh mesh)
