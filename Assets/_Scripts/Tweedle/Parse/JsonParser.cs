@@ -256,38 +256,23 @@ namespace Alice.Tweedle.Parse
         }
 
         private void LoadModelStructures(ModelManifest inManifest) {
-            if (Application.isPlaying) {
+            if (!Application.isPlaying) return;
 
-                for (int i = 0; i < inManifest.models.Count; ++i) {
-                    ResourceReference meshRef = null;
+            foreach (var model in inManifest.models) {
+                var meshRef = inManifest.GetStructure(model.structure);
+                if (meshRef == null) continue;
 
-                    // find struct resource
-                    for (int j = 0; j < inManifest.resources.Count; ++j) {
-                        if (inManifest.resources[j].name == inManifest.models[i].structure) {
-                            meshRef = inManifest.resources[j];
-                            break;
-                        }
-                    }
+                var data = m_ZipFile.ReadDataEntry(meshRef.file);
+                using (var assetLoader = new TriLib.AssetLoader()) {
+                    var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
+                    var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
+                    var loadedModel = assetLoader.LoadFromMemoryWithTextures(data, meshRef.file, options, null,
+                        Path.GetDirectoryName(cachePath));
 
-                    if (meshRef != null) {
-                        byte[] data = m_ZipFile.ReadDataEntry(meshRef.file);
+                    var cacheId = inManifest.description.name + "/" + model.name;
 
-                        using (var assetLoader = new TriLib.AssetLoader())
-                        {
-                            var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
-                            var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
-
-                            GameObject loadedModel = assetLoader.LoadFromMemoryWithTextures(data, meshRef.file, options, null, System.IO.Path.GetDirectoryName(cachePath));
-
-                            var cacheID = inManifest.description.name + "/" + inManifest.models[i].name;
-
-                            Utils.BoundingBox boundingBox = (meshRef is StructureReference) ? ((StructureReference) meshRef).boundingBox : inManifest.boundingBox;
-                            Bounds boundsConverted = new Bounds(Vector3.zero, new Vector3(-boundingBox.min[0] + boundingBox.max[0],
-                                                                                        -boundingBox.min[1] + boundingBox.max[1],
-                                                                                        -boundingBox.min[2] + boundingBox.max[2]));
-                            SceneGraph.Current.ModelCache.Add(cacheID, loadedModel, boundsConverted);
-                        }
-                    }
+                    SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, meshRef.boundingBox.AsBounds(),
+                        inManifest.jointBounds);
                 }
             }
         }
