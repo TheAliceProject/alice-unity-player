@@ -1,16 +1,12 @@
-﻿using System;
+using System;
 
 namespace Alice.Tweedle.Parse
 {
     public class TweedleParseException : SystemException
     {
-        public string ExpectedVersion;
-        public string DiscoveredVersion;
-        public TweedleParseException(string message, string expected, string actual)
-            : base(message)
+        public TweedleParseException(string message, Exception innerException)
+            : base(message, innerException)
         {
-            ExpectedVersion = expected;
-            DiscoveredVersion = actual;
         }
     }
 }
