@@ -275,7 +275,7 @@ namespace Alice.Player.Unity {
 
         private void OnUpdateAmbientLightColor(TValue inValue) {
             var color = inValue.RawObject<Primitives.Color>().Value;
-            m_AmbientLightColor = new UnityEngine.Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
+            m_AmbientLightColor = new UnityEngine.Color((float)color.R * 2, (float)color.G * 2, (float)color.B * 2, (float)color.A);
             UpdateAmbientLightColor();
         }
 
