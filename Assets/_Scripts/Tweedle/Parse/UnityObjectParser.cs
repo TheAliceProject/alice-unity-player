@@ -92,20 +92,15 @@ namespace Alice.Tweedle.Parse
             {
                 JsonParser.ParseZipFile(m_System, path);
             }
-            catch (TweedleParseException exception)
+            catch (TweedleVersionException tve)
             {
-                ModalWindow modalWindow = Instantiate(modalWindowPrefab, mainMenu);
-
-                string message = "This world is not compatible with this player.\n<b>Player:</b>\n   " + exception.ExpectedVersion + "\n<b>World:</b>\n   " + exception.DiscoveredVersion;
-                modalWindow.SetData("Oops!", message);
-                if (VRControl.IsLoadedInVR()){
-                    ModalWindow modalWindowVr = Instantiate(modalWindowPrefabVR, mainMenuVr);
-                    modalWindowVr.SetData("Oops!", message);
-                    // Make sure when one closes, to close the other as well
-                    modalWindowVr.LinkWindow(modalWindow);
-                    modalWindow.LinkWindow(modalWindowVr);
-                }
-                FadeLoadingScreens(false); // Cannot yield in a catch statement. So just get out of there.
+                NotifyUserOfLoadError("This world is not compatible with this player.\n<b>Player:</b>\n   " +
+                                  tve.ExpectedVersion + "\n<b>World:</b>\n   " + tve.DiscoveredVersion);
+                yield break;
+            }
+            catch (TweedleParseException tre)
+            {
+                NotifyUserOfLoadError("There was a problem reading this world.\n\n" + tre.Message);
                 yield break;
             }
 
@@ -126,6 +121,22 @@ namespace Alice.Tweedle.Parse
             if(mainMenuCtrl == MainMenuControl.Disabled)
                 WorldControl.DisableMainMenu();
             desktopWorldControl.ResumeUserTimescale();
+        }
+
+        private void NotifyUserOfLoadError(string message)
+        {
+            var modalWindow = Instantiate(modalWindowPrefab, mainMenu);
+            modalWindow.SetData("Oops!", message);
+            if (VRControl.IsLoadedInVR())
+            {
+                var modalWindowVr = Instantiate(modalWindowPrefabVR, mainMenuVr);
+                modalWindowVr.SetData("Oops!", message);
+                // Make sure when one closes, to close the other as well
+                modalWindowVr.LinkWindow(modalWindow);
+                modalWindow.LinkWindow(modalWindowVr);
+            }
+            FadeLoadingScreens(false);
+            WorldControl.ReturnToMainMenu();
         }
 
         private void FadeLoadingScreens(bool on)

@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle.File;
 using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
@@ -106,7 +107,7 @@ namespace Alice.Tweedle.Parse
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
                         ParseZipFile(m_System, libRef.path.fullPath);
                     } else {
-                        throw new TweedleParseException("Could not find prerequisite " + prerequisites[i].name, WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(), WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + prerequisites[i].version);
+                        throw new TweedleVersionException("Could not find prerequisite " + prerequisites[i].name, WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(), WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + prerequisites[i].version);
                     }
                 }
             }
@@ -178,9 +179,17 @@ namespace Alice.Tweedle.Parse
         }
 
         private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
-            string tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.file);
-            TType tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-            m_System.GetRuntimeAssembly().Add(tweedleType);
+            try
+            {
+                var tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.file);
+                var tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
+                m_System.GetRuntimeAssembly().Add(tweedleType);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                throw new TweedleParseException("Unable to read " + resourceRef.file, e);
+            }
         }
 
         private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
