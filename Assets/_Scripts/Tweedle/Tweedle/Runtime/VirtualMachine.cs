@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using Alice.Tweedle;
+using Alice.Player.Modules;
 using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.VM
@@ -9,7 +9,8 @@ namespace Alice.Tweedle.VM
     {
         ExecutionScope staticScope;
         public TweedleSystem Library { get; private set; }
-        public ExecutionQueue executionQueue = new ExecutionQueue();
+        private ExecutionQueue executionQueue = new ExecutionQueue();
+        public Action<TweedleRuntimeException> ErrorHandler;
 
         public VirtualMachine()
         {
@@ -35,7 +36,7 @@ namespace Alice.Tweedle.VM
             Queue(new ExpressionStatement(exp));
         }
 
-        public void Queue(TweedleStatement statement)
+        private void Queue(TweedleStatement statement)
         {
             statement.QueueStepToNotify(staticScope, new ExecutionStep(staticScope));
         }
@@ -43,13 +44,31 @@ namespace Alice.Tweedle.VM
         protected internal void AddStep(ExecutionStep step)
         {
             executionQueue.AddToQueue(step);
-            executionQueue.ProcessOneFrame();
+            ProcessQueueSafely();
+        }
+        
+        internal void ProcessQueueSafely()
+        {
+            try {
+                executionQueue.ProcessOneFrame();
+            } catch (TweedleRuntimeException tre) {
+                if (ErrorHandler != null) {
+                    ErrorHandler.Invoke(tre);
+                } else {
+                    throw;
+                }
+            }
         }
 
         internal IEnumerator ProcessQueue()
         {
-            executionQueue.ProcessOneFrame();
+            ProcessQueueSafely();
             yield return null;
+        }
+
+        public void Resume()
+        {
+            ProcessQueueSafely();
         }
     }
 

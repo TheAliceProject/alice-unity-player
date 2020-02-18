@@ -11,6 +11,8 @@ public class WorldObjects : MonoBehaviour
     public GameObject vrObjects;
     public UnityObjectParser parser;
 
+    public static string SCENE_GRAPH_LIBRARY_NAME = "SceneGraphLibrary";
+    
     void Awake()
     {
         if (_instance != null && _instance != this){

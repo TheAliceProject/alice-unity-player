@@ -10,6 +10,11 @@ namespace Alice.Player.Modules
     {
         private SGEntity cachedEntity;
 
+        public void SetColliderTarget(SGEntity entity)
+        {
+            cachedEntity = entity;
+        }
+
         void OnTriggerEnter(Collider other)
         {
             SendObjectCollision(other.gameObject, true);

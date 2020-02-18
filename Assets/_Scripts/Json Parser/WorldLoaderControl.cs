@@ -116,8 +116,12 @@ public class WorldLoaderControl : MonoBehaviour
                 recentButtons[totalFilesFound].button.onClick.RemoveAllListeners();
                 recentButtons[totalFilesFound].button.onClick.AddListener(() =>
                 {
+                    var parser = WorldObjects.GetParser();
+                    if (parser == null) {
+                        return;
+                    }
                     recentButtons[x].SetLastOpenedNow();
-                    WorldObjects.GetParser().OpenWorld(recentButtons[x].GetFilePath());
+                    parser.OpenWorld(recentButtons[x].GetFilePath());
                 });
                 totalFilesFound++;
                 if(totalFilesFound == 2)

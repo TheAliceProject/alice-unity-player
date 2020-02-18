@@ -1,11 +1,10 @@
+using System;
 using UnityEngine;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
-using System;
 using System.Collections.Generic;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
-using BeauRoutine;
 using UnityEngine.XR;
 
 namespace Alice.Player.Unity {
@@ -30,7 +29,6 @@ namespace Alice.Player.Unity {
         private UnityEngine.Color m_AtmosphereColor = UnityEngine.Color.white;
         private float m_GlobalBrightness = 1f;
 
-        private SceneCanvas m_SceneCanvas;
         private Light m_AboveLightA;
         private Light m_AboveLightB;
         private Light m_AboveLightC;
@@ -39,7 +37,6 @@ namespace Alice.Player.Unity {
         private Light m_BelowLight;
         private const float k_BelowLightIntensity = 1f;
         private const float k_BelowLightPitch = -90f;
-        private UnityEngine.Vector3 m_DefaultColliderSize = new UnityEngine.Vector3(0.1f, 0.1f, 0.1f);
         private bool lastUiActive = false;
 
         private UnityEngine.Vector3 dragOrigin;
@@ -50,6 +47,16 @@ namespace Alice.Player.Unity {
         private UnityEngine.Vector3 objectOriginPoint = UnityEngine.Vector3.zero;
         private UnityEngine.Vector3 planeOriginPoint = UnityEngine.Vector3.zero;
 
+        public override void AddEntityCollider()
+        {
+            throw new NotSupportedException("No colliders at the Scene level");
+        }
+
+        public override void AddMouseCollider()
+        {
+            throw new NotSupportedException("No colliders at the Scene level");
+        }
+
         protected override void Awake() {
             base.Awake();
 
@@ -59,7 +66,6 @@ namespace Alice.Player.Unity {
 
             m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
 
-            m_SceneCanvas = CreateCanvas();
             RenderSettings.fogMode = FogMode.Exponential;
 
             RegisterPropertyDelegate(FOG_DENSITY_PROPERTY_NAME, OnUpdateFogDensity);
@@ -120,64 +126,6 @@ namespace Alice.Player.Unity {
 
             return light;
         }
-
-        private SceneCanvas CreateCanvas()
-        {
-            SceneCanvas canvas = null;
-            if(XRSettings.enabled)
-            {
-                canvas = Instantiate(SceneGraph.Current.InternalResources.VRSceneCanvas);
-                canvas.transform.SetParent(VRControl.Rig().canvasRoot);
-                var headTransform = VRControl.Rig().head;
-
-                // Get player facing direction
-                UnityEngine.Vector3 facingDirection = headTransform.position + headTransform.forward;
-                // Reset height to player height
-                facingDirection.y = headTransform.position.y;
-                // Get direction vector of head
-                UnityEngine.Vector3 directionVector = facingDirection - headTransform.position;
-                // Normalize and set a certain distance away
-                canvas.transform.position = headTransform.position + (directionVector.normalized * VRControl.WORLD_CANVAS_DISTANCE);
-
-                // Rotate the canvas correctly
-                canvas.transform.LookAt(headTransform);
-                canvas.transform.Rotate(0f, 180f, 0f, Space.Self);
-            }
-            else
-            {
-                canvas = Instantiate(SceneGraph.Current.InternalResources.SceneCanvas);
-                canvas.transform.SetParent(cachedTransform);
-            }
-
-            return canvas;
-        }
-
-        public SceneCanvas GetCurrentCanvas()
-        {
-            return m_SceneCanvas;
-        }
-
-        public SceneCanvas CreateNewWorldCanvas()
-        {
-            // We want to spawn this in the direction the player is looking, but at a certain distance
-            var canvas = Instantiate(SceneGraph.Current.InternalResources.WorldCanvas);
-            var headTransform = VRControl.Rig().head;
-
-            // Get player facing direction
-            UnityEngine.Vector3 facingDirection = headTransform.position + headTransform.forward;
-            // Reset height to player height
-            facingDirection.y = headTransform.position.y;
-            // Get direction vector of head
-            UnityEngine.Vector3 directionVector = facingDirection - headTransform.position;
-            // Normalize and set a certain distance away
-            canvas.transform.position = headTransform.position + (directionVector.normalized * VRControl.WORLD_CANVAS_DISTANCE);
-
-            // Rotate the canvas correctly
-            canvas.transform.LookAt(headTransform);
-            canvas.transform.Rotate(0f, 180f, 0f, Space.Self);
-            canvas.transform.SetParent(cachedTransform);
-            return canvas;
-        }
         
         public void  AddActivationListener(PAction inListener) {
             m_ActivationListeners.Add(inListener);
@@ -194,7 +142,7 @@ namespace Alice.Player.Unity {
         public void AddMouseClickOnObjectListener(PAction<Primitives.Portion, Primitives.Portion, TValue> inListener, OverlappingEventPolicy eventPolicy, SGModel[] clickedObjects) {
             if (XRSettings.enabled)
                 VRControl.EnablePointersForObjects(true);
-            AddColliders(clickedObjects);
+            AddMouseColliders(clickedObjects);
             m_MouseEventHandler.AddMouseListener(new MouseEventListenerProxy(inListener, eventPolicy, clickedObjects));
         }
 
@@ -243,58 +191,19 @@ namespace Alice.Player.Unity {
             m_InteractionHandler.AddOcclusionListener(new OcclusionEventListenerProxy(listener, overlappingEventPolicy, setA, setB, interactionType));
         }
         
-        public void AddColliders(SGEntity[] models)
+        public void AddMouseColliders(SGEntity[] models)
         {
-            for (int i = 0; i < models.Length; i++)
+            foreach (var model in models)
             {
-                MeshRenderer[] meshRenderers = models[i].transform.GetComponentsInChildren<MeshRenderer>();
-                SkinnedMeshRenderer[] skinnedMeshRenderers = models[i].transform.GetComponentsInChildren<SkinnedMeshRenderer>();
-                
-                if((meshRenderers != null || skinnedMeshRenderers != null) && (meshRenderers.Length > 0 || skinnedMeshRenderers.Length > 0))
-                {
-                    foreach (MeshRenderer renderer in meshRenderers)
-                    {
-                        if (renderer.transform.GetComponent<MeshCollider>() == null)
-                        {
-                            MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
-                            Rigidbody rigidBody = renderer.gameObject.AddComponent<Rigidbody>();    // Rigidbody is required for collision detection
-                            rigidBody.isKinematic = true;
-                            collider.convex = true;
-                            collider.isTrigger = true;
-                            renderer.gameObject.AddComponent<CollisionBroadcaster>();
-                        }
-                    }
-                    foreach (SkinnedMeshRenderer renderer in skinnedMeshRenderers)
-                    {
-                        if (renderer.transform.GetComponent<MeshCollider>() == null)
-                        {
-                            MeshCollider collider = renderer.gameObject.AddComponent<MeshCollider>();
-                            Rigidbody rigidBody = renderer.gameObject.AddComponent<Rigidbody>();
-                            rigidBody.isKinematic = true;
-
-                            Mesh colliderMesh = new Mesh();
-                            renderer.BakeMesh(colliderMesh);
-                            collider.sharedMesh = null;
-                            collider.sharedMesh = colliderMesh;
-                            
-                            collider.convex = true;
-                            collider.isTrigger = true;
-                            renderer.gameObject.AddComponent<CollisionBroadcaster>();
-                        }
-                    }
-                }
-                else // Add box collider if no renderer exists
-                {
-                    if(models[i].gameObject.GetComponent<BoxCollider>() == null)
-                    {
-                        Rigidbody rigidBody = models[i].gameObject.AddComponent<Rigidbody>();
-                        rigidBody.isKinematic = true;
-                        BoxCollider collider = models[i].gameObject.AddComponent<BoxCollider>();
-                        collider.size = m_DefaultColliderSize;
-                        collider.isTrigger = true;
-                        models[i].gameObject.AddComponent<CollisionBroadcaster>();
-                    }
-                }
+                model.AddMouseCollider();
+            }
+        }
+        
+        public void AddEntityColliders(SGEntity[] models)
+        {
+            foreach (var model in models)
+            {
+                model.AddEntityCollider();
             }
         }
 

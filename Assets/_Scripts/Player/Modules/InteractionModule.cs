@@ -107,8 +107,8 @@ namespace Alice.Player.Modules
             for(int i = 0; i < b.Length; i++){
                 bThings[i] = SceneGraph.Current.FindEntity(b[i]);
             }
-            sceneEntity.AddColliders(aThings);
-            sceneEntity.AddColliders(bThings);
+            sceneEntity.AddEntityColliders(aThings);
+            sceneEntity.AddEntityColliders(bThings);
         }
 
         private static SGEntity[] ConvertToEntityArray(TValue[] tvalues)

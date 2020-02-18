@@ -1,9 +1,6 @@
-using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
-using System.Collections;
 using UnityEngine.XR;
-using UnityEngine;
 
 namespace Alice.Player.Modules
 {
@@ -34,17 +31,24 @@ namespace Alice.Player.Modules
             return canvas.UserInputControl.spawnIntegerInput(message);
         }
 
+        [PInteropMethod]
+        public static AsyncReturn<bool> spawnErrorDialog(string message)
+        {
+            SceneCanvas canvas = GetSceneCanvas();
+            return canvas.UserInputControl.spawnErrorDialog(message);
+        }
+
         private static SceneCanvas GetSceneCanvas()
         {
             SceneCanvas canvas;
             if (XRSettings.enabled)
             {
-                canvas = SceneGraph.Current.Scene.CreateNewWorldCanvas();
+                canvas = SceneGraph.Current.CreateNewWorldCanvas();
                 VRControl.Rig().EnablePointersForUI(true);
             }
             else
             {
-                canvas = SceneGraph.Current.Scene.GetCurrentCanvas();
+                canvas = SceneGraph.Current.GetCurrentCanvas();
             }
             return canvas;
         }

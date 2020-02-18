@@ -16,8 +16,21 @@ public class SettingsControl : MonoBehaviour
     {
         applyButton.onClick.AddListener(ApplySettings);
 
-        UpdateFromSettings();
+        dropdown.onValueChanged.AddListener((i) =>
+        {
+            applyButton.interactable = true;
+        });
+        fullScreen.onValueChanged.AddListener((i) =>
+        {
+            applyButton.interactable = true;
+        });
     }
+
+    void OnEnable(){
+        UpdateFromSettings();
+        applyButton.interactable = false;
+    }
+
     private void UpdateFromSettings()
     {
         fullScreen.isOn = settings.IsFullScreen();
@@ -37,6 +50,7 @@ public class SettingsControl : MonoBehaviour
 
     private void ApplySettings()
     {
+        applyButton.interactable = false;
         settings.SetDimensions(dropdown.options[dropdown.value].text);
         settings.SetFullScreen(fullScreen.isOn);
         settings.SaveAndApply();

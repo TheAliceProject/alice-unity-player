@@ -56,10 +56,15 @@ namespace Alice.Tweedle.VM
 
         internal void ProcessOneFrame()
         {
-            if (!isProcessing)
+            if (isProcessing) return;
+
+            isProcessing = true;
+            try
             {
-                isProcessing = true;
                 BeginProcessing();
+            }
+            finally
+            {
                 isProcessing = false;
             }
         }
@@ -102,17 +107,26 @@ namespace Alice.Tweedle.VM
                 //  * Add multiple child steps to the queue (doTogether)
                 step.Execute();
             }
-            catch (Exception tre)
+            catch (TweedleRuntimeException tre)
             {
-                UnityEngine.Debug.Log(
-                    "*------------------------Exception------------------------*\n" + tre.Message +
-                    "\n*----------------------Tweedle Stack----------------------*\n" + step.CallStack() +
-                    "\n*----------------------System Stack-----------------------*\n" + tre.StackTrace +
-                    "\n*---------------------------------------------------------*");
-                // TODO decide how best to handle errors in steps
-                throw tre;
+                UnityEngine.Debug.LogErrorFormat(TweedleExceptionFormat, tre.Message, step.CallStack(), tre.StackTrace);
+                throw;
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogErrorFormat(SystemExceptionFormat, e.Message, step.CallStack(), e.StackTrace);
+                throw new TweedleRuntimeException(e);
             }
         }
+        
+        const string TweedleExceptionFormat = "*----------------------Tweedle Exception------------------*\n{0}\n" +
+                                              "*----------------------Tweedle Stack----------------------*\n{1}\n" +
+                                              "*----------------------System Stack-----------------------*\n{2}\n" +
+                                              "*---------------------------------------------------------*";
+        const string SystemExceptionFormat = "*----------------------System Exception-------------------*\n{0}\n" +
+                                             "*----------------------Tweedle Stack----------------------*\n{1}\n" +
+                                             "*----------------------System Stack-----------------------*\n{2}\n" +
+                                             "*---------------------------------------------------------*";
     }
 
 }

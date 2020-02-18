@@ -168,6 +168,36 @@ namespace Alice.Player.Unity {
             inRenderer.SetPropertyBlock(ioPropertyBlock);
         }
 
+        protected override void CreateEntityCollider()
+        {
+            var meshRenderers = transform.GetComponentsInChildren<MeshRenderer>();
+            if (meshRenderers == null) return;
+            
+            foreach (var meshRenderer in meshRenderers)
+            {
+                if (meshRenderer.transform.GetComponent<MeshCollider>() != null) continue;
+                var meshCollider = meshRenderer.gameObject.AddComponent<MeshCollider>();
+                // Rigid body is required for collision detection
+                var rigidBody = meshRenderer.gameObject.AddComponent<Rigidbody>();
+                rigidBody.isKinematic = true;
+                meshCollider.convex = true;
+                meshCollider.isTrigger = true;
+                meshRenderer.gameObject.AddComponent<CollisionBroadcaster>();
+            }
+        }
+
+        protected override void CreateMouseCollider()
+        {
+            var meshRenderers = transform.GetComponentsInChildren<MeshRenderer>();
+            if (meshRenderers == null) return;
+            
+            foreach (var meshRenderer in meshRenderers)
+            {
+                meshRenderer.gameObject.AddComponent<MeshCollider>();
+                meshRenderer.gameObject.AddComponent<CollisionBroadcaster>();
+            }
+        }
+
         public override void CleanUp() {}
 
     }
