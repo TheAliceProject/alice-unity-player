@@ -25,26 +25,14 @@ public class WorldControl : MonoBehaviour
     private static float currentTimeScale = 1f;
     private static bool paused = false;
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
+    private static bool isDisabledForThisInstance = false;
 
     void Start()
     {
         if(!currentWorldControls.Contains(this))
             currentWorldControls.Add(this);
 
-        mainMenuButton.onClick.AddListener(() =>
-        {
-            Destroy(GameObject.Find("SceneGraph"));
-            WorldObjects.GetIntroCanvas().SetActive(true);
-            if(XRSettings.enabled)
-            {
-                WorldObjects.GetVRObjects().SetActive(true);
-            }
-            Camera newCamera = Instantiate(CameraPrefab);
-            newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
-            newCamera.tag = "MainCamera";
-            Time.timeScale = currentTimeScale = 1f;
-            uISlidedown.ForceSlide(false);
-        });
+        mainMenuButton.onClick.AddListener(ShowMainMenu);
 
         restartButton.onClick.AddListener(() =>
         {
@@ -90,6 +78,26 @@ public class WorldControl : MonoBehaviour
             paused = !paused;
             UpdateStatus();
         });
+
+        // Disable main menu button when restarting from a bundled world app
+        if(isDisabledForThisInstance)
+            mainMenuButton.gameObject.SetActive(false);
+    }
+
+    private void ShowMainMenu()
+    {
+        Destroy(GameObject.Find("SceneGraph"));
+        WorldObjects.GetIntroCanvas().SetActive(true);
+        if (XRSettings.enabled)
+        {
+            WorldObjects.GetVRObjects().SetActive(true);
+        }
+
+        Camera newCamera = Instantiate(CameraPrefab);
+        newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
+        newCamera.tag = "MainCamera";
+        Time.timeScale = currentTimeScale = 1f;
+        uISlidedown.ForceSlide(false);
     }
 
     void OnDestroy()
@@ -113,6 +121,26 @@ public class WorldControl : MonoBehaviour
         }
     }
 
+    public static void ShowWorldControlsBriefly()
+    {
+        foreach (WorldControl wc in currentWorldControls)
+        {
+            wc.ShowWorldControlBriefly();
+        }
+    }
+
+    private void ShowWorldControlBriefly(){
+        uISlidedown.ShowBriefly();
+    }
+
+    public static void DisableMainMenu()
+    {
+        foreach (WorldControl wc in currentWorldControls){
+            wc.mainMenuButton.gameObject.SetActive(false);
+        }
+        isDisabledForThisInstance = true;
+    }
+
     void UpdateUI()
     {
         if (Time.timeScale == 0.0f){ // if(paused) ?
@@ -122,6 +150,13 @@ public class WorldControl : MonoBehaviour
         else{
             playPauseImage.sprite = pauseSprite;
             status.text = string.Format("{0:0.0}x", Time.timeScale);
+        }
+    }
+
+    public static void ReturnToMainMenu()
+    {
+        foreach(WorldControl wc in currentWorldControls){
+            wc.ShowMainMenu();
         }
     }
 }

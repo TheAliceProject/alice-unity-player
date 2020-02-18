@@ -1,17 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.IO;
 using BeauRoutine;
 using System.Linq;
+using UnityEngine.UI;
 
 public class LoadMoreControl : MonoBehaviour
 {
     public TMP_Dropdown filter;
     public Transform buttonParent;
-    
-    public enum WorldListLocation{
+    public GridLayoutGroup buttonLayout;
+    public ScrollRect rect;
+
+    public enum WorldListSort{
         LocalRecent,
         LocalName,
         // LocalAuthor,
@@ -26,11 +30,15 @@ public class LoadMoreControl : MonoBehaviour
     private const string RecentWorldsFileName = "/recentWorlds.txt";
     private List<RecentWorldButton> recentWorlds = new List<RecentWorldButton>();
     private Routine m_routine;
+    
+    private const float MinCellWidth = 350;
+    private const float CellAspectRatio = 0.85f;
+    private static bool useBundledWorlds = false;
 
     void Start()
     {
         DestroyCurrentButtons();
-        LoadButtons(GetRecentWorlds());
+        LoadButtons(useBundledWorlds ? GetBundledWorlds() : GetRecentWorlds());
 
         filter.onValueChanged.AddListener(delegate
         {
@@ -38,9 +46,61 @@ public class LoadMoreControl : MonoBehaviour
         });
     }
 
+    void Update()
+    {
+        if(VRControl.IsLoadedInVR()){
+            if (Input.GetAxis("RightThumbstickUpDown") > 0.75f)
+                rect.verticalNormalizedPosition += 0.01f;
+            else if (Input.GetAxis("RightThumbstickUpDown") < -0.75f)
+                rect.verticalNormalizedPosition -= 0.01f;
+        }
+    }
+
     void OnEnable()
     {
-        LoadButtons(GetRecentWorlds());
+        LoadButtons(useBundledWorlds ? GetBundledWorlds() : GetRecentWorlds());
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        ResizeGrid();
+    }
+
+    public void SetAsStandalone()
+    {
+        useBundledWorlds = true;
+        filter.gameObject.SetActive(false);
+        LoadButtons(GetBundledWorlds());
+    }
+
+    void ResizeGrid()
+    {
+        RectTransform parent = buttonLayout.GetComponentInParent<RectTransform>();
+        var parentWidth = parent.rect.width;
+        var margin = buttonLayout.spacing.x;
+ 
+        var cellsPerRow = (float) Math.Floor((parentWidth + margin) / (MinCellWidth + margin));
+        var baseWidth = (cellsPerRow * (MinCellWidth + margin)) - margin;
+        var spareWidth = parentWidth - baseWidth;
+        var cellWidth = MinCellWidth + spareWidth / cellsPerRow;
+
+        buttonLayout.cellSize = new Vector2(cellWidth, cellWidth * CellAspectRatio);
+    }
+
+    private List<RecentWorldData> GetBundledWorlds(){
+        List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
+        recentWorldsData.Clear();
+
+        DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
+        FileInfo[] files = dir.GetFiles("*.a3w");
+        for(int i = 0; i < files.Length; i++)
+        {
+            if (!File.Exists(files[i].FullName) || files[i].FullName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
+                continue;
+            RecentWorldData data = new RecentWorldData(files[i].FullName);
+            recentWorldsData.Add(data);
+        }
+        return SortWorlds(recentWorldsData);
     }
 
     private List<RecentWorldData> GetRecentWorlds(){
@@ -67,27 +127,19 @@ public class LoadMoreControl : MonoBehaviour
             recentWorldsData.Add(data);
         }
         fs.Close();
-        return recentWorldsData;
+        return SortWorlds(recentWorldsData);
     }
-//This is the function SortWorldByName
-    private List<RecentWorldData> SortWorldByName(List<RecentWorldData> ListNeedSort)
+
+    private List<RecentWorldData> SortWorlds(List<RecentWorldData> listToSort) {
+        if((WorldListSort) filter.value == WorldListSort.LocalName)
+            listToSort.Sort((a, b) => String.Compare(GetSortName(a), GetSortName(b), StringComparison.Ordinal));
+        // Else take default ordering, by recent use
+        return listToSort;
+    }
+
+    private String GetSortName(RecentWorldData world)
     {
-        int value;
-        Dictionary<RecentWorldData, int> newDic = new Dictionary<RecentWorldData, int>();
-        foreach(RecentWorldData world in ListNeedSort)
-        {
-            value = ConvertAsciiHelper((int)(Path.GetFileNameWithoutExtension(world.path)[0]));
-            newDic.Add(world, value);
-        }
-        //sort the dic and we can get a dic to use;
-        List<KeyValuePair<RecentWorldData, int>> newlist = newDic.ToList();
-        newlist.Sort((x, y) => x.Value.CompareTo(y.Value));
-        List<RecentWorldData> res = (from e in newlist select e.Key).ToList();
-        return res;
-    }   
-    int ConvertAsciiHelper(int number)
-    {
-        return (number <= 122 && number >= 97) ? (number - 32) : number;
+        return Path.GetFileNameWithoutExtension(world.path);
     }
 
     void LoadButtons(List<RecentWorldData> worldFiles)
@@ -108,8 +160,12 @@ public class LoadMoreControl : MonoBehaviour
             recentWorlds.Add(newButton);
             newButton.button.onClick.AddListener(() =>
             {
+                var parser = WorldObjects.GetParser();
+                if (parser == null) {
+                    return;
+                }
                 newButton.SetLastOpenedNow();
-                WorldObjects.GetParser().OpenWorld(newButton.GetFilePath());
+                parser.OpenWorld(newButton.GetFilePath());
             });
         }
 
@@ -124,10 +180,9 @@ public class LoadMoreControl : MonoBehaviour
                 minYPos = trans.anchoredPosition.y;
         }
 
-        Debug.Log("Min y pos: " + minYPos);
-
        // (buttonParent as RectTransform).SetSizeDelta(minYPos, Axis.Y);
         
+       ResizeGrid();
     }
 
     private void DestroyCurrentButtons()

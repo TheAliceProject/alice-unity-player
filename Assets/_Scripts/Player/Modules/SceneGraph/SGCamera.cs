@@ -26,6 +26,7 @@ namespace Alice.Player.Unity {
                     if(VRControl.LoadedVRDevice() != VRControl.VRDevice.Vive)
                         m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
                     VRControl.SetRig(m_rig);
+                    SceneGraph.Current.CreateVRCanvas();
                     vrLoaded = true;
                     routine.Replace(this, CancelOutDefaultVrRotation());
                 }
@@ -38,6 +39,23 @@ namespace Alice.Player.Unity {
                 Camera.transform.localPosition = UnityEngine.Vector3.zero;
                 Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
             }
+        }
+
+        public Transform GetHandFor(string handName)
+        {
+            if (m_rig == null)
+            {
+                return Camera.transform;
+            }
+            if (handName.Contains("Left"))
+            {
+                return m_rig.leftController;
+            }
+            if (handName.Contains("Right"))
+            {
+                return m_rig.rightController;
+            }
+            throw new ArgumentException("No recognized hand in " + handName);
         }
 
         private IEnumerator CancelOutDefaultVrRotation()

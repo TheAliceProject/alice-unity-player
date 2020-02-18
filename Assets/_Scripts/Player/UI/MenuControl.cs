@@ -102,4 +102,10 @@ public class MenuControl : MonoBehaviour
         // Enable the selected panel
         thisPanel.SetActive(true);
     }
+    
+    public void DeactivateMainMenu()
+    {
+        MainMenu.gameObject.SetActive(false);
+        LoadMoreWorldsPanel.SetActive(true);
+    }
 }

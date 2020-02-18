@@ -77,6 +77,20 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
         VRControl.Rig().EnablePointersForControl(controlsActive);
     }
 
+    public void ShowBriefly()
+    {
+        m_routine.Replace(this, ShowBrieflyRoutine());
+    }
+
+    private IEnumerator ShowBrieflyRoutine()
+    {
+        yield return anchor.AnchorPosTo(GetOnPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
+        controlsActive = true;
+        yield return 1.5f;
+        yield return anchor.AnchorPosTo(GetOffPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
+        controlsActive = false;
+    }
+
     private float GetOnPosition(){
         return isVR ? onYPositionVR : onYPosition;
     }

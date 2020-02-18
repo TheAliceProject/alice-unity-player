@@ -2,14 +2,15 @@ using UnityEngine;
 using Alice.Tweedle;
 using System.Collections.Generic;
 using System;
+using Alice.Player.Modules;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
-        
         private string m_ResourceId;
-        private Bounds m_modelBounds;
+        private ModelSpec m_ModelSpec;
         private Renderer[] m_Renderers;
         private MaterialPropertyBlock[] m_PropertyBlocks;
+        private Dictionary<Renderer, Mesh> bakedMeshes = new Dictionary<Renderer, Mesh>();
         public List<Transform> m_vehicledList = new List<Transform>();
 
         public void SetResource(string inIdentifier) {
@@ -24,14 +25,15 @@ namespace Alice.Player.Unity {
                 m_ModelTransform = null;
             }
 
-            var prefab = SceneGraph.Current.ModelCache.Get(inIdentifier);
-
-            if (prefab) {
-                var model = Instantiate(prefab, cachedTransform, false);
-                m_modelBounds = SceneGraph.Current.ModelCache.GetBoundingBoxFromModel(inIdentifier);
+            m_ModelSpec = SceneGraph.Current.ModelCache.Get(inIdentifier);
+            
+            if (m_ModelSpec is null) {
+                m_Renderers = null;
+            } else {
+                var model = Instantiate(m_ModelSpec.Model, cachedTransform, false);
                 m_ModelTransform = model.transform;
-                m_ModelTransform.localRotation = UnityEngine.Quaternion.identity;
-                m_ModelTransform.localPosition = UnityEngine.Vector3.zero;
+                m_ModelTransform.localRotation = Quaternion.identity;
+                m_ModelTransform.localPosition = Vector3.zero;
 
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
@@ -47,13 +49,13 @@ namespace Alice.Player.Unity {
                         // make sure the skinned mesh renderers local bounds get updated
                         var skinnedRenderer = (SkinnedMeshRenderer)m_Renderers[i];
                         skinnedRenderer.updateWhenOffscreen = true;
+
+                        bakedMeshes[skinnedRenderer] = new Mesh();
+                        skinnedRenderer.BakeMesh(bakedMeshes[skinnedRenderer]);
                     }
                     ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
                 }
                 CacheMeshBounds();
-            }
-            else {
-                m_Renderers = null;
             }
         }
 
@@ -63,7 +65,7 @@ namespace Alice.Player.Unity {
         }
 
         protected override Bounds GetMeshBounds() {
-            return m_modelBounds;
+            return m_ModelSpec.InitialBounds;
         }
 
         protected override void OnPaintChanged() {
@@ -110,6 +112,82 @@ namespace Alice.Player.Unity {
                 meshSize.z == 0 ? 1 : meshSize.z/inSize.z
                 );
             }
+        }
+
+        protected override void CreateEntityCollider()
+        {
+            var root = FindInHierarchy(m_ModelTransform, "ROOT");
+            if (root != null && CreateJointColliders(root.transform)) {
+                return;
+            }
+
+            // If no joint colliders were created, create colliders from meshes
+            var skinnedMeshRenderers = transform.GetComponentsInChildren<SkinnedMeshRenderer>();
+            if (skinnedMeshRenderers != null)
+            {
+                foreach (var skinnedMeshRenderer in skinnedMeshRenderers)
+                {
+                    CreateMeshEntityCollider(skinnedMeshRenderer);
+                }
+            }
+            base.CreateEntityCollider();
+        }
+
+        private bool CreateJointColliders(Transform inTransform) {
+            var createdAny = false;
+            if (m_ModelSpec.BoundsForJoint(inTransform.name, out var jointSize)) {
+                if (inTransform.gameObject.GetComponent<Rigidbody>() is null) {
+                    // Rigid body is required for collision detection between meshes
+                    var rigidBody = inTransform.gameObject.AddComponent<Rigidbody>();
+                    rigidBody.isKinematic = true;
+                }
+                var jointCollider = inTransform.gameObject.AddComponent<BoxCollider>();
+                jointCollider.center = jointSize.center;
+                jointCollider.size = jointSize.size;
+                jointCollider.isTrigger = true;
+                var broadcaster = inTransform.gameObject.AddComponent<CollisionBroadcaster>();
+                broadcaster.SetColliderTarget(this);
+                createdAny = true;
+            }
+            foreach (Transform child in inTransform) {
+                if (CreateJointColliders(child)) {
+                    createdAny = true;
+                }
+            }
+            return createdAny;
+        }
+
+        private void CreateMeshEntityCollider(SkinnedMeshRenderer skinnedMeshRenderer)
+        {
+            if (skinnedMeshRenderer.gameObject.GetComponent<Rigidbody>() != null) return;
+            
+            var meshCollider = CreateMeshCollider(skinnedMeshRenderer);
+            // Rigid body is required for collision detection between meshes
+            var rigidBody = skinnedMeshRenderer.gameObject.AddComponent<Rigidbody>();
+            rigidBody.isKinematic = true;
+            meshCollider.convex = true;
+            meshCollider.isTrigger = true;
+            skinnedMeshRenderer.gameObject.AddComponent<CollisionBroadcaster>();
+        }
+
+        protected override void CreateMouseCollider()
+        {
+            var skinnedMeshRenderers = transform.GetComponentsInChildren<SkinnedMeshRenderer>();
+            if (skinnedMeshRenderers != null)
+            {
+                foreach (var skinnedMeshRenderer in skinnedMeshRenderers)
+                {
+                    CreateMeshCollider(skinnedMeshRenderer);
+                }
+            }
+            base.CreateMouseCollider();
+        }
+
+        private MeshCollider CreateMeshCollider(SkinnedMeshRenderer skinnedRenderer)
+        {
+            var meshCollider = skinnedRenderer.gameObject.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = bakedMeshes[skinnedRenderer];
+            return meshCollider;
         }
 
         private void CollectInHierarchy(Transform inTransform, string start, List<string> matches) {
