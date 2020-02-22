@@ -16,6 +16,8 @@ namespace Alice.Player.Unity {
             GetPropertyBlock(m_Renderer, ref m_PropertyBlock);
             m_PropertyBlock.SetVector("_MainTex_ST", new Vector4(100,100,0,0));
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
+
+            m_ModelTransform.gameObject.layer = LayerMask.NameToLayer("Terrain");
         }
 
         protected override void CreateEntityCollider()
