@@ -60,6 +60,11 @@ namespace Alice.Tweedle
 
         public override bool Equals(ref TValue inValA, ref TValue inValB)
         {
+            if (inValA.Type.Name == "Color")
+            {
+                return base.Equals(ref inValA, ref inValB)
+                    && inValA.RawObject<Player.Primitives.Color>().Value == inValB.RawObject<Player.Primitives.Color>().Value;
+            }
             return base.Equals(ref inValA, ref inValB)
                 && inValA.Object() == inValB.Object();
         }
