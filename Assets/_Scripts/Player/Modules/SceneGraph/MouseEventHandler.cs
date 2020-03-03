@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Alice.Player.Modules;
 using Alice.Player.Primitives;
 using UnityEngine.XR;
 
@@ -23,11 +21,13 @@ namespace Alice.Player.Unity
         private UnityEngine.Vector3 dragOrigin;
         private UnityEngine.Vector3 shiftOrigin;
         private UnityEngine.Vector3 rotateOrigin;
-        private bool defaultModelManipulationActive = false;
+        private List<SGModel> modelsThatCanBeMoved = new List<SGModel>();
+        private bool canBackgroundBeMoved;
         internal bool isMac;
 
-        public void SetModelManipulation(bool active){
-            defaultModelManipulationActive = active;
+        public void ActivateModelManipulation(IEnumerable<SGModel> models, bool moveBackground) {
+            modelsThatCanBeMoved.AddRange(models);
+            canBackgroundBeMoved |= moveBackground;
         }
 
         public void AddMouseListener(MouseEventListenerProxy listener){
@@ -43,23 +43,21 @@ namespace Alice.Player.Unity
                 RaycastHit hit;
                 Ray ray = GetRayFromMouseOrController();
                 if (Physics.Raycast(ray, out hit, 100.0f)){
-                    if (defaultModelManipulationActive){
-                        sgObject = hit.transform.GetComponentInParent<SGModel>();
-                        if(sgObject != null)
-                        {
-                            objectToMove = sgObject.transform;
-                            objectOriginPoint = hit.transform.position;
+                    sgObject = hit.transform.GetComponentInParent<SGModel>();
+                    if(modelsThatCanBeMoved.Contains(sgObject))
+                    {
+                        objectToMove = sgObject.transform;
+                        objectOriginPoint = hit.transform.position;
 
-                            verticalMovementPlane = new Plane(UnityEngine.Vector3.forward, objectOriginPoint);
-                            yClickOffset = hit.point.y - objectOriginPoint.y;
+                        verticalMovementPlane = new Plane(UnityEngine.Vector3.forward, objectOriginPoint);
+                        yClickOffset = hit.point.y - objectOriginPoint.y;
 
-                            // Use hit.point.y to base movement plane on mouse click, not model origin
-                            UnityEngine.Vector3 clickOriginPoint = new UnityEngine.Vector3(objectOriginPoint.x, hit.point.y, objectOriginPoint.z);
-                            movementPlane = new Plane(UnityEngine.Vector3.up, clickOriginPoint);
-                            float distance;
-                            if (movementPlane.Raycast(ray, out distance))
-                                planeOriginPoint = ray.origin + (ray.direction * distance);
-                        }
+                        // Use hit.point.y to base movement plane on mouse click, not model origin
+                        UnityEngine.Vector3 clickOriginPoint = new UnityEngine.Vector3(objectOriginPoint.x, hit.point.y, objectOriginPoint.z);
+                        movementPlane = new Plane(UnityEngine.Vector3.up, clickOriginPoint);
+                        float distance;
+                        if (movementPlane.Raycast(ray, out distance))
+                            planeOriginPoint = ray.origin + (ray.direction * distance);
                     }
                 }
             }
@@ -98,7 +96,7 @@ namespace Alice.Player.Unity
             }
 
 
-            if (defaultModelManipulationActive && (objectToMove != null) && (IsVerticalModifierUp() || IsRotateModifierUp())){
+            if ((objectToMove != null) && (IsVerticalModifierUp() || IsRotateModifierUp())){
                 objectOriginPoint = objectToMove.position;
                 Ray planeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
                 float distance;
@@ -132,7 +130,7 @@ namespace Alice.Player.Unity
 
 
 
-            if (objectToMove == null && defaultModelManipulationActive){
+            if (objectToMove == null && canBackgroundBeMoved){
                 objectToMove = Camera.main.transform.parent;
             }
 
