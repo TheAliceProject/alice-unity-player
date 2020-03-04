@@ -6,13 +6,11 @@ namespace Alice.Tweedle.Parse
     [TestFixture]
     public class ExecutionScopeTest
     {
-        TestVirtualMachine vm;
         ExecutionScope scope;
 
-        public void Init()
+        private void Init()
         {
-            vm = new TestVirtualMachine();
-            scope = new ExecutionScope("Test", vm);
+            scope = new ExecutionScope("Test", new TestVirtualMachine());
         }
 
         [Test]
@@ -22,7 +20,7 @@ namespace Alice.Tweedle.Parse
             TLocalVariable xDec = new TLocalVariable(TBuiltInTypes.WHOLE_NUMBER, "x");
             scope.SetLocalValue(xDec, TBuiltInTypes.WHOLE_NUMBER.Instantiate(12));
 
-            TValue newVal = (TValue)scope.GetValue("x");
+            TValue newVal = scope.GetValue("x");
             Assert.AreEqual(12, newVal.ToInt(), "The VM should have returned 12.");
         }
 
@@ -32,14 +30,14 @@ namespace Alice.Tweedle.Parse
             Init();
             TLocalVariable xVar = new TLocalVariable(TBuiltInTypes.WHOLE_NUMBER, "x", TBuiltInTypes.WHOLE_NUMBER.Instantiate(12));
             LocalVariableDeclaration xDec = new LocalVariableDeclaration(false, xVar);
-            vm.ExecuteToFinish(xDec, scope);
+            TestVirtualMachine.ExecuteToFinish(xDec, scope);
 
-            TValue newVal = (TValue)scope.GetValue("x");
+            TValue newVal = scope.GetValue("x");
             Assert.AreEqual(12, newVal.ToInt(), "The VM should have returned 12.");
         }
 
         [Test]
-        public void ScopeShouldRejectSettingOfUnitializedLocalValue()
+        public void ScopeShouldRejectSettingOfUninitializedLocalValue()
         {
             Init();
             Assert.Throws<TweedleRuntimeException>(
@@ -87,7 +85,7 @@ namespace Alice.Tweedle.Parse
             scope.SetLocalValue(xDec, TBuiltInTypes.WHOLE_NUMBER.Instantiate(12));
             ExecutionScope child = scope.ChildScope();
 
-            TValue newVal = (TValue)child.GetValue("x");
+            TValue newVal = child.GetValue("x");
             Assert.AreEqual(12, newVal.ToInt(), "The VM should have returned 12.");
         }
 
@@ -100,7 +98,7 @@ namespace Alice.Tweedle.Parse
             ExecutionScope child = scope.ChildScope();
             child.SetValue("x", TBuiltInTypes.WHOLE_NUMBER.Instantiate(77));
 
-            TValue newVal = (TValue)child.GetValue("x");
+            TValue newVal = child.GetValue("x");
             Assert.AreEqual(77, newVal.ToInt(), "The VM should have returned 77.");
         }
 
@@ -113,7 +111,7 @@ namespace Alice.Tweedle.Parse
             ExecutionScope child = scope.ChildScope();
             child.SetValue("x", TBuiltInTypes.WHOLE_NUMBER.Instantiate(77));
 
-            TValue newVal = (TValue)scope.GetValue("x");
+            TValue newVal = scope.GetValue("x");
             Assert.AreEqual(77, newVal.ToInt(), "The VM should have returned 77.");
         }
 
@@ -126,7 +124,7 @@ namespace Alice.Tweedle.Parse
             ExecutionScope child = scope.ChildScope();
             child.SetLocalValue(xDec, TBuiltInTypes.WHOLE_NUMBER.Instantiate(77));
 
-            TValue newVal = (TValue)child.GetValue("x");
+            TValue newVal = child.GetValue("x");
             Assert.AreEqual(77, newVal.ToInt(), "The VM should have returned 77.");
         }
 
@@ -139,7 +137,7 @@ namespace Alice.Tweedle.Parse
             ExecutionScope child = scope.ChildScope();
             child.SetLocalValue(xDec, TBuiltInTypes.WHOLE_NUMBER.Instantiate(77));
 
-            TValue newVal = (TValue)scope.GetValue("x");
+            TValue newVal = scope.GetValue("x");
             Assert.AreEqual(12, newVal.ToInt(), "The VM should have returned 12.");
         }
     }
