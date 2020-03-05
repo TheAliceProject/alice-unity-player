@@ -51,19 +51,17 @@ namespace Alice.Tweedle.VM
             }
         }
 
-        public ExecutionStep OnCompletionNotify(ExecutionStep finalNext)
-        {
-            if (next == null)
-            {
+        public ExecutionStep OnCompletionNotify(ExecutionStep finalNext) {
+            if (finalNext == null) return this;
+            if (next == null) {
                 next = finalNext;
                 next.blockerCount++;
-            }
-            else
-            {
+            } else {
                 // Add at the end of the chain of steps.
                 next.OnCompletionNotify(finalNext);
             }
-            // Return earliest step in the chain
+
+            // Always return "this", the first step in the chain, to continue processing
             return this;
         }
 

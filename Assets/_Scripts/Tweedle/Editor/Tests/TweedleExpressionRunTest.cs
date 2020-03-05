@@ -33,7 +33,7 @@ namespace Alice.Tweedle.Parse
         private void RunStatement(string src, ExecutionScope scope)
         {
             TweedleStatement statement = new TweedleParser().ParseStatement(src);
-            vm.ExecuteToFinish(statement, scope);
+            TestVirtualMachine.ExecuteToFinish(statement, scope);
         }
 
         [Test]
