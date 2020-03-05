@@ -18,6 +18,10 @@ namespace Alice.Player.Unity {
 
         protected virtual void OnTransformationPropertyChanged(TValue inValue) {
             VantagePoint vp = inValue.RawObject<VantagePoint>();
+            StoreAliceTransformation(vp);
+        }
+
+        protected virtual void StoreAliceTransformation(VantagePoint vp) {
             // convert to left-handedness
             cachedTransform.localPosition = vp.UnityPosition();
             cachedTransform.localRotation = vp.UnityRotation();
