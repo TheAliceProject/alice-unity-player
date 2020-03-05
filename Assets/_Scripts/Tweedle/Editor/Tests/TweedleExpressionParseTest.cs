@@ -606,5 +606,19 @@ namespace Alice.Tweedle.Parse
             ITweedleExpression tested = ParseExpression("this.sphere as SThing");
             Assert.IsInstanceOf<CastExpression>(tested, "The parser should have returned a CastExpression.");
         }
+
+        [Test]
+        public void AColorShouldBeCreated()
+        {
+            var tested = ParseExpression("Color.RED");
+            Assert.IsInstanceOf<FieldAccess>(tested, "The parser should have returned a FieldAccess.");
+        }
+
+        [Test]
+        public void AnImageSourceShouldBeCreated()
+        {
+            var tested = ParseExpression("new ImageSource(resource: \"Floor/blue_white\")");
+            Assert.IsInstanceOf<Instantiation>(tested, "The parser should have returned a Instantiation.");
+        }
     }
 }
