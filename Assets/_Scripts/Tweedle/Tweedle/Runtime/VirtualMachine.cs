@@ -2,6 +2,7 @@
 using System.Collections;
 using Alice.Player.Modules;
 using Alice.Tweedle.Parse;
+using UnityEngine;
 
 namespace Alice.Tweedle.VM
 {
@@ -33,12 +34,7 @@ namespace Alice.Tweedle.VM
 
         public void Queue(ITweedleExpression exp)
         {
-            Queue(new ExpressionStatement(exp));
-        }
-
-        private void Queue(TweedleStatement statement)
-        {
-            statement.QueueStepToNotify(staticScope, new ExecutionStep(staticScope));
+            new ExpressionStatement(exp).QueueStepToNotify(staticScope);
         }
 
         protected internal void AddStep(ExecutionStep step)

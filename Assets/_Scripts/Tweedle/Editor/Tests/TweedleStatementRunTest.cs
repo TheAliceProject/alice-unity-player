@@ -9,7 +9,7 @@ namespace Alice.Tweedle.Parse
         void ExecuteStatement(string src, ExecutionScope scope)
         {
             TweedleStatement stmt = new TweedleParser().ParseStatement(src);
-            ((TestVirtualMachine)scope.vm).ExecuteToFinish(stmt, scope);
+            TestVirtualMachine.ExecuteToFinish(stmt, scope);
         }
 
         [Test]
@@ -25,34 +25,114 @@ namespace Alice.Tweedle.Parse
 
         private static ExecutionScope GetTestScopeWithReturnTestClass() {
 
-            const string attrClassSrc ="class AttrClass {\n" +
-            "  AttrClass()\n{}\n" +
-            "  WholeNumber attr1 <- 0;\n" + 
-            "  WholeNumber attr2 <- 0;\n" + 
-            "}";
+            const string attrClassSrc = @"class AttrClass {
+  AttrClass()
+{}
+  WholeNumber attr1 <- 0;
+  WholeNumber attr2 <- 0;
+}";
 
-            const string returnTestSrc =
-            "class ReturnTest {\n" +
-            "  ReturnTest()\n{}\n" +
-            "  void together(AttrClass instance, WholeNumber count1, WholeNumber count2) {\n" +
-            "    doTogether {\n" +
-            "       return;\n" +
-            "       instance.attr1 <- count1;\n" +
-            "       countUpTo(c < count2) { instance.attr2 <- instance.attr2 + 1; }\n" +
-            "    }\n" +
-            "  }\n" +
-            "  WholeNumber sequential(WholeNumber earlyValue, WholeNumber lateValue){\n" +
-            "    WholeNumber x <- earlyValue;\n" +
-            "    if (true) {return x;}\n"+
-            "    x <- lateValue;\n" +
-            "    return x;\n" +
-            "  }\n" +
-            "  void voidReturn(WholeNumber earlyValue, WholeNumber lateValue){\n" +
-            "    WholeNumber x <- earlyValue;\n" +
-            "    if (true) {return;}\n"+
-            "    x <- lateValue;\n" +
-            "  }\n" +
-            "}";
+            const string returnTestSrc = @"class ReturnTest {
+  ReturnTest()
+{}
+  void together(AttrClass instance, WholeNumber count1, WholeNumber count2) {
+    doTogether {
+       return;
+       instance.attr1 <- count1;
+       countUpTo(c < count2) { instance.attr2 <- instance.attr2 + 1; }
+    }
+  }
+  WholeNumber sequential(WholeNumber earlyValue, WholeNumber lateValue){
+    WholeNumber x <- earlyValue;
+    if (true) {return x;}
+    x <- lateValue;
+    return x;
+  }
+  void voidReturn(WholeNumber earlyValue, WholeNumber lateValue){
+    WholeNumber x <- earlyValue;
+    if (true) {return;}
+    x <- lateValue;
+  }
+  WholeNumber doLittle() {
+    WholeNumber m <- 0;
+    WholeNumber n <- 0;
+    WholeNumber p <- 0;
+    doTogether {
+      n <- 1;
+      m <- 1;
+      p <- 1;
+    }
+    return n+m+p;
+  }
+  WholeNumber doLots() {
+    WholeNumber m <- 0;
+    WholeNumber n <- 0;
+    WholeNumber p <- 0;
+    doTogether {
+      n <- 4;
+      doInOrder {
+        countUpTo( indexA < 60 ) {  // could delay things a little
+          m <- m + 1;
+        }
+        p <- 16;
+      }
+    }
+    return n+m+p;
+  }
+  WholeNumber doThingsRepeatedly() {
+    WholeNumber m <- 0;
+    WholeNumber n <- 0;
+    WholeNumber p <- 0;
+    doTogether {
+      n <- 4;
+      m <- m + 1;
+      p <- 16;
+    }
+    doTogether {
+      n <- n + 2;
+      m <- m + 3;
+      p <- p + 1;
+    }
+    doTogether {
+      n <- n + 4;
+      m <- m + 6;
+      p <- p + 3;
+    }
+    return n+m+p;
+  }
+  WholeNumber doMostNestedThings() {
+    WholeNumber m <- 0;
+    WholeNumber n <- 0;
+    WholeNumber p <- 0;
+    doTogether {
+*<      this.say(text: ""Nothing done here""); >*
+        n <- 4;
+        m <- m + 1;
+        p <- 16;
+    }
+    doTogether {
+*<      this.say(text: ""Nothing done here""); >*
+        n <- n + 2;
+        m <- m + 3;
+        p <- p + 1;
+    }
+    doTogether {
+*<      this.say(text: ""Nothing done here""); >*
+        n <- n + 4;
+        m <- m + 6;
+        p <- p + 3;
+    }
+    return n+m+p;
+  }
+  WholeNumber doDisabledThingsTogether() {
+    WholeNumber n <- 0;
+    eachTogether(WholeNumber c in new WholeNumber[] {5,2,3} ) {
+*<      n <- n + 100; >*
+    }
+    n <- n + 1;
+    return n;
+  }
+}";
 
             TweedleSystem system = new TweedleSystem();
             TClassType attrClass = (TClassType)new TweedleParser().ParseType(attrClassSrc);
@@ -66,30 +146,27 @@ namespace Alice.Tweedle.Parse
 
         private static ExecutionScope GetTestScopeWithStaticsOnClass()
         {
-            const string childClassSrc =
-                "class ChildClass {\n" +
-                "  ChildClass(TextString inside){ \n" +
-                "    this.insider <- inside;\n" +
-                "  }\n" +
-                "  TextString insider;\n" +
-                "  }";
+            const string childClassSrc = @"class ChildClass {
+  ChildClass(TextString inside){ 
+    this.insider <- inside;
+  }
+  TextString insider;
+  }";
 
-            const string valueClassSrc =
-                "class ValueClass {\n" +
-                "  ValueClass(TextString nom, WholeNumber num){ \n" +
-                "    name <- nom;\n" +
-                "    number <- num;\n" +
-                "  }\n" +
-                "  TextString name;\n" +
-                "  WholeNumber number;\n" +
-                "  static TextString sharedName <- \"valuable\";\n" +
-                "  static WholeNumber sharedNumber <- 22;\n" +
-                "  static ChildClass sharedChild <- new ChildClass(inside: \"secret\");\n" +
-
-                "  TextString getChildValue() {\n" +
-                "    return ValueClass.sharedChild.insider;\n" +
-                "  }\n" +
-                "}";
+            const string valueClassSrc = @"class ValueClass {
+  ValueClass(TextString nom, WholeNumber num){ 
+    name <- nom;
+    number <- num;
+  }
+  TextString name;
+  WholeNumber number;
+  static TextString sharedName <- ""valuable"";
+  static WholeNumber sharedNumber <- 22;
+  static ChildClass sharedChild <- new ChildClass(inside: ""secret"");
+  TextString getChildValue() {
+    return ValueClass.sharedChild.insider;
+  }
+}";
 
             TweedleSystem system = new TweedleSystem();
             TClassType childClass = (TClassType)new TweedleParser().ParseType(childClassSrc);
@@ -191,6 +268,51 @@ namespace Alice.Tweedle.Parse
             ExecuteStatement("doTogether { x <- 4; x <- 34; x <- 12; }", scope);
 
             Assert.AreNotEqual(3, scope.GetValue("x").ToInt(), "Should no longer be 3");
+        }
+
+        [Test]
+        public void SimpleDoTogetherStatementsShouldAllExecute() {
+            var scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest test <- new ReturnTest();", scope);
+            ExecuteStatement("WholeNumber x <- test.doLittle();", scope);
+
+            Assert.AreEqual(3, scope.GetValue("x").ToInt());
+        }
+
+        [Test]
+        public void NestedDoTogetherStatementsShouldAllExecute() {
+            var scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest test <- new ReturnTest();", scope);
+            ExecuteStatement("WholeNumber x <- test.doLots();", scope);
+
+            Assert.AreEqual(80, scope.GetValue("x").ToInt());
+        }
+
+        [Test]
+        public void SequenceOfDoTogetherStatementsShouldAllExecute() {
+            var scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest test <- new ReturnTest();", scope);
+            ExecuteStatement("WholeNumber x <- test.doThingsRepeatedly();", scope);
+
+            Assert.AreEqual(40, scope.GetValue("x").ToInt());
+        }
+
+        [Test]
+        public void SequentialDoTogetherStatementsWithDisabledStatementsShouldAllExecute() {
+            var scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest test <- new ReturnTest();", scope);
+            ExecuteStatement("WholeNumber x <- test.doMostNestedThings();", scope);
+
+            Assert.AreEqual(40, scope.GetValue("x").ToInt());
+        }
+
+        [Test]
+        public void EachTogetherWithDisabledStatementShouldOnlyContinueOnce() {
+            var scope = GetTestScopeWithReturnTestClass();
+            ExecuteStatement("ReturnTest test <- new ReturnTest();", scope);
+            ExecuteStatement("WholeNumber x <- test.doDisabledThingsTogether();", scope);
+
+            Assert.AreEqual(1, scope.GetValue("x").ToInt());
         }
 
         [Test]
@@ -410,18 +532,17 @@ namespace Alice.Tweedle.Parse
 
         private static ExecutionScope GetTestScopeWithDisabledStatements()
         {
-            const string classSrc =
-                "class SomeClass {\n" +
-                "  SomeClass(){}\n" +
-                "  TextString getValueAfterComment() {\n" +
-                "    // return \"why\";\n" +
-                "    return \"why not\";\n" +
-                "  }\n" +
-                "  TextString getValueAfterDisabledStatement() {\n" +
-                "    *< return \"why\"; >*\n" +
-                "    return \"why not\";\n" +
-                "  }\n" +
-                "}";
+            const string classSrc = @"class SomeClass {
+  SomeClass(){}
+  TextString getValueAfterComment() {
+    // return ""why"";
+    return ""why not"";
+  }
+  TextString getValueAfterDisabledStatement() {
+    *< return ""why""; >*
+    return ""why not"";
+  }
+}";
 
             TweedleSystem system = new TweedleSystem();
             TClassType someClass = (TClassType)new TweedleParser().ParseType(classSrc);
