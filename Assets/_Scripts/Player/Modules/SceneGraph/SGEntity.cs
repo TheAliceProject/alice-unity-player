@@ -1,6 +1,7 @@
 using UnityEngine;
 using Alice.Tweedle;
 using System.Collections.Generic;
+using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     
@@ -116,5 +117,13 @@ namespace Alice.Player.Unity {
         }
 
         public abstract void CleanUp();
+
+        public virtual VantagePoint GetLocalTransformation() {
+            return VantagePoint.FromUnity(cachedTransform.localPosition, cachedTransform.localRotation);
+        }
+
+        public virtual VantagePoint GetAbsoluteTransformation() {
+            return VantagePoint.FromUnity(cachedTransform.position, cachedTransform.rotation);
+        }
     }
 }

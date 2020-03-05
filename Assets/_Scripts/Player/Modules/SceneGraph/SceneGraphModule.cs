@@ -84,13 +84,25 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static void createJointEntity(TValue joint, string id, TValue model) {
-            var modelEnt = SceneGraph.Current.FindEntity<SGJointedModel>(model);
-            if (modelEnt) {
-                var jointEnt = modelEnt.LinkJoint(joint, id);
-                if (jointEnt) {
-                    SceneGraph.Current.AddEntity(jointEnt);
-                }
+            CreateJoint(joint, id, model);
+        }
+
+        [PInteropMethod]
+        public static void createJointEntity(TValue joint, string id, TValue model, Orientation reorientation) {
+            var jointEnt =  CreateJoint(joint, id, model);
+            if (jointEnt) {
+                jointEnt.SetReorientation(reorientation);
             }
+        }
+
+        private static SGJoint CreateJoint(TValue joint, string id, TValue model) {
+            var modelEnt = SceneGraph.Current.FindEntity<SGJointedModel>(model);
+            if (!modelEnt) return null;
+            var jointEnt = modelEnt.LinkJoint(joint, id);
+            if (jointEnt) {
+                SceneGraph.Current.AddEntity(jointEnt);
+            }
+            return jointEnt;
         }
 
         [PInteropMethod]
@@ -428,23 +440,13 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static VantagePoint getLocalTransformation(TValue thing) {
             var entity = SceneGraph.Current.FindEntity(thing);
-            if (entity) {
-                var p = entity.cachedTransform.localPosition;
-                var r = entity.cachedTransform.localRotation;
-                return VantagePoint.FromUnity(p, r);
-            }
-            return VantagePoint.IDENTITY;
+            return entity ? entity.GetLocalTransformation() : VantagePoint.IDENTITY;
         }
 
         [PInteropMethod]
         public static VantagePoint getAbsoluteTransformation(TValue thing) {
             var entity = SceneGraph.Current.FindEntity(thing);
-            if (entity) {
-                var p = entity.cachedTransform.position;
-                var r = entity.cachedTransform.rotation;
-                return VantagePoint.FromUnity(p, r);
-            }
-            return VantagePoint.IDENTITY;
+            return entity ? entity.GetAbsoluteTransformation() : VantagePoint.IDENTITY;
         }
 
         [PInteropMethod]
