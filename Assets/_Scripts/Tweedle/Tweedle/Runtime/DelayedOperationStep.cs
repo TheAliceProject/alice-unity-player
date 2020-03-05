@@ -4,7 +4,7 @@ using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
-    // A step to execute an action only after all preceeding steps are complete.
+    // A step to execute an action only after all preceding steps are complete.
     // Used to invoke methods, constructors, and lambdas.
     class DelayedOperationStep : ExecutionStep
     {
