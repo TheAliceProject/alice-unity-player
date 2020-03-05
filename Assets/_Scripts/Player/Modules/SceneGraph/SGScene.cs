@@ -114,11 +114,11 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public void SetDefaultModelManipulationActive(bool active)
+        public void ActivateDefaultModelManipulation(List<SGModel> models, bool moveBackground)
         {
             if (XRSettings.enabled)
                 VRControl.EnablePointersForObjects(true);
-            m_MouseEventHandler.SetModelManipulation(active);
+            m_MouseEventHandler.ActivateModelManipulation(models, moveBackground);
         }
     
         private Light CreateLight(float inPitch, float inHeading, float intensity, bool useShadows) {
@@ -197,7 +197,7 @@ namespace Alice.Player.Unity {
             m_InteractionHandler.AddOcclusionListener(new OcclusionEventListenerProxy(listener, overlappingEventPolicy, setA, setB, interactionType));
         }
         
-        public void AddMouseColliders(SGEntity[] models)
+        public void AddMouseColliders(IEnumerable<SGModel> models)
         {
             foreach (var model in models)
             {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Alice.Tweedle.Parse;
 using Alice.Tweedle.VM;
+using UnityEngine;
 
 namespace Alice.Tweedle
 {
@@ -30,9 +31,15 @@ namespace Alice.Tweedle
 
         internal void AddParallelSteps(ExecutionScope scope, ExecutionStep next)
         {
-            foreach (TweedleStatement statement in Statements)
+            var isNextQueued = false;
+            foreach (var statement in Statements)
             {
+                if (!statement.IsEnabled) continue;
+                isNextQueued = true;
                 statement.QueueStepToNotify(scope.ChildScope(), next);
+            }
+            if (!isNextQueued) {
+                next?.Queue();
             }
         }
 
