@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Alice.Player.Primitives;
 using Alice.Tweedle.VM;
 using NUnit.Framework;
 using UnityEngine.TestTools;
@@ -13,7 +14,9 @@ namespace Alice.Tweedle.Parse
 
         private void Init()
         {
-            vm = new TestVirtualMachine(new TweedleSystem());
+            var tweedleSystem = new TweedleSystem();
+            tweedleSystem.AddStaticAssembly(Player.PlayerAssemblies.Assembly(Player.PlayerAssemblies.CURRENT));
+            vm = new TestVirtualMachine(tweedleSystem);
             vm.Library.Link();
             scope = new ExecutionScope("Test", vm);
         }
@@ -239,5 +242,74 @@ namespace Alice.Tweedle.Parse
             Assert.IsTrue(scope.GetValue("x").ToBoolean());
         }
 
+        [Test]
+        public void AColorShouldBeCreated()
+        {
+            Init();
+            RunStatement("Color c <- Color.RED;", scope);
+            Assert.IsInstanceOf<TPClassType>(scope.GetValue("c").Type);
+            Assert.AreEqual(typeof(Color), ((TPClassType) scope.GetValue("c").Type).GetPObjectType());
+        }
+
+        [Test]
+        public void AColorShouldBeAPaint()
+        {
+            Init();
+            RunStatement("Paint c <- Color.RED;", scope);
+            Assert.IsInstanceOf<TPClassType>(scope.GetValue("c").Type);
+            Assert.AreEqual(typeof(Color),  ((TPClassType) scope.GetValue("c").Type).GetPObjectType());
+        }
+
+        [Test]
+        public void AnImageSourceShouldBeCreated()
+        {
+            Init();
+            RunStatement("ImageSource i <- new ImageSource(resource: \"Floor/blue_white\");", scope);
+            Assert.IsInstanceOf<TPClassType>(scope.GetValue("i").Type);
+            Assert.AreEqual(typeof(ImageSource), ((TPClassType) scope.GetValue("i").Type).GetPObjectType());
+        }
+
+        [Test]
+        public void AnImageSourceShouldBeAPaint()
+        {
+            Init();
+            RunStatement("Paint i <- new ImageSource(resource: \"Floor/blue_white\");", scope);
+            Assert.IsInstanceOf<TPClassType>(scope.GetValue("i").Type);
+            Assert.AreEqual(typeof(ImageSource), ((TPClassType) scope.GetValue("i").Type).GetPObjectType());
+        }
+
+        [Test]
+        public void AnImageSourceShouldNotEqualAColor()
+        {
+            Init();
+            RunStatement("Boolean b <- (Color.RED == new ImageSource(resource: \"Floor/blue_white\"));", scope);
+            Assert.IsFalse(scope.GetValue("b").ToBoolean());
+        }
+
+        [Test]
+        public void AColorShouldNotEqualAnImageSource()
+        {
+            Init();
+            RunStatement("Boolean b <- (new ImageSource(resource: \"Floor/blue_white\") == Color.RED);", scope);
+            Assert.IsFalse(scope.GetValue("b").ToBoolean());
+        }
+
+        [Test]
+        public void AnImageSourceInAPaintVariableShouldCompareToAColor()
+        {
+            Init();
+            RunStatement("Paint i <- new ImageSource(resource: \"Floor/blue_white\");", scope);
+            RunStatement("Boolean b <- (i == Color.RED);", scope);
+            Assert.AreEqual(typeof(ImageSource), ((TPClassType) scope.GetValue("i").Type).GetPObjectType());
+        }
+
+        [Test]
+        public void AnColorInAPaintVariableShouldCompareToAColor()
+        {
+            Init();
+            RunStatement("Paint i <- Color.RED);", scope);
+            RunStatement("Boolean b <- (i == Color.RED);", scope);
+            Assert.IsTrue(scope.GetValue("b").ToBoolean());
+        }
     }
 }
