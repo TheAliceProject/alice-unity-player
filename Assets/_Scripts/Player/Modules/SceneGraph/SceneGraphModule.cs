@@ -84,13 +84,25 @@ namespace Alice.Player.Modules {
 
         [PInteropMethod]
         public static void createJointEntity(TValue joint, string id, TValue model) {
+            CreateJoint(joint, id, model);
+        }
+
+        [PInteropMethod]
+        public static void createJointEntity(TValue joint, string id, TValue model, Orientation reorientation) {
+            var jointEnt =  CreateJoint(joint, id, model);
+            if (jointEnt) {
+                jointEnt.SetReorientation(reorientation);
+            }
+        }
+
+        private static SGJoint CreateJoint(TValue joint, string id, TValue model) {
             var modelEnt = SceneGraph.Current.FindEntity<SGJointedModel>(model);
-            if (modelEnt) {
+            if (!modelEnt) return null;
             var jointEnt = modelEnt.LinkJoint(joint, id);
             if (jointEnt) {
                 SceneGraph.Current.AddEntity(jointEnt);
             }
-            }
+            return jointEnt;
         }
 
         [PInteropMethod]

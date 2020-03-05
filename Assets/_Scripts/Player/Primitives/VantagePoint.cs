@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 
@@ -36,6 +34,13 @@ namespace Alice.Player.Primitives
         /// </summary>
         public static VantagePoint FromUnity(UnityEngine.Vector3 pos, UnityEngine.Quaternion rot) {
             return new VantagePoint(new Primitives.Vector3(-pos.x, pos.y, pos.z), new Primitives.Quaternion(-rot.x, rot.y, rot.z, -rot.w));
+        }
+
+        /// <summary>
+        /// Convert from Unity's left-hand coord system to Sims & Alice's right-hand coord system, then reorient from Sims to Alice
+        /// </summary>
+        public static VantagePoint FromUnity(UnityEngine.Vector3 pos, UnityEngine.Quaternion rot, VantagePoint reorientation) {
+            return FromUnity(pos, rot).multiply(reorientation);
         }
 
         public UnityEngine.Vector3 UnityPosition() {
