@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Alice.Tweedle.Interop;
 
 namespace Alice.Tweedle
@@ -61,7 +59,7 @@ namespace Alice.Tweedle
         public override bool Equals(ref TValue inValA, ref TValue inValB)
         {
             return base.Equals(ref inValA, ref inValB)
-                && inValA.Object() == inValB.Object();
+                && inValA.RawObject<object>() == inValB.RawObject<object>();
         }
 
         public override bool LessThan(ref TValue inValA, ref TValue inValB)
