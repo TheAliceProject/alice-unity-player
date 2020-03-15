@@ -70,5 +70,13 @@ namespace Alice.Player.Unity {
             m_HasMouseCollider = true;
             m_HasEntityCollider = true;
         }
+
+        protected void ResetColliderState()
+        {
+            if (m_HasEntityCollider)
+                CreateEntityCollider();
+            if (m_HasMouseCollider)
+                CreateMouseCollider();
+        }
     }
 }
