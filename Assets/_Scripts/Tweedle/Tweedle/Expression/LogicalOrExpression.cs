@@ -10,7 +10,10 @@
 
         protected override TValue Evaluate(TValue left, TValue right)
         {
-            return TBuiltInTypes.BOOLEAN.Instantiate(left.ToBoolean() || right.ToBoolean());
+            if (left.ToBoolean())
+                return TBuiltInTypes.BOOLEAN.Instantiate(true);
+            else
+                return TBuiltInTypes.BOOLEAN.Instantiate(right.ToBoolean());
         }
 
         internal override string Operator()
