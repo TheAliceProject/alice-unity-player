@@ -21,10 +21,15 @@ namespace Alice.Tweedle
 
         public TValue EvaluateLiteral()
         {
-            return Evaluate((TValue)lhs, (TValue)rhs);
+            return Evaluate(lhs, rhs);
         }
 
         protected abstract TValue Evaluate(TValue left, TValue right);
+
+        protected virtual TValue Evaluate(ITweedleExpression left, ITweedleExpression right)
+        {
+           return  Evaluate((TValue)left, (TValue)right);
+        }
 
         public override string ToTweedle()
         {
