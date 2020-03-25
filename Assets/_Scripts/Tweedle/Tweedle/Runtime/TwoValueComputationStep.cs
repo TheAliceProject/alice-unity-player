@@ -11,12 +11,15 @@ namespace Alice.Tweedle.VM
         TValue result1;
         TValue result2;
         Func<TValue, TValue, TValue> body;
+        bool logicalAnd, logicalOr;
 
         public TwoValueComputationStep(string callStackEntry,
                                                              ExecutionScope scope,
                                                              ITweedleExpression exp1,
                                                              ITweedleExpression exp2,
-                                                             Func<TValue, TValue, TValue> body)
+                                                             Func<TValue, TValue, TValue> body,
+                                                             bool logicalAnd = false,
+                                                             bool logicalOr = false)
             : base(scope)
         {
             using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
@@ -27,6 +30,8 @@ namespace Alice.Tweedle.VM
             this.exp1 = exp1;
             this.exp2 = exp2;
             this.body = body;
+            this.logicalAnd = logicalAnd;
+            this.logicalOr = logicalOr;
         }
 
         void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
@@ -38,6 +43,13 @@ namespace Alice.Tweedle.VM
             evalStep.Queue();
         }
 
+        void QueueExpressionStepWithoutEval(ITweedleExpression exp, Action<TValue> handler)
+        {
+            var storeStep = new ValueOperationStep(callStack, scope, handler);
+            storeStep.OnCompletionNotify(this);
+            storeStep.Queue();
+        }
+
         internal override void Execute()
         {
             if (result1 == TValue.UNDEFINED)
@@ -47,7 +59,22 @@ namespace Alice.Tweedle.VM
             }
             if (result2 == TValue.UNDEFINED)
             {
-                QueueExpressionStep(exp2, value => result2 = value);
+                if (logicalAnd && !result1.ToBoolean())
+                {
+                    result2 = TValue.FALSE;
+                    result = body.Invoke(result1, result2);
+                    base.Execute();
+                }
+                else if (logicalOr && result1.ToBoolean())
+                {
+                    result2 = TValue.TRUE;
+                    result = body.Invoke(result1, result2);
+                    base.Execute();
+                }
+                else
+                {
+                    QueueExpressionStep(exp2, value => result2 = value);
+                }
                 return;
             }
             result = body.Invoke(result1, result2);
