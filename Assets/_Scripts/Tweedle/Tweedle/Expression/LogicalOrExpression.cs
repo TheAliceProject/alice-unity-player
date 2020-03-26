@@ -4,9 +4,6 @@ namespace Alice.Tweedle
 {
     class LogicalOrExpression : BinaryExpression
     {
-        ITweedleExpression lhs;
-        ITweedleExpression rhs;
-
         public LogicalOrExpression(ITweedleExpression lhs, ITweedleExpression rhs)
             : base(lhs, rhs, TBuiltInTypes.BOOLEAN)
         {
@@ -21,7 +18,7 @@ namespace Alice.Tweedle
 
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            return new TwoValueComputationStep(ToTweedle(), scope, lhs, rhs, Evaluate, false, true);
+            return new ShortCircuitingTwoValueComputationStep(ToTweedle(), scope, lhs, rhs, Evaluate, TValue.TRUE);
         }
 
         internal override string Operator()
