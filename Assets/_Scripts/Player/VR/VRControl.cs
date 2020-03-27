@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
@@ -169,6 +169,7 @@ public class VRControl : MonoBehaviour
                     
                 else if (XRDevice.model.Contains("Oculus")){
                     deviceType = VRDevice.OculusRift;
+                    XRDevice.SetTrackingSpaceType(TrackingSpaceType.RoomScale);
                 }
             }
         }
