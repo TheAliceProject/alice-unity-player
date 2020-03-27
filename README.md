@@ -1,5 +1,5 @@
 # alice-unity-player
-Build using Unity Version 2019.2.20f1
+Build using Unity Version 2019.2.21f1
 # _Scenes
 The Model Import folder holds the scenes regarding dynamically importing models. The scene labeled AssetBundle was created to test loading in asset bundles, Unity's way of compact storage of files, however at Alice's current state this feature will not be used. For future versions of Alice it may be useful to store the gallery as individual asset bundles, and package those with the a3w folder rather than the model because this ensures the model will import properly as well as saving space for the user and time on import (since TriLib won't be as fast as asset bundles). The scene labeled TriLib is for testing import of meshes/skinned-meshes through the TriLib library.
 The Project Import folder holds the scenes for testing json files/zip-files import, parsing a json file/string, as well as parsing an a3w project into Tweedle.
