@@ -7,8 +7,6 @@ namespace Alice.Tweedle
         public LogicalAndExpression(ITweedleExpression lhs, ITweedleExpression rhs)
             : base(lhs, rhs, TBuiltInTypes.BOOLEAN)
         {
-            this.lhs = lhs;
-            this.rhs = rhs;
         }
 
         protected override TValue Evaluate(TValue left, TValue right)
