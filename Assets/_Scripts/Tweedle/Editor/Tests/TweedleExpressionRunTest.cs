@@ -311,5 +311,22 @@ namespace Alice.Tweedle.Parse
             RunStatement("Boolean b <- (i == Color.RED);", scope);
             Assert.IsTrue(scope.GetValue("b").ToBoolean());
         }
+
+        [Test]
+        public void OrShouldShortCircuitOnLHSTrue()
+        {
+            Init();
+            RunStatement("Boolean x <- true || y.isGood();", scope);
+            Assert.IsTrue(scope.GetValue("x").ToBoolean());
+        }
+
+        [Test]
+        public void AndShouldShortCircuitOnLHSFalse()
+        {
+            Init();
+            RunStatement("Boolean x <- false && y.isGood();", scope);
+            Assert.IsFalse(scope.GetValue("x").ToBoolean());
+        }
+
     }
 }
