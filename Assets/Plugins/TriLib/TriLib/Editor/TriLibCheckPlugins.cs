@@ -259,7 +259,7 @@ public class TriLibCheckPlugins : IPreprocessBuild, IPostprocessBuild
 			var pbxProject = new PBXProject ();
 			var pbxProjectPath = PBXProject.GetPBXProjectPath (buildPath);
 			pbxProject.ReadFromFile (pbxProjectPath);
-			var targetGuid = pbxProject.TargetGuidByName (PBXProject.GetUnityTargetName ());
+            var targetGuid = pbxProject.TargetGuidByName (pbxProject.GetUnityFrameworkTargetGuid());
 			pbxProject.AddFrameworkToProject (targetGuid, "libz.dylib", true);
 			pbxProject.AddFrameworkToProject (targetGuid, "libz.tbd", true);
 			pbxProject.SetBuildProperty (targetGuid, "ENABLE_BITCODE", "NO");
