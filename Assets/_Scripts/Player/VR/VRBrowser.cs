@@ -58,7 +58,7 @@ public class VRBrowser : MonoBehaviour
                 {
                     System.IO.Directory.GetDirectories(pwd + path);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return;
                 }
