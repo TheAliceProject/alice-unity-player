@@ -39,6 +39,7 @@ namespace Alice.Player.Unity {
                 Camera.transform.localPosition = UnityEngine.Vector3.zero;
                 Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
             }
+            Camera.GetComponentInChildren<AudioListener>().enabled = true;
         }
 
         public Transform GetHandFor(string handName)
