@@ -18,6 +18,10 @@ namespace Alice.Player.Unity {
 
         protected virtual void OnTransformationPropertyChanged(TValue inValue) {
             VantagePoint vp = inValue.RawObject<VantagePoint>();
+            StoreAliceTransformation(vp);
+        }
+
+        protected virtual void StoreAliceTransformation(VantagePoint vp) {
             // convert to left-handedness
             cachedTransform.localPosition = vp.UnityPosition();
             cachedTransform.localRotation = vp.UnityRotation();
@@ -65,6 +69,14 @@ namespace Alice.Player.Unity {
             // When used, this box will cover both collider types
             m_HasMouseCollider = true;
             m_HasEntityCollider = true;
+        }
+
+        protected void ResetColliderState()
+        {
+            if (m_HasEntityCollider)
+                CreateEntityCollider();
+            if (m_HasMouseCollider)
+                CreateMouseCollider();
         }
     }
 }

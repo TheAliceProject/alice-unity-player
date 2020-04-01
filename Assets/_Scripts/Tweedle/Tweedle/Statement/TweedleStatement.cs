@@ -15,15 +15,14 @@ namespace Alice.Tweedle
             enabled = false;
         }
 
-        internal virtual void QueueStepToNotify(ExecutionScope scope, ExecutionStep next)
+        internal virtual void QueueStepToNotify(ExecutionScope scope, ExecutionStep next = null)
         {
             if (enabled)
             {
                 AsStepToNotify(scope, next).Queue();
             }
-            else if (next != null)
-            {
-                next.Queue();
+            else {
+                next?.Queue();
             }
         }
 
