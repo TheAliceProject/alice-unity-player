@@ -12,6 +12,7 @@ public static class KeyMap
     public static readonly List<Key> RightKeys = new List<Key> { Key.RIGHT, Key.D, Key.RIGHT_AXIS_RIGHT, Key.LEFT_AXIS_RIGHT };
     public static readonly List<Key> ArrowKeys = new List<Key> { Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN,
                                                                  Key.W, Key.A, Key.S, Key.D,
+                                                                 Key.I, Key.J, Key.K, Key.L,
                                                                  Key.RIGHT_AXIS_UP, Key.RIGHT_AXIS_DOWN, Key.RIGHT_AXIS_LEFT, Key.RIGHT_AXIS_RIGHT,
                                                                  Key.LEFT_AXIS_UP, Key.LEFT_AXIS_DOWN, Key.LEFT_AXIS_LEFT, Key.LEFT_AXIS_RIGHT};
     public static readonly List<Key> NumpadKeys = new List<Key> { Key.NUMPAD0, Key.NUMPAD1, Key.NUMPAD2, Key.NUMPAD3, Key.NUMPAD4, Key.NUMPAD5, Key.NUMPAD6, Key.NUMPAD7, Key.NUMPAD8, Key.NUMPAD9,
@@ -127,13 +128,13 @@ public static class KeyMap
         {Key.RIGHT_THUMBSTICK_CLICK, Key.DIGIT_1},
         {Key.LEFT_THUMBSTICK_CLICK, Key.DIGIT_2},
         {Key.RIGHT_AXIS_RIGHT, Key.RIGHT},
-        {Key.LEFT_AXIS_RIGHT, Key.RIGHT},
+        {Key.LEFT_AXIS_RIGHT, Key.L},
         {Key.RIGHT_AXIS_LEFT, Key.LEFT},
-        {Key.LEFT_AXIS_LEFT, Key.LEFT},
+        {Key.LEFT_AXIS_LEFT, Key.J},
         {Key.RIGHT_AXIS_UP, Key.UP},
-        {Key.LEFT_AXIS_UP, Key.UP},
+        {Key.LEFT_AXIS_UP, Key.I},
         {Key.RIGHT_AXIS_DOWN, Key.DOWN},
-        {Key.LEFT_AXIS_DOWN, Key.DOWN}
+        {Key.LEFT_AXIS_DOWN, Key.K}
     };
 
     public static Dictionary<string, Key> VRButtonLookup = new Dictionary<string, Key>()
