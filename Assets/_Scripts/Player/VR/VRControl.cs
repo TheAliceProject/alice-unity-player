@@ -6,7 +6,7 @@ using UnityEngine.XR;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_WINRT
 using System.Diagnostics;
 #endif
 
@@ -63,7 +63,7 @@ public class VRControl : MonoBehaviour
         // while trying to go as fast as possible. 100 FPS should be plenty.
         Application.targetFrameRate = 100;
         // On mac, there won't be any VR support for now
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_WINRT
         Process[] pname = Process.GetProcessesByName("vrserver");
          if(pname != null && pname.Length > 0){
             VRTypeFound = "OpenVR";
@@ -82,7 +82,7 @@ public class VRControl : MonoBehaviour
 #endif
     }
 
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_WINRT
     void Update()
     {
         if(XRSettings.enabled)
