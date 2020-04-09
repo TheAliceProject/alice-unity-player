@@ -16,10 +16,8 @@ namespace Alice.Tweedle.VM
         {
         }
 
-        public void ExecuteToFinish(TweedleStatement statement, ExecutionScope scope)
-        {
-            statement.QueueStepToNotify(scope, new ExecutionStep(scope));
-            ProcessQueueSafely();
+        public static void ExecuteToFinish(TweedleStatement statement, ExecutionScope scope) {
+            statement.QueueStepToNotify(scope);
         }
 
         public TValue EvaluateToFinish(ITweedleExpression expression, ExecutionScope scope)

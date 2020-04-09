@@ -4,13 +4,13 @@ using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
-    internal class TwoValueComputationStep : ExecutionStep
+    public  class TwoValueComputationStep : ExecutionStep
     {
-        ITweedleExpression exp1;
-        ITweedleExpression exp2;
-        TValue result1;
-        TValue result2;
-        Func<TValue, TValue, TValue> body;
+        protected ITweedleExpression exp1;
+        protected ITweedleExpression exp2;
+        protected TValue result1;
+        protected TValue result2;
+        protected Func<TValue, TValue, TValue> body;
 
         public TwoValueComputationStep(string callStackEntry,
                                                              ExecutionScope scope,
@@ -29,7 +29,7 @@ namespace Alice.Tweedle.VM
             this.body = body;
         }
 
-        void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
+        protected void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
         {
             var evalStep = exp.AsStep(scope);
             var storeStep = new ValueOperationStep(callStack, scope, handler);

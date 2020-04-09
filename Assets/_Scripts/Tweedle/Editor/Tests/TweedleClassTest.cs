@@ -116,7 +116,7 @@ namespace Alice.Tweedle.Parse
 
         void ExecuteStatement(string src)
         {
-            vm.ExecuteToFinish(parser.ParseStatement(src), scope);
+            TestVirtualMachine.ExecuteToFinish(parser.ParseStatement(src), scope);
         }
 
         [Test]

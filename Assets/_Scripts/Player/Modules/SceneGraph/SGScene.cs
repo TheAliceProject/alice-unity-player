@@ -32,6 +32,9 @@ namespace Alice.Player.Unity {
         private Light m_AboveLightA;
         private Light m_AboveLightB;
         private Light m_AboveLightC;
+        private Light m_HorizontalLightA;
+        private Light m_HorizontalLightB;
+        private Light m_HorizontalLightC;
         private const float k_AboveLightIntensity = 0.25f;
         private const float k_AboveLightPitch = 45f;
         private Light m_BelowLight;
@@ -60,9 +63,12 @@ namespace Alice.Player.Unity {
         protected override void Awake() {
             base.Awake();
 
-            m_AboveLightA = CreateLight(k_AboveLightPitch, 0f, k_AboveLightIntensity, true);
+            m_AboveLightA = CreateLight(k_AboveLightPitch, 0f, k_AboveLightIntensity, false);
             m_AboveLightB = CreateLight(k_AboveLightPitch, 120f, k_AboveLightIntensity, false);
             m_AboveLightC = CreateLight(k_AboveLightPitch, 240f, k_AboveLightIntensity, false);
+            m_HorizontalLightA = CreateLight(0, 0f, k_AboveLightIntensity, false);
+            m_HorizontalLightB = CreateLight(0, 120f, k_AboveLightIntensity, false);
+            m_HorizontalLightC = CreateLight(0, 240f, k_AboveLightIntensity, false);
 
             m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
 
@@ -108,11 +114,11 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public void SetDefaultModelManipulationActive(bool active)
+        public void ActivateDefaultModelManipulation(List<SGModel> models, bool moveBackground)
         {
             if (XRSettings.enabled)
                 VRControl.EnablePointersForObjects(true);
-            m_MouseEventHandler.SetModelManipulation(active);
+            m_MouseEventHandler.ActivateModelManipulation(models, moveBackground);
         }
     
         private Light CreateLight(float inPitch, float inHeading, float intensity, bool useShadows) {
@@ -191,7 +197,7 @@ namespace Alice.Player.Unity {
             m_InteractionHandler.AddOcclusionListener(new OcclusionEventListenerProxy(listener, overlappingEventPolicy, setA, setB, interactionType));
         }
         
-        public void AddMouseColliders(SGEntity[] models)
+        public void AddMouseColliders(IEnumerable<SGModel> models)
         {
             foreach (var model in models)
             {
@@ -267,6 +273,7 @@ namespace Alice.Player.Unity {
             //RenderSettings.ambientIntensity = brightness;
             RenderSettings.reflectionIntensity = brightness;
             m_AboveLightA.intensity = m_AboveLightB.intensity = m_AboveLightC.intensity = k_AboveLightIntensity * brightness;
+            m_HorizontalLightA.intensity = m_HorizontalLightB.intensity = m_HorizontalLightC.intensity = k_AboveLightIntensity * brightness;
             m_BelowLight.intensity = k_BelowLightIntensity * brightness;
 
             UpdateAtmosphereColor();
@@ -285,6 +292,9 @@ namespace Alice.Player.Unity {
             m_AboveLightA.color = unityColor;
             m_AboveLightB.color = unityColor;
             m_AboveLightC.color = unityColor;
+            m_HorizontalLightA.color = unityColor;
+            m_HorizontalLightB.color = unityColor;
+            m_HorizontalLightC.color = unityColor;
         }
 
         private void OnUpdateBelowLightColor(TValue inValue) {

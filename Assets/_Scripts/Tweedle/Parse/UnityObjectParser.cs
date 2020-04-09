@@ -237,9 +237,9 @@ namespace Alice.Tweedle.Parse
             FileInfo[] info = dir.GetFiles("*.mp3");
             foreach (FileInfo f in info){
                 if(f.FullName.Contains("tempAudio")){
-                    try{
+                    try {
                         System.IO.File.Delete(f.FullName);
-                    }catch(IOException exception){
+                    } catch(IOException) {
                         // We'll get them on the next startup.
                     }
                 }

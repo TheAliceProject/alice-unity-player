@@ -4,8 +4,8 @@ namespace Alice.Tweedle
 {
     public abstract class BinaryExpression : TweedleExpression
     {
-        ITweedleExpression lhs;
-        ITweedleExpression rhs;
+        protected ITweedleExpression lhs;
+        protected ITweedleExpression rhs;
 
         public BinaryExpression(ITweedleExpression lhs, ITweedleExpression rhs, TTypeRef type)
             : base(type)
