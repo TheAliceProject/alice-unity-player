@@ -1,8 +1,3 @@
-using UnityEngine;
-using Alice.Tweedle.Interop;
-using Alice.Tweedle;
-using Alice.Player.Primitives;
-
 namespace Alice.Player.Unity {
     public sealed class SGJoint : SGTransformableEntity {
         private SGJointedModel m_parentModel;

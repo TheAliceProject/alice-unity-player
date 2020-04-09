@@ -97,6 +97,7 @@ public class WorldControl : MonoBehaviour
         newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
         newCamera.tag = "MainCamera";
         Time.timeScale = currentTimeScale = 1f;
+        paused = false;
         uISlidedown.ForceSlide(false);
     }
 
@@ -155,7 +156,7 @@ public class WorldControl : MonoBehaviour
 
     public static void ReturnToMainMenu()
     {
-        foreach(WorldControl wc in currentWorldControls){
+        foreach (WorldControl wc in currentWorldControls){
             wc.ShowMainMenu();
         }
     }

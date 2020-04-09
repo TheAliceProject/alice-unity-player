@@ -57,6 +57,8 @@ namespace Alice.Player.Unity {
                 }
                 CacheMeshBounds();
             }
+
+            ResetColliderState();
         }
 
         public void AddToVehicleList(Transform t)
