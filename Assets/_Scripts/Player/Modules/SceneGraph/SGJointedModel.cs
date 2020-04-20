@@ -7,6 +7,7 @@ using Alice.Player.Modules;
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
         private string m_ResourceId;
+        private Vector3 m_formerSize;
         private ModelSpec m_ModelSpec;
         private Renderer[] m_Renderers;
         private MaterialPropertyBlock[] m_PropertyBlocks;
@@ -21,6 +22,7 @@ namespace Alice.Player.Unity {
             m_ResourceId = inIdentifier;
 
             if (m_ModelTransform) {
+                m_formerSize = GetSize(false);
                 Destroy(m_ModelTransform.gameObject);
                 m_ModelTransform = null;
             }
@@ -34,6 +36,7 @@ namespace Alice.Player.Unity {
                 m_ModelTransform = model.transform;
                 m_ModelTransform.localRotation = Quaternion.identity;
                 m_ModelTransform.localPosition = Vector3.zero;
+                if (m_formerSize != Vector3.zero) SetSize(m_formerSize);
 
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
