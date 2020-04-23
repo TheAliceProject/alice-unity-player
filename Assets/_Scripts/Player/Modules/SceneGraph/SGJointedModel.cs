@@ -84,11 +84,9 @@ namespace Alice.Player.Unity {
 
         public SGJoint LinkJoint(TValue inOwner, string inName) {
             var bone = FindInHierarchy(m_ModelTransform, inName.ToUpper());
-            SGJoint joint = null;
-            if (bone != null) {
-                joint = SGEntity.Create<SGJoint>(inOwner, bone);
+            if (bone == null) return null;
+            var joint = SGEntity.Create<SGJoint>(inOwner, bone.gameObject);
                 joint.SetParentJointedModel(this);
-            }
             return joint;
         }
 
@@ -119,7 +117,7 @@ namespace Alice.Player.Unity {
         protected override void CreateEntityCollider()
         {
             var root = FindInHierarchy(m_ModelTransform, "ROOT");
-            if (root != null && CreateJointColliders(root.transform)) {
+            if (root != null && CreateJointColliders(root)) {
                 return;
             }
 
@@ -201,10 +199,10 @@ namespace Alice.Player.Unity {
             }
         }
 
-        private GameObject FindInHierarchy(Transform inTransform, string inName) {
+        private Transform FindInHierarchy(Transform inTransform, string inName) {
             foreach (Transform child in inTransform) {
                 if (child.gameObject.name == inName) {
-                    return child.gameObject;
+                    return child;
                 }
 
                 var match = FindInHierarchy(child, inName);
