@@ -19,11 +19,7 @@ namespace Alice.Player.Unity {
             }
 
             m_ResourceId = inIdentifier;
-
-            if (m_ModelTransform) {
-                Destroy(m_ModelTransform.gameObject);
-                m_ModelTransform = null;
-            }
+            var oldTransform = m_ModelTransform;
 
             m_ModelSpec = SceneGraph.Current.ModelCache.Get(inIdentifier);
             
@@ -34,6 +30,11 @@ namespace Alice.Player.Unity {
                 m_ModelTransform = model.transform;
                 m_ModelTransform.localRotation = Quaternion.identity;
                 m_ModelTransform.localPosition = Vector3.zero;
+                
+                if (oldTransform) {
+                    CopySkeleton(oldTransform, m_ModelTransform);
+                    Destroy(oldTransform.gameObject);
+                }
 
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
@@ -61,6 +62,26 @@ namespace Alice.Player.Unity {
             ResetColliderState();
         }
 
+        private void CopySkeleton(Transform oldTransform, Transform newTransform) {
+            m_ModelTransform.localScale = oldTransform.localScale;
+            CopyJoints(FindInHierarchy(oldTransform, "ROOT"),
+                FindInHierarchy(newTransform, "ROOT"));
+        }
+        
+
+        private void CopyJoints(Transform oldTransform, Transform newTransform) {
+            newTransform.localPosition = oldTransform.localPosition;
+            newTransform.localRotation = oldTransform.localRotation;
+            newTransform.localScale = oldTransform.localScale;
+            foreach (Transform oldChild in oldTransform) {
+                foreach (Transform newChild in newTransform) {
+                    if (oldChild.gameObject.name == newChild.gameObject.name) {
+                        CopyJoints(oldChild, newChild);
+                    }
+                }
+            }
+        }
+
         public void AddToVehicleList(Transform t)
         {
             m_vehicledList.Add(t);
@@ -86,7 +107,7 @@ namespace Alice.Player.Unity {
             var bone = FindInHierarchy(m_ModelTransform, inName.ToUpper());
             if (bone == null) return null;
             var joint = SGEntity.Create<SGJoint>(inOwner, bone.gameObject);
-                joint.SetParentJointedModel(this);
+            joint.SetParentJointedModel(this);
             return joint;
         }
 
