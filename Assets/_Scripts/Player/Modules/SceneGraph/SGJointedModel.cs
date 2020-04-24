@@ -157,7 +157,7 @@ namespace Alice.Player.Unity {
         private bool CreateJointColliders(Transform inTransform) {
             var createdAny = false;
             if (m_ModelSpec.BoundsForJoint(inTransform.name, out var jointSize)) {
-                if (inTransform.gameObject.GetComponent<Rigidbody>() is null) {
+                if (inTransform.gameObject.GetComponent<Rigidbody>() == null) {
                     // Rigid body is required for collision detection between meshes
                     var rigidBody = inTransform.gameObject.AddComponent<Rigidbody>();
                     rigidBody.isKinematic = true;
