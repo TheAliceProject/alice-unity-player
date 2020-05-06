@@ -125,7 +125,9 @@ namespace Alice.Tweedle
         public override string ConvertToString(ref TValue inValue)
         {
             AssertValueIsType(ref inValue);
-            return inValue.RawNumber().ToString();
+            string value = inValue.RawNumber().ToString();
+            if (value.Split('.').Length == 1) value += ".0";
+            return value;
         }
 
         public override object ConvertToPObject(ref TValue inValue)
