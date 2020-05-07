@@ -1,4 +1,4 @@
-using UnityEngine;
+using Alice.Player.Primitives;
 
 namespace Alice.Player.Unity {
     public sealed class SGVRHand : SGTransformableEntity {
@@ -15,6 +15,10 @@ namespace Alice.Player.Unity {
 
         public SGCamera GetCamera(){
             return m_camera;
+        }
+
+        public override VantagePoint GetLocalTransformation() {
+            return GetLocalTransformationUpTo(m_camera);
         }
     }
 }
