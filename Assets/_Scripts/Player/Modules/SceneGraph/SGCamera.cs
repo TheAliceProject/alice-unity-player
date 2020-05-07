@@ -46,7 +46,7 @@ namespace Alice.Player.Unity {
         {
             if (m_rig == null)
             {
-                return Camera.transform;
+                return cachedTransform;
             }
             if (handName.Contains("Left"))
             {

@@ -781,9 +781,17 @@ namespace Alice.Player.Primitives
         /// <returns>The string representation.</returns>
         public override string ToString()
         {
-            CultureInfo ci = CultureInfo.CurrentCulture;
+            return ToString("{0.####}");
+        }
  
-            return String.Format(ci, "{{X:{0} Y:{1} Z:{2} W:{3}}}", X.ToString(ci), Y.ToString(ci), Z.ToString(ci), W.ToString(ci));
+        /// <summary>
+        /// Returns a formatted String representing this Quaternion instance.
+        /// </summary>
+        /// <returns>The string representation.</returns>
+        public string ToString(String format)
+        {
+            CultureInfo ci = CultureInfo.CurrentCulture;
+            return String.Format(ci, "{{X:{0} Y:{1} Z:{2} W:{3}}}", X.ToString(format, ci), Y.ToString(format, ci), Z.ToString(format, ci), W.ToString(format, ci));
         }
  
         /// <summary>
