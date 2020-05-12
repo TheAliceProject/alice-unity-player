@@ -5,6 +5,7 @@ using UnityEngine;
 public class ClickableObject : MonoBehaviour
 {
     public GameObject aliceNamePanel = null;
+    public GameObject randyPanel = null;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,14 +19,22 @@ public class ClickableObject : MonoBehaviour
         
     }
 
-    public void ClickOnRabit()
+    public void ClickOnAlice()
     {
-        aliceNamePanel.SetActive(true);
+        randyPanel.SetActive(false);
+        aliceNamePanel.SetActive(!aliceNamePanel.activeSelf);
     }
 
-    public void ClickOnAliceNamePanel()
+    public void ClickOnRandy()
     {
-        gameObject.SetActive(false);
+        aliceNamePanel.SetActive(false);
+        randyPanel.SetActive(!randyPanel.activeSelf);
+    }
+
+    public void ClickOnPanel()
+    {
+        randyPanel.SetActive(false);
+        aliceNamePanel.SetActive(false);
     }
 
 }
