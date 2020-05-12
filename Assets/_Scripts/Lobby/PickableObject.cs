@@ -8,6 +8,7 @@ public class PickableObject : MonoBehaviour
     private bool ControllerIsIn = false;
     private bool InTheHand = false;
     private GameObject controller;
+    private bool left = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,13 +18,25 @@ public class PickableObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(ControllerIsIn && VRControl.IsRightTriggerUp())
+        if(ControllerIsIn && !left && VRControl.IsRightTriggerUp())
         {
             InTheHand = true;
             ControllerIsIn = false;
         }
 
-        else if(InTheHand && VRControl.IsRightTriggerUp())
+        else if(InTheHand && !left && VRControl.IsRightTriggerUp())
+        {
+            InTheHand = false;
+            transform.position = startPosition;
+        }
+
+        if (ControllerIsIn && left && VRControl.IsLeftTriggerUp())
+        {
+            InTheHand = true;
+            ControllerIsIn = false;
+        }
+
+        else if (InTheHand && left && VRControl.IsLeftTriggerUp())
         {
             InTheHand = false;
             transform.position = startPosition;
@@ -33,13 +46,30 @@ public class PickableObject : MonoBehaviour
             transform.position = controller.transform.position;
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerStay(Collider collision)
     {
+        if (InTheHand)
+            return;
+
         if (collision.transform.name.Contains("Controller (right)"))
         {
             if(!InTheHand)
                 ControllerIsIn = true;
+            left = false;
             controller = collision.gameObject;
         }
+
+        if(collision.transform.name.Contains("Controller (left)")){
+            if (!InTheHand)
+                ControllerIsIn = true;
+            left = true;
+            controller = collision.gameObject;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        ControllerIsIn = false;
+        controller = null;
     }
 }
