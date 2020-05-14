@@ -81,11 +81,11 @@ namespace Alice.Player.Unity {
         private bool entity2HasBounds = false;
         private Bounds bounds1;
         private Bounds bounds2;
-        public OverlappingPair(SGEntity ent1, SGEntity ent2)
+        public OverlappingPair(SGEntity ent1, SGEntity ent2, bool isEnter = false)
         {
             entity1 = ent1;
             entity2 = ent2;
-            numOverlaps = 0;
+            numOverlaps = isEnter ? 1 : 0;
 
             if (entity1 is SGModel)
             {
@@ -106,6 +106,10 @@ namespace Alice.Player.Unity {
         {
             return ent1 == entity1 && ent2 == entity2 ||
                    ent1 == entity2 && ent2 == entity1;
+        }
+
+        public bool IsOrdered(SGEntity ent1, SGEntity ent2) {
+            return ent1 == entity1 && ent2 == entity2;
         }
 
         public float GetDistance()
