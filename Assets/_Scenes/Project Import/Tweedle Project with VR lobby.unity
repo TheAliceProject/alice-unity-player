@@ -707,7 +707,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 275de6e87cb60fb4e9a897de1e5157c6,
         type: 3}
       propertyPath: m_RootOrder
-      value: 18
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 275de6e87cb60fb4e9a897de1e5157c6,
         type: 3}
@@ -778,8 +778,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d64901bd61f7c45b2380e2ce8d7165, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aliceNamePanel: {fileID: 371796546}
-  randyPanel: {fileID: 749812295}
+  character: {fileID: 99423196}
+  panel: {fileID: 371796546}
 --- !u!114 &99423200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -824,7 +824,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 99423198}
-        m_MethodName: ClickOnAlice
+        m_MethodName: ClickOnCharacter
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2250,15 +2250,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 371796546}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.044, y: 1.313, z: -2.89}
-  m_LocalScale: {x: 0.47672996, y: 0.29913536, z: 0.29913536}
+  m_LocalRotation: {x: 0.56967026, y: -0.4188984, z: 0.41889843, w: 0.5696702}
+  m_LocalPosition: {x: 2.7132096, y: 2.045, z: -0.6231719}
+  m_LocalScale: {x: 0.47672996, y: 0.2991353, z: 0.2991353}
   m_Children:
   - {fileID: 935360821}
   - {fileID: 665660401}
   m_Father: {fileID: 1616974780}
-  m_RootOrder: 19
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 90.00001, y: 0, z: 0}
 --- !u!114 &371796548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2271,8 +2271,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d64901bd61f7c45b2380e2ce8d7165, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aliceNamePanel: {fileID: 371796546}
-  randyPanel: {fileID: 749812295}
+  character: {fileID: 0}
+  panel: {fileID: 371796546}
 --- !u!65 &371796549
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3968,7 +3968,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &749812296
 Transform:
   m_ObjectHideFlags: 0
@@ -3976,14 +3976,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 749812295}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.044, y: 1.313, z: -2.89}
-  m_LocalScale: {x: 0.47672996, y: 0.29913536, z: 0.29913536}
+  m_LocalRotation: {x: 0.5753987, y: 0.41099438, z: -0.41099438, w: 0.5753987}
+  m_LocalPosition: {x: -3.911, y: 2.251, z: -0.931}
+  m_LocalScale: {x: 0.4767299, y: 0.2991354, z: 0.29913542}
   m_Children:
   - {fileID: 203724066}
   - {fileID: 185838016}
   m_Father: {fileID: 1616974780}
-  m_RootOrder: 20
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &749812297
 MonoBehaviour:
@@ -4051,8 +4051,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d64901bd61f7c45b2380e2ce8d7165, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aliceNamePanel: {fileID: 371796546}
-  randyPanel: {fileID: 749812295}
+  character: {fileID: 0}
+  panel: {fileID: 749812295}
 --- !u!65 &749812299
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6233,17 +6233,17 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: c1d840aeca3dda049a32af97798c77a2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.32
+      value: -5.093
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: c1d840aeca3dda049a32af97798c77a2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.01
+      value: -0.018
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: c1d840aeca3dda049a32af97798c77a2,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.69
+      value: -0.359
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: c1d840aeca3dda049a32af97798c77a2,
         type: 3}
@@ -6538,7 +6538,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 9efec5bc87c0f7542bac76a9748a7cab,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.46
+      value: -5.964
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 9efec5bc87c0f7542bac76a9748a7cab,
         type: 3}
@@ -6548,7 +6548,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 9efec5bc87c0f7542bac76a9748a7cab,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.47
+      value: -1.528
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 9efec5bc87c0f7542bac76a9748a7cab,
         type: 3}
@@ -6638,7 +6638,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 7824c174be8d6b2408989e65131cbfbc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.702
+      value: -3.215
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 7824c174be8d6b2408989e65131cbfbc,
         type: 3}
@@ -6648,7 +6648,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 7824c174be8d6b2408989e65131cbfbc,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.85899997
+      value: -0.692
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 7824c174be8d6b2408989e65131cbfbc,
         type: 3}
@@ -8047,7 +8047,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: c9bda82bae2217b489f81b937bb1a18d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.47
+      value: -5.563
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: c9bda82bae2217b489f81b937bb1a18d,
         type: 3}
@@ -8057,7 +8057,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: c9bda82bae2217b489f81b937bb1a18d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.29
+      value: 0.376
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: c9bda82bae2217b489f81b937bb1a18d,
         type: 3}
@@ -10002,9 +10002,9 @@ Transform:
   - {fileID: 504431547}
   - {fileID: 2121831516}
   - {fileID: 342436175}
+  - {fileID: 749812296}
   - {fileID: 99423195}
   - {fileID: 371796547}
-  - {fileID: 749812296}
   m_Father: {fileID: 583400857}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
@@ -10855,8 +10855,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d64901bd61f7c45b2380e2ce8d7165, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aliceNamePanel: {fileID: 371796546}
-  randyPanel: {fileID: 749812295}
+  character: {fileID: 1996396418}
+  panel: {fileID: 749812295}
 --- !u!114 &1996396420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10901,7 +10901,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1996396419}
-        m_MethodName: ClickOnRandy
+        m_MethodName: ClickOnCharacter
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

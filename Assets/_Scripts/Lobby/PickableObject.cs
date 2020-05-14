@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PickableObject : MonoBehaviour
 {
+    //use this panel to avoid Madhatter being selected while picking up the tea cup.
+    public List<ClickableObject> clickableObjects;
     private Vector3 startPosition;
     private bool ControllerIsIn = false;
     private bool InTheHand = false;
@@ -48,6 +50,9 @@ public class PickableObject : MonoBehaviour
 
     private void OnTriggerStay(Collider collision)
     {
+        foreach(ClickableObject co in clickableObjects)
+            co.SetNotClickable();
+
         if (InTheHand)
             return;
 
@@ -69,6 +74,8 @@ public class PickableObject : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        foreach (ClickableObject co in clickableObjects)
+            co.SetClickable();
         ControllerIsIn = false;
         controller = null;
     }
