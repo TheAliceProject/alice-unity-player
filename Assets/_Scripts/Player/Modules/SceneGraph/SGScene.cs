@@ -249,6 +249,7 @@ namespace Alice.Player.Unity {
         }
 
         public void Activate() {
+            m_InteractionHandler.StartNotifying();
             for (int i = 0, count = m_ActivationListeners.Count; i < count; ++i) {
                 m_ActivationListeners[i].Call();
             }
