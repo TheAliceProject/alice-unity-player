@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Alice.Player.Unity 
 {
@@ -13,6 +14,8 @@ namespace Alice.Player.Unity
         
         
         private readonly List<OverlappingPair> m_Collisions = new List<OverlappingPair>();
+
+        private bool m_Active;
 
         // Called from Update()
         public void HandleInteractionEvents()
@@ -110,8 +113,8 @@ namespace Alice.Player.Unity
         {
             foreach (var listener in m_OcclusionListeners)
             {
-                listener.NotifyEvent(foregroundObject, backgroundObject);
-            }
+                    listener.NotifyEvent(foregroundObject, backgroundObject);
+                }
         }
 
         public void NotifyModelInView(SGModel model, bool enteredView)
@@ -120,6 +123,10 @@ namespace Alice.Player.Unity
             {
                 listener.NotifyEvent(model, enteredView);
             }
+        }
+
+        public void StartNotifying() {
+            m_Active = true;
         }
     }
 
