@@ -31,22 +31,20 @@ namespace Alice.Player.Unity {
             validModels = new List<SGModel>(set);
         }
 
-        public void NotifyEvent(SGModel obj, bool entered)
-        {
+        public void NotifyEvent(SGModel obj, bool entered) {
+            if (!validModels.Contains(obj))
+                return;
+            
             if (!inViewCounts.ContainsKey(obj))
-                inViewCounts[obj] = 0;
-
-            inViewCounts[obj] += entered ? 1 : -1;
+                inViewCounts[obj] = entered ? 1 : 0;
+            else
+                inViewCounts[obj] += entered ? 1 : -1;
 
             if(onEnter != entered)
                 return;
-
-            if(validModels.Contains(obj))
-            {
-                if(entered && inViewCounts[obj] == 1 || !entered && inViewCounts[obj] == 0)
-                    CallEvent(obj.owner);
-            }
-                
+            
+            if(entered && inViewCounts[obj] == 1 || !entered && inViewCounts[obj] == 0)
+                CallEvent(obj.owner);
         }
         
         public void CallEvent(TValue x){
