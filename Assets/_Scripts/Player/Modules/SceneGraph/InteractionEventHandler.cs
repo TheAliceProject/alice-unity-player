@@ -85,11 +85,15 @@ namespace Alice.Player.Unity
             var pair = m_Collisions.FirstOrDefault(p => p.ContainsBoth(object1, object2));
             if (pair != null)
             {
+                if (pair.IsOrdered(object2, object1)) {
+                    // Each collision is reported twice. Only register one ordering.
+                    return;
+                }
                 pair.UpdateOverlaps(enter);
             }
             else
             {
-                pair = new OverlappingPair(object1, object2);
+                pair = new OverlappingPair(object1, object2, enter);
                 m_Collisions.Add(pair);
             }
 
