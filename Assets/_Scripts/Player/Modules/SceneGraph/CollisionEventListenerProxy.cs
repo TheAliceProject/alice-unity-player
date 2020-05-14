@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Player.Modules;
@@ -33,9 +32,11 @@ namespace Alice.Player.Unity {
         {
             if(onEnter != entered)
                 return;
-            
-            if(interactingObjects.set1.Contains(object1) && interactingObjects.set2.Contains(object2))
+
+            if (interactingObjects.set1.Contains(object1) && interactingObjects.set2.Contains(object2)) {
                 CallEvent(object1.owner, object2.owner);
+                return;
+            }
 
             if(interactingObjects.set1.Contains(object2) && interactingObjects.set2.Contains(object1))
                 CallEvent(object2.owner, object1.owner);
