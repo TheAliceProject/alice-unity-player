@@ -100,7 +100,7 @@ namespace Alice.Player.Unity
                 m_Collisions.Add(pair);
             }
 
-            if (!pair.IsEnter() && !pair.IsExit())
+            if (!m_Active || (!pair.IsEnter() && !pair.IsExit()))
                 return;
 
             foreach (var listener in m_CollisionListeners)
@@ -113,8 +113,13 @@ namespace Alice.Player.Unity
         {
             foreach (var listener in m_OcclusionListeners)
             {
+                if (m_Active) {
                     listener.NotifyEvent(foregroundObject, backgroundObject);
                 }
+                else {
+                    listener.UpdateOrAddOcclusion(foregroundObject, backgroundObject);
+                }
+            }
         }
 
         public void NotifyModelInView(SGModel model, bool enteredView)
