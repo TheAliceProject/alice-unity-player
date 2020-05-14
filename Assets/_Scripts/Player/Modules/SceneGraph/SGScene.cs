@@ -315,6 +315,11 @@ namespace Alice.Player.Unity {
                                                      m_GlobalBrightness);
         }
 
+        void OnApplicationQuit()
+        {
+            m_InteractionHandler.StopNotifying();
+        }
+
         public override void CleanUp() {
 
         }
