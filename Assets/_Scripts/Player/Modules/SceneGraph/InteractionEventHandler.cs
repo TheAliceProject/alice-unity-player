@@ -126,8 +126,10 @@ namespace Alice.Player.Unity
         {
             foreach (var listener in m_ViewListeners)
             {
+                if (m_Active) {
                 listener.NotifyEvent(model, enteredView);
             }
+        }
         }
 
         public void StartNotifying() {
