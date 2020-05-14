@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class ClickableObject : MonoBehaviour
 {
-    public GameObject aliceNamePanel = null;
-    public GameObject randyPanel = null;
+    public GameObject character = null;
+    public GameObject panel = null;
+    private bool clickable = true;
     // Start is called before the first frame update
     void Start()
     {
-        if(aliceNamePanel != null)
-            aliceNamePanel.SetActive(false);
+        if(panel != null)
+            panel.SetActive(false);
     }
 
     // Update is called once per frame
@@ -19,22 +20,29 @@ public class ClickableObject : MonoBehaviour
         
     }
 
-    public void ClickOnAlice()
+    public void ClickOnCharacter()
     {
-        randyPanel.SetActive(false);
-        aliceNamePanel.SetActive(!aliceNamePanel.activeSelf);
+        if(clickable)
+            panel.SetActive(!panel.activeSelf);
     }
 
-    public void ClickOnRandy()
-    {
-        aliceNamePanel.SetActive(false);
-        randyPanel.SetActive(!randyPanel.activeSelf);
-    }
 
     public void ClickOnPanel()
     {
-        randyPanel.SetActive(false);
-        aliceNamePanel.SetActive(false);
+        if (clickable)
+            panel.SetActive(false);
     }
 
+
+    public void SetClickable()
+    {
+        if (!clickable)
+            clickable = true;
+    }
+
+    public void SetNotClickable()
+    {
+        if (clickable)
+            clickable = false;
+    }
 }
