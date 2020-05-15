@@ -781,7 +781,7 @@ namespace Alice.Player.Primitives
         /// <returns>The string representation.</returns>
         public override string ToString()
         {
-            return ToString("{0.####}");
+            return ToString("0.####");
         }
  
         /// <summary>
@@ -791,7 +791,7 @@ namespace Alice.Player.Primitives
         public string ToString(String format)
         {
             CultureInfo ci = CultureInfo.CurrentCulture;
-            return String.Format(ci, "{{X:{0} Y:{1} Z:{2} W:{3}}}", X.ToString(format, ci), Y.ToString(format, ci), Z.ToString(format, ci), W.ToString(format, ci));
+            return String.Format(ci, "<X:{0} Y:{1} Z:{2} W:{3}>", X.ToString(format, ci), Y.ToString(format, ci), Z.ToString(format, ci), W.ToString(format, ci));
         }
  
         /// <summary>
