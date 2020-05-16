@@ -73,7 +73,7 @@ namespace Alice.Tweedle.Parse
             {
                 m_QueueProcessor.Stop();
             }
-
+            RenderSettings.skybox = null;
             LoadWorld(zipPath, mainMenuCtrl);
         }
 
