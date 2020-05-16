@@ -122,7 +122,6 @@ public class WorldLoaderControl : MonoBehaviour
                     }
                     recentButtons[x].SetLastOpenedNow();
                     parser.OpenWorld(recentButtons[x].GetFilePath());
-                    RenderSettings.skybox = null;
                 });
                 totalFilesFound++;
                 if(totalFilesFound == 2)
