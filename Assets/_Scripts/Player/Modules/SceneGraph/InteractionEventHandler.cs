@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Alice.Player.Unity 
 {
@@ -13,6 +14,8 @@ namespace Alice.Player.Unity
         
         
         private readonly List<OverlappingPair> m_Collisions = new List<OverlappingPair>();
+
+        private bool m_Active;
 
         // Called from Update()
         public void HandleInteractionEvents()
@@ -85,15 +88,19 @@ namespace Alice.Player.Unity
             var pair = m_Collisions.FirstOrDefault(p => p.ContainsBoth(object1, object2));
             if (pair != null)
             {
+                if (pair.IsOrdered(object2, object1)) {
+                    // Each collision is reported twice. Only register one ordering.
+                    return;
+                }
                 pair.UpdateOverlaps(enter);
             }
             else
             {
-                pair = new OverlappingPair(object1, object2);
+                pair = new OverlappingPair(object1, object2, enter);
                 m_Collisions.Add(pair);
             }
 
-            if (!pair.IsEnter() && !pair.IsExit())
+            if (!m_Active || (!pair.IsEnter() && !pair.IsExit()))
                 return;
 
             foreach (var listener in m_CollisionListeners)
@@ -106,7 +113,12 @@ namespace Alice.Player.Unity
         {
             foreach (var listener in m_OcclusionListeners)
             {
-                listener.NotifyEvent(foregroundObject, backgroundObject);
+                if (m_Active) {
+                    listener.NotifyEvent(foregroundObject, backgroundObject);
+                }
+                else {
+                    listener.UpdateOrAddOcclusion(foregroundObject, backgroundObject);
+                }
             }
         }
 
@@ -114,8 +126,18 @@ namespace Alice.Player.Unity
         {
             foreach (var listener in m_ViewListeners)
             {
-                listener.NotifyEvent(model, enteredView);
+                if (m_Active) {
+                    listener.NotifyEvent(model, enteredView);
+                }
             }
+        }
+
+        public void StartNotifying() {
+            m_Active = true;
+        }
+
+        public void StopNotifying() {
+            m_Active = false;
         }
     }
 

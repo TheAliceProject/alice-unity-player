@@ -249,6 +249,7 @@ namespace Alice.Player.Unity {
         }
 
         public void Activate() {
+            m_InteractionHandler.StartNotifying();
             for (int i = 0, count = m_ActivationListeners.Count; i < count; ++i) {
                 m_ActivationListeners[i].Call();
             }
@@ -312,6 +313,11 @@ namespace Alice.Player.Unity {
             RenderSettings.ambientLight = UnityEngine.Color.Lerp(new UnityEngine.Color(0,0,0,1), 
                                                      m_AmbientLightColor, 
                                                      m_GlobalBrightness);
+        }
+
+        void OnApplicationQuit()
+        {
+            m_InteractionHandler.StopNotifying();
         }
 
         public override void CleanUp() {
