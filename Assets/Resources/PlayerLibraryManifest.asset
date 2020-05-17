@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0614eab3cb65ee2438c20b7ee73218cd, type: 3}
   m_Name: PlayerLibraryManifest
   m_EditorClassIdentifier: 
-  PlayerLibraryVersion: 1.0-beta.5
+  PlayerLibraryVersion: 1.0-beta.6
   m_BuiltInLibraries:
   - path:
       relativePath: SceneGraphLibrary.a3w
     identifier:
       name: SceneGraphLibrary
-      version: 0.13
+      version: 0.14
       type: Library
