@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Player.Modules;
@@ -30,11 +31,14 @@ namespace Alice.Player.Unity {
             else
                 Debug.LogError("Invalid interaction type in ProximityEventListenerProxy");
 
-            foreach(SGEntity entityA in setA)
-            {
-                foreach(SGEntity entityB in setB)
-                {
-                    OverlappingPair pair = new OverlappingPair(entityA, entityB);
+            foreach(var entityA in setA) {
+                foreach(var entityB in setB) {
+                    if (entityA == entityB) continue;
+                    
+                    var pair = entityPairs.FirstOrDefault(p => p.ContainsBoth(entityA,entityB));
+                    if (pair != null) continue;
+                    
+                    pair = new OverlappingPair(entityA,entityB);
                     entityPairs.Add(pair);
                     pairDistances[pair] = pair.GetDistance();
                 }

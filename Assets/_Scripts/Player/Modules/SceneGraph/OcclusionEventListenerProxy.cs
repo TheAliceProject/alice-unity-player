@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Player.Modules;
@@ -34,39 +35,32 @@ namespace Alice.Player.Unity {
         public void UpdateOcclusions()
         {
             for (int i = occludingPairs.Count - 1; i >= 0; i--){
-                occludingPairs[i].occluddingFrame--;
-                if(occludingPairs[i].occluddingFrame == 0){
-                    if(!onEnter && interactingObjects.IsThereOverlap(occludingPairs[i].model1, occludingPairs[i].model2)){
-                        CallEvent(occludingPairs[i].model1.owner, occludingPairs[i].model2.owner);
-                    }
-                    occludingPairs.Remove(occludingPairs[i]);
+                var pair = occludingPairs[i];
+                if (pair.DecrementFrameCount()) continue;
+                
+                if(!onEnter && interactingObjects.IsThereOverlap(pair.model1, pair.model2)){
+                    CallEvent(pair.model1.owner, pair.model2.owner);
                 }
+                occludingPairs.Remove(pair);
             }
             
         }
 
-        public void NotifyEvent(SGModel foregroundModel, SGModel backgroundModel)
-        {
-            OccludingPair occludingPair = null;
-            for (int i = 0; i < occludingPairs.Count; i++)
-            {
-                if(occludingPairs[i].ContainsBoth(foregroundModel, backgroundModel))
-                {
-                    occludingPair = occludingPairs[i];
-                    occludingPair.occluddingFrame = 2; // Reset frame count
-                    break;
-                }
+        public void NotifyEvent(SGModel foregroundModel, SGModel backgroundModel) {
+            if (UpdateOrAddOcclusion(foregroundModel, backgroundModel) &&
+                onEnter &&
+                interactingObjects.IsThereOverlap(foregroundModel, backgroundModel)) {
+                CallEvent(foregroundModel.owner, backgroundModel.owner);
             }
+        }
 
-            if(occludingPair == null)
-            {
-                occludingPair = new OccludingPair(foregroundModel, backgroundModel);
-                occludingPairs.Add(occludingPair);
-
-                if(onEnter && interactingObjects.IsThereOverlap(foregroundModel, backgroundModel)){
-                    CallEvent(foregroundModel.owner, backgroundModel.owner);
-                }
+        public bool UpdateOrAddOcclusion(SGModel foregroundModel, SGModel backgroundModel) {
+            foreach (var pair in occludingPairs.Where(pair => pair.ContainsBoth(foregroundModel, backgroundModel))) {
+                pair.ResetFrameCount();
+                return false;
             }
+            occludingPairs.Add(new OccludingPair(foregroundModel, backgroundModel));
+            return true;
         }
         
         public void CallEvent(TValue x, TValue y){
@@ -101,9 +95,9 @@ namespace Alice.Player.Unity {
 
     public class OccludingPair
     {
-        public SGModel model1;
-        public SGModel model2;
-        public int occluddingFrame = 2;
+        public readonly SGModel model1;
+        public readonly SGModel model2;
+        private int occludingFrame = 2;
 
         public OccludingPair(SGModel mod1, SGModel mod2)
         {
@@ -111,15 +105,17 @@ namespace Alice.Player.Unity {
             model2 = mod2;
         }
 
-        public bool ContainsBoth(SGModel mod1, SGModel mod2)
-        {
-            if (mod1 != model1 && mod1 != model2)
-                return false;
+        public bool ContainsBoth(SGModel mod1, SGModel mod2) {
+            return (mod1 == model1 || mod1 == model2) &&
+                   (mod2 == model1 || mod2 == model2);
+        }
 
-            if (mod2 != model1 && mod2 != model2)
-                return false;
+        public bool DecrementFrameCount() {
+            return occludingFrame-- > 0;
+        }
 
-            return true;
+        public void ResetFrameCount() {
+            occludingFrame = 2;
         }
     }
 

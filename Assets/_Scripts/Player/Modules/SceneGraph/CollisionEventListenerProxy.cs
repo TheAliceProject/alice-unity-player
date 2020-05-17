@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Player.Modules;
@@ -33,9 +32,11 @@ namespace Alice.Player.Unity {
         {
             if(onEnter != entered)
                 return;
-            
-            if(interactingObjects.set1.Contains(object1) && interactingObjects.set2.Contains(object2))
+
+            if (interactingObjects.set1.Contains(object1) && interactingObjects.set2.Contains(object2)) {
                 CallEvent(object1.owner, object2.owner);
+                return;
+            }
 
             if(interactingObjects.set1.Contains(object2) && interactingObjects.set2.Contains(object1))
                 CallEvent(object2.owner, object1.owner);
@@ -81,11 +82,11 @@ namespace Alice.Player.Unity {
         private bool entity2HasBounds = false;
         private Bounds bounds1;
         private Bounds bounds2;
-        public OverlappingPair(SGEntity ent1, SGEntity ent2)
+        public OverlappingPair(SGEntity ent1, SGEntity ent2, bool isEnter = false)
         {
             entity1 = ent1;
             entity2 = ent2;
-            numOverlaps = 0;
+            numOverlaps = isEnter ? 1 : 0;
 
             if (entity1 is SGModel)
             {
@@ -106,6 +107,10 @@ namespace Alice.Player.Unity {
         {
             return ent1 == entity1 && ent2 == entity2 ||
                    ent1 == entity2 && ent2 == entity1;
+        }
+
+        public bool IsOrdered(SGEntity ent1, SGEntity ent2) {
+            return ent1 == entity1 && ent2 == entity2;
         }
 
         public float GetDistance()

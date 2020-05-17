@@ -20,6 +20,8 @@ public class WorldControl : MonoBehaviour
     public Sprite playSprite;
     public Sprite pauseSprite;
 
+    public Material skyboxMaterial;
+
     private const float minimiumTimeScale = 1f / 64f;
     private const float maximumTimeScale = 64f;
     private static float currentTimeScale = 1f;
@@ -98,6 +100,7 @@ public class WorldControl : MonoBehaviour
         newCamera.tag = "MainCamera";
         Time.timeScale = currentTimeScale = 1f;
         paused = false;
+        RenderSettings.skybox = skyboxMaterial;
         uISlidedown.ForceSlide(false);
     }
 

@@ -14,7 +14,7 @@ namespace Alice.Player.Unity {
             m_ModelTransform.localPosition = new UnityEngine.Vector3(0,-0.0001f,0);
 
             GetPropertyBlock(m_Renderer, ref m_PropertyBlock);
-            m_PropertyBlock.SetVector("_MainTex_ST", new Vector4(100,100,0,0));
+            m_PropertyBlock.SetVector("_MainTex_ST", new Vector4(-128,-128,-0.5f,-0.5f));
             m_Renderer.SetPropertyBlock(m_PropertyBlock);
         }
 

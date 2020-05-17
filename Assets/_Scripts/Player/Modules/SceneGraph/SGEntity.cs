@@ -122,6 +122,18 @@ namespace Alice.Player.Unity {
             return VantagePoint.FromUnity(cachedTransform.localPosition, cachedTransform.localRotation);
         }
 
+        // Helper method for those entities under transforms that are not represented by SGEntities
+        protected VantagePoint GetLocalTransformationUpTo(SGEntity sgParent) {
+            var parent = cachedTransform.parent;
+            var cumulativeTransform = VantagePoint.FromUnity(cachedTransform.localPosition, cachedTransform.localRotation);
+            while (parent != null && (parent.gameObject != sgParent.gameObject)) {
+                var parentAliceTransform = VantagePoint.FromUnity(parent.localPosition, parent.localRotation);
+                cumulativeTransform = parentAliceTransform.multiply(cumulativeTransform);
+                parent = parent.parent;
+            }
+            return cumulativeTransform;
+        }
+
         public virtual VantagePoint GetAbsoluteTransformation() {
             return VantagePoint.FromUnity(cachedTransform.position, cachedTransform.rotation);
         }
