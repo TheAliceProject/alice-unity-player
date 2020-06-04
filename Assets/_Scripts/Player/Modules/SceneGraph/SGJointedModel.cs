@@ -104,7 +104,7 @@ namespace Alice.Player.Unity {
         }
 
         public SGJoint LinkJoint(TValue inOwner, string inName) {
-            var bone = FindInHierarchy(m_ModelTransform, inName.ToUpper());
+            var bone = FindInHierarchy(m_ModelTransform, inName);
             if (bone == null) return null;
             var joint = SGEntity.Create<SGJoint>(inOwner, bone.gameObject);
             joint.SetParentJointedModel(this);
@@ -222,7 +222,7 @@ namespace Alice.Player.Unity {
 
         private Transform FindInHierarchy(Transform inTransform, string inName) {
             foreach (Transform child in inTransform) {
-                if (child.gameObject.name == inName) {
+                if (child.gameObject.name.Equals(inName, StringComparison.OrdinalIgnoreCase)) {
                     return child;
                 }
 
@@ -231,7 +231,7 @@ namespace Alice.Player.Unity {
                     return match;
                 }
             }
-            
+
             return null;
         }
     }
