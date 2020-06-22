@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Alice.Tweedle;
 
 namespace Alice.Tweedle.VM
 {
@@ -114,7 +113,11 @@ namespace Alice.Tweedle.VM
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogErrorFormat(SystemExceptionFormat, e.Message, step.CallStack(), e.StackTrace);
+                if (e.InnerException != null && e.InnerException != e) {
+                    UnityEngine.Debug.LogErrorFormat(SecondaryExceptionFormat, e.Message, step.CallStack(), e.StackTrace, e.InnerException.StackTrace);
+                } else {
+                    UnityEngine.Debug.LogErrorFormat(SystemExceptionFormat, e.Message, step.CallStack(), e.StackTrace);
+                }
                 throw new TweedleRuntimeException(e);
             }
         }
@@ -127,6 +130,11 @@ namespace Alice.Tweedle.VM
                                              "*----------------------Tweedle Stack----------------------*\n{1}\n" +
                                              "*----------------------System Stack-----------------------*\n{2}\n" +
                                              "*---------------------------------------------------------*";
+        const string SecondaryExceptionFormat = "*----------------------System Exception-------------------*\n{0}\n" +
+                                                "*----------------------Tweedle Stack----------------------*\n{1}\n" +
+                                                "*----------------------System Stack-----------------------*\n{2}\n" +
+                                                "*----------------------Inner Stack------------------------*\n{3}\n" +
+                                                "*---------------------------------------------------------*";
     }
 
 }
