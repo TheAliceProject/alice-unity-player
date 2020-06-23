@@ -64,8 +64,9 @@ namespace Alice.Player.Unity {
 
         private void CopySkeleton(Transform oldTransform, Transform newTransform) {
             m_ModelTransform.localScale = oldTransform.localScale;
-            CopyJoints(FindInHierarchy(oldTransform, "ROOT"),
-                FindInHierarchy(newTransform, "ROOT"));
+            var currentRoot = FindInHierarchy(oldTransform, "ROOT");
+            if (currentRoot == null) return;
+            CopyJoints(currentRoot, FindInHierarchy(newTransform, "ROOT"));
         }
         
 
