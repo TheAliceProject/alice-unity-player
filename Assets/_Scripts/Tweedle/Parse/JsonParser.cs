@@ -12,6 +12,12 @@ namespace Alice.Tweedle.Parse
 {
     public class JsonParser
     {
+        public static Stream libraryStream;
+        public static void SetLibraryStream(Stream stream)
+        {
+            libraryStream = stream;
+        }
+
         public static void ParseZipFile(TweedleSystem inSystem, string inZipPath) {
             using (FileStream stream = new FileStream(inZipPath, FileMode.Open, FileAccess.Read, FileShare.None)) {
                 using (ZipFile zipFile = new ZipFile(stream))
@@ -57,6 +63,15 @@ namespace Alice.Tweedle.Parse
             m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
             ParseJson(m_ZipFile.ReadEntry("manifest.json"));
+        }
+
+        public static void ParseZipFile(TweedleSystem inSystem, Stream inZipStream)
+        {
+            using (ZipFile zipFile = new ZipFile(inZipStream))
+            {
+                JsonParser reader = new JsonParser(inSystem, zipFile);
+                reader.Parse();
+            }
         }
 
         public Manifest ParseJson(string inManifestJson, string inWorkingDir = "")
@@ -105,8 +120,13 @@ namespace Alice.Tweedle.Parse
 
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
+#if UNITY_ANDROID || UNITY_IOS
+                        ParseZipFile(m_System, libraryStream);                     
+#else
                         ParseZipFile(m_System, libRef.path.fullPath);
-                    } else {
+#endif
+                    }
+                    else {
                         throw new TweedleVersionException("Could not find prerequisite " + prerequisites[i].name, WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(), WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + prerequisites[i].version);
                     }
                 }

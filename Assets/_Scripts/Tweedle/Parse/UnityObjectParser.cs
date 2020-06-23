@@ -7,6 +7,7 @@ using System.Collections;
 using Alice.Player.Modules;
 using BeauRoutine;
 using SFB;
+using UnityEngine.Networking;
 
 namespace Alice.Tweedle.Parse
 {
@@ -47,24 +48,40 @@ namespace Alice.Tweedle.Parse
             DeleteTemporaryAudioFiles();
         }
 
-        public void OpenWorld(string fileName = "", MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
-            string zipPath = fileName;
-            if (zipPath == "") {
-                var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", project_ext, false);
-                if(path.Length > 0)
-                {
-                    zipPath = path[0];
-                    zipPath = System.Uri.UnescapeDataString(zipPath);
-                }
-            }
-            if (System.IO.File.Exists(zipPath) == false) {
-                Debug.LogWarning("UnityObjectParser.Select Failed to open File " + zipPath);
-                return;
-            }
+        public IEnumerator MakeLibraryZip()
+        {
+            string libraryPath = System.IO.Path.Combine(Application.streamingAssetsPath, "SceneGraphLibrary.a3w");
+            byte[] result;
+            UnityWebRequest www = new UnityWebRequest(libraryPath);
+            DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
+            www.downloadHandler = dH;
+            yield return www.SendWebRequest();
+            while(!www.isDone);
+            result = www.downloadHandler.data;
+            Stream libraryStream = new MemoryStream(result);
+            JsonParser.SetLibraryStream(libraryStream);
+            Debug.Log("Loaded Library");
+        }
 
-            m_currentFilePath = zipPath;
+        IEnumerator loadStreamingAsset(string fileName)
+        {
+            string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
+            byte[] result;
+            Debug.Log(filePath);
+            yield return YieldLoadingScreens(true);
+            UnityWebRequest www = new UnityWebRequest(filePath);
+            DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
+            www.downloadHandler = dH;
+            yield return www.SendWebRequest();
+            while(!www.isDone);
+            result = www.downloadHandler.data;
+            Stream stream = new MemoryStream(result);
+            yield return Routine.Start(MakeLibraryZip());
 
-            if (Player.Unity.SceneGraph.Exists) {
+            Camera.main.backgroundColor = Color.clear;
+
+            if (Player.Unity.SceneGraph.Exists)
+            {
                 Player.Unity.SceneGraph.Current.Clear();
             }
 
@@ -73,8 +90,57 @@ namespace Alice.Tweedle.Parse
             {
                 m_QueueProcessor.Stop();
             }
+
+            m_System = new TweedleSystem();
+            JsonParser.ParseZipFile(m_System, stream);
+            m_System.Link();
+
+            if (dumpTypeOutlines)
+            {
+                m_System.DumpTypes();
+            }
+
+            m_System.QueueProgramMain(m_VM);
+
+            StartQueueProcessing();
+            yield return YieldLoadingScreens(false);
+         }
+         
+         
+        public void OpenWorld(string fileName = "", MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
+
+#if UNITY_ANDROID || UNITY_IOS
+
+            Routine.Start(loadStreamingAsset(fileName));
+#else
+
+            string zipPath = fileName;
+            if(zipPath == "") {
+                var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", project_ext, false);
+                if(path.Length > 0) {
+                    zipPath = path[0];
+                    zipPath = System.Uri.UnescapeDataString(zipPath);
+                }
+            }
+            if(System.IO.File.Exists(zipPath) == false) {
+                Debug.LogWarning("UnityObjectParser.Select Failed to open File " + zipPath);
+                return;
+            }
+
+            m_currentFilePath = zipPath;
+
+            if(Player.Unity.SceneGraph.Exists) {
+                Player.Unity.SceneGraph.Current.Clear();
+            }
+
+            m_System?.Unload();
+            if(m_QueueProcessor != null) {
+                m_QueueProcessor.Stop();
+            }
             RenderSettings.skybox = null;
             LoadWorld(zipPath, mainMenuCtrl);
+
+#endif
         }
 
         private void LoadWorld(string path, MainMenuControl mainMenuCtrl)
@@ -165,14 +231,16 @@ namespace Alice.Tweedle.Parse
         {
             m_VM = new VirtualMachine {ErrorHandler = NotifyUserOfError};
 
+#if UNITY_IOS || UNITY_ANDROID
+            Screen.sleepTimeout = 0;
+            OpenWorld("BundledWorld.a3w");
+#endif
             // This code will open a world directly in the unity app.
             // On windows, right click and Open With... the Alice Player executable
             string[] args = System.Environment.GetCommandLineArgs();
 
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i].ToLower().Contains(".a3w"))
-                {
+            for(int i = 0; i < args.Length; i++) {
+                if(args[i].ToLower().Contains(".a3w")) {
                     loadingScreen.fader.alpha = 1f;
                     OpenWorld(args[1]);
                     return;
@@ -182,6 +250,8 @@ namespace Alice.Tweedle.Parse
             // This code will automatically launch a world if there is a .a3w in the StreamingAssets subdirectory
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
             FileInfo[] files = dir.GetFiles("*.a3w");
+#if !UNITY_ANDROID
+            // This seems to not work correctly on android. Likely because streamingassets are compressed in the apk
             if (files.Length == 2) // Really 1, but ignore SceneGraphLibrary
             {
                 for (int i = 0; i < files.Length; i++)
@@ -189,6 +259,7 @@ namespace Alice.Tweedle.Parse
                     if(!files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
                     {
                         loadingScreen.fader.alpha = 1f;
+                        //Debug.Log("1:" + files[i].Name + " 2:" + files[i].FullName);
                         OpenWorld(files[i].FullName, MainMenuControl.Disabled);
                     }
                 }
@@ -206,6 +277,7 @@ namespace Alice.Tweedle.Parse
                     loadMoreControl[i].SetAsStandalone();
                 }
             }
+#endif
         }
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
