@@ -69,7 +69,7 @@ namespace Alice.Tweedle.Parse
 
         public void AddResource(ResourceReference resourceAsset)
         {
-            ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.name, resourceAsset.ContentType, resourceAsset.FormatType);
+            ResourceIdentifier identifier = new ResourceIdentifier(resourceAsset.file, resourceAsset.ContentType, resourceAsset.FormatType);
             if (Resources.ContainsKey(identifier)) {
                 Debug.LogWarningFormat("Resources with identifier {0} already exists", identifier.ToString());
             } else {

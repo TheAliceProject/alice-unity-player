@@ -240,7 +240,7 @@ namespace Alice.Tweedle.Parse
                 "\"resources\":[" +
                     "{\"name\": \"beast_growl_02_echo.mp3\", \"type\": \"audio\", \"format\": \"mpeg\", \"file\": \"resources/beast_growl_02_echo.mp3\", \"uuid\": \"23d9dfb6-5cb0-4b55-bd05-1ec5bb133381\", \"duration\": 3.313}" +
                 "]}";
-            Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")], "Audio should be stored, not be null.");
+            Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("resources/beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")], "Audio should be stored, not be null.");
         }
 
         [Test]
@@ -254,7 +254,7 @@ namespace Alice.Tweedle.Parse
                 "\"resources\":[" +
                     "{\"name\": \"beast_growl_02_echo.mp3\", \"type\": \"audio\", \"format\": \"mpeg\", \"file\": \"resources/beast_growl_02_echo.mp3\", \"uuid\": \"23d9dfb6-5cb0-4b55-bd05-1ec5bb133381\", \"duration\": 3.313}" +
                 "]}";
-            AudioReference audio = (AudioReference)StoredSystem(manifest).Resources[new ResourceIdentifier("beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")];
+            AudioReference audio = (AudioReference)StoredSystem(manifest).Resources[new ResourceIdentifier("resources/beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")];
             Assert.AreEqual("resources/beast_growl_02_echo.mp3", audio.file, "Audio should a file.");
             Assert.AreEqual("23d9dfb6-5cb0-4b55-bd05-1ec5bb133381", audio.uuid, "Audio uuid should match.");
             Assert.AreEqual(3.313f, audio.duration, "Audio duration should match.");
@@ -271,7 +271,7 @@ namespace Alice.Tweedle.Parse
                 "\"resources\":[" +
                     "{\"name\": \"somePicture.png\", \"type\": \"image\", \"format\": \"png\", \"file\": \"resources/somePicture.png\", \"uuid\": \"9d7f2757-154a-4124-9d44-587025184679\", \"height\": 300, \"width\": 500}" +
                 "]}";
-            Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("somePicture.png", ContentType.Image, "png")], "Image should be stored, not be null.");
+            Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("resources/somePicture.png", ContentType.Image, "png")], "Image should be stored, not be null.");
         }
 
         [Test]
@@ -285,7 +285,7 @@ namespace Alice.Tweedle.Parse
                 "\"resources\":[" +
                     "{\"name\": \"somePicture.png\", \"type\": \"image\", \"format\": \"png\", \"file\": \"resources/somePicture.png\", \"uuid\": \"9d7f2757-154a-4124-9d44-587025184679\", \"height\": 300, \"width\": 500}" +
                 "]}";
-            ImageReference image = (ImageReference)StoredSystem(manifest).Resources[new ResourceIdentifier("somePicture.png", ContentType.Image, "png")];
+            ImageReference image = (ImageReference)StoredSystem(manifest).Resources[new ResourceIdentifier("resources/somePicture.png", ContentType.Image, "png")];
             Assert.AreEqual("9d7f2757-154a-4124-9d44-587025184679", image.uuid, "Image uuid should match.");
             Assert.AreEqual(300f, image.height, "Image height should match.");
             Assert.AreEqual(500f, image.width, "Image width should match.");
