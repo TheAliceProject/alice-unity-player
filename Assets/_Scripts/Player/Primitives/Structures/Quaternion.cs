@@ -56,10 +56,10 @@ namespace Alice.Player.Primitives
         /// <param name="w">The W component of the Quaternion.</param>
         public Quaternion(double x, double y, double z, double w)
         {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
-            this.W = w;
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
         }
  
         /// <summary>
@@ -84,7 +84,7 @@ namespace Alice.Player.Primitives
         {
             double ls = X * X + Y * Y + Z * Z + W * W;
  
-            return Math.Sqrt((double)ls);
+            return Math.Sqrt(ls);
         }
  
         /// <summary>
@@ -95,6 +95,17 @@ namespace Alice.Player.Primitives
         {
             return X * X + Y * Y + Z * Z + W * W;
         }
+
+        /// <summary>
+        /// Divides each component of the Quaternion by the length of the Quaternion.
+        /// </summary>
+        public void Normalize() {
+            var invNorm = 1.0f / Length();
+            X *= invNorm;
+            Y *= invNorm;
+            Z *= invNorm;
+            W *= invNorm;
+        }
  
         /// <summary>
         /// Divides each component of the Quaternion by the length of the Quaternion.
@@ -104,16 +115,11 @@ namespace Alice.Player.Primitives
         public static Quaternion Normalize(Quaternion value)
         {
             Quaternion ans;
- 
-            double ls = value.X * value.X + value.Y * value.Y + value.Z * value.Z + value.W * value.W;
- 
-            double invNorm = 1.0f / Math.Sqrt((double)ls);
- 
-            ans.X = value.X * invNorm;
-            ans.Y = value.Y * invNorm;
-            ans.Z = value.Z * invNorm;
-            ans.W = value.W * invNorm;
- 
+            ans.X = value.X;
+            ans.Y = value.Y;
+            ans.Z = value.Z;
+            ans.W = value.W;
+            ans.Normalize();
             return ans;
         }
  
@@ -229,7 +235,7 @@ namespace Alice.Player.Primitives
  
             if (trace > 0.0f)
             {
-                double s = (double)Math.Sqrt(trace + 1.0f);
+                double s = Math.Sqrt(trace + 1.0f);
                 q.W = s * 0.5f;
                 s = 0.5f / s;
                 q.X = (matrix.M23 - matrix.M32) * s;
@@ -240,7 +246,7 @@ namespace Alice.Player.Primitives
             {
                 if (matrix.M11 >= matrix.M22 && matrix.M11 >= matrix.M33)
                 {
-                    double s = (double)Math.Sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
+                    double s = Math.Sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
                     double invS = 0.5f / s;
                     q.X = 0.5f * s;
                     q.Y = (matrix.M12 + matrix.M21) * invS;
@@ -249,7 +255,7 @@ namespace Alice.Player.Primitives
                 }
                 else if (matrix.M22 > matrix.M33)
                 {
-                    double s = (double)Math.Sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
+                    double s = Math.Sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
                     double invS = 0.5f / s;
                     q.X = (matrix.M21 + matrix.M12) * invS;
                     q.Y = 0.5f * s;
@@ -258,7 +264,7 @@ namespace Alice.Player.Primitives
                 }
                 else
                 {
-                    double s = (double)Math.Sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
+                    double s = Math.Sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
                     double invS = 0.5f / s;
                     q.X = (matrix.M31 + matrix.M13) * invS;
                     q.Y = (matrix.M32 + matrix.M23) * invS;
@@ -370,18 +376,10 @@ namespace Alice.Player.Primitives
                 r.W = t1 * quaternion1.W - t * quaternion2.W;
             }
  
-            // Normalize it.
-            double ls = r.X * r.X + r.Y * r.Y + r.Z * r.Z + r.W * r.W;
-            double invNorm = 1.0f / (double)Math.Sqrt((double)ls);
- 
-            r.X *= invNorm;
-            r.Y *= invNorm;
-            r.Z *= invNorm;
-            r.W *= invNorm;
- 
+            r.Normalize();
             return r;
         }
- 
+
         /// <summary>
         /// Concatenates two Quaternions; the result represents the value1 rotation followed by the value2 rotation.
         /// </summary>
@@ -504,6 +502,7 @@ namespace Alice.Player.Primitives
             ans.Z = q1z * q2w + q2z * q1w + cz;
             ans.W = q1w * q2w - dot;
  
+            ans.Normalize();
             return ans;
         }
  
