@@ -4,13 +4,17 @@ namespace Alice.Tweedle.Parse
 {
     public class TweedleVersionException : SystemException
     {
-        public string ExpectedVersion;
-        public string DiscoveredVersion;
-        public TweedleVersionException(string message, string expected, string actual)
+        public readonly string ExpectedVersion;
+        public readonly string DiscoveredVersion;
+        public readonly string PlayerCompatibleAliceVersion;
+        public readonly string SourceAliceVersion;
+        public TweedleVersionException(string message, string playerLibrary, string requestedLibrary, string playerCompatibleAlice, string sourceAlice)
             : base(message)
         {
-            ExpectedVersion = expected;
-            DiscoveredVersion = actual;
+            ExpectedVersion = playerLibrary;
+            DiscoveredVersion = requestedLibrary;
+            PlayerCompatibleAliceVersion = playerCompatibleAlice;
+            SourceAliceVersion = sourceAlice;
         }
     }
 }
