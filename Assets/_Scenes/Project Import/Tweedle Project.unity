@@ -3823,7 +3823,7 @@ PrefabInstance:
     - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 30
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
@@ -3833,7 +3833,7 @@ PrefabInstance:
     - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
@@ -3848,7 +3848,7 @@ PrefabInstance:
     - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
       propertyPath: m_fontSize
-      value: 15.6
+      value: 11.35
       objectReference: {fileID: 0}
     - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
@@ -3874,6 +3874,18 @@ PrefabInstance:
         type: 3}
       propertyPath: m_isTextTruncated
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_text
+      value: 'Player --
+
+        Compatible with Alice --'
+      objectReference: {fileID: 0}
+    - target: {fileID: 3793252898309485002, guid: efee6d1d4d595d046a09b11eab729e4c,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4287401100
       objectReference: {fileID: 0}
     - target: {fileID: 4203162802620114807, guid: efee6d1d4d595d046a09b11eab729e4c,
         type: 3}
