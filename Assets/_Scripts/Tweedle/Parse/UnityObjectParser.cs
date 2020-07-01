@@ -231,10 +231,6 @@ namespace Alice.Tweedle.Parse
         {
             m_VM = new VirtualMachine {ErrorHandler = NotifyUserOfError};
 
-#if UNITY_IOS || UNITY_ANDROID
-            Screen.sleepTimeout = 0;
-            OpenWorld("BundledWorld.a3w");
-#endif
             // This code will open a world directly in the unity app.
             // On windows, right click and Open With... the Alice Player executable
             string[] args = System.Environment.GetCommandLineArgs();
@@ -247,35 +243,53 @@ namespace Alice.Tweedle.Parse
                 }
             }
 
-            // This code will automatically launch a world if there is a .a3w in the StreamingAssets subdirectory
+            /*
+             * The StreamingAssets folder should by default contain two world files: SceneGraphLigrary.a3w and DefaultBundledWorld.a3w
+             * If there are more worlds bundled in this folder, the code bellow will try to open them(if there is a single one)
+             * or to list them in a menu(multiple bundled), waiting for a choice.
+             * If no other worlds found, 
+             * ON PC PLATFORM: remain on the main menu
+             * ON ANDROID/WebGL: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
+             */
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
             FileInfo[] files = dir.GetFiles("*.a3w");
-#if !UNITY_ANDROID
-            // This seems to not work correctly on android. Likely because streamingassets are compressed in the apk
-            if (files.Length == 2) // Really 1, but ignore SceneGraphLibrary
-            {
-                for (int i = 0; i < files.Length; i++)
-                {
-                    if(!files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
-                    {
+            bool sceneGraphLibFound = false, defaultWorldFound = false;
+            int bundledWorldNum;
+
+            for(int i = 0; i < files.Length; ++i) {
+                if(files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w")) {
+                    sceneGraphLibFound = true;
+                }
+                else if(files[i].Name.Contains(WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + ".a3w")) {
+                    defaultWorldFound = true;
+                }  
+            }
+
+            // How many worlds are bundled in the StreamingAssets folder except SceneGraphLibrary and DefaultWorld
+            bundledWorldNum = files.Length - (sceneGraphLibFound ? 1 : 0) - (defaultWorldFound ? 1 : 0);
+
+            if(bundledWorldNum == 1) { // Only one world is bundled, auto load that world
+                for(int i = 0; i < files.Length; i++) {
+                    if(!files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w")
+                        && !files[i].Name.Contains(WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + ".a3w")) {
                         loadingScreen.fader.alpha = 1f;
-                        //Debug.Log("1:" + files[i].Name + " 2:" + files[i].FullName);
                         OpenWorld(files[i].FullName, MainMenuControl.Disabled);
                     }
                 }
             }
-            else if(files.Length > 2)
-            {
-                // If bundled with multiple files, we will put them on the "Load More" screen as a hub for their worlds
-                for(int i = 0; i < menuControls.Length; i++)
-                {
+            else if(bundledWorldNum > 1) { // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
+                for(int i = 0; i < menuControls.Length; i++) {
                     menuControls[i].DeactivateMainMenu();
                 }
-                for(int i = 0; i < loadMoreControl.Length; i++)
-                {
+                for(int i = 0; i < loadMoreControl.Length; i++) {
                     loadMoreControl[i].gameObject.SetActive(true);
                     loadMoreControl[i].SetAsStandalone();
                 }
+            }
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+            // On Mobile platforms and WebGL, when no bundled world found, we will try to open a default world
+            else if(bundledWorldNum == 0 && defaultWorldFound){
+                OpenWorld(WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + ".a3w", MainMenuControl.Disabled);
             }
 #endif
         }

@@ -12,6 +12,7 @@ public class WorldObjects : MonoBehaviour
     public UnityObjectParser parser;
 
     public static string SCENE_GRAPH_LIBRARY_NAME = "SceneGraphLibrary";
+    public static string DEFAULT_BUNDLED_WORLD_NAME = "DefaultBundledWorld";
     
     void Awake()
     {
