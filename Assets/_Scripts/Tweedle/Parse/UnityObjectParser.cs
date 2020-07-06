@@ -251,10 +251,14 @@ namespace Alice.Tweedle.Parse
              * ON PC PLATFORM: remain on the main menu
              * ON ANDROID/WebGL: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
              */
-            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
-            FileInfo[] files = dir.GetFiles("*.a3w");
+            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath),
+                dirAutoload = new DirectoryInfo(Application.streamingAssetsPath + "/Autoload");
+            FileInfo[] files = dir.GetFiles("*.a3w"),
+                filesAutoload = dirAutoload.GetFiles("*.a3w");
+
+
             bool sceneGraphLibFound = false, defaultWorldFound = false;
-            int bundledWorldNum;
+            //int bundledWorldNum;
 
             for(int i = 0; i < files.Length; ++i) {
                 if(files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w")) {
@@ -262,22 +266,24 @@ namespace Alice.Tweedle.Parse
                 }
                 else if(files[i].Name.Contains(WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + ".a3w")) {
                     defaultWorldFound = true;
-                }  
-            }
-
-            // How many worlds are bundled in the StreamingAssets folder except SceneGraphLibrary and DefaultWorld
-            bundledWorldNum = files.Length - (sceneGraphLibFound ? 1 : 0) - (defaultWorldFound ? 1 : 0);
-
-            if(bundledWorldNum == 1) { // Only one world is bundled, auto load that world
-                for(int i = 0; i < files.Length; i++) {
-                    if(!files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w")
-                        && !files[i].Name.Contains(WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + ".a3w")) {
-                        loadingScreen.fader.alpha = 1f;
-                        OpenWorld(files[i].FullName, MainMenuControl.Disabled);
-                    }
                 }
             }
-            else if(bundledWorldNum > 1) { // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
+
+            //// How many worlds are bundled in the StreamingAssets folder except SceneGraphLibrary and DefaultWorld
+            //bundledWorldNum = files.Length - (sceneGraphLibFound ? 1 : 0) - (defaultWorldFound ? 1 : 0);
+
+            if(filesAutoload.Length == 1) { // Only one world is bundled, auto load that world
+                //for(int i = 0; i < files.Length; i++) {
+                //    if(!files[i].Name.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w")
+                //        && !files[i].Name.Contains(WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + ".a3w")) {
+                //        loadingScreen.fader.alpha = 1f;
+                //        OpenWorld(files[i].FullName, MainMenuControl.Disabled);
+                //    }
+                //}
+                loadingScreen.fader.alpha = 1f;
+                OpenWorld(filesAutoload[0].FullName, MainMenuControl.Disabled);
+            }
+            else if(filesAutoload.Length > 1) { // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
                 for(int i = 0; i < menuControls.Length; i++) {
                     menuControls[i].DeactivateMainMenu();
                 }
@@ -288,7 +294,7 @@ namespace Alice.Tweedle.Parse
             }
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
             // On Mobile platforms and WebGL, when no bundled world found, we will try to open a default world
-            else if(bundledWorldNum == 0 && defaultWorldFound){
+            else if(filesAutoload.Length == 0){
                 OpenWorld(WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + ".a3w", MainMenuControl.Disabled);
             }
 #endif
