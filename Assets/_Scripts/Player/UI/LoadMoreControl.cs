@@ -91,7 +91,7 @@ public class LoadMoreControl : MonoBehaviour
         List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
         recentWorldsData.Clear();
 
-        DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
+        DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath + "/Autoload");
         FileInfo[] files = dir.GetFiles("*.a3w");
         for(int i = 0; i < files.Length; i++)
         {
