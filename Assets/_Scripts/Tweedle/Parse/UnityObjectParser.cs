@@ -109,7 +109,7 @@ namespace Alice.Tweedle.Parse
          
         public void OpenWorld(string fileName = "", MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
 
-#if UNITY_ANDROID || UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
 
             Routine.Start(loadStreamingAsset(fileName));
 #else
