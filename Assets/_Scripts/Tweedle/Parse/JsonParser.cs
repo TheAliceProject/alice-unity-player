@@ -120,7 +120,7 @@ namespace Alice.Tweedle.Parse
 
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
-#if UNITY_ANDROID || UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
                         ParseZipFile(m_System, libraryStream);                     
 #else
                         ParseZipFile(m_System, libRef.path.fullPath);
