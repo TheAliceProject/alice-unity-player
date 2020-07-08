@@ -244,10 +244,10 @@ namespace Alice.Tweedle.Parse
             }
 
             /*
-             * The StreamingAssets folder should by default contain two world files: SceneGraphLigrary.a3w and DefaultBundledWorld.a3w
-             * If there are more worlds bundled in this folder, the code bellow will try to open them(if there is a single one)
+             * The StreamingAssets/Default folder should by default contain two world files: SceneGraphLigrary.a3w and DefaultBundledWorld.a3w
+             * If there are some worlds bundled in StreamingAssets folder, the code bellow will try to open them(if there is a single one)
              * or to list them in a menu(multiple bundled), waiting for a choice.
-             * If no other worlds found, 
+             * If no worlds found, 
              * ON PC PLATFORM: remain on the main menu
              * ON ANDROID/WebGL: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
              */
