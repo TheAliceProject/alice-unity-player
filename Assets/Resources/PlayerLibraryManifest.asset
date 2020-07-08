@@ -15,7 +15,7 @@ MonoBehaviour:
   PlayerLibraryVersion: 1.0-beta.8
   m_BuiltInLibraries:
   - path:
-      relativePath: SceneGraphLibrary.a3w
+      relativePath: Default/SceneGraphLibrary.a3w
     identifier:
       name: SceneGraphLibrary
       version: 0.14
