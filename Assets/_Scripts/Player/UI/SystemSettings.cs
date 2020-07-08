@@ -86,7 +86,9 @@ public class SystemSettings : ScriptableObject {
     private void ApplyScreenState()
     {
         // Set resolution and fullscreen
+#if !UNITY_ANDROID
         Screen.SetResolution(_dimensions.Width, _dimensions.Height, IsFullScreen());
+#endif
     }
 
     public bool IsFullScreen()
