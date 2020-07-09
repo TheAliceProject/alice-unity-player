@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using Alice.Tweedle.Parse;
 
@@ -11,6 +9,6 @@ public class CreditsControl : MonoBehaviour
     void Start()
     {
         if (versionString)
-            versionString.text = string.Format("Player Ver {0}\nLibrary Ver {1}", PlayerLibraryManifest.Instance.PlayerLibraryVersion, PlayerLibraryManifest.Instance.GetLibraryVersion());
+            versionString.text = string.Format("Player {0}\nCompatible with Alice {1}", PlayerLibraryManifest.Instance.playerVersion, PlayerLibraryManifest.Instance.aliceVersion);
     }
 }

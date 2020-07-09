@@ -79,7 +79,7 @@ namespace Alice.Tweedle.Parse
             Manifest asset = JsonUtility.FromJson<Manifest>(inManifestJson);
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
-            ParsePrerequisites(asset.prerequisites);
+            ParsePrerequisites(asset);
 
             ProjectType t = asset.Identifier.Type;
             switch (t)
@@ -112,22 +112,24 @@ namespace Alice.Tweedle.Parse
             return asset;
         }
 
-        private void ParsePrerequisites(List<ProjectIdentifier> prerequisites)
-        {
-            for (int i = 0; i < prerequisites.Count; i++)
-            {
-                if (!m_System.LoadedFiles.Contains(prerequisites[i])) {
+        private void ParsePrerequisites(Manifest manifest) {
+            var prerequisites = manifest.prerequisites;
+            foreach (var t in prerequisites) {
+                if (!m_System.LoadedFiles.Contains(t)) {
 
                     PlayerLibraryReference libRef;
-                    if (PlayerLibraryManifest.Instance.TryGetLibrary(prerequisites[i], out libRef)) {
+                    if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef)) {
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
                         ParseZipFile(m_System, libraryStream);                     
 #else
                         ParseZipFile(m_System, libRef.path.fullPath);
 #endif
-                    }
-                    else {
-                        throw new TweedleVersionException("Could not find prerequisite " + prerequisites[i].name, WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(), WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + prerequisites[i].version);
+                    } else {
+                        throw new TweedleVersionException("Could not find prerequisite " + t.name,
+                            WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
+                            WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + t.version,
+                            PlayerLibraryManifest.Instance.aliceVersion,
+                            manifest.provenance.aliceVersion);
                     }
                 }
             }

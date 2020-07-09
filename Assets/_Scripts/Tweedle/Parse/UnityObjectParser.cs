@@ -160,13 +160,17 @@ namespace Alice.Tweedle.Parse
             }
             catch (TweedleVersionException tve)
             {
-                NotifyUserOfLoadError("This world is not compatible with this player.\n<b>Player:</b>\n   " +
-                                  tve.ExpectedVersion + "\n<b>World:</b>\n   " + tve.DiscoveredVersion);
+                NotifyUserOfLoadError(
+                    "Unable to open the world with this player",
+                    "This player is compatible with Alice " + tve.PlayerCompatibleAliceVersion +
+                    "\nThe world was created using Alice " + tve.SourceAliceVersion + 
+                    "\n\nThe player has " + tve.ExpectedVersion + "\nThe world requires " + tve.DiscoveredVersion +
+                    "\n\nTry updating the player.");
                 yield break;
             }
             catch (TweedleParseException tre)
             {
-                NotifyUserOfLoadError("There was a problem reading this world.\n\n" + tre.Message);
+                NotifyUserOfLoadError("Unable to read this world", tre.Message);
                 yield break;
             }
 
@@ -189,14 +193,14 @@ namespace Alice.Tweedle.Parse
             desktopWorldControl.ResumeUserTimescale();
         }
 
-        private void NotifyUserOfLoadError(string message)
+        private void NotifyUserOfLoadError(string title, string message)
         {
             var modalWindow = Instantiate(modalWindowPrefab, mainMenu);
-            modalWindow.SetData("Oops!", message);
+            modalWindow.SetData(title, message);
             if (VRControl.IsLoadedInVR())
             {
                 var modalWindowVr = Instantiate(modalWindowPrefabVR, mainMenuVr);
-                modalWindowVr.SetData("Oops!", message);
+                modalWindowVr.SetData(title, message);
                 // Make sure when one closes, to close the other as well
                 modalWindowVr.LinkWindow(modalWindow);
                 modalWindow.LinkWindow(modalWindowVr);
