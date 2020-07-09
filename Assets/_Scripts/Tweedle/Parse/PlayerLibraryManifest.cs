@@ -25,7 +25,8 @@ namespace Alice.Tweedle.Parse {
                 return "None";
         }
 
-        public string PlayerLibraryVersion = "0.1";
+        public string playerVersion = "0.1";
+        public string aliceVersion = "3.6.0.0";
 
         [SerializeField, UnityEngine.Serialization.FormerlySerializedAs("m_Libraries")]
         private PlayerLibraryReference[] m_BuiltInLibraries = null;
