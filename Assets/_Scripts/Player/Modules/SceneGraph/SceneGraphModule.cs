@@ -408,6 +408,19 @@ namespace Alice.Player.Modules {
             return asyncReturn;
         }
 
+        private static IEnumerator DelayReturnRoutine(AsyncReturn asyncReturn, float delay)
+        {
+            yield return delay;
+            asyncReturn.Return();
+        }
+
+        [PInteropMethod]
+        public static void updateEyesOnChange(TValue eye, TValue person) {
+            var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
+            var eyeJoint = SceneGraph.Current.FindEntity<SGJoint>(eye);
+            entity.OnEyesChanged(eyeJoint);
+        }
+
         #endregion // Other
 
         #region Events

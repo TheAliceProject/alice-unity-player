@@ -25,6 +25,36 @@ namespace Alice.Player.Unity {
         private readonly Dictionary<Renderer, RendererDetails> m_Details = new Dictionary<Renderer, RendererDetails>();
         private readonly List<Transform> m_VehicledList = new List<Transform>();
 
+        // For Sims models, there will be several meshes and the 4th one is the face mesh.
+        private const int faceMeshIdx = 4;
+        private const float
+        sMinEyeU = -0.033f,
+        sMaxEyeU = .04f,
+        sMaxEyeV = .04f,
+        sMinEyeV = -.04f;
+        private const float MAX_EYE_LEFT_RIGHT = 1.0f;
+        private const float MIN_EYE_LEFT_RIGHT = -1.0f;
+        private const float MAX_EYE_UP_DOWN = .4f;
+        private const float MIN_EYE_UP_DOWN = -.4f;
+        private const string leftEyeID = "LEFT_EYE";
+        private const string rightEyeID = "RIGHT_EYE";
+
+        struct UVData
+        {
+            public int idx;
+            public float uVal;
+            public float vVal;
+
+            public UVData(int i, float u, float v) {
+                this.idx = i;
+                this.uVal = u;
+                this.vVal = v;
+            }
+        }
+
+        private List<UVData> leftEyeUVData;
+        private List<UVData> rightEyeUVData;
+
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
                 return;
@@ -154,6 +184,101 @@ namespace Alice.Player.Unity {
                 var details = m_Details[rend];
                 ApplyOpacity(rend, ref details.Blocks, details.Materials);
             }
+        }
+
+        // This method should only be called on Sims models
+        // And when being called, this method updates the uv mapping of the eyes based on the eye joints rotation.
+        public void OnEyesChanged(SGJoint eyeJoint) {
+            if(leftEyeUVData == null || rightEyeUVData == null) {
+                InitEyesUVData();
+            }
+            //m_Renderers[4].gameObject.SetActive(false);
+            List<UVData> curEyeUVData;
+            if(eyeJoint.gameObject.name == leftEyeID) {
+                curEyeUVData = leftEyeUVData;
+            }
+            else if(eyeJoint.gameObject.name == rightEyeID) {
+                curEyeUVData = rightEyeUVData;
+            }
+            else {
+                return;
+            }
+
+            float curEyeLeftRight = eyeJoint.gameObject.transform.localEulerAngles.y;
+            if(curEyeLeftRight > 180) {
+                curEyeLeftRight -= 360;
+            }
+            curEyeLeftRight *= Mathf.Deg2Rad * -1;
+
+            float curEyeUpDown = eyeJoint.gameObject.transform.localEulerAngles.z;
+            if(curEyeUpDown > 180) {
+                curEyeUpDown -= 360;
+            }
+            curEyeUpDown *= Mathf.Deg2Rad;
+
+            float uRange = sMaxEyeU - sMinEyeU;
+            float vRange = sMaxEyeV - sMinEyeV;
+
+            float vOffset = (GetPercentBetween(curEyeLeftRight, MIN_EYE_LEFT_RIGHT, MAX_EYE_LEFT_RIGHT) - .5f) * uRange;
+            float uOffset = (GetPercentBetween(curEyeUpDown, MIN_EYE_UP_DOWN, MAX_EYE_UP_DOWN) - .5f) * vRange;
+
+            Mesh mesh = m_Renderers[faceMeshIdx].GetComponent<SkinnedMeshRenderer>().sharedMesh;
+            Vector2[] uvs = mesh.uv;
+            for(int i = 0; i < curEyeUVData.Count; ++i) {
+                Vector2 curUV = uvs[curEyeUVData[i].idx];
+                curUV.x = curEyeUVData[i].uVal + vOffset;
+                curUV.y = curEyeUVData[i].vVal + uOffset;
+                uvs[curEyeUVData[i].idx] = curUV;
+            }
+            mesh.uv = uvs;
+        }
+
+        float GetPercentBetween(float val, float min, float max) {
+            if(val < min) {
+                return 0;
+            }
+            if(val > max) {
+                return 1;
+            }
+            return (val - min) / (max - min);
+        }
+
+        private void InitEyesUVData() {
+            // UV Data for left eye
+            leftEyeUVData = new List<UVData>();
+            leftEyeUVData.Add(new UVData(136, 0.033740f, 0.910210f));
+            leftEyeUVData.Add(new UVData(137, 0.059278f, 0.894269f));
+            leftEyeUVData.Add(new UVData(138, 0.038978f, 0.954912f));
+            leftEyeUVData.Add(new UVData(175, 0.059942f, 0.790487f));
+            leftEyeUVData.Add(new UVData(176, 0.081780f, 0.816221f));
+            leftEyeUVData.Add(new UVData(177, 0.059278f, 0.856990f));
+            leftEyeUVData.Add(new UVData(178, 0.081502f, 0.918293f));
+            leftEyeUVData.Add(new UVData(179, 0.091173f, 0.876598f));
+            leftEyeUVData.Add(new UVData(180, 0.035157f, 0.837395f));
+
+            // UV Data for right eye
+            rightEyeUVData = new List<UVData>();
+            rightEyeUVData.Add(new UVData(181, 0.059278f, 0.856462f));
+            rightEyeUVData.Add(new UVData(182, 0.091993f, 0.874778f));
+            rightEyeUVData.Add(new UVData(183, 0.059278f, 0.895116f));
+            rightEyeUVData.Add(new UVData(184, 0.082230f, 0.935699f));
+            rightEyeUVData.Add(new UVData(185, 0.081954f, 0.834003f));
+            rightEyeUVData.Add(new UVData(186, 0.033548f, 0.841771f));
+            rightEyeUVData.Add(new UVData(187, 0.038860f, 0.796880f));
+            rightEyeUVData.Add(new UVData(188, 0.059558f, 0.960270f));
+            rightEyeUVData.Add(new UVData(189, 0.034869f, 0.913973f));
+        }
+
+        // For test ONLY
+        private void Update() {
+            //if(Input.GetKeyDown(KeyCode.J)) {
+            //    GameObject leftEye = GameObject.Find("LEFT_EYE");
+            //    OnEyesChanged(leftEye.GetComponent<SGJoint>());
+            //}
+            //if(Input.GetKeyDown(KeyCode.K)) {
+            //    GameObject rightEye = GameObject.Find("RIGHT_EYE");
+            //    OnEyesChanged(rightEye.GetComponent<SGJoint>());
+            //}
         }
 
         public SGJoint LinkJoint(TValue inOwner, string inName) {
