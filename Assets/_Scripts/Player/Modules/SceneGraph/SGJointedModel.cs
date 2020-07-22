@@ -26,7 +26,7 @@ namespace Alice.Player.Unity {
         private readonly List<Transform> m_VehicledList = new List<Transform>();
 
         // For Sims models, there will be several meshes and the 4th one is the face mesh.
-        private const int faceMeshIdx = 4;
+        private int faceMeshIdx = -1;
         private const float
         sMinEyeU = -0.033f,
         sMaxEyeU = .04f,
@@ -192,6 +192,10 @@ namespace Alice.Player.Unity {
             if(leftEyeUVData == null || rightEyeUVData == null) {
                 InitEyesUVData();
             }
+            if(faceMeshIdx < 0) {
+                Debug.LogError("OnEyesChanged: No proper mesh found.");
+                return;
+            }
             //m_Renderers[4].gameObject.SetActive(false);
             List<UVData> curEyeUVData;
             if(eyeJoint.gameObject.name == leftEyeID) {
@@ -267,19 +271,35 @@ namespace Alice.Player.Unity {
             rightEyeUVData.Add(new UVData(187, 0.038860f, 0.796880f));
             rightEyeUVData.Add(new UVData(188, 0.059558f, 0.960270f));
             rightEyeUVData.Add(new UVData(189, 0.034869f, 0.913973f));
+
+            for(int i = 0; i < m_Renderers.Length; ++i) {
+                Mesh mesh = m_Renderers[i].GetComponent<SkinnedMeshRenderer>().sharedMesh;
+                Vector2[] uvs = mesh.uv;
+                if(leftEyeUVData[0].idx >= uvs.Length || rightEyeUVData[0].idx >= uvs.Length) {
+                    continue;
+                }
+                if(Mathf.Approximately(uvs[leftEyeUVData[0].idx].x, leftEyeUVData[0].uVal)
+                    && Mathf.Approximately(uvs[leftEyeUVData[0].idx].y, leftEyeUVData[0].vVal)
+                    && Mathf.Approximately(uvs[rightEyeUVData[0].idx].x, rightEyeUVData[0].uVal)
+                    && Mathf.Approximately(uvs[rightEyeUVData[0].idx].y, rightEyeUVData[0].vVal)){
+                    faceMeshIdx = i;
+                    break;
+                }
+            }
         }
 
+
         // For test ONLY
-        private void Update() {
-            //if(Input.GetKeyDown(KeyCode.J)) {
-            //    GameObject leftEye = GameObject.Find("LEFT_EYE");
-            //    OnEyesChanged(leftEye.GetComponent<SGJoint>());
-            //}
-            //if(Input.GetKeyDown(KeyCode.K)) {
-            //    GameObject rightEye = GameObject.Find("RIGHT_EYE");
-            //    OnEyesChanged(rightEye.GetComponent<SGJoint>());
-            //}
-        }
+        //private void Update() {
+        //    if(Input.GetKeyDown(KeyCode.J)) {
+        //        GameObject leftEye = GameObject.Find("LEFT_EYE");
+        //        OnEyesChanged(leftEye.GetComponent<SGJoint>());
+        //    }
+        //    if(Input.GetKeyDown(KeyCode.K)) {
+        //        GameObject rightEye = GameObject.Find("RIGHT_EYE");
+        //        OnEyesChanged(rightEye.GetComponent<SGJoint>());
+        //    }
+        //}
 
         public SGJoint LinkJoint(TValue inOwner, string inName) {
             var bone = FindInHierarchy(m_ModelTransform, inName);
