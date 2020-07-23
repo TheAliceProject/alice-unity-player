@@ -35,7 +35,7 @@ namespace Alice.Player.Unity {
         private const float MAX_EYE_LEFT_RIGHT = 1.0f;
         private const float MIN_EYE_LEFT_RIGHT = -1.0f;
         private const float MAX_EYE_UP_DOWN = .4f;
-        private const float MIN_EYE_UP_DOWN = -.4f;
+        private const float MIN_EYE_UP_DOWN = -0.4f;
         private const string leftEyeID = "LEFT_EYE";
         private const string rightEyeID = "RIGHT_EYE";
 
@@ -196,7 +196,6 @@ namespace Alice.Player.Unity {
                 Debug.LogError("OnEyesChanged: No proper mesh found.");
                 return;
             }
-            //m_Renderers[4].gameObject.SetActive(false);
             List<UVData> curEyeUVData;
             if(eyeJoint.gameObject.name == leftEyeID) {
                 curEyeUVData = leftEyeUVData;
@@ -212,19 +211,21 @@ namespace Alice.Player.Unity {
             if(curEyeLeftRight > 180) {
                 curEyeLeftRight -= 360;
             }
+            curEyeLeftRight = Mathf.Clamp(curEyeLeftRight, -90, 90);
             curEyeLeftRight *= Mathf.Deg2Rad * -1;
 
-            float curEyeUpDown = eyeJoint.gameObject.transform.localEulerAngles.z;
+            float curEyeUpDown = eyeJoint.gameObject.transform.localEulerAngles.x;
             if(curEyeUpDown > 180) {
                 curEyeUpDown -= 360;
             }
-            curEyeUpDown *= Mathf.Deg2Rad;
+            curEyeUpDown = Mathf.Clamp(curEyeUpDown, -90, 90);
+            curEyeUpDown *= Mathf.Deg2Rad * -1;
 
             float uRange = sMaxEyeU - sMinEyeU;
             float vRange = sMaxEyeV - sMinEyeV;
 
-            float vOffset = (GetPercentBetween(curEyeLeftRight, MIN_EYE_LEFT_RIGHT, MAX_EYE_LEFT_RIGHT) - .5f) * uRange;
-            float uOffset = (GetPercentBetween(curEyeUpDown, MIN_EYE_UP_DOWN, MAX_EYE_UP_DOWN) - .5f) * vRange;
+            float uOffset = (GetPercentBetween(curEyeLeftRight, MIN_EYE_LEFT_RIGHT, MAX_EYE_LEFT_RIGHT) - .5f) * uRange;
+            float vOffset = (GetPercentBetween(curEyeUpDown, MIN_EYE_UP_DOWN, MAX_EYE_UP_DOWN) - .5f) * vRange;
 
             Mesh mesh = m_Renderers[faceMeshIdx].GetComponent<SkinnedMeshRenderer>().sharedMesh;
             Vector2[] uvs = mesh.uv;
@@ -272,19 +273,67 @@ namespace Alice.Player.Unity {
             rightEyeUVData.Add(new UVData(188, 0.059558f, 0.960270f));
             rightEyeUVData.Add(new UVData(189, 0.034869f, 0.913973f));
 
-            for(int i = 0; i < m_Renderers.Length; ++i) {
-                Mesh mesh = m_Renderers[i].GetComponent<SkinnedMeshRenderer>().sharedMesh;
+            bool eyeMeshFound = false;
+            int curIdx = 0;
+
+            while(!eyeMeshFound && curIdx < m_Renderers.Length) {
+                Mesh mesh = m_Renderers[curIdx].GetComponent<SkinnedMeshRenderer>().sharedMesh;
                 Vector2[] uvs = mesh.uv;
-                if(leftEyeUVData[0].idx >= uvs.Length || rightEyeUVData[0].idx >= uvs.Length) {
+                // Find a candidate mesh that has one pair match.
+                for(int i = 0; i < uvs.Length; ++i) {
+                    
+                    if(Mathf.Approximately(uvs[i].x, leftEyeUVData[0].uVal) 
+                        && Mathf.Approximately(uvs[i].y, leftEyeUVData[0].vVal)) {
+                        break;
+                    }
+                }
+                // Check the candidate for all the pairs.
+                bool foundAllMatchForLeft = true;
+                for(int j = 0; j < leftEyeUVData.Count; ++j) {
+                    bool foundCurMatch = false;
+                    for(int t = 0; t < uvs.Length; ++t) {
+                        if(Mathf.Approximately(uvs[t].x, leftEyeUVData[j].uVal)
+                        && Mathf.Approximately(uvs[t].y, leftEyeUVData[j].vVal)) {
+                            foundCurMatch = true;
+                            UVData tmp = leftEyeUVData[j];
+                            tmp.idx = t;
+                            leftEyeUVData[j] = tmp;
+                            break;
+                        }
+                    }
+                    if(!foundCurMatch) { // no long a candidate
+                        foundAllMatchForLeft = false;
+                        break;
+                    }
+                }
+                if(!foundAllMatchForLeft) {
+                    curIdx++;
                     continue;
                 }
-                if(Mathf.Approximately(uvs[leftEyeUVData[0].idx].x, leftEyeUVData[0].uVal)
-                    && Mathf.Approximately(uvs[leftEyeUVData[0].idx].y, leftEyeUVData[0].vVal)
-                    && Mathf.Approximately(uvs[rightEyeUVData[0].idx].x, rightEyeUVData[0].uVal)
-                    && Mathf.Approximately(uvs[rightEyeUVData[0].idx].y, rightEyeUVData[0].vVal)){
-                    faceMeshIdx = i;
-                    break;
+                bool foundAllMatchForRight = true;
+                for(int k = 0; k < rightEyeUVData.Count; k++) {
+                    bool foundCurMatch = false;
+                    for(int t = 0; t < uvs.Length; ++t) {
+                        if(Mathf.Approximately(uvs[t].x, rightEyeUVData[k].uVal)
+                        && Mathf.Approximately(uvs[t].y, rightEyeUVData[k].vVal)) {
+                            foundCurMatch = true;
+                            UVData tmp = rightEyeUVData[k];
+                            tmp.idx = t;
+                            rightEyeUVData[k] = tmp;
+                            break;
+                        }
+                    }
+                    if(!foundCurMatch) {
+                        foundAllMatchForRight = false;
+                        break;
+                    }
                 }
+                if(!foundAllMatchForRight) {
+                    curIdx++;
+                    continue;
+                }
+                faceMeshIdx = curIdx;
+                return;
             }
         }
 
