@@ -418,7 +418,7 @@ namespace Alice.Player.Modules {
         public static void updateEyesOnChange(TValue eye, TValue person) {
             var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
             var eyeJoint = SceneGraph.Current.FindEntity<SGJoint>(eye);
-            entity.OnEyesChanged(eyeJoint);
+            entity.WatchEye(eyeJoint);
         }
 
         #endregion // Other
