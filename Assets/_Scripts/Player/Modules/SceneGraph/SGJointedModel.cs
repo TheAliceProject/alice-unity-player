@@ -26,6 +26,9 @@ namespace Alice.Player.Unity {
         private readonly List<Transform> m_VehicledList = new List<Transform>();
         private SGJoint m_LeftEye;
         private SGJoint m_RightEye;
+        private SGJoint m_LeftEyelid;
+        private SGJoint m_RightEyelid;
+        private SGJoint m_Mouth;
         private Mesh m_FaceMesh;
 
         private const float
@@ -41,6 +44,9 @@ namespace Alice.Player.Unity {
         private const float MIN_EYE_UP_DOWN = -0.4f;
         private const string leftEyeID = "LEFT_EYE";
         private const string rightEyeID = "RIGHT_EYE";
+        private const string leftEyelidID = "LEFT_EYELID";
+        private const string rightEyelidID = "RIGHT_EYELID";
+        private const string mouthID = "MOUTH";
 
         struct UVData
         {
@@ -206,13 +212,45 @@ namespace Alice.Player.Unity {
             }
         }
 
+        public void WatchEyelid(SGJoint eyelidJoint) {
+            if (leftEyeUVData == null || rightEyeUVData == null)
+            {
+                InitEyesUVData();
+            }
+
+            switch (eyelidJoint.gameObject.name) {
+                case leftEyelidID:
+                    m_LeftEyelid = eyelidJoint;
+                    break;
+                case rightEyelidID:
+                    m_RightEyelid = eyelidJoint;
+                    break;
+            }
+        }
+
+        public void WatchMouth(SGJoint mouthJoint) {
+            if (leftEyeUVData == null || rightEyeUVData == null)
+            {
+                InitEyesUVData();
+            }
+
+            if (mouthJoint.gameObject.name == mouthID) {
+                m_Mouth = mouthJoint;
+            }
+        }
+
         public void JointChanged(SGJoint sgJoint) {
             if (sgJoint == m_LeftEye) {
                 UpdateCoordinates(sgJoint, leftEyeUVData);
             }   
             if (sgJoint == m_RightEye) {
                 UpdateCoordinates(sgJoint, rightEyeUVData);
-            }   
+            }
+            if (sgJoint == m_LeftEyelid
+                || sgJoint == m_RightEyelid
+                || sgJoint == m_Mouth) {
+                UpdateBlendshapes(sgJoint);
+            }
         }
 
         private void UpdateCoordinates(SGJoint eyeJoint, List<UVData> uvData) {
@@ -235,6 +273,12 @@ namespace Alice.Player.Unity {
                 uvs[uvDatum.idx] = curUV;
             }
             m_FaceMesh.uv = uvs;
+        }
+
+        private void UpdateBlendshapes(SGJoint joint) {
+            if (m_FaceMesh.blendShapeCount <= 0) {
+                Debug.LogError("UpdateBlendshapes: No blendshapes found on face mesh.");
+            }
         }
 
         private static float RestrictAndConvertAngle(float degrees) {
@@ -309,6 +353,8 @@ namespace Alice.Player.Unity {
 
             return true;
         }
+
+
 
         public SGJoint LinkJoint(TValue inOwner, string inName) {
             var bone = FindInHierarchy(m_ModelTransform, inName);

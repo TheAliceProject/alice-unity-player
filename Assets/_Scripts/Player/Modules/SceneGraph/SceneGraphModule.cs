@@ -421,6 +421,19 @@ namespace Alice.Player.Modules {
             entity.WatchEye(eyeJoint);
         }
 
+        [PInteropMethod]
+        public static void updateMouthBlendOnChange(TValue mouth, TValue person) {
+            var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
+            var mouthJoint = SceneGraph.Current.FindEntity<SGJoint>(mouth);
+            entity.WatchMouth(mouthJoint);
+        }
+
+        [PInteropMethod]
+        public static void updateEyelidBlendsOnChange(TValue eyelid, TValue person) {
+            var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
+            var eyelidJoint = SceneGraph.Current.FindEntity<SGJoint>(eyelid);
+            entity.WatchEyelid(eyelidJoint);
+        }
         #endregion // Other
 
         #region Events
