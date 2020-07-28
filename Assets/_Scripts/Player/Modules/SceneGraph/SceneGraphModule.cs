@@ -415,24 +415,16 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static void updateEyesOnChange(TValue eye, TValue person) {
+        public static void trackFacialJoint(TValue joint, TValue person)
+        {
             var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
-            var eyeJoint = SceneGraph.Current.FindEntity<SGJoint>(eye);
-            entity.WatchEye(eyeJoint);
+            var facialJoint = SceneGraph.Current.FindEntity<SGJoint>(joint);
+            entity.StartTrackingJoint(facialJoint);
         }
 
         [PInteropMethod]
-        public static void updateMouthBlendOnChange(TValue mouth, TValue person) {
-            var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
-            var mouthJoint = SceneGraph.Current.FindEntity<SGJoint>(mouth);
-            entity.WatchMouth(mouthJoint);
-        }
-
-        [PInteropMethod]
-        public static void updateEyelidBlendsOnChange(TValue eyelid, TValue person) {
-            var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
-            var eyelidJoint = SceneGraph.Current.FindEntity<SGJoint>(eyelid);
-            entity.WatchEyelid(eyelidJoint);
+        public static void updateEyesOnChange(TValue eye, TValue person) { 
+            
         }
         #endregion // Other
 

@@ -197,45 +197,29 @@ namespace Alice.Player.Unity {
 
         // This method should only be called on Sims models
         // It identifies the eye joint to update the uv mapping of the eyes when that eye joint moves.
-        public void WatchEye(SGJoint eyeJoint) {
-            if (leftEyeUVData == null || rightEyeUVData == null) {
+        public void StartTrackingJoint(SGJoint inputJoint) {
+            if (leftEyeUVData == null || rightEyeUVData == null)
+            {
                 InitEyesUVData();
             }
 
-            switch (eyeJoint.gameObject.name) {
+            switch (inputJoint.gameObject.name)
+            {
                 case leftEyeID:
-                    m_LeftEye = eyeJoint;
+                    m_LeftEye = inputJoint;
                     break;
                 case rightEyeID:
-                    m_RightEye = eyeJoint;
+                    m_RightEye = inputJoint;
                     break;
-            }
-        }
-
-        public void WatchEyelid(SGJoint eyelidJoint) {
-            if (leftEyeUVData == null || rightEyeUVData == null)
-            {
-                InitEyesUVData();
-            }
-
-            switch (eyelidJoint.gameObject.name) {
                 case leftEyelidID:
-                    m_LeftEyelid = eyelidJoint;
+                    m_LeftEyelid = inputJoint;
                     break;
                 case rightEyelidID:
-                    m_RightEyelid = eyelidJoint;
+                    m_RightEyelid = inputJoint;
                     break;
-            }
-        }
-
-        public void WatchMouth(SGJoint mouthJoint) {
-            if (leftEyeUVData == null || rightEyeUVData == null)
-            {
-                InitEyesUVData();
-            }
-
-            if (mouthJoint.gameObject.name == mouthID) {
-                m_Mouth = mouthJoint;
+                case mouthID:
+                    m_Mouth = inputJoint;
+                    break;
             }
         }
 
@@ -276,7 +260,10 @@ namespace Alice.Player.Unity {
         }
 
         private void UpdateBlendshapes(SGJoint joint) {
-            if (m_FaceMesh.blendShapeCount <= 0) {
+            if (m_FaceMesh == null){
+                Debug.LogError("WatchEye: No face mesh found.");
+                return;
+            }else if (m_FaceMesh.blendShapeCount <= 0) {
                 Debug.LogError("UpdateBlendshapes: No blendshapes found on face mesh.");
             }
         }
