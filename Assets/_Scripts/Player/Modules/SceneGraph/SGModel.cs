@@ -85,10 +85,9 @@ namespace Alice.Player.Unity {
             return bounds;
         }
 
-        public Bounds GetBoundsInWorldSpace(bool inDynamic)
-        {
-            Bounds bounds = GetBounds(inDynamic);
-            bounds.center = this.cachedTransform.position + new UnityEngine.Vector3(0f, GetSize(false).y / 2f, 0f);
+        public Bounds GetBoundsInWorldSpace(bool inDynamic) {
+            var bounds = GetBounds(inDynamic);
+            bounds.center += cachedTransform.position;
             return bounds;
         }
 
