@@ -42,9 +42,10 @@ namespace Alice.Player.Unity {
                     return;
                 }
             }
+            var sinceLastFire = new Duration(lastFireTime);
             lastFireTime = Time.time;
             AsyncReturn callReturn;
-            callReturn = listener.Call(new Duration(lastFireTime));
+            callReturn = listener.Call(sinceLastFire);
             callActive = true;
             callReturn.OnReturn(() => {
                 returnedCall();
