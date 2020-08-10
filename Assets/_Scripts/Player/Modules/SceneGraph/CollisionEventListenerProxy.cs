@@ -78,29 +78,11 @@ namespace Alice.Player.Unity {
         public SGEntity entity2;
 
         private int numOverlaps;
-        private bool entity1HasBounds = false;
-        private bool entity2HasBounds = false;
-        private Bounds bounds1;
-        private Bounds bounds2;
         public OverlappingPair(SGEntity ent1, SGEntity ent2, bool isEnter = false)
         {
             entity1 = ent1;
             entity2 = ent2;
             numOverlaps = isEnter ? 1 : 0;
-
-            if (entity1 is SGModel)
-            {
-                var sgModel = (SGModel)entity1;
-                bounds1 = sgModel.GetBounds(true);
-                entity1HasBounds = true;
-            }
-
-            if (entity2 is SGModel)
-            {
-                var sgModel = (SGModel)entity2;
-                bounds2 = sgModel.GetBounds(true);
-                entity2HasBounds = true;
-            }
         }
 
         public bool ContainsBoth(SGEntity ent1, SGEntity ent2)
@@ -115,29 +97,26 @@ namespace Alice.Player.Unity {
 
         public float GetDistance()
         {
-            UnityEngine.Vector3 point1, point2;
-            if(entity1HasBounds){
-                var sgModel = (SGModel)entity1;
-                bounds1 = sgModel.GetBoundsInWorldSpace(true);
-                point1 = bounds1.ClosestPoint(entity2.transform.position);
+            Vector3 point1, point2;
+            var center1 = entity1.transform.position;
+            var center2 = entity2.transform.position;
+            if (entity1 is SGModel sgModel1) {
+                point1 = sgModel1.GetBoundsInWorldSpace(true).ClosestPoint(center2);
+            } else {
+                point1 = center1;
             }
-            else{
-                point1 = entity1.transform.position;
-            }
-                
-
-            if (entity2HasBounds){
-                var sgModel = (SGModel)entity2;
-                bounds2 = sgModel.GetBoundsInWorldSpace(true);
-                point2 = bounds2.ClosestPoint(entity1.transform.position);
-            }
-            else{
-                point2 = entity2.transform.position;
+            if (entity2 is SGModel sgModel) {
+                point2 = sgModel.GetBoundsInWorldSpace(true).ClosestPoint(center1);
+            } else {
+                point2 = center2;
             }
 
+            var isIntersecting = Vector3.Distance(point1, center2) < Vector3.Distance(point2, center2)
+                                 && Vector3.Distance(point2, center1) < Vector3.Distance(point1, center1);
             // Uncomment to see distance visualized
-            //Debug.DrawLine(point1, point2, UnityEngine.Color.red, 0.5f);
-            return UnityEngine.Vector3.Distance(point1, point2);
+            // Debug.DrawLine(point1, point2, isIntersecting ? Color.blue : Color.red, 0.5f);
+            var distance = Vector3.Distance(point1, point2);
+            return isIntersecting ? -distance : distance;
         }
 
         public bool IsEnter()
