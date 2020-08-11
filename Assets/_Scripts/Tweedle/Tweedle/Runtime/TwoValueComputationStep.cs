@@ -29,7 +29,7 @@ namespace Alice.Tweedle.VM
             this.body = body;
         }
 
-        protected void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
+        protected virtual void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
         {
             var evalStep = exp.AsStep(scope);
             var storeStep = new ValueOperationStep(callStack, scope, handler);
