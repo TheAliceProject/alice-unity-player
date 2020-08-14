@@ -56,5 +56,11 @@ namespace Alice.Player.Unity {
             base.OnPaintChanged();
             ApplyPaint(m_GroundBacksideRenderer, ref m_GroundBacksidePropertyBlock);
         }
+
+        protected override void OnOpacityChanged()
+        {
+            base.OnOpacityChanged();
+            ApplyOpacity(m_GroundBacksideRenderer, ref m_GroundBacksidePropertyBlock);
+        }
     }
 }
