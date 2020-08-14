@@ -28,7 +28,7 @@ namespace Alice.Player.Unity {
 
             Transform  floorTransform;
             MeshFilter  floorFilter;
-            CreateModelObject(SceneGraph.Current?.InternalResources?.GroundMesh, OpaqueMaterial, m_ModelTransform, out floorTransform, out m_FloorRenderer, out floorFilter);
+            CreateModelObject(SceneGraph.Current?.InternalResources?.GroundMesh, TransparentMaterial, m_ModelTransform, out floorTransform, out m_FloorRenderer, out floorFilter);
 
             GetPropertyBlock(m_FloorRenderer, ref m_FloorPropertyBlock);
             m_FloorPropertyBlock.SetVector("_MainTex_ST", new Vector4(-10,10,0,0));
@@ -36,7 +36,7 @@ namespace Alice.Player.Unity {
 
             Transform  ceilingTransform;
             MeshFilter  ceilingFilter;
-            CreateModelObject(SceneGraph.Current?.InternalResources?.GroundMesh, OpaqueMaterial, m_ModelTransform, out ceilingTransform, out m_CeilingRenderer, out ceilingFilter);
+            CreateModelObject(SceneGraph.Current?.InternalResources?.GroundMesh, TransparentMaterial, m_ModelTransform, out ceilingTransform, out m_CeilingRenderer, out ceilingFilter);
 
             GetPropertyBlock(m_CeilingRenderer, ref m_CeilingPropertyBlock);
             m_CeilingPropertyBlock.SetVector("_MainTex_ST", new Vector4(10,10,0,0));
