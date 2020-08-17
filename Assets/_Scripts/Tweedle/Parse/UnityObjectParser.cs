@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Collections;
 using Alice.Player.Modules;
 using BeauRoutine;
+using ICSharpCode.SharpZipLib.Zip;
 using SFB;
 using UnityEngine.Networking;
 
@@ -157,6 +158,11 @@ namespace Alice.Tweedle.Parse
             try
             {
                 JsonParser.ParseZipFile(m_System, path);
+            }
+            catch (ZipException ze)
+            {
+                NotifyUserOfLoadError("Unable to read this file", ze.Message);
+                yield break;
             }
             catch (TweedleVersionException tve)
             {
