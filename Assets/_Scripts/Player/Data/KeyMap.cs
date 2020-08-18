@@ -125,6 +125,7 @@ public static class KeyMap
     {
         {Key.RIGHT_PRIMARY, Key.A},
         {Key.RIGHT_SECONDARY, Key.B},
+        {Key.RIGHT_TRIGGER, Key.SLASH},
         {Key.LEFT_PRIMARY, Key.X},
         {Key.LEFT_SECONDARY, Key.Y},
         {Key.LEFT_TRIGGER, Key.SPACE},
