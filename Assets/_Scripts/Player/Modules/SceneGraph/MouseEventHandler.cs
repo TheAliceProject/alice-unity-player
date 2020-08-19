@@ -120,7 +120,7 @@ namespace Alice.Player.Unity
 
             // After this point do nothing if mouse button is not held
             if(XRSettings.enabled){
-                if(Input.GetAxis("RightTrigger") < VRControl.TRIGGER_SENSITIVITY && Input.GetAxis("LeftTrigger") < VRControl.TRIGGER_SENSITIVITY)
+                if(Input.GetAxis("RightTrigger") < VRControl.TRIGGER_SENSITIVITY)
                     return;
             }
             else{
@@ -220,10 +220,10 @@ namespace Alice.Player.Unity
 
 
         private bool IsMouseOrTriggerDown(){
-            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.IsRightTriggerDown() || VRControl.IsLeftTriggerDown();
+            return Input.GetKeyDown(KeyCode.Mouse0) || VRControl.IsRightTriggerDown();
         }
         private bool IsMouseOrTriggerUp(){
-            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.IsRightTriggerUp() || VRControl.IsLeftTriggerUp();
+            return Input.GetKeyUp(KeyCode.Mouse0) || VRControl.IsRightTriggerUp();
         }
         private bool IsVerticalModifierHeld(){
             return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
