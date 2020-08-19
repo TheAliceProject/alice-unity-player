@@ -214,7 +214,6 @@ public class VRControl : MonoBehaviour
         {
             lastLeftTrigger = true;
             leftTriggerDown = true;
-            lastControllerClicked = rig.leftController;
         }
         else if (lastLeftTrigger && Input.GetAxis("LeftTrigger") < TRIGGER_SENSITIVITY)
         {
