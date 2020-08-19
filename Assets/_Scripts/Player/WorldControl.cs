@@ -88,16 +88,21 @@ public class WorldControl : MonoBehaviour
 
     private void ShowMainMenu()
     {
-        Destroy(GameObject.Find("SceneGraph"));
+        var sceneGraph = GameObject.Find("SceneGraph");
+        var destroyedScene = (sceneGraph != null);
+        Destroy(sceneGraph);
+
         WorldObjects.GetIntroCanvas().SetActive(true);
         if (XRSettings.enabled)
         {
             WorldObjects.GetVRObjects().SetActive(true);
         }
 
-        Camera newCamera = Instantiate(CameraPrefab);
-        newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
-        newCamera.tag = "MainCamera";
+        if (destroyedScene) {
+            var newCamera = Instantiate(CameraPrefab);
+            newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
+            newCamera.tag = "MainCamera";
+        }
         Time.timeScale = currentTimeScale = 1f;
         paused = false;
         RenderSettings.skybox = skyboxMaterial;

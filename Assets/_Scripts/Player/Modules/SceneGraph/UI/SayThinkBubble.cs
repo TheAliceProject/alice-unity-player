@@ -82,11 +82,19 @@ namespace Alice.Player.Unity {
         }
 
         private IEnumerator SayThinkRoutine(RectTransform trans, SGEntity entity, float duration){
+            float startEndAnimationTime;
+            if (duration < 1.0f)
+            {
+                startEndAnimationTime = 0.2f * duration;
+            }
+            else {
+                startEndAnimationTime = 0.2f;
+            }
             bubbleText.transform.SetScale(1f, Axis.X);
             tailRoutine.Replace(this, AlignTailRoutine(entity));
-            yield return (trans as Transform).ScaleTo(new UnityEngine.Vector3(1f, 1f, 1f), 0.25f, Axis.XYZ);
-            yield return duration;
-            yield return trans.ScaleTo(0f, 0.25f, Axis.XY);
+            yield return (trans as Transform).ScaleTo(new UnityEngine.Vector3(1f, 1f, 1f), startEndAnimationTime, Axis.XYZ);
+            yield return duration - 2 * startEndAnimationTime;
+            yield return trans.ScaleTo(0f, startEndAnimationTime, Axis.XY);
             sayThinkControlRef.DestroyBubble(this);
         }
 
