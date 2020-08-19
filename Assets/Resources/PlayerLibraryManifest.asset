@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0614eab3cb65ee2438c20b7ee73218cd, type: 3}
   m_Name: PlayerLibraryManifest
   m_EditorClassIdentifier: 
-  playerVersion: 1.0-beta.9
+  playerVersion: 1.0-beta.10
   aliceVersion: 3.6.0.0
   m_BuiltInLibraries:
   - path:
