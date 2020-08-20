@@ -12,14 +12,15 @@ namespace Alice.Tweedle.VM {
         }
 
         internal override void Execute() {
-            if (initialValue.Type.Equals(TBuiltInTypes.TEXT_STRING)) {
-                result = initialValue;
-            } else {
+            if (initialValue.Type.IsTweedleDefinedType()) {
                 new MethodCallExpression(initialValue, "toString", new NamedArgument[0])
                     .AsStep(scope)
                     .OnCompletionNotify(next)
                     .Queue();
+            } else {
+                result = TValue.FromString(initialValue.Type.ConvertToString(ref initialValue));
             }
+
             base.Execute();
         }
     }
