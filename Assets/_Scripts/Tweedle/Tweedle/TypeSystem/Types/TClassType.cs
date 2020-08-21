@@ -37,6 +37,8 @@ namespace Alice.Tweedle
 
         public override bool IsReferenceType() { return true; }
 
+        public override bool IsTweedleDefinedType() { return true; }
+
         #region Lifecycle
 
         public override TValue Instantiate()
