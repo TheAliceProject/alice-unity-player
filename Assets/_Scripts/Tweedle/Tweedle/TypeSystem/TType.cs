@@ -57,6 +57,8 @@ namespace Alice.Tweedle
 
         public abstract bool IsReferenceType();
 
+        public virtual bool IsTweedleDefinedType() { return false; }
+
         public virtual TField[] Fields(ExecutionScope inScope, ref TValue inValue) { return TField.EMPTY_ARRAY; }
         public virtual TMethod[] Methods(ExecutionScope inScope, ref TValue inValue) { return TMethod.EMPTY_ARRAY; }
         public virtual TMethod[] Constructors(ExecutionScope inScope) { return TMethod.EMPTY_ARRAY; }
