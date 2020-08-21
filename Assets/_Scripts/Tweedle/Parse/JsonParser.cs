@@ -302,8 +302,10 @@ namespace Alice.Tweedle.Parse
 
                     var cacheId = inManifest.description.name + "/" + model.name;
 
-                    SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, meshRef.boundingBox.AsBounds(),
-                        inManifest.jointBounds);
+                    var meshBounds = meshRef.boundingBox.AsBounds();
+                    var bounds = meshBounds.min.Equals(Vector3.zero) && meshBounds.max.Equals(Vector3.zero) ?
+                        inManifest.boundingBox.AsBounds() : meshBounds;
+                    SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, bounds, inManifest.jointBounds);
                 }
             }
         }
