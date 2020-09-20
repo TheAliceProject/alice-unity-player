@@ -17,6 +17,7 @@ namespace Alice.Player.Unity {
         public bool Add(string inIdentifier, GameObject inModel, Bounds inBounds, List<JointBounds> jointBounds) {
             var success = base.Add(inIdentifier, new ModelSpec(inModel, inBounds, jointBounds));
             NormalizeWeightsInModel(inModel);
+            //Debug.Log(inModel.GetComponent<MeshRenderer>().materials[2].color.a);
             if (success && m_Root) {
                 inModel.transform.SetParent(m_Root, false);
             }

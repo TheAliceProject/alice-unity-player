@@ -1654,6 +1654,7 @@ namespace TriLib
             var metallicTexture = materialData.MetallicInfoLoaded ? LoadTextureFromFile(materialData.MetallicPath, materialData.Name, options, materialData.MetallicEmbeddedTextureData, materialData.MetallicWrapMode, ref dummy, false) : null;
 
             var hasAlpha = hasAlphaChannelOnTextures || materialData.AlphaLoaded && materialData.Alpha < 1f;
+            Debug.Log(hasAlpha);
             var hasSpecular = materialData.SpecularColorLoaded || !string.IsNullOrEmpty(materialData.SpecularPath);
 
             var material = LoadMaterial(materialData.Name, options, hasAlpha, hasSpecular);
@@ -1716,11 +1717,14 @@ namespace TriLib
             if ((options == null || options.ApplyDiffuseColor) && materialData.DiffuseColorLoaded)
             {
                 var color = materialData.DiffuseColor;
+                Debug.Log(options.ApplyColorAlpha);
+                Debug.Log(options.DisableAlphaMaterials);
                 if ((options == null || options.ApplyColorAlpha && !options.DisableAlphaMaterials) && materialData.AlphaLoaded)
                 {
                     color.a = materialData.Alpha;
                 }
                 material.SetColor("_Color", color);
+                Debug.Log("Alpha" + color.a);
             }
             if ((options == null || options.ApplyEmissionColor) && materialData.EmissionColorLoaded)
             {
@@ -2513,6 +2517,12 @@ namespace TriLib
                     if (AssimpInterop.aiMaterial_GetDiffuse(material, out colorDiffuse))
                     {
                         materialData.DiffuseColor = colorDiffuse;
+                        if (colorDiffuse.a < 1.0)
+                        {
+                            materialData.AlphaLoaded = true;
+                            materialData.Alpha = colorDiffuse.a;
+                        }
+                        Debug.Log(materialData.DiffuseColor.a);
                         diffuseColorLoaded = true;
                     }
 #if TRILIB_OUTPUT_MESSAGES

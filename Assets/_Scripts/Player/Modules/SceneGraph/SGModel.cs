@@ -11,6 +11,7 @@ namespace Alice.Player.Unity {
     public abstract class SGModel : SGTransformableEntity {
 
         static public  void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
+            Debug.Log("create");
             var go = new GameObject("Model");
             outFilter = go.AddComponent<MeshFilter>();
             outFilter.mesh = inMesh;
@@ -155,9 +156,14 @@ namespace Alice.Player.Unity {
                 inRenderer.enabled = true;
             }
 
-            if (m_CachedOpacity < 0.996f && inRenderer.sharedMaterial != TransparentMaterial) {
+            Debug.Log("ioPropertyBlock.GetColor" + ioPropertyBlock.GetColor("_Color").a);
+
+            if ((m_CachedOpacity < 0.996f || ioPropertyBlock.GetColor("_Color").a < 0.996f) && inRenderer.sharedMaterial != TransparentMaterial)
+            {
                 inRenderer.sharedMaterial = TransparentMaterial;
-            } else if (m_CachedOpacity >= 0.996f && inRenderer.sharedMaterial != OpaqueMaterial) {
+            }
+            else if (!(m_CachedOpacity < 0.996f || ioPropertyBlock.GetColor("_Color").a < 0.996f) && inRenderer.sharedMaterial != OpaqueMaterial)
+            {
                 inRenderer.sharedMaterial = OpaqueMaterial;
             }
 
