@@ -40,9 +40,17 @@ namespace Alice.Player.Unity {
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
+                    Debug.LogError(m_Renderers[i].sharedMaterial.color);
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
+
+                    Debug.LogError("m_Renderers[i].sharedMaterial.color" + m_Renderers[i].sharedMaterial.color);
+                    m_PropertyBlocks[i].SetColor(COLOR_SHADER_NAME, m_Renderers[i].sharedMaterial.color);
+
                     if (m_Renderers[i].sharedMaterial.mainTexture != null)
+                    {
                         m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
+                    }
+                        
                     else
                         Debug.LogWarningFormat("SetTexture '{0}' is null for {1}", MAIN_TEXTURE_SHADER_NAME, model);
 

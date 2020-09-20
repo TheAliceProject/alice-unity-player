@@ -2,6 +2,8 @@ using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using System;
+using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Alice.Player.Primitives
 {
@@ -98,7 +100,11 @@ namespace Alice.Player.Primitives
         public override PaintTypeID PaintType { get { return PaintTypeID.Color; } }
 
         public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName) {
-            inPropertyBlock.SetColor("_Color", new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, (float)Value.A*inOpacity));
+            Debug.Log(string.Format("Color {0} {1} {2} {3} {4}",
+                1, (float)Value.G, (float)Value.B, (float)Value.A, inOpacity));
+            Debug.Log(inPropertyBlock.GetColor("_Color").a);
+            if (inPropertyBlock.GetColor("_Color").a >= 0.996f)
+                inPropertyBlock.SetColor("_Color", new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, (float)Value.A*inOpacity));
             inPropertyBlock.SetTexture(inTextureName, UnityEngine.Texture2D.whiteTexture);
         }
 
