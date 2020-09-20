@@ -12,6 +12,7 @@ namespace Alice.Player.Unity {
         private MaterialPropertyBlock[] m_PropertyBlocks;
         private Dictionary<Renderer, Mesh> bakedMeshes = new Dictionary<Renderer, Mesh>();
         public List<Transform> m_vehicledList = new List<Transform>();
+        private List<float> m_originalAlphas = new List<float>();
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -33,6 +34,7 @@ namespace Alice.Player.Unity {
                 
                 if (oldTransform) {
                     CopySkeleton(oldTransform, m_ModelTransform);
+                    m_originalAlphas.Clear();
                     Destroy(oldTransform.gameObject);
                 }
 
@@ -45,6 +47,7 @@ namespace Alice.Player.Unity {
 
                     Debug.LogError("m_Renderers[i].sharedMaterial.color" + m_Renderers[i].sharedMaterial.color);
                     m_PropertyBlocks[i].SetColor(COLOR_SHADER_NAME, m_Renderers[i].sharedMaterial.color);
+                    m_originalAlphas.Add(m_Renderers[i].sharedMaterial.color.a);
 
                     if (m_Renderers[i].sharedMaterial.mainTexture != null)
                     {
@@ -62,7 +65,7 @@ namespace Alice.Player.Unity {
                         bakedMeshes[skinnedRenderer] = new Mesh();
                         skinnedRenderer.BakeMesh(bakedMeshes[skinnedRenderer]);
                     }
-                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
+                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i]);
                 }
                 CacheMeshBounds();
             }
@@ -102,13 +105,14 @@ namespace Alice.Player.Unity {
 
         protected override void OnPaintChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
+                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i]);
             }
         }
 
         protected override void OnOpacityChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
+                Debug.Log("JointedModel::OnOpacityChanged" +  m_originalAlphas[i]);
+                ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i]);
             }
         }
 
