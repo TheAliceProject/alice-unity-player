@@ -34,12 +34,12 @@ namespace Alice.Player.Unity {
                 
                 if (oldTransform) {
                     CopySkeleton(oldTransform, m_ModelTransform);
-                    m_originalAlphas.Clear();
                     Destroy(oldTransform.gameObject);
                 }
 
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
+                m_originalAlphas = new List<float>(m_Renderers.Length);
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     Debug.LogError(m_Renderers[i].sharedMaterial.color);
