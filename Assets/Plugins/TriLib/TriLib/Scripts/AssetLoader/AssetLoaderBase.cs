@@ -1860,7 +1860,6 @@ namespace TriLib
         protected virtual Texture2D LoadTextureFromFile(string path, string name, AssetLoaderOptions options, EmbeddedTextureData embeddedTextureData, TextureWrapMode textureWrapMode, ref bool hasAlphaChannel, bool isNormalMap, bool checkAlphaChannel = false)
         {
             Texture2D texture = null;
-            Debug.Log("Texture2D LoadTextureFromFile" + checkAlphaChannel);
             if (LoadedTextures.ContainsKey(path))
             {
                 texture = LoadedTextures[path];

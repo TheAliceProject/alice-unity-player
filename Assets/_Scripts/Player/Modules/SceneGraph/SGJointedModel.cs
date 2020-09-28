@@ -41,6 +41,7 @@ namespace Alice.Player.Unity {
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
                 m_originalAlphas = new List<float>(m_Renderers.Length);
+                m_hasAlphaTextures = new List<bool>(m_Renderers.Length);
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
