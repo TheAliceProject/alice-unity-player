@@ -1654,7 +1654,6 @@ namespace TriLib
             var metallicTexture = materialData.MetallicInfoLoaded ? LoadTextureFromFile(materialData.MetallicPath, materialData.Name, options, materialData.MetallicEmbeddedTextureData, materialData.MetallicWrapMode, ref dummy, false) : null;
 
             var hasAlpha = hasAlphaChannelOnTextures || materialData.AlphaLoaded && materialData.Alpha < 1f;
-            Debug.Log(hasAlpha);
             var hasSpecular = materialData.SpecularColorLoaded || !string.IsNullOrEmpty(materialData.SpecularPath);
 
             var material = LoadMaterial(materialData.Name, options, hasAlpha, hasSpecular);
@@ -1717,14 +1716,19 @@ namespace TriLib
             if ((options == null || options.ApplyDiffuseColor) && materialData.DiffuseColorLoaded)
             {
                 var color = materialData.DiffuseColor;
-                Debug.Log(options.ApplyColorAlpha);
-                Debug.Log(options.DisableAlphaMaterials);
                 if ((options == null || options.ApplyColorAlpha && !options.DisableAlphaMaterials) && materialData.AlphaLoaded)
                 {
                     color.a = materialData.Alpha;
                 }
+                // Since the texture could not be set as readable during run time
+                // the alpha channel has to be checked here and stored in color
+                // Assuming that imported material will not have a diffuse color with alpha equals zero
+                // Also assuming the material would not have a overall opacity value with a translucent texture
+                else if (hasAlphaChannelOnTextures)
+                {
+                    color.a = 0;
+                }
                 material.SetColor("_Color", color);
-                Debug.Log("Alpha" + color.a);
             }
             if ((options == null || options.ApplyEmissionColor) && materialData.EmissionColorLoaded)
             {
@@ -1856,6 +1860,7 @@ namespace TriLib
         protected virtual Texture2D LoadTextureFromFile(string path, string name, AssetLoaderOptions options, EmbeddedTextureData embeddedTextureData, TextureWrapMode textureWrapMode, ref bool hasAlphaChannel, bool isNormalMap, bool checkAlphaChannel = false)
         {
             Texture2D texture = null;
+            Debug.Log("Texture2D LoadTextureFromFile" + checkAlphaChannel);
             if (LoadedTextures.ContainsKey(path))
             {
                 texture = LoadedTextures[path];
@@ -2522,7 +2527,6 @@ namespace TriLib
                             materialData.AlphaLoaded = true;
                             materialData.Alpha = colorDiffuse.a;
                         }
-                        Debug.Log(materialData.DiffuseColor.a);
                         diffuseColorLoaded = true;
                     }
 #if TRILIB_OUTPUT_MESSAGES

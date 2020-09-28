@@ -11,7 +11,6 @@ namespace Alice.Player.Unity {
     public abstract class SGModel : SGTransformableEntity {
 
         static public  void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
-            Debug.Log("create");
             var go = new GameObject("Model");
             outFilter = go.AddComponent<MeshFilter>();
             outFilter.mesh = inMesh;
@@ -137,18 +136,16 @@ namespace Alice.Player.Unity {
 
         protected abstract void OnOpacityChanged();
 
-        protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, float originalAlpha = 1.0f) {
-            Debug.Log("ApplyOpacity" + originalAlpha);
-            ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlock, originalAlpha);
+        protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, float originalAlpha = 1.0f, bool hasAlphaTextures = false) {
+            ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlock, originalAlpha, hasAlphaTextures);
         }
 
-        protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, float originalAlpha = 1.0f)
+        protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, float originalAlpha = 1.0f, bool hasAlphaTextures = false)
         {
-            Debug.Log("ApplyCurrentPaintAndOpacity" + originalAlpha);
-            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, originalAlpha);
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, originalAlpha, hasAlphaTextures);
         }
 
-        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, float originalAlpha = 1.0f) {
+        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, float originalAlpha = 1.0f, bool hasAlphaTextures = false) {
             if (m_CachedOpacity < 0.004f) {
                 if (inRenderer.enabled) {
                     inRenderer.enabled = false;
@@ -158,9 +155,12 @@ namespace Alice.Player.Unity {
                 inRenderer.enabled = true;
             }
 
-            Debug.Log("ioPropertyBlock.GetColor" + originalAlpha);
-
-            if ((m_CachedOpacity < 0.996f || originalAlpha < 0.996f) && inRenderer.sharedMaterial != TransparentMaterial)
+            if (hasAlphaTextures && inRenderer.sharedMaterial != TransparentMaterial)
+            {
+                inRenderer.sharedMaterial = TransparentMaterial;
+            }
+            else if (hasAlphaTextures) { }
+            else if ((m_CachedOpacity < 0.996f || originalAlpha < 0.996f) && inRenderer.sharedMaterial != TransparentMaterial)
             {
                 inRenderer.sharedMaterial = TransparentMaterial;
             }

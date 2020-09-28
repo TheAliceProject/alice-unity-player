@@ -176,6 +176,7 @@ namespace TriLib
                     texture2D.Compress(textureCompression == TextureCompression.HighQuality);
                 }
             }
+            Debug.Log("Texture2D ProcessTextureData" + checkAlphaChannel);
             if (checkAlphaChannel)
             {
                 hasAlphaChannel = false;
@@ -185,6 +186,7 @@ namespace TriLib
                     hasAlphaChannel = true;
                     break;
                 }
+                Debug.Log("Texture2D ProcessTextureData" + hasAlphaChannel);
             }
             return texture2D;
         }
