@@ -2,8 +2,6 @@ using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using System;
-using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace Alice.Player.Primitives
 {
