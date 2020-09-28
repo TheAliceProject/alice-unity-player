@@ -100,9 +100,6 @@ namespace Alice.Player.Primitives
         public override PaintTypeID PaintType { get { return PaintTypeID.Color; } }
 
         public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName, float originalAlpha = 1.0f) {
-            Debug.Log(string.Format("Color {0} {1} {2} {3} {4}",
-                1, (float)Value.G, (float)Value.B, (float)Value.A, originalAlpha));
-            Debug.Log(inPropertyBlock.GetColor("_Color").a);
             if (originalAlpha >= 0.996f)
                 inPropertyBlock.SetColor("_Color", new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, (float)Value.A*inOpacity));
             else

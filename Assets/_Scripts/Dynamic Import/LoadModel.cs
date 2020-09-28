@@ -83,7 +83,6 @@ public class LoadModel : MonoBehaviour {
             { //Initializes our Asset Loader.
                 var assetLoaderOptions = ScriptableObject.CreateInstance<AssetLoaderOptions>(); //Creates an Asset Loader Options object.
                 assetLoaderOptions.AutoPlayAnimations = false;
-                Debug.Log(fileName);
 				var filename = Path.Combine(Path.GetFullPath("./Assets/Models"), fileName); //Combines our current directory with our model filename "turtle1.b3d" and generates the full model path.
 				GameObject loadedModel = assetLoader.LoadFromFile(filename, assetLoaderOptions); //Loads our model.
                 NormalizeWeightsInModel(loadedModel);

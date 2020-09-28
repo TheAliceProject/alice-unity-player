@@ -13,6 +13,7 @@ namespace Alice.Player.Unity {
         private Dictionary<Renderer, Mesh> bakedMeshes = new Dictionary<Renderer, Mesh>();
         public List<Transform> m_vehicledList = new List<Transform>();
         private List<float> m_originalAlphas = new List<float>();
+        private List<bool> m_hasAlphaTextures = new List<bool>();
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -42,13 +43,21 @@ namespace Alice.Player.Unity {
                 m_originalAlphas = new List<float>(m_Renderers.Length);
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
-                    Debug.LogError(m_Renderers[i].sharedMaterial.color);
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
 
-                    Debug.LogError("m_Renderers[i].sharedMaterial.color" + m_Renderers[i].sharedMaterial.color);
                     m_PropertyBlocks[i].SetColor(COLOR_SHADER_NAME, m_Renderers[i].sharedMaterial.color);
-                    m_originalAlphas.Add(m_Renderers[i].sharedMaterial.color.a);
 
+                    if(m_Renderers[i].sharedMaterial.color.a == 0)
+                    {
+                        m_hasAlphaTextures.Add(true);
+                        m_originalAlphas.Add(1);
+                    }
+                    else
+                    {
+                        m_hasAlphaTextures.Add(false);
+                        m_originalAlphas.Add(m_Renderers[i].sharedMaterial.color.a);
+                    }
+                    
                     if (m_Renderers[i].sharedMaterial.mainTexture != null)
                     {
                         m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
@@ -65,7 +74,7 @@ namespace Alice.Player.Unity {
                         bakedMeshes[skinnedRenderer] = new Mesh();
                         skinnedRenderer.BakeMesh(bakedMeshes[skinnedRenderer]);
                     }
-                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i]);
+                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i], m_hasAlphaTextures[i]);
                 }
                 CacheMeshBounds();
             }
@@ -111,8 +120,7 @@ namespace Alice.Player.Unity {
 
         protected override void OnOpacityChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                Debug.Log("JointedModel::OnOpacityChanged" +  m_originalAlphas[i]);
-                ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i]);
+                ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i], m_hasAlphaTextures[i]);
             }
         }
 
