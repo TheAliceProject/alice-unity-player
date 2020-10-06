@@ -21,10 +21,14 @@ MonoBehaviour:
     type: 2}
   m_TransparentTorusMaterial: {fileID: 2100000, guid: 822416802eafe2e4caec2ed8e17fe047,
     type: 2}
-  m_BoxMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  m_SphereMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  m_CylinderMesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
-  m_ConeMesh: {fileID: 4300000, guid: bce710460135b6549a4f01a69997fa8d, type: 3}
+  m_BoxMesh: {fileID: 4068373912626513877, guid: fd076030c9943314b9e1a6b8fb7c0f6a,
+    type: 3}
+  m_SphereMesh: {fileID: 2540817853737639666, guid: 016b9b1e684efce4bb64116d0e7a1e7d,
+    type: 3}
+  m_CylinderMesh: {fileID: 6099800089077584851, guid: 7f094db071079174da28bdaad3745852,
+    type: 3}
+  m_ConeMesh: {fileID: -5076798556035486163, guid: d8f999ef6b68c9145ac5ed0738a2ac7d,
+    type: 3}
   m_TorusMesh: {fileID: 4300000, guid: f43e91053deeef64abf47f88f662c01c, type: 3}
   m_BillboardMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   m_DiscMesh: {fileID: 4300004, guid: feec5fa165df30647b74424b455bcce6, type: 3}
