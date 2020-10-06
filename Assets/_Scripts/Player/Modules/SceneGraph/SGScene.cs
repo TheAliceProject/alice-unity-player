@@ -71,6 +71,7 @@ namespace Alice.Player.Unity {
             m_HorizontalLightC = CreateLight(0, 240f, k_AboveLightIntensity, false);
 
             m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
+            m_BelowLight.renderMode = LightRenderMode.ForcePixel;
 
             RenderSettings.fogMode = FogMode.Exponential;
 
