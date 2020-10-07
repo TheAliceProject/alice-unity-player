@@ -27,7 +27,7 @@ namespace Alice.Player.Primitives
         #endregion //Interop Interfaces
         
         public abstract PaintTypeID PaintType { get; }
-        public abstract void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName);
+        public abstract void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName, float originalAlpha = 1.0f);
         
 
     }
