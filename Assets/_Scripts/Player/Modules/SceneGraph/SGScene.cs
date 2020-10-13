@@ -66,6 +66,11 @@ namespace Alice.Player.Unity {
             m_AboveLightA = CreateLight(k_AboveLightPitch, 0f, k_AboveLightIntensity, false);
             m_AboveLightB = CreateLight(k_AboveLightPitch, 120f, k_AboveLightIntensity, false);
             m_AboveLightC = CreateLight(k_AboveLightPitch, 240f, k_AboveLightIntensity, false);
+
+            m_AboveLightA.shadows = LightShadows.Soft;
+            m_AboveLightB.shadows = LightShadows.Soft;
+            m_AboveLightC.shadows = LightShadows.Soft;
+
             m_HorizontalLightA = CreateLight(0, 0f, k_AboveLightIntensity, false);
             m_HorizontalLightB = CreateLight(0, 120f, k_AboveLightIntensity, false);
             m_HorizontalLightC = CreateLight(0, 240f, k_AboveLightIntensity, false);
