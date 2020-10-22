@@ -63,14 +63,15 @@ namespace Alice.Player.Unity {
         protected override void Awake() {
             base.Awake();
 
-            m_AboveLightA = CreateLight(k_AboveLightPitch, 0f, k_AboveLightIntensity, false);
-            m_AboveLightB = CreateLight(k_AboveLightPitch, 120f, k_AboveLightIntensity, false);
-            m_AboveLightC = CreateLight(k_AboveLightPitch, 240f, k_AboveLightIntensity, false);
+            m_AboveLightA = CreateLight(k_AboveLightPitch, 0f, k_AboveLightIntensity, true);
+            m_AboveLightB = CreateLight(k_AboveLightPitch, 120f, k_AboveLightIntensity, true);
+            m_AboveLightC = CreateLight(k_AboveLightPitch, 240f, k_AboveLightIntensity, true);
             m_HorizontalLightA = CreateLight(0, 0f, k_AboveLightIntensity, false);
             m_HorizontalLightB = CreateLight(0, 120f, k_AboveLightIntensity, false);
             m_HorizontalLightC = CreateLight(0, 240f, k_AboveLightIntensity, false);
 
             m_BelowLight = CreateLight(k_BelowLightPitch, 0, k_BelowLightIntensity, false);
+            m_BelowLight.renderMode = LightRenderMode.ForcePixel;
 
             RenderSettings.fogMode = FogMode.Exponential;
 
@@ -125,7 +126,7 @@ namespace Alice.Player.Unity {
             var light = new GameObject("Light").AddComponent<Light>();
             light.transform.parent = cachedTransform;
             light.type = LightType.Directional;
-            light.shadows = useShadows ? LightShadows.Hard : LightShadows.None;
+            light.shadows = useShadows ? LightShadows.Soft : LightShadows.None;
             light.shadowStrength = 0.8f;
             light.transform.localRotation = UnityEngine.Quaternion.Euler(inPitch, inHeading, 0);
             light.intensity = intensity;
