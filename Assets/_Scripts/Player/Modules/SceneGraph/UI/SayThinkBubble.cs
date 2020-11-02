@@ -102,7 +102,11 @@ namespace Alice.Player.Unity {
             while(true){
                 if(speechOrigin == null)
                     GetMouthPosition(entity.cachedTransform);
-                UnityEngine.Vector3 objectPos = speechOrigin.position;
+                UnityEngine.Vector3 objectPos = UnityEngine.Vector3.zero;
+                if (isSay)
+                    objectPos = GetSpeechBubbleOffset(entity.cachedTransform);
+                else
+                    objectPos = GetThoughtBubbleOffset(entity.cachedTransform);
                 float tailRotation = 0f;
                 float tailLength = 0f;
 
@@ -110,13 +114,13 @@ namespace Alice.Player.Unity {
                     var screenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
                     UnityEngine.Vector2 objectScreenPoint;
                     RectTransformUtility.ScreenPointToLocalPointInRectangle((this.transform as RectTransform), screenPoint, Camera.main, out objectScreenPoint);
-                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 10f;
+                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position);
                     tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
                 }
                 else{
                     bubbleText.fontSize = fontSizeUnscaled * (Screen.width / FONT_WIDTH_SCALE);
                     var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
-                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position) - 10f; // -10f for some buffer space away from mouth 
+                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position); // -10f for some buffer space away from mouth 
                     tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
                 }
 
@@ -171,6 +175,91 @@ namespace Alice.Player.Unity {
                     queue.Enqueue(t);
             }
             return null;
+        }
+
+        private UnityEngine.Vector3 GetThoughtBubbleOffset(Transform parent)
+        {
+            UnityEngine.Vector3 topOffset = UnityEngine.Vector3.zero;
+            Transform mouthJoint = FindDeepChild(parent, "LOWER_LIP");
+            if (mouthJoint == null)
+            {
+                mouthJoint = FindDeepChild(parent, "MOUTH");
+            }
+
+            Transform headJoint = FindDeepChild(parent, "HEAD");
+
+            // Jointed model
+            if (mouthJoint != null && headJoint != null)
+            {
+                float estimatedBoundingSphereRaduis = UnityEngine.Vector3.Distance(headJoint.position, mouthJoint.position);
+                topOffset = headJoint.localPosition + new UnityEngine.Vector3(0, 1.5f, 0) * estimatedBoundingSphereRaduis;
+                topOffset = headJoint.TransformPoint(topOffset);
+                return topOffset;
+            }
+
+            // Shapes and models without head or mouths
+            GameObject mesh = parent.GetComponentInChildren<MeshFilter>().gameObject;
+            // Use box collider since it is aligned with local axises
+            bool hasBoxCollider = (mesh.GetComponent<BoxCollider>() != null);
+            if (!hasBoxCollider)
+            {
+                mesh.AddComponent<BoxCollider>();
+            }
+            UnityEngine.Vector3 center = mesh.GetComponent<BoxCollider>().center;
+            UnityEngine.Vector3 size = mesh.GetComponent<BoxCollider>().size;
+            UnityEngine.Vector3 min = center - size * 0.5f;
+            UnityEngine.Vector3 max = center + size * 0.5f;
+            Debug.Log(center);
+            Debug.Log(size);
+            if (!hasBoxCollider)
+            {
+                Destroy(mesh.GetComponent<BoxCollider>());
+            }
+
+            // Assume the pivot of the model is on the center
+            topOffset.y = max.y; 
+            topOffset.x = (max.x + min.x) / 2;
+            topOffset.z = (max.z + min.z) / 2;
+            topOffset = parent.TransformPoint(topOffset);
+            return topOffset;
+        }
+
+        private UnityEngine.Vector3 GetSpeechBubbleOffset(Transform parent)
+        {
+            UnityEngine.Vector3 topOffset = UnityEngine.Vector3.zero;
+            Transform mouthJoint = FindDeepChild(parent, "LOWER_LIP");
+
+            // Jointed model
+            if (mouthJoint != null)
+            {
+                return mouthJoint.position;
+            }
+
+            // Shapes and models without head or mouths
+            GameObject mesh = parent.GetComponentInChildren<MeshFilter>().gameObject;
+            // Use box collider since it is aligned with local axises
+            bool hasBoxCollider = (mesh.GetComponent<BoxCollider>() != null);
+            if (!hasBoxCollider)
+            {
+                mesh.AddComponent<BoxCollider>();
+            }
+            UnityEngine.Vector3 center = mesh.GetComponent<BoxCollider>().center;
+            UnityEngine.Vector3 size = mesh.GetComponent<BoxCollider>().size;
+            UnityEngine.Vector3 min = center - size * 0.5f;
+            UnityEngine.Vector3 max = center + size * 0.5f;
+            Debug.Log(center);
+            Debug.Log(size);
+            if (!hasBoxCollider)
+            {
+                Destroy(mesh.GetComponent<BoxCollider>());
+            }
+
+            // Assume the pivot of the model is on the center
+            topOffset.z = min.z;
+            topOffset.y = (max.y + min.y) / 2;
+            topOffset.x = (max.x + min.x) / 2;
+            topOffset = parent.TransformPoint(topOffset);
+            return topOffset;
         }
     }
 }
