@@ -3227,6 +3227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4812a58f720a1641bb335022eae77aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickableObjects: []
 --- !u!65 &512833167
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6850,6 +6851,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4812a58f720a1641bb335022eae77aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickableObjects: []
 --- !u!65 &1026919491
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8006,6 +8008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4812a58f720a1641bb335022eae77aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickableObjects: []
 --- !u!1 &1343364850 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 1d2bd4c05bf9b2d4e9a2c4412c8d18d2,
@@ -8024,6 +8027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4812a58f720a1641bb335022eae77aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickableObjects: []
 --- !u!65 &1343364852
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9462,6 +9466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4812a58f720a1641bb335022eae77aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickableObjects: []
 --- !u!65 &1508835877
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10788,6 +10793,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4812a58f720a1641bb335022eae77aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickableObjects: []
 --- !u!65 &1920605635
 BoxCollider:
   m_ObjectHideFlags: 0
