@@ -74,15 +74,30 @@ public class VRRig : MonoBehaviour
 
             RaycastHit hit;
             Ray ray = new Ray(rightController.position, rightController.forward);
-            if (Physics.Raycast(ray, out hit, rightPointerDistance))
+            float rayLength = 0;
+            cursor.SetActive(false);
+            while (Physics.Raycast(ray, out hit, rightPointerDistance))
             {
-                rightPointerDistance = hit.distance;
-                cursor.SetActive(true);
-                cursor.transform.position = rightController.position + rightController.forward * rightPointerDistance;
-            }
-            else
-            {
-                cursor.SetActive(false);
+                Debug.Log(hit.transform.name);
+                rayLength += hit.distance;
+                if (rayLength >= rightPointerDistance)
+                {
+                    break;
+                }
+                // go through transparent objects
+                if (hit.transform.gameObject.GetComponent<MeshRenderer>() == null
+                    || hit.transform.gameObject.GetComponent<MeshRenderer>().enabled == false)
+                {
+                    ray = new Ray(hit.point + rightController.forward * 0.01f, rightController.forward);
+                }
+                // opaque or semitransparent
+                else
+                {
+                    cursor.SetActive(true);
+                    rightPointerDistance = rayLength;
+                    cursor.transform.position = rightController.position + rightController.forward * rightPointerDistance;
+                    break;
+                }
             }
 
             for (int i = 0; i < 2; i++)
