@@ -1635,7 +1635,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   anchor: {fileID: 448281127}
   isVR: 0
-  handMenu: {fileID: 4483987869849470762}
 --- !u!1 &287430660 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 671725708447182247, guid: efee6d1d4d595d046a09b11eab729e4c,
@@ -11434,12 +11433,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.44, y: 1.73}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &4483987869849470762 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8817699455269626681, guid: 57a99d88f3e3d924795a033752aa67d5,
-    type: 3}
-  m_PrefabInstance: {fileID: 1656904014}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5961744192449638642
 PrefabInstance:
   m_ObjectHideFlags: 0

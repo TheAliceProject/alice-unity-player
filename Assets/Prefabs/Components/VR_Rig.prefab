@@ -871,7 +871,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3520005908811345824}
   - component: {fileID: 7811638191363421627}
-  - component: {fileID: 1374248727}
   m_Layer: 0
   m_Name: VR_Rig
   m_TagString: Untagged
@@ -917,22 +916,6 @@ MonoBehaviour:
   rightRend: {fileID: 7277373018887493053}
   leftRend: {fileID: 6756112286272519854}
   vrMenu: {fileID: 8817699455269626681}
---- !u!54 &1374248727
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3520005908811345825}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &3520005909066690961
 GameObject:
   m_ObjectHideFlags: 0
@@ -2255,15 +2238,15 @@ MeshRenderer:
     type: 3}
   m_PrefabInstance: {fileID: 2143262611}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5006512736895909001 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: a3264d2dc6df31140aa3b8cc2adddcf8,
-    type: 3}
-  m_PrefabInstance: {fileID: 2143262611}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8296172667635027610 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: a3264d2dc6df31140aa3b8cc2adddcf8,
+    type: 3}
+  m_PrefabInstance: {fileID: 2143262611}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5006512736895909001 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: a3264d2dc6df31140aa3b8cc2adddcf8,
     type: 3}
   m_PrefabInstance: {fileID: 2143262611}
   m_PrefabAsset: {fileID: 0}

@@ -21,13 +21,12 @@ namespace Alice.Player.Unity {
                     if (Camera.main != null)
                         Destroy(Camera.main.gameObject);
                     m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
-                    GameObject.FindObjectOfType<UISlidedown>().handMenu = m_rig.GetComponent<VRRig>().vrMenu;
                     Camera = m_rig.headCamera;
                     Camera.tag = "MainCamera";
                     if(VRControl.LoadedVRDevice() != VRControl.VRDevice.Vive)
                         m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
                     VRControl.SetRig(m_rig);
-                    SceneGraph.Current.CreateVRCanvas();
+                    // SceneGraph.Current.CreateVRCanvas();
                     vrLoaded = true;
                     routine.Replace(this, CancelOutDefaultVrRotation());
                 }

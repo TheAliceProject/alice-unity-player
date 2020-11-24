@@ -36,14 +36,7 @@ public class WorldControl : MonoBehaviour
 
         mainMenuButton.onClick.AddListener(ShowMainMenu);
 
-        restartButton.onClick.AddListener(() =>
-        {
-            Destroy(GameObject.Find("SceneGraph"));
-            Camera newCamera = Instantiate(CameraPrefab);
-            newCamera.tag = "MainCamera";
-            uISlidedown.ForceSlide(false);
-            WorldObjects.GetParser().ReloadCurrentLevel();
-        });
+        restartButton.onClick.AddListener(RestartWorld);
 
         speedUpButton.onClick.AddListener(() =>
         {
@@ -55,8 +48,7 @@ public class WorldControl : MonoBehaviour
             else{
                 paused = false;
             }
-            Time.timeScale = currentTimeScale;
-            UpdateStatus();
+            ChangeSpeed(currentTimeScale);
         });
 
         slowDownButton.onClick.AddListener(() =>
@@ -65,28 +57,17 @@ public class WorldControl : MonoBehaviour
                 return;
 
             currentTimeScale /= 2f;
-            Time.timeScale = currentTimeScale;
-            UpdateStatus();
+            ChangeSpeed(currentTimeScale);
         });
 
-        pauseButton.onClick.AddListener(() =>
-        {
-            if(paused){
-                Time.timeScale = currentTimeScale;
-            }
-            else{
-                Time.timeScale = 0f;
-            }
-            paused = !paused;
-            UpdateStatus();
-        });
+        pauseButton.onClick.AddListener(PauseGame);
 
         // Disable main menu button when restarting from a bundled world app
         if(isDisabledForThisInstance)
             mainMenuButton.gameObject.SetActive(false);
     }
 
-    private void ShowMainMenu()
+    public void ShowMainMenu()
     {
         var sceneGraph = GameObject.Find("SceneGraph");
         var destroyedScene = (sceneGraph != null);
@@ -107,6 +88,36 @@ public class WorldControl : MonoBehaviour
         paused = false;
         RenderSettings.skybox = skyboxMaterial;
         uISlidedown.ForceSlide(false);
+    }
+
+    public void RestartWorld()
+    {
+        Destroy(GameObject.Find("SceneGraph"));
+        Camera newCamera = Instantiate(CameraPrefab);
+        newCamera.tag = "MainCamera";
+        uISlidedown.ForceSlide(false);
+        WorldObjects.GetParser().ReloadCurrentLevel();
+    }
+
+    public void ChangeSpeed(float timeScale)
+    {
+        currentTimeScale = timeScale;
+        Time.timeScale = currentTimeScale;
+        UpdateStatus();
+    }
+
+    public void PauseGame()
+    {
+        if (paused)
+        {
+            Time.timeScale = currentTimeScale;
+        }
+        else
+        {
+            Time.timeScale = 0f;
+        }
+        paused = !paused;
+        UpdateStatus();
     }
 
     void OnDestroy()
