@@ -21,6 +21,7 @@ namespace Alice.Player.Unity {
                     if (Camera.main != null)
                         Destroy(Camera.main.gameObject);
                     m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
+                    GameObject.FindObjectOfType<UISlidedown>().handMenu = m_rig.GetComponent<VRRig>().vrMenu;
                     Camera = m_rig.headCamera;
                     Camera.tag = "MainCamera";
                     if(VRControl.LoadedVRDevice() != VRControl.VRDevice.Vive)

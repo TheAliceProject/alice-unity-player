@@ -22,6 +22,8 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
 
     private const float moveTime = 0.25f;
     private bool controlsActive = false;
+
+    public GameObject handMenu;
     
     void Update()
     {
@@ -31,7 +33,7 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
             // See https://docs.unity3d.com/Manual/xr_input.html
             if (VRControl.LoadedVRDevice() == VRControl.VRDevice.Vive)
             {
-                if (Input.GetButtonDown("PrimaryLeft"))
+                if (Input.GetButtonDown("PrimaryRight"))
                 {
                     VRSlide();
                 }
@@ -67,7 +69,10 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
     public void ForceSlide(bool on)
     {
         controlsActive = on;
-        m_routine.Replace(this, anchor.AnchorPosTo(on ? GetOnPosition() : GetOffPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut));
+        //if(isVR && handMenu != null)
+        //    handMenu.SetActive(controlsActive);
+        //else
+            m_routine.Replace(this, anchor.AnchorPosTo(on ? GetOnPosition() : GetOffPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut));
     }
 
     public void VRSlide()
