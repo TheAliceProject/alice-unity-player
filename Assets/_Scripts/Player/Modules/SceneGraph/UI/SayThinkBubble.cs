@@ -107,6 +107,7 @@ namespace Alice.Player.Unity {
                     objectPos = GetSpeechBubbleOffset(entity.cachedTransform);
                 else
                     objectPos = GetThoughtBubbleOffset(entity.cachedTransform);
+                Debug.DrawRay(objectPos, UnityEngine.Vector3.forward);
                 float tailRotation = 0f;
                 float tailLength = 0f;
 
@@ -133,14 +134,20 @@ namespace Alice.Player.Unity {
                     tailOutline[0].rectTransform.sizeDelta = tailSizeDelta;
                 }
                 else{
-                    float lastTailPos = 150f;
-                    if(tailPivot.localEulerAngles.z < 35f || (tailPivot.localEulerAngles.z > 145f && tailPivot.localEulerAngles.z < 225f) || tailPivot.localEulerAngles.z > 315f)
-                        lastTailPos = 80f;
-                    for(int i = 0; i < tailOutline.Length; i++){
-                        Vector2 tailPos = tailOutline[i].rectTransform.anchoredPosition;
-                        tailPos.y = -(lastTailPos + ((tailLength * i) / tailOutline.Length));
-                        tailOutline[i].rectTransform.anchoredPosition = tailPos;
+                    var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos);
+                    for (int i = 0; i < tailOutline.Length; i++)
+                    {
+                        Debug.Log(objectScreenPoint);
+                        tailOutline[i].rectTransform.position = tailPivot.position + (objectScreenPoint - tailPivot.position) * ((float)(i + 1) / (float)tailOutline.Length);
                     }
+                    //float lastTailPos = 150f;
+                    //if(tailPivot.localEulerAngles.z < 35f || (tailPivot.localEulerAngles.z > 145f && tailPivot.localEulerAngles.z < 225f) || tailPivot.localEulerAngles.z > 315f)
+                    //    lastTailPos = 80f;
+                    //for(int i = 0; i < tailOutline.Length; i++){
+                    //    Vector2 tailPos = tailOutline[i].rectTransform.anchoredPosition;
+                    //    tailPos.y = -(lastTailPos + ((tailLength * (i + 1)) / tailOutline.Length));
+                    //    tailOutline[i].rectTransform.anchoredPosition = tailPos;
+                    //}
                 }
                 yield return null;
             }
@@ -180,25 +187,67 @@ namespace Alice.Player.Unity {
         private UnityEngine.Vector3 GetThoughtBubbleOffset(Transform parent)
         {
             UnityEngine.Vector3 topOffset = UnityEngine.Vector3.zero;
-            Transform mouthJoint = FindDeepChild(parent, "LOWER_LIP");
-            if (mouthJoint == null)
+
+            // Find the valuable mesh
+            // The biggest skinned mesh
+            // or the whole mesh
+            GameObject mesh = null;
+            SkinnedMeshRenderer maxMesh = parent.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (maxMesh != null)
             {
-                mouthJoint = FindDeepChild(parent, "MOUTH");
+                foreach (SkinnedMeshRenderer smr in parent.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    if (smr.bounds.size.magnitude > maxMesh.bounds.size.magnitude)
+                    {
+                        maxMesh = smr;
+                    }
+                }
+                mesh = maxMesh.gameObject;
             }
+            else if (parent.GetComponentInChildren<MeshFilter>() != null)
+            {
+                mesh = parent.GetComponentInChildren<MeshFilter>().gameObject;
+            }
+            else
+            {
+                mesh = parent.GetComponentInChildren<MeshRenderer>().gameObject;
+            }
+
 
             Transform headJoint = FindDeepChild(parent, "HEAD");
 
             // Jointed model
-            if (mouthJoint != null && headJoint != null)
+            if (headJoint != null)
             {
-                float estimatedBoundingSphereRaduis = UnityEngine.Vector3.Distance(headJoint.position, mouthJoint.position);
-                topOffset = headJoint.localPosition + new UnityEngine.Vector3(0, 1.5f, 0) * estimatedBoundingSphereRaduis;
-                topOffset = headJoint.TransformPoint(topOffset);
-                return topOffset;
+                float estimatedBoundingSphereRaduis = 1.0f;
+                Transform mouthJoint = FindDeepChild(parent, "LOWER_LIP");
+                if (mouthJoint == null)
+                {
+                    mouthJoint = FindDeepChild(parent, "MOUTH");
+                    estimatedBoundingSphereRaduis = UnityEngine.Vector3.Distance(headJoint.position, mouthJoint.position);
+                }
+                
+                topOffset = headJoint.position + new UnityEngine.Vector3(0, 1.5f, 0) * estimatedBoundingSphereRaduis;
+                //topOffset = headJoint.TransformPoint(topOffset);
+                //Debug.Log(parent.name);
+
+                maxMesh.gameObject.AddComponent<MeshCollider>();
+                maxMesh.gameObject.GetComponent<MeshCollider>().sharedMesh = maxMesh.sharedMesh;
+                maxMesh.gameObject.GetComponent<MeshCollider>().convex = true;
+                //Debug.DrawRay(topOffset, -UnityEngine.Vector3.up);
+                //Debug.Break();
+                RaycastHit hit;
+                if (Physics.Raycast(topOffset, -UnityEngine.Vector3.up, out hit, Mathf.Infinity))
+                {
+                    maxMesh.gameObject.GetComponent<MeshCollider>().enabled = false;
+                    return hit.point;
+                }
+                else
+                {
+                    return topOffset;
+                }
             }
 
-            // Shapes and models without head or mouths
-            GameObject mesh = parent.GetComponentInChildren<MeshFilter>().gameObject;
             // Use box collider since it is aligned with local axises
             bool hasBoxCollider = (mesh.GetComponent<BoxCollider>() != null);
             if (!hasBoxCollider)
@@ -235,8 +284,36 @@ namespace Alice.Player.Unity {
                 return mouthJoint.position;
             }
 
-            // Shapes and models without head or mouths
-            GameObject mesh = parent.GetComponentInChildren<MeshFilter>().gameObject;
+            Transform headJoint = FindDeepChild(parent, "HEAD");
+            if (headJoint != null)
+            {
+                return headJoint.position;
+            }
+
+            // Find the valuable mesh
+            // It could be the biggest skinned mesh or the whole mesh
+            GameObject mesh = null;
+            SkinnedMeshRenderer maxMesh = parent.GetComponentInChildren<SkinnedMeshRenderer>();
+            if (maxMesh != null)
+            {
+                foreach (SkinnedMeshRenderer smr in parent.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    if (smr.bounds.size.magnitude > maxMesh.bounds.size.magnitude)
+                    {
+                        maxMesh = smr;
+                    }
+                }
+                mesh = maxMesh.gameObject;
+            }
+            else if (parent.GetComponentInChildren<MeshFilter>() != null)
+            {
+                mesh = parent.GetComponentInChildren<MeshFilter>().gameObject;
+            }
+            else
+            {
+                mesh = parent.GetComponentInChildren<MeshRenderer>().gameObject;
+            }
+
             // Use box collider since it is aligned with local axises
             bool hasBoxCollider = (mesh.GetComponent<BoxCollider>() != null);
             if (!hasBoxCollider)
