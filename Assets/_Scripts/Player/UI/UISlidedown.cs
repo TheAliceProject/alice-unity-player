@@ -31,7 +31,7 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
             // See https://docs.unity3d.com/Manual/xr_input.html
             if (VRControl.LoadedVRDevice() == VRControl.VRDevice.Vive)
             {
-                if (Input.GetButtonDown("PrimaryLeft"))
+                if (Input.GetButtonDown("PrimaryRight"))
                 {
                     VRSlide();
                 }
