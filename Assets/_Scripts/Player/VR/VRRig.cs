@@ -72,33 +72,7 @@ public class VRRig : MonoBehaviour
                 rightPointerDistance = CheckHandRaycasts(rightController);
             }
 
-            RaycastHit hit;
-            Ray ray = new Ray(rightController.position, rightController.forward);
-            float rayLength = 0;
-            cursor.SetActive(false);
-            while (Physics.Raycast(ray, out hit, rightPointerDistance))
-            {
-                Debug.Log(hit.transform.name);
-                rayLength += hit.distance;
-                if (rayLength >= rightPointerDistance)
-                {
-                    break;
-                }
-                // go through transparent objects
-                if (hit.transform.gameObject.GetComponent<MeshRenderer>() == null
-                    || hit.transform.gameObject.GetComponent<MeshRenderer>().enabled == false)
-                {
-                    ray = new Ray(hit.point + rightController.forward * 0.01f, rightController.forward);
-                }
-                // opaque or semitransparent
-                else
-                {
-                    cursor.SetActive(true);
-                    rightPointerDistance = rayLength;
-                    cursor.transform.position = rightController.position + rightController.forward * rightPointerDistance;
-                    break;
-                }
-            }
+            rightPointerDistance = GetPointerDistance(rightPointerDistance);
 
             for (int i = 0; i < 2; i++)
             {
@@ -133,5 +107,37 @@ public class VRRig : MonoBehaviour
         }
 
         return pointerDistance;
+    }
+
+    private float GetPointerDistance(float rightPointerDistance)
+    {
+        RaycastHit hit;
+        Ray ray = new Ray(rightController.position, rightController.forward);
+        float rayLength = 0;
+        cursor.SetActive(false);
+        while (Physics.Raycast(ray, out hit, rightPointerDistance))
+        {
+            rayLength += hit.distance;
+            if (rayLength >= rightPointerDistance)
+            {
+                return rightPointerDistance;
+            }
+            // go through transparent objects
+            if ((hit.transform.gameObject.GetComponent<MeshRenderer>() != null
+                && hit.transform.gameObject.GetComponent<MeshRenderer>().enabled == false)
+                || (hit.transform.gameObject.GetComponent<SkinnedMeshRenderer>() != null
+                && hit.transform.gameObject.GetComponent<SkinnedMeshRenderer>().enabled == false))
+            {
+                ray = new Ray(hit.point + rightController.forward * 0.01f, rightController.forward);
+            }
+            // opaque or semitransparent
+            else
+            {
+                cursor.SetActive(true);
+                cursor.transform.position = rightController.position + rightController.forward * rayLength;
+                return rayLength;
+            }
+        }
+        return rightPointerDistance;
     }
 }
