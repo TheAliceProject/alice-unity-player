@@ -107,7 +107,6 @@ namespace Alice.Player.Unity {
                     objectPos = GetSpeechBubbleOffset(entity.cachedTransform);
                 else
                     objectPos = GetThoughtBubbleOffset(entity.cachedTransform);
-                Debug.DrawRay(objectPos, UnityEngine.Vector3.forward);
                 float tailRotation = 0f;
                 float tailLength = 0f;
 
@@ -121,7 +120,7 @@ namespace Alice.Player.Unity {
                 else{
                     bubbleText.fontSize = fontSizeUnscaled * (Screen.width / FONT_WIDTH_SCALE);
                     var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
-                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position); // -10f for some buffer space away from mouth 
+                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position); 
                     tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
                 }
 
@@ -134,20 +133,13 @@ namespace Alice.Player.Unity {
                     tailOutline[0].rectTransform.sizeDelta = tailSizeDelta;
                 }
                 else{
+                    // Place the tail along the line between object screen position and bubble
+                    // Fix the last node on the head position
                     var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos);
                     for (int i = 0; i < tailOutline.Length; i++)
                     {
-                        Debug.Log(objectScreenPoint);
                         tailOutline[i].rectTransform.position = tailPivot.position + (objectScreenPoint - tailPivot.position) * ((float)(i + 1) / (float)tailOutline.Length);
                     }
-                    //float lastTailPos = 150f;
-                    //if(tailPivot.localEulerAngles.z < 35f || (tailPivot.localEulerAngles.z > 145f && tailPivot.localEulerAngles.z < 225f) || tailPivot.localEulerAngles.z > 315f)
-                    //    lastTailPos = 80f;
-                    //for(int i = 0; i < tailOutline.Length; i++){
-                    //    Vector2 tailPos = tailOutline[i].rectTransform.anchoredPosition;
-                    //    tailPos.y = -(lastTailPos + ((tailLength * (i + 1)) / tailOutline.Length));
-                    //    tailOutline[i].rectTransform.anchoredPosition = tailPos;
-                    //}
                 }
                 yield return null;
             }
@@ -189,30 +181,8 @@ namespace Alice.Player.Unity {
             UnityEngine.Vector3 topOffset = UnityEngine.Vector3.zero;
 
             // Find the valuable mesh
-            // The biggest skinned mesh
-            // or the whole mesh
-            GameObject mesh = null;
-            SkinnedMeshRenderer maxMesh = parent.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (maxMesh != null)
-            {
-                foreach (SkinnedMeshRenderer smr in parent.GetComponentsInChildren<SkinnedMeshRenderer>())
-                {
-                    if (smr.bounds.size.magnitude > maxMesh.bounds.size.magnitude)
-                    {
-                        maxMesh = smr;
-                    }
-                }
-                mesh = maxMesh.gameObject;
-            }
-            else if (parent.GetComponentInChildren<MeshFilter>() != null)
-            {
-                mesh = parent.GetComponentInChildren<MeshFilter>().gameObject;
-            }
-            else
-            {
-                mesh = parent.GetComponentInChildren<MeshRenderer>().gameObject;
-            }
-
+            // The biggest skinned mesh or the whole mesh
+            GameObject mesh = GetMeshObject(parent);
 
             Transform headJoint = FindDeepChild(parent, "HEAD");
 
@@ -228,18 +198,15 @@ namespace Alice.Player.Unity {
                 }
                 
                 topOffset = headJoint.position + new UnityEngine.Vector3(0, 1.5f, 0) * estimatedBoundingSphereRaduis;
-                //topOffset = headJoint.TransformPoint(topOffset);
-                //Debug.Log(parent.name);
 
-                maxMesh.gameObject.AddComponent<MeshCollider>();
-                maxMesh.gameObject.GetComponent<MeshCollider>().sharedMesh = maxMesh.sharedMesh;
-                maxMesh.gameObject.GetComponent<MeshCollider>().convex = true;
-                //Debug.DrawRay(topOffset, -UnityEngine.Vector3.up);
-                //Debug.Break();
+                mesh.AddComponent<MeshCollider>();
+                mesh.GetComponent<MeshCollider>().sharedMesh = mesh.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+                mesh.GetComponent<MeshCollider>().convex = true;
+
                 RaycastHit hit;
                 if (Physics.Raycast(topOffset, -UnityEngine.Vector3.up, out hit, Mathf.Infinity))
                 {
-                    maxMesh.gameObject.GetComponent<MeshCollider>().enabled = false;
+                    mesh.gameObject.GetComponent<MeshCollider>().enabled = false;
                     return hit.point;
                 }
                 else
@@ -248,22 +215,9 @@ namespace Alice.Player.Unity {
                 }
             }
 
-            // Use box collider since it is aligned with local axises
-            bool hasBoxCollider = (mesh.GetComponent<BoxCollider>() != null);
-            if (!hasBoxCollider)
-            {
-                mesh.AddComponent<BoxCollider>();
-            }
-            UnityEngine.Vector3 center = mesh.GetComponent<BoxCollider>().center;
-            UnityEngine.Vector3 size = mesh.GetComponent<BoxCollider>().size;
-            UnityEngine.Vector3 min = center - size * 0.5f;
-            UnityEngine.Vector3 max = center + size * 0.5f;
-            Debug.Log(center);
-            Debug.Log(size);
-            if (!hasBoxCollider)
-            {
-                Destroy(mesh.GetComponent<BoxCollider>());
-            }
+            UnityEngine.Vector3 min = UnityEngine.Vector3.zero;
+            UnityEngine.Vector3 max = UnityEngine.Vector3.zero;
+            GetBoxColliderBound(mesh, ref min, ref max);
 
             // Assume the pivot of the model is on the center
             topOffset.y = max.y; 
@@ -292,6 +246,22 @@ namespace Alice.Player.Unity {
 
             // Find the valuable mesh
             // It could be the biggest skinned mesh or the whole mesh
+            GameObject mesh = GetMeshObject(parent);
+
+            UnityEngine.Vector3 min = UnityEngine.Vector3.zero;
+            UnityEngine.Vector3 max = UnityEngine.Vector3.zero;
+            GetBoxColliderBound(mesh, ref min, ref max);
+
+            // Assume the pivot of the model is on the center
+            topOffset.z = min.z;
+            topOffset.y = (max.y + min.y) / 2;
+            topOffset.x = (max.x + min.x) / 2;
+            topOffset = parent.TransformPoint(topOffset);
+            return topOffset;
+        }
+
+        private GameObject GetMeshObject(Transform parent)
+        {
             GameObject mesh = null;
             SkinnedMeshRenderer maxMesh = parent.GetComponentInChildren<SkinnedMeshRenderer>();
             if (maxMesh != null)
@@ -313,30 +283,25 @@ namespace Alice.Player.Unity {
             {
                 mesh = parent.GetComponentInChildren<MeshRenderer>().gameObject;
             }
+            return mesh;
+        }
 
+        private void GetBoxColliderBound(GameObject meshObject, ref UnityEngine.Vector3 min, ref UnityEngine.Vector3 max)
+        {
             // Use box collider since it is aligned with local axises
-            bool hasBoxCollider = (mesh.GetComponent<BoxCollider>() != null);
+            bool hasBoxCollider = (meshObject.GetComponent<BoxCollider>() != null);
             if (!hasBoxCollider)
             {
-                mesh.AddComponent<BoxCollider>();
+                meshObject.AddComponent<BoxCollider>();
             }
-            UnityEngine.Vector3 center = mesh.GetComponent<BoxCollider>().center;
-            UnityEngine.Vector3 size = mesh.GetComponent<BoxCollider>().size;
-            UnityEngine.Vector3 min = center - size * 0.5f;
-            UnityEngine.Vector3 max = center + size * 0.5f;
-            Debug.Log(center);
-            Debug.Log(size);
+            UnityEngine.Vector3 center = meshObject.GetComponent<BoxCollider>().center;
+            UnityEngine.Vector3 size = meshObject.GetComponent<BoxCollider>().size;
+            min = center - size * 0.5f;
+            max = center + size * 0.5f;
             if (!hasBoxCollider)
             {
-                Destroy(mesh.GetComponent<BoxCollider>());
+                Destroy(meshObject.GetComponent<BoxCollider>());
             }
-
-            // Assume the pivot of the model is on the center
-            topOffset.z = min.z;
-            topOffset.y = (max.y + min.y) / 2;
-            topOffset.x = (max.x + min.x) / 2;
-            topOffset = parent.TransformPoint(topOffset);
-            return topOffset;
         }
     }
 }
