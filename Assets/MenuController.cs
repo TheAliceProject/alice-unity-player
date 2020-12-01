@@ -7,13 +7,11 @@ public class MenuController : MonoBehaviour
     public Color blueColor;
     public Color grayColor;
 
-    public Texture playTexture;
-    public Texture pauseTexture;
-    public Texture speedTexture;
-    public Texture fastTexture;
-    public Texture slowTexture;
-    public Texture replayTexture;
-    public Texture homeTexture;
+    public GameObject playTexture;
+    public GameObject pauseTexture;
+    public GameObject speedTexture;
+    public GameObject replayTexture;
+    public GameObject homeTexture;
 
     public GameObject playPauseButton;
     public GameObject speedButton;
@@ -61,23 +59,20 @@ public class MenuController : MonoBehaviour
         leaveButton.GetComponent<MeshRenderer>().material.color = grayColor;
 
         // set icon of the button to cooresponding texture and idle color
-        if(isPlaying)
-            playPauseButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = pauseTexture;
-        else
-            playPauseButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = playTexture;
-        playPauseButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = blueColor;
-        speedButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = speedTexture;
-        speedButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = blueColor;
-        replayButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = replayTexture;
-        replayButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = blueColor;
-        leaveButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = homeTexture;
-        leaveButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = blueColor;
+        playTexture.SetActive(!isPlaying);
+        pauseTexture.SetActive(isPlaying);
+
+        playTexture.GetComponent<MeshRenderer>().material.color = blueColor;
+        pauseTexture.GetComponent<MeshRenderer>().material.color = blueColor;
+        speedTexture.GetComponent<MeshRenderer>().material.color = blueColor;
+        replayTexture.GetComponent<MeshRenderer>().material.color = blueColor;
+        homeTexture.GetComponent<MeshRenderer>().material.color = blueColor;
 
         // set outline disabled
-        playPauseButton.transform.GetChild(1).gameObject.SetActive(false);
-        speedButton.transform.GetChild(1).gameObject.SetActive(false);
-        replayButton.transform.GetChild(1).gameObject.SetActive(false);
-        leaveButton.transform.GetChild(1).gameObject.SetActive(false);
+        playPauseButton.transform.GetChild(0).gameObject.SetActive(false);
+        speedButton.transform.GetChild(0).gameObject.SetActive(false);
+        replayButton.transform.GetChild(0).gameObject.SetActive(false);
+        leaveButton.transform.GetChild(0).gameObject.SetActive(false);
 
         speedSubButton.SetActive(false);
 
@@ -90,8 +85,13 @@ public class MenuController : MonoBehaviour
         ResetButton();
 
         button.GetComponent<MeshRenderer>().material.color = blueColor;
-        button.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = grayColor;
-        button.transform.GetChild(1).gameObject.SetActive(true);
+        //button.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = grayColor;
+        button.transform.GetChild(0).gameObject.SetActive(true);
+        button.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = grayColor;
+        if(button.transform.childCount > 2)
+        {
+            button.transform.GetChild(2).GetComponent<MeshRenderer>().material.color = grayColor;
+        }
     }
 
     // Update is called once per frame
@@ -153,21 +153,14 @@ public class MenuController : MonoBehaviour
             switch (activeButton)
             {
                 case 0:
-                    if (isPlaying)
-                    {
-                        Debug.Log(1);
-                        playPauseButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = playTexture;
-                    }
-                    else
-                    {
-                        playPauseButton.transform.GetChild(0).GetComponent<MeshRenderer>().material.mainTexture = pauseTexture;
-                    }
+                    playTexture.SetActive(isPlaying);
+                    pauseTexture.SetActive(!isPlaying);
                     isPlaying = !isPlaying;
                     wc.PauseGame();
                     break;
                 case 1:
                     isSpeedSubButtonActive = !isSpeedSubButtonActive;
-                    speedButton.transform.GetChild(1).gameObject.SetActive(isSpeedSubButtonActive);
+                    speedButton.transform.GetChild(0).gameObject.SetActive(isSpeedSubButtonActive);
                     speedSubButton.SetActive(isSpeedSubButtonActive);
                     break;
                 case 2:
