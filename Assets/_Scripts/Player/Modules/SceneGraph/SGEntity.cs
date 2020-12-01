@@ -38,6 +38,7 @@ namespace Alice.Player.Unity {
             set {
                 if (value != m_Vehicle) {
                     m_Vehicle = value;
+
                     if(value is SGJoint){
                         Transform holder = m_Vehicle.cachedTransform.Find("holder");
                         if(holder == null){
@@ -49,29 +50,26 @@ namespace Alice.Player.Unity {
                         cachedTransform.SetParent(holder, true);
                     }
                     else{
-                        Debug.Log(cachedTransform.name);
-                        Debug.Log(m_Vehicle?.cachedTransform.name);
-                        if(m_Vehicle?.cachedTransform.name == "handOffset")
+                        // Release a holding object
+                        if(m_Vehicle?.cachedTransform.name == "holder")
                         {
+                            // The m_Vehicle.cachedTransform.parent is supposed to be SGScene
+                            Destroy(m_Vehicle?.cachedTransform);
                             m_Vehicle.cachedTransform = m_Vehicle.cachedTransform.parent;
                         }
+                        // Hold an object
                         if(m_Vehicle?.cachedTransform.name == "RightHand (SGVRHand)")
                         {
-                            GameObject handOffsetObj = new GameObject("handOffset");
+                            Transform holder = new GameObject("holder").transform;
 
-                            //cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
                             UnityEngine.Vector3 controllerRay = m_Vehicle.cachedTransform.parent.forward;
                             UnityEngine.Vector3 objectRay = cachedTransform.position - m_Vehicle.cachedTransform.parent.position;
                             UnityEngine.Vector3 offsetRay = objectRay - UnityEngine.Vector3.Dot(controllerRay, objectRay) * controllerRay;
-                            //UnityEngine.Vector3 offsetRay = new UnityEngine.Vector3(0, 100, 0);
-                            Debug.DrawRay(m_Vehicle.cachedTransform.parent.position, offsetRay, UnityEngine.Color.black, 10);
-                            Debug.DrawRay(m_Vehicle.cachedTransform.parent.position, objectRay, UnityEngine.Color.white, 10);
-                            handOffsetObj.transform.position = offsetRay + m_Vehicle.cachedTransform.parent.position;
-                            handOffsetObj.transform.SetParent(m_Vehicle?.cachedTransform, true);
-                            handOffsetObj.transform.localEulerAngles = UnityEngine.Vector3.zero;
-                            handOffsetObj.transform.localScale = UnityEngine.Vector3.one;
-                            m_Vehicle.cachedTransform = handOffsetObj.transform;
-                            //Debug.Break();
+                            holder.position = offsetRay + m_Vehicle.cachedTransform.parent.position;
+                            holder.SetParent(m_Vehicle?.cachedTransform, true);
+                            holder.localEulerAngles = UnityEngine.Vector3.zero;
+                            holder.localScale = UnityEngine.Vector3.one;
+                            m_Vehicle.cachedTransform = holder;
                         }
                         cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
                     }
