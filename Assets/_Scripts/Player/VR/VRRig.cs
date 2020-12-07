@@ -12,11 +12,14 @@ public class VRRig : MonoBehaviour
     public Camera headCamera;
     public LineRenderer rightRend;
     public LineRenderer leftRend;
+    public GameObject cursorPrefab;
 
     private EventSystem eventSystem;
     private bool enabledForUI = false;
     private bool enabledForManipulation = false;
     private bool enabledForControl = false;
+
+    private GameObject cursor;
 
     private List<GameObject> selectedButtons = new List<GameObject>();
 
@@ -27,6 +30,12 @@ public class VRRig : MonoBehaviour
         enabledForUI = false;
         enabledForControl = false;
         eventSystem = VRControl.EventSystem();
+    }
+
+    private void Start()
+    {
+        cursor = Instantiate(cursorPrefab, transform);
+        cursor.SetActive(false);
     }
 
     private void EnablePointers(bool ena){
@@ -55,16 +64,20 @@ public class VRRig : MonoBehaviour
     }
 
     void Update(){
-        if(enabledForManipulation || enabledForUI || enabledForControl){
+        if (enabledForManipulation || enabledForUI || enabledForControl)
+        {
             float rightPointerDistance = 10f;
-            if(enabledForUI || enabledForControl){
+            if (enabledForUI || enabledForControl)
+            {
                 rightPointerDistance = CheckHandRaycasts(rightController);
             }
 
-            for (int i = 0; i < 2; i++){
+            rightPointerDistance = GetPointerDistance(rightPointerDistance);
+
+            for (int i = 0; i < 2; i++)
+            {
                 rightRend.SetPosition(i, rightController.position + (rightController.forward * ((float)i * rightPointerDistance)));
             }
-
         }
     }
 
@@ -94,5 +107,37 @@ public class VRRig : MonoBehaviour
         }
 
         return pointerDistance;
+    }
+
+    private float GetPointerDistance(float rightPointerDistance)
+    {
+        RaycastHit hit;
+        Ray ray = new Ray(rightController.position, rightController.forward);
+        float rayLength = 0;
+        cursor.SetActive(false);
+        while (Physics.Raycast(ray, out hit, rightPointerDistance))
+        {
+            rayLength += hit.distance;
+            if (rayLength >= rightPointerDistance)
+            {
+                return rightPointerDistance;
+            }
+            // go through transparent objects
+            if ((hit.transform.gameObject.GetComponent<MeshRenderer>() != null
+                && hit.transform.gameObject.GetComponent<MeshRenderer>().enabled == false)
+                || (hit.transform.gameObject.GetComponent<SkinnedMeshRenderer>() != null
+                && hit.transform.gameObject.GetComponent<SkinnedMeshRenderer>().enabled == false))
+            {
+                ray = new Ray(hit.point + rightController.forward * 0.01f, rightController.forward);
+            }
+            // opaque or semitransparent
+            else
+            {
+                cursor.SetActive(true);
+                cursor.transform.position = rightController.position + rightController.forward * rayLength;
+                return rayLength;
+            }
+        }
+        return rightPointerDistance;
     }
 }
