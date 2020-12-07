@@ -34,7 +34,6 @@ namespace Alice.Player.Unity {
         private SayThinkControl sayThinkControlRef;
         private Routine spawnRoutine = Routine.Null;
         private Routine tailRoutine = Routine.Null;
-        private Transform speechOrigin = null;
         private float fontSizeUnscaled = 12f;
 
         void Start()
@@ -100,8 +99,6 @@ namespace Alice.Player.Unity {
 
         private IEnumerator AlignTailRoutine(SGEntity entity){
             while(true){
-                if(speechOrigin == null)
-                    GetMouthPosition(entity.cachedTransform);
                 UnityEngine.Vector3 objectPos = UnityEngine.Vector3.zero;
                 if (isSay)
                     objectPos = GetSpeechBubbleOffset(entity.cachedTransform);
@@ -143,22 +140,6 @@ namespace Alice.Player.Unity {
                 }
                 yield return null;
             }
-        }
-
-        private void GetMouthPosition(Transform parent)
-        {
-            // Best case scenario, we find a lower lip bone
-            speechOrigin = FindDeepChild(parent, "LOWER_LIP");
-            if(speechOrigin != null)
-                return;
-            
-            speechOrigin = FindDeepChild(parent, "MOUTH");
-            if(speechOrigin != null)
-                return;
-
-            // Default to parent 
-            speechOrigin = parent;
-            return;
         }
 
         private Transform FindDeepChild(Transform parent, string aName)
