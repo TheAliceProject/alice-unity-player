@@ -1807,11 +1807,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blueColor: {r: 0.3254902, g: 0.5058824, b: 0.69411767, a: 1}
   grayColor: {r: 0.81568635, g: 0.80392164, b: 0.8078432, a: 1}
-  playTexture: {fileID: 1282979451521271215}
-  pauseTexture: {fileID: 2209281838079440657}
-  speedTexture: {fileID: 150045862145808640}
-  replayTexture: {fileID: 2091271633397454304}
-  homeTexture: {fileID: 7837927771427609764}
+  playIcon: {fileID: 1282979451521271215}
+  pauseIcon: {fileID: 2209281838079440657}
+  speedIcon: {fileID: 150045862145808640}
+  replayIcon: {fileID: 2091271633397454304}
+  homeIcon: {fileID: 7837927771427609764}
   playPauseButton: {fileID: 5026472133400245100}
   speedButton: {fileID: 3670983518346173281}
   replayButton: {fileID: 1451941146388598247}
