@@ -135,6 +135,7 @@ LineRenderer:
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -191,9 +192,9 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 0.7254902}
-      key1: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 0.7254902}
-      key2: {r: 0, g: 0, b: 0, a: 0}
+      key0: {r: 0.2824849, g: 0.47047383, b: 0.6509434, a: 0.7254902}
+      key1: {r: 0.28627452, g: 0.47058824, b: 0.6509804, a: 0.7254902}
+      key2: {r: 0, g: 0, b: 0, a: 0.19215687}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -208,8 +209,8 @@ LineRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 49151
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0
@@ -217,7 +218,7 @@ LineRenderer:
       atime7: 0
       m_Mode: 0
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
@@ -374,6 +375,8 @@ MonoBehaviour:
   headCamera: {fileID: 757374203648644505}
   rightRend: {fileID: 7277373018887493053}
   leftRend: {fileID: 6756112286272519854}
+  cursorPrefab: {fileID: 8739116046262974457, guid: c0e5fa3c47cebe64ca72fc6cc83abffb,
+    type: 3}
 --- !u!1 &3520005909066690961
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,6 +431,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -518,6 +522,7 @@ LineRenderer:
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -574,9 +579,9 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 0.7254902}
-      key1: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 0.7254902}
-      key2: {r: 0, g: 0, b: 0, a: 0}
+      key0: {r: 0.2824849, g: 0.47047383, b: 0.6509434, a: 0.7254902}
+      key1: {r: 0.28627452, g: 0.47058824, b: 0.6509804, a: 0.7254902}
+      key2: {r: 0, g: 0, b: 0, a: 0.19215687}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
@@ -591,8 +596,8 @@ LineRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 49151
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0
@@ -600,7 +605,7 @@ LineRenderer:
       atime7: 0
       m_Mode: 0
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
@@ -663,6 +668,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
