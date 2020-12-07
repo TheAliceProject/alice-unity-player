@@ -7,11 +7,11 @@ public class MenuController : MonoBehaviour
     public Color blueColor;
     public Color grayColor;
 
-    public GameObject playTexture;
-    public GameObject pauseTexture;
-    public GameObject speedTexture;
-    public GameObject replayTexture;
-    public GameObject homeTexture;
+    public GameObject playIcon;
+    public GameObject pauseIcon;
+    public GameObject speedIcon;
+    public GameObject replayIcon;
+    public GameObject homeIcon;
 
     public GameObject playPauseButton;
     public GameObject speedButton;
@@ -59,14 +59,14 @@ public class MenuController : MonoBehaviour
         leaveButton.GetComponent<MeshRenderer>().material.color = grayColor;
 
         // set icon of the button to cooresponding texture and idle color
-        playTexture.SetActive(!isPlaying);
-        pauseTexture.SetActive(isPlaying);
+        playIcon.SetActive(!isPlaying);
+        pauseIcon.SetActive(isPlaying);
 
-        playTexture.GetComponent<MeshRenderer>().material.color = blueColor;
-        pauseTexture.GetComponent<MeshRenderer>().material.color = blueColor;
-        speedTexture.GetComponent<MeshRenderer>().material.color = blueColor;
-        replayTexture.GetComponent<MeshRenderer>().material.color = blueColor;
-        homeTexture.GetComponent<MeshRenderer>().material.color = blueColor;
+        playIcon.GetComponent<MeshRenderer>().material.color = blueColor;
+        pauseIcon.GetComponent<MeshRenderer>().material.color = blueColor;
+        speedIcon.GetComponent<MeshRenderer>().material.color = blueColor;
+        replayIcon.GetComponent<MeshRenderer>().material.color = blueColor;
+        homeIcon.GetComponent<MeshRenderer>().material.color = blueColor;
 
         // set outline disabled
         playPauseButton.transform.GetChild(0).gameObject.SetActive(false);
@@ -97,7 +97,16 @@ public class MenuController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("PrimaryRight"))
+        if (GameObject.Find("SceneGraph") == null)
+            return;
+        if (VRControl.LoadedVRDevice() == VRControl.VRDevice.Vive)
+        {
+            if (Input.GetButtonDown("PrimaryRight"))
+            {
+                SetDisplay(!isDisplaying);
+            }
+        }
+        else if (Input.GetButtonDown("MenuLeft"))
         {
             SetDisplay(!isDisplaying);
         }
@@ -153,8 +162,8 @@ public class MenuController : MonoBehaviour
             switch (activeButton)
             {
                 case 0:
-                    playTexture.SetActive(isPlaying);
-                    pauseTexture.SetActive(!isPlaying);
+                    playIcon.SetActive(isPlaying);
+                    pauseIcon.SetActive(!isPlaying);
                     isPlaying = !isPlaying;
                     wc.PauseGame();
                     break;
