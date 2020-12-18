@@ -54,7 +54,7 @@ namespace Alice.Player.Unity {
                         if(m_Vehicle.cachedTransform.name == "handHolder")
                         {
                             // The m_Vehicle.cachedTransform.parent is supposed to be SGScene
-                            Destroy(m_Vehicle?.cachedTransform.gameObject);
+                            Destroy(m_Vehicle.cachedTransform.gameObject);
                             m_Vehicle.cachedTransform = m_Vehicle.cachedTransform.parent;
                         }
                         // Hold an object
@@ -66,12 +66,12 @@ namespace Alice.Player.Unity {
                             UnityEngine.Vector3 objectRay = cachedTransform.position - m_Vehicle.cachedTransform.parent.position;
                             UnityEngine.Vector3 offsetRay = objectRay - UnityEngine.Vector3.Dot(controllerRay, objectRay) * controllerRay;
                             holder.position = offsetRay + m_Vehicle.cachedTransform.parent.position;
-                            holder.SetParent(m_Vehicle?.cachedTransform, true);
+                            holder.SetParent(m_Vehicle.cachedTransform, true);
                             holder.localEulerAngles = UnityEngine.Vector3.zero;
                             holder.localScale = UnityEngine.Vector3.one;
                             m_Vehicle.cachedTransform = holder;
                         }
-                        cachedTransform.SetParent(m_Vehicle?.cachedTransform, true);
+                        cachedTransform.SetParent(m_Vehicle.cachedTransform, true);
                     }
                 }
             }
