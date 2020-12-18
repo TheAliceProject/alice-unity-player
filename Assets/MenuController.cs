@@ -85,7 +85,6 @@ public class MenuController : MonoBehaviour
         ResetButton();
 
         button.GetComponent<MeshRenderer>().material.color = blueColor;
-        //button.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = grayColor;
         button.transform.GetChild(0).gameObject.SetActive(true);
         button.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = grayColor;
         if(button.transform.childCount > 2)
@@ -113,9 +112,6 @@ public class MenuController : MonoBehaviour
 
         if (!isDisplaying)
             return;
-        transform.position = rightController.position;
-        transform.LookAt(head);
-        transform.RotateAround(transform.position, transform.right, 70);
 
         if (Input.GetAxis("RightThumbstickUpDown") > 0)
         {
