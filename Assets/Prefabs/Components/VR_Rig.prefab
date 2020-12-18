@@ -836,6 +836,8 @@ MonoBehaviour:
   rightRend: {fileID: 7277373018887493053}
   leftRend: {fileID: 6756112286272519854}
   vrMenu: {fileID: 8817699455269626681}
+  cursorPrefab: {fileID: 8739116046262974457, guid: c0e5fa3c47cebe64ca72fc6cc83abffb,
+    type: 3}
 --- !u!1 &3520005909066690961
 GameObject:
   m_ObjectHideFlags: 0
