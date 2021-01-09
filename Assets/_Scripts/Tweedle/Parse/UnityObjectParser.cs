@@ -323,5 +323,9 @@ namespace Alice.Tweedle.Parse
                 }
             }
         }
+
+        public void PurgeVm() {
+            m_VM.EmptyQueue();
+        }
     }
 }
