@@ -22,56 +22,27 @@ public class WorldControl : MonoBehaviour
 
     public Material skyboxMaterial;
 
-    private const float minimiumTimeScale = 1f / 64f;
-    private const float maximumTimeScale = 64f;
-    private static float currentTimeScale = 1f;
-    private static bool paused = false;
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
     private static bool isDisabledForThisInstance = false;
 
-    void Start()
-    {
+    void Start() {
         if(!currentWorldControls.Contains(this))
             currentWorldControls.Add(this);
 
         mainMenuButton.onClick.AddListener(ShowMainMenu);
-
         restartButton.onClick.AddListener(RestartWorld);
-
-        speedUpButton.onClick.AddListener(() =>
-        {
-            if(!paused){
-                if(currentTimeScale >= maximumTimeScale)
-                    return;
-                currentTimeScale *= 2f;
-            }
-            else{
-                paused = false;
-            }
-            ChangeSpeed(currentTimeScale);
-        });
-
-        slowDownButton.onClick.AddListener(() =>
-        {
-            if(currentTimeScale <= minimiumTimeScale)
-                return;
-
-            currentTimeScale /= 2f;
-            ChangeSpeed(currentTimeScale);
-        });
-
-        pauseButton.onClick.AddListener(PauseGame);
+        speedUpButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().IncreaseSpeed);
+        slowDownButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().DecreaseSpeed);
+        pauseButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().TogglePausePlay);
 
         // Disable main menu button when restarting from a bundled world app
         if(isDisabledForThisInstance)
             mainMenuButton.gameObject.SetActive(false);
     }
 
-    public void ShowMainMenu()
+    private void ShowMainMenu()
     {
-        var sceneGraph = GameObject.Find("SceneGraph");
-        var destroyedScene = (sceneGraph != null);
-        Destroy(sceneGraph);
+        var destroyedScene = StopScene();
 
         WorldObjects.GetIntroCanvas().SetActive(true);
         if (XRSettings.enabled)
@@ -84,61 +55,28 @@ public class WorldControl : MonoBehaviour
             newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
             newCamera.tag = "MainCamera";
         }
-        Time.timeScale = currentTimeScale = 1f;
-        paused = false;
+        WorldObjects.GetWorldExecutionState().Reset();
         RenderSettings.skybox = skyboxMaterial;
         uISlidedown.ForceSlide(false);
     }
 
-    public void RestartWorld()
-    {
-        Destroy(GameObject.Find("SceneGraph"));
+    private static bool StopScene() {
+        var sceneGraph = GameObject.Find("SceneGraph");
+        var destroyedScene = (sceneGraph != null);
+        Destroy(sceneGraph);
+        return destroyedScene;
+    }
+
+    private void RestartWorld() {
+        StopScene();
         Camera newCamera = Instantiate(CameraPrefab);
         newCamera.tag = "MainCamera";
         uISlidedown.ForceSlide(false);
         WorldObjects.GetParser().ReloadCurrentLevel();
     }
 
-    public void ChangeSpeed(float timeScale)
-    {
-        currentTimeScale = timeScale;
-        Time.timeScale = currentTimeScale;
-        UpdateStatus();
-    }
-
-    public void PauseGame()
-    {
-        if (paused)
-        {
-            Time.timeScale = currentTimeScale;
-        }
-        else
-        {
-            Time.timeScale = 0f;
-        }
-        paused = !paused;
-        UpdateStatus();
-    }
-
-    void OnDestroy()
-    {
-        if(currentWorldControls != null)
-            currentWorldControls.Remove(this);
-    }
-
-    public void SetNormalTimescale(){
-        Time.timeScale = 1f;
-    }
-    public void ResumeUserTimescale(){
-        Time.timeScale = paused ? 0f : currentTimeScale;
-        UpdateStatus();
-    }
-
-    void UpdateStatus()
-    {
-        foreach(WorldControl wc in currentWorldControls){
-            wc.UpdateUI();
-        }
+    void OnDestroy() {
+        currentWorldControls?.Remove(this);
     }
 
     public static void ShowWorldControlsBriefly()
@@ -161,21 +99,31 @@ public class WorldControl : MonoBehaviour
         isDisabledForThisInstance = true;
     }
 
-    void UpdateUI()
+    public static void UpdateViews() {
+        foreach(var wc in currentWorldControls) {
+            wc.UpdateUI();
+        }
+    }
+
+    private void UpdateUI()
     {
         if (Time.timeScale == 0.0f){ // if(paused) ?
             playPauseImage.sprite = playSprite;
             status.text = "Paused";
-        }
-        else{
+        } else {
             playPauseImage.sprite = pauseSprite;
             status.text = string.Format("{0:0.0}x", Time.timeScale);
         }
     }
 
-    public static void ReturnToMainMenu()
-    {
-        foreach (WorldControl wc in currentWorldControls){
+    public static void Restart() {
+        foreach (var wc in currentWorldControls) {
+            wc.RestartWorld();
+        }
+    }
+
+    public static void ReturnToMainMenu() {
+        foreach (var wc in currentWorldControls) {
             wc.ShowMainMenu();
         }
     }

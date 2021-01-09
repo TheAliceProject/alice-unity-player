@@ -23,24 +23,9 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
     private const float moveTime = 0.25f;
     private bool controlsActive = false;
 
-    void Update()
-    {
-        if(isVR)
-        {
-            // " (1) Sandwich button refers to the Vive menu button. This button is mapped to primaryButton, rather than menuButton, in order to better handle cross-platform applications. "
-            // See https://docs.unity3d.com/Manual/xr_input.html
-            if (VRControl.LoadedVRDevice() == VRControl.VRDevice.Vive)
-            {
-                if (Input.GetButtonDown("PrimaryRight"))
-                {
-                    VRSlide();
-                }
-            }
-            else if (Input.GetButtonDown("MenuLeft"))
-            {
-                VRSlide();
-            }
-        }
+    void Update() {
+        if(isVR && VRControl.IsMenuTriggerDown())
+            VRSlide();
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)

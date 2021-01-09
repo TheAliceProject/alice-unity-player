@@ -33,7 +33,6 @@ namespace Alice.Tweedle.Parse
         public LoadMoreControl[] loadMoreControl;
         public MenuControl[] menuControls;
         public LoadingControl loadingScreen;
-        public WorldControl desktopWorldControl;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
@@ -151,7 +150,7 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator DisplayLoadingAndLoadLevel(string path, MainMenuControl mainMenuCtrl)
         {
-            desktopWorldControl.SetNormalTimescale();
+            WorldObjects.GetWorldExecutionState().SetNormalTimescale();
             yield return YieldLoadingScreens(true);
             worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
@@ -196,7 +195,7 @@ namespace Alice.Tweedle.Parse
             WorldControl.ShowWorldControlsBriefly();
             if(mainMenuCtrl == MainMenuControl.Disabled)
                 WorldControl.DisableMainMenu();
-            desktopWorldControl.ResumeUserTimescale();
+            WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
         }
 
         private void NotifyUserOfLoadError(string title, string message)
