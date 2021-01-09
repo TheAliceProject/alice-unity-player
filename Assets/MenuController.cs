@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using Alice.Player.Unity;
 using UnityEngine;
 
 public class MenuController : MonoBehaviour
@@ -25,42 +25,37 @@ public class MenuController : MonoBehaviour
     public Transform rightController;
     public Transform head;
 
-    // -1 Idle
-    // 0 play / pause
-    // 1 speed
-    // 2 replay
-    // 3 exit
-    // 4 slow down
-    // 5 speed up
-    private int activeButton = -1;
-    // 0 play
-    // 1 pause
-    private bool isPlaying = true;
-    private bool isDisplaying = false;
-    private bool isSpeedSubButtonActive = false;
-    private float speed = 1;
+    private enum Button{
+        None,
+        PlayPause,
+        Speed,
+        Reload,
+        Exit
+    }
+    private Button _activeButton = Button.None;
 
-    private WorldControl wc;
+    private bool _isDisplaying;
+    private bool _isSpeedSubButtonActive;
+    private bool _centered;
+    private float _lastSpeedChangeTime;
+    private const float TIME_BETWEEN_CHANGES = 0.66F;
+    private WorldExecutionState _executionState;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
+        _executionState = WorldObjects.GetWorldExecutionState();
         SetDisplay(true);
         StartCoroutine(DisableMenuInSeconds(3));
-        wc = GameObject.FindObjectOfType<WorldControl>();
     }
 
-    private void ResetButton()
-    {
+    private void ResetButton() {
         // set button color to gray as idle
         playPauseButton.GetComponent<MeshRenderer>().material.color = grayColor;
         speedButton.GetComponent<MeshRenderer>().material.color = grayColor;
         replayButton.GetComponent<MeshRenderer>().material.color = grayColor;
         leaveButton.GetComponent<MeshRenderer>().material.color = grayColor;
 
-        // set icon of the button to cooresponding texture and idle color
-        playIcon.SetActive(!isPlaying);
-        pauseIcon.SetActive(isPlaying);
+        UpdatePlayPauseIcon();
 
         playIcon.GetComponent<MeshRenderer>().material.color = blueColor;
         pauseIcon.GetComponent<MeshRenderer>().material.color = blueColor;
@@ -76,123 +71,116 @@ public class MenuController : MonoBehaviour
 
         speedSubButton.SetActive(false);
 
-        activeButton = -1;
-        isSpeedSubButtonActive = false;
+        _activeButton = Button.None;
+        _isSpeedSubButtonActive = false;
     }
 
-    private void UpdateButton(GameObject button)
-    {
+    private void UpdatePlayPauseIcon() {
+        var isPaused = _executionState.IsPaused();
+        playIcon.SetActive(isPaused);
+        pauseIcon.SetActive(!isPaused);
+    }
+
+    // Update is called once per frame
+    void Update() {
+        if (!SceneGraph.Exists)
+            return;
+        if (VRControl.IsMenuTriggerDown())
+            SetDisplay(!_isDisplaying);
+        if (!_isDisplaying)
+            return;
+
+        if (Input.GetAxis("RightThumbstickUpDown") > 0) {
+            if (_isSpeedSubButtonActive)
+                UpdateSpeed();
+            else
+                SelectButton();
+        } else if(!_isSpeedSubButtonActive) {
+            ResetButton();
+            _activeButton = Button.None;
+        }
+        if (VRControl.IsRightTriggerUp())
+            ActivateButton();
+    }
+
+    private void UpdateSpeed() {
+        var now = Time.unscaledTime;
+        if (now - TIME_BETWEEN_CHANGES < _lastSpeedChangeTime) return;
+
+        if (Input.GetAxis("RightThumbstickLeftRight") > .25) {
+            _lastSpeedChangeTime = now;
+            _executionState.IncreaseSpeed();
+        } else if (Input.GetAxis("RightThumbstickLeftRight") < -.25) {
+            _lastSpeedChangeTime = now;
+            _executionState.DecreaseSpeed();
+        }
+        speedSubButton.transform.GetChild(0).GetComponent<TextMesh>().text =
+            _executionState.GetSpeed().ToString("F2") + "x";
+    }
+
+    private void SelectButton() {
+        if (Input.GetAxis("RightThumbstickLeftRight") < -0.5) {
+            UpdateButton(playPauseButton);
+            _activeButton = Button.PlayPause;
+        } else if (Input.GetAxis("RightThumbstickLeftRight") < 0)  {
+            UpdateButton(speedButton);
+            _activeButton = Button.Speed;
+        } else if (Input.GetAxis("RightThumbstickLeftRight") > 0.5) {
+            UpdateButton(leaveButton);
+            _activeButton = Button.Exit;
+        } else if (Input.GetAxis("RightThumbstickLeftRight") > 0)  {
+            UpdateButton(replayButton);
+            _activeButton = Button.Reload;
+        }
+    }
+
+    private void UpdateButton(GameObject button) {
         ResetButton();
 
         button.GetComponent<MeshRenderer>().material.color = blueColor;
         button.transform.GetChild(0).gameObject.SetActive(true);
         button.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = grayColor;
-        if(button.transform.childCount > 2)
-        {
+        if(button.transform.childCount > 2) {
             button.transform.GetChild(2).GetComponent<MeshRenderer>().material.color = grayColor;
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (GameObject.Find("SceneGraph") == null)
-            return;
-        if (VRControl.LoadedVRDevice() == VRControl.VRDevice.Vive)
-        {
-            if (Input.GetButtonDown("PrimaryRight"))
-            {
-                SetDisplay(!isDisplaying);
-            }
-        }
-        else if (Input.GetButtonDown("MenuLeft"))
-        {
-            SetDisplay(!isDisplaying);
-        }
-
-        if (!isDisplaying)
-            return;
-
-        if (Input.GetAxis("RightThumbstickUpDown") > 0)
-        {
-            if (isSpeedSubButtonActive)
-            {
-                speed = Input.GetAxis("RightThumbstickLeftRight") + 1;
-                speed = (int)(speed / 0.5f) * 0.5f + 0.5f;
-                speed = Mathf.Clamp(speed, 0.5f, 2);
-                wc.ChangeSpeed(speed);
-                speedSubButton.transform.GetChild(0).GetComponent<TextMesh>().text = speed.ToString("F2") + "x";
-            }
-            else
-            {
-                if (Input.GetAxis("RightThumbstickLeftRight") < -0.5)
-                {
-                    UpdateButton(playPauseButton);
-                    activeButton = 0;
-                }
-                else if (Input.GetAxis("RightThumbstickLeftRight") < 0)
-                {
-                    UpdateButton(speedButton);
-                    activeButton = 1;
-                }
-                else if (Input.GetAxis("RightThumbstickLeftRight") > 0.5)
-                {
-                    UpdateButton(leaveButton);
-                    activeButton = 3;
-                }
-                else if (Input.GetAxis("RightThumbstickLeftRight") > 0)
-                {
-                    UpdateButton(replayButton);
-                    activeButton = 2;
-                }
-            }
-        }
-        else if(!isSpeedSubButtonActive)
-        {
-            ResetButton();
-            activeButton = -1;
-        }
-
-        if (VRControl.IsRightTriggerUp())
-        {
-            switch (activeButton)
-            {
-                case 0:
-                    playIcon.SetActive(isPlaying);
-                    pauseIcon.SetActive(!isPlaying);
-                    isPlaying = !isPlaying;
-                    wc.PauseGame();
-                    break;
-                case 1:
-                    isSpeedSubButtonActive = !isSpeedSubButtonActive;
-                    speedButton.transform.GetChild(0).gameObject.SetActive(isSpeedSubButtonActive);
-                    speedSubButton.SetActive(isSpeedSubButtonActive);
-                    break;
-                case 2:
-                    wc.RestartWorld();
-                    break;
-                case 3:
-                    wc.ShowMainMenu();
-                    break;
-                default: break;
-            }
-
+    private void ActivateButton() {
+        switch (_activeButton) {
+            case Button.None:
+                break;
+            case Button.PlayPause:
+                _executionState.TogglePausePlay();
+                UpdatePlayPauseIcon();
+                break;
+            case Button.Speed:
+                _isSpeedSubButtonActive = !_isSpeedSubButtonActive;
+                speedButton.transform.GetChild(0).gameObject.SetActive(_isSpeedSubButtonActive);
+                speedSubButton.SetActive(_isSpeedSubButtonActive);
+                UpdatePlayPauseIcon();
+                break;
+            case Button.Reload:
+                _executionState.RestartWorld();
+                break;
+            case Button.Exit:
+                _executionState.ShowMainMenu();
+                break;
         }
     }
 
-    private void SetDisplay(bool shouldDisplay)
-    {
+    private void SetDisplay(bool shouldDisplay) {
         ResetButton();
-        isDisplaying = shouldDisplay;
+        _isDisplaying = shouldDisplay;
         playPauseButton.SetActive(shouldDisplay);
         speedButton.SetActive(shouldDisplay);
         replayButton.SetActive(shouldDisplay);
         leaveButton.SetActive(shouldDisplay);
         speedSubButton.SetActive(shouldDisplay);
+
+        _executionState.EnableVrEvents(!shouldDisplay);
     }
 
-    private IEnumerator DisableMenuInSeconds(float secondsToWait)
-    {
+    private IEnumerator DisableMenuInSeconds(float secondsToWait) {
         yield return new WaitForSeconds(secondsToWait);
         SetDisplay(false);
     }
