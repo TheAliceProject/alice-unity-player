@@ -220,8 +220,15 @@ public class VRControl : MonoBehaviour
             lastLeftTrigger = false;
             leftTriggerUp = true;
         }
-
     }
+
+    public static bool IsMenuTriggerDown() {
+        // " (1) Sandwich button refers to the Vive menu button. This button is mapped to primaryButton,
+        // rather than menuButton, in order to better handle cross-platform applications. "
+        // See https://docs.unity3d.com/Manual/xr_input.html
+        return Input.GetButtonDown(LoadedVRDevice() == VRDevice.Vive ? "PrimaryRight" : "MenuLeft");
+    }
+    
     public static bool IsRightTriggerDown()
     {
         return _instance != null && _instance.rightTriggerDown;
