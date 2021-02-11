@@ -45,7 +45,7 @@ namespace Alice.Player.Unity
             if (m_KeyPressListeners.Count <= 0 && !m_objectMover.HasObjects())
                 return;
             AddPressedKeys();
-            if (XRSettings.enabled)
+            if (XRSettings.enabled && WorldObjects.GetWorldExecutionState().IsVrSendingEvents())
                 UpdateControllerEvents();
             RemoveReleasedKeys();
         }

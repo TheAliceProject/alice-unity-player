@@ -15,6 +15,8 @@ public class WorldObjects : MonoBehaviour
     public static string DEFAULT_BUNDLED_WORLD_NAME = "DefaultBundledWorld";
     public static string DEFAULT_FOLDER_PATH = "/Default/";
     
+    private readonly WorldExecutionState _executionState = new WorldExecutionState();
+    
     void Awake()
     {
         if (_instance != null && _instance != this){
@@ -46,5 +48,9 @@ public class WorldObjects : MonoBehaviour
             return _instance.vrObjects;
         }
         return null;
+    }
+
+    internal static WorldExecutionState GetWorldExecutionState() {
+        return _instance != null ? _instance._executionState : null;
     }
 }

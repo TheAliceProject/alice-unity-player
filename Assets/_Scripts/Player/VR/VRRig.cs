@@ -12,6 +12,7 @@ public class VRRig : MonoBehaviour
     public Camera headCamera;
     public LineRenderer rightRend;
     public LineRenderer leftRend;
+    public GameObject vrMenu;
     public GameObject cursorPrefab;
 
     private EventSystem eventSystem;
