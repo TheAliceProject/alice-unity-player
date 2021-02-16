@@ -31,6 +31,9 @@ namespace Alice.Player.Unity {
 
         private void move(SGTransformableEntity movedObject, Key theKey) {
             var movingTrans = movedObject.cachedTransform;
+            if (movingTrans == null) {
+                return;
+            }
             if (KeyMap.UpKeys.Contains(theKey)) {
                 var vp = VantagePoint.FromUnity(movingTrans.localPosition - BackwardMovement(movingTrans), movingTrans.localRotation);
                 movedObject.UpdateVantagePointProperty(vp);
