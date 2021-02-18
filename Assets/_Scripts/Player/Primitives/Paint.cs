@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using Alice.Tweedle.Interop;
-using System;
 
 namespace Alice.Player.Primitives
 {
@@ -27,8 +25,6 @@ namespace Alice.Player.Primitives
         #endregion //Interop Interfaces
         
         public abstract PaintTypeID PaintType { get; }
-        public abstract void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName, float originalAlpha = 1.0f);
-        
-
+        public abstract void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName);
     }
 }

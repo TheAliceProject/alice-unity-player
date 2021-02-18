@@ -1,10 +1,7 @@
 using UnityEngine;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
-using Alice.Tweedle.Interop;
 using Alice.Tweedle;
-using System;
-using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     
@@ -122,10 +119,10 @@ namespace Alice.Player.Unity {
 
         protected abstract void OnPaintChanged();
 
-        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, float originalAlpha = 1.0f) {
+        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
             GetPropertyBlock(inRenderer, ref ioPropertyBlock);
 
-            m_CachedPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName, originalAlpha);
+            m_CachedPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName);
             inRenderer.SetPropertyBlock(ioPropertyBlock);
         }
 
@@ -136,42 +133,32 @@ namespace Alice.Player.Unity {
 
         protected abstract void OnOpacityChanged();
 
-        protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, float originalAlpha = 1.0f, bool hasAlphaTextures = false) {
-            ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlock, originalAlpha, hasAlphaTextures);
+        protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
+            ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlock);
         }
 
-        protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, float originalAlpha = 1.0f, bool hasAlphaTextures = false)
-        {
-            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, originalAlpha, hasAlphaTextures);
+        protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint);
         }
 
-        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, float originalAlpha = 1.0f, bool hasAlphaTextures = false) {
+        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint) {
             if (m_CachedOpacity < 0.004f) {
                 if (inRenderer.enabled) {
                     inRenderer.enabled = false;
                 }
                 return;
-            } else if (!inRenderer.enabled) {
+            }
+            if (!inRenderer.enabled) {
                 inRenderer.enabled = true;
             }
-
-            if (hasAlphaTextures && inRenderer.sharedMaterial != TransparentMaterial)
-            {
+            if (m_CachedOpacity < 0.996f && inRenderer.sharedMaterial != TransparentMaterial) {
                 inRenderer.sharedMaterial = TransparentMaterial;
-            }
-            else if (hasAlphaTextures) { }
-            else if ((m_CachedOpacity < 0.996f || originalAlpha < 0.996f) && inRenderer.sharedMaterial != TransparentMaterial)
-            {
-                inRenderer.sharedMaterial = TransparentMaterial;
-            }
-            else if (m_CachedOpacity >= 0.996f && originalAlpha >= 0.996f && inRenderer.sharedMaterial != OpaqueMaterial)
-            {
+            } else if (m_CachedOpacity >= 0.996f && inRenderer.sharedMaterial != OpaqueMaterial) {
                 inRenderer.sharedMaterial = OpaqueMaterial;
             }
-
             GetPropertyBlock(inRenderer, ref ioPropertyBlock);
 
-            inPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName, originalAlpha);
+            inPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName);
             inRenderer.SetPropertyBlock(ioPropertyBlock);
         }
 

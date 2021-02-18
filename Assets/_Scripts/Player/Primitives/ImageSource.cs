@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
-using System;
 using Alice.Player.Unity;
 
 namespace Alice.Player.Primitives
@@ -53,14 +51,9 @@ namespace Alice.Player.Primitives
 
         public override PaintTypeID PaintType { get { return PaintTypeID.ImageSource; } }
 
-        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName, float originalAlpha = 1.0f) {
+        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName) {
             inPropertyBlock.SetTexture(inTextureName, Value);
-
-            if (originalAlpha > 0.996f)
-            {
-                var color = new UnityEngine.Color(1, 1, 1, inOpacity);
-                inPropertyBlock.SetColor(Alice.Player.Unity.SGModel.COLOR_SHADER_NAME, color);
-            }
+            inPropertyBlock.SetColor(SGModel.COLOR_SHADER_NAME, new UnityEngine.Color(1, 1, 1, inOpacity));
         }
 
         public override string ToString() {

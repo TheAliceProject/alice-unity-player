@@ -12,8 +12,6 @@ namespace Alice.Player.Unity {
         private MaterialPropertyBlock[] m_PropertyBlocks;
         private Dictionary<Renderer, Mesh> bakedMeshes = new Dictionary<Renderer, Mesh>();
         public List<Transform> m_vehicledList = new List<Transform>();
-        private List<float> m_originalAlphas = new List<float>();
-        private List<bool> m_hasAlphaTextures = new List<bool>();
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -40,32 +38,15 @@ namespace Alice.Player.Unity {
 
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
                 m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
-                m_originalAlphas = new List<float>(m_Renderers.Length);
-                m_hasAlphaTextures = new List<bool>(m_Renderers.Length);
 
                 for (int i = 0; i < m_Renderers.Length; ++i) {
                     GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
 
-                    m_PropertyBlocks[i].SetColor(COLOR_SHADER_NAME, m_Renderers[i].sharedMaterial.color);
-
-                    if(m_Renderers[i].sharedMaterial.color.a == 0)
-                    {
-                        m_hasAlphaTextures.Add(true);
-                        m_originalAlphas.Add(1);
-                    }
-                    else
-                    {
-                        m_hasAlphaTextures.Add(false);
-                        m_originalAlphas.Add(m_Renderers[i].sharedMaterial.color.a);
-                    }
-                    
-                    if (m_Renderers[i].sharedMaterial.mainTexture != null)
-                    {
+                    if (m_Renderers[i].sharedMaterial.mainTexture != null) {
                         m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
-                    }
-                        
-                    else
+                    } else {
                         Debug.LogWarningFormat("SetTexture '{0}' is null for {1}", MAIN_TEXTURE_SHADER_NAME, model);
+                    }
 
                     if (m_Renderers[i] is SkinnedMeshRenderer) {
                         // make sure the skinned mesh renderers local bounds get updated
@@ -75,7 +56,7 @@ namespace Alice.Player.Unity {
                         bakedMeshes[skinnedRenderer] = new Mesh();
                         skinnedRenderer.BakeMesh(bakedMeshes[skinnedRenderer]);
                     }
-                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i], m_hasAlphaTextures[i]);
+                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
                 }
                 CacheMeshBounds();
             }
@@ -115,13 +96,13 @@ namespace Alice.Player.Unity {
 
         protected override void OnPaintChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i]);
+                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }
 
         protected override void OnOpacityChanged() {
             for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i], m_originalAlphas[i], m_hasAlphaTextures[i]);
+                ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
             }
         }
 
@@ -141,19 +122,13 @@ namespace Alice.Player.Unity {
 
         protected override void SetSize(Vector3 inSize) {
             var meshSize = m_CachedMeshBounds.size;
-            m_ModelTransform.localScale = new UnityEngine.Vector3(
-                meshSize.x == 0 ? 1 : inSize.x/meshSize.x,
-                meshSize.y == 0 ? 1 : inSize.y/meshSize.y,
-                meshSize.z == 0 ? 1 : inSize.z/meshSize.z
-            );
-
+            var xScale = meshSize.x == 0 ? 1 : inSize.x/meshSize.x;
+            var yScale = meshSize.y == 0 ? 1 : inSize.y/meshSize.y;
+            var zScale = meshSize.z == 0 ? 1 : inSize.z/meshSize.z;
+            m_ModelTransform.localScale = new Vector3(xScale, yScale, zScale);
             // Inverse scale any holders on joints that may exist
-            foreach(Transform holder in m_vehicledList){
-                holder.localScale = new UnityEngine.Vector3(
-                meshSize.x == 0 ? 1 : meshSize.x/inSize.x,
-                meshSize.y == 0 ? 1 : meshSize.y/inSize.y,
-                meshSize.z == 0 ? 1 : meshSize.z/inSize.z
-                );
+            foreach(var holder in m_vehicledList){
+                holder.localScale = new Vector3(1/xScale, 1/yScale, 1/zScale);
             }
         }
 
