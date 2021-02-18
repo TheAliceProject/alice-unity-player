@@ -1720,14 +1720,6 @@ namespace TriLib
                 {
                     color.a = materialData.Alpha;
                 }
-                // Since the texture could not be set as readable during run time
-                // the alpha channel has to be checked here and stored in color
-                // Assuming that imported material will not have a diffuse color with alpha equals zero
-                // Also assuming the material would not have a overall opacity value with a translucent texture
-                else if (hasAlphaChannelOnTextures)
-                {
-                    color.a = 0;
-                }
                 material.SetColor("_Color", color);
             }
             if ((options == null || options.ApplyEmissionColor) && materialData.EmissionColorLoaded)
@@ -2521,11 +2513,6 @@ namespace TriLib
                     if (AssimpInterop.aiMaterial_GetDiffuse(material, out colorDiffuse))
                     {
                         materialData.DiffuseColor = colorDiffuse;
-                        if (colorDiffuse.a < 1.0)
-                        {
-                            materialData.AlphaLoaded = true;
-                            materialData.Alpha = colorDiffuse.a;
-                        }
                         diffuseColorLoaded = true;
                     }
 #if TRILIB_OUTPUT_MESSAGES
