@@ -35,6 +35,10 @@ namespace Alice.Player.Unity
             StartKeyRepeater();
         }
 
+        public void DropAllListeners() {
+            m_KeyPressListeners.Clear();
+        }
+
         public void RemoveAllKeys(){
             m_heldKeyCodes.Clear();
             m_heldKeys.Clear();

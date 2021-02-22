@@ -34,6 +34,10 @@ namespace Alice.Player.Unity
             m_MouseClickListeners.Add(listener);
         }
 
+        public void DropAllListeners() {
+            m_MouseClickListeners.Clear(); 
+        }
+
         public void HandleMouseEvents(){
             if(XRSettings.enabled && VRControl.Rig().IsEnabledForUI())
                 return;

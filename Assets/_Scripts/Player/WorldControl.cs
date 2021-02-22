@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Alice.Player.Unity;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -64,6 +65,9 @@ public class WorldControl : MonoBehaviour
         WorldObjects.GetParser().PurgeVm();
         var sceneGraph = GameObject.Find("SceneGraph");
         var destroyedScene = (sceneGraph != null);
+        if (destroyedScene) {
+            SceneGraph.Current.Scene.DropAllListeners();
+        }
         Destroy(sceneGraph);
         return destroyedScene;
     }
