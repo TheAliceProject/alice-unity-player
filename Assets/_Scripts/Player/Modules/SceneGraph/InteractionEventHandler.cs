@@ -58,6 +58,14 @@ namespace Alice.Player.Unity
         {
             m_OcclusionListeners.Add(listener);
         }
+
+        public void DropAllListeners() {
+            m_CollisionListeners.Clear();
+            m_OcclusionListeners.Clear();
+            m_PovListeners.Clear();
+            m_ProximityListeners.Clear();
+            m_ViewListeners.Clear();
+        }
         
         public void NotifyObjectsCollided(SGEntity object1, SGEntity object2, bool enter)
         {

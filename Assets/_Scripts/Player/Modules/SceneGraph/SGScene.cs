@@ -197,6 +197,14 @@ namespace Alice.Player.Unity {
         {
             m_InteractionHandler.AddOcclusionListener(new OcclusionEventListenerProxy(listener, overlappingEventPolicy, setA, setB, interactionType));
         }
+
+        public void DropAllListeners() {
+            m_TimeListeners.Clear();
+            m_MouseEventHandler.DropAllListeners(); 
+            m_KeyboardEventHandler.DropAllListeners();
+            m_InteractionHandler.DropAllListeners();
+            m_VrEventHandler.DropAllListeners();
+        }
         
         public void AddMouseColliders(IEnumerable<SGModel> models)
         {
