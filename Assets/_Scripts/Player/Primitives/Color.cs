@@ -96,9 +96,15 @@ namespace Alice.Player.Primitives
 
         public override PaintTypeID PaintType { get { return PaintTypeID.Color; } }
 
-        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName) {
+        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+            float appliedOpacity;
+            if (baseMaterial == BaseMaterial.Glass) {
+                appliedOpacity = 0.2f*inOpacity;
+            } else {
+                appliedOpacity = (float)Value.A*inOpacity;
+            }
             inPropertyBlock.SetColor(SGModel.COLOR_SHADER_NAME,
-                new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, (float)Value.A*inOpacity));
+                new UnityEngine.Color((float)Value.R, (float)Value.G, (float)Value.B, appliedOpacity));
         }
 
         public override string ToString() {
