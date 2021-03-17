@@ -51,7 +51,7 @@ namespace Alice.Player.Primitives
 
         public override PaintTypeID PaintType { get { return PaintTypeID.ImageSource; } }
 
-        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName) {
+        public override void Apply(UnityEngine.MaterialPropertyBlock inPropertyBlock, float inOpacity, string inTextureName, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
             inPropertyBlock.SetTexture(inTextureName, Value);
             inPropertyBlock.SetColor(SGModel.COLOR_SHADER_NAME, new UnityEngine.Color(1, 1, 1, inOpacity));
         }
