@@ -76,11 +76,11 @@ namespace Alice.Tweedle
         /// If unlinked, links this reference to its type and outputs the type.
         /// Returns if the reference had been unlinked.
         /// </summary>
-        public bool Resolve(TAssemblyLinkContext inContext, out TType outType)
+        public bool Resolve(TAssembly inAssembly, out TType outType)
         {
             if (m_Type == null)
             {
-                m_Type = outType = inContext.TypeNamed(Name);
+                m_Type = outType = inAssembly.TypeNamed(Name);
                 if (outType == null)
                     throw new TweedleLinkException("Unable to link " + Name + " - type not found");
                 return true;
@@ -93,10 +93,10 @@ namespace Alice.Tweedle
         /// If unlinked, links the reference to its type.
         /// Returns if the reference had been unlinked.
         /// </summary>
-        public bool Resolve(TAssemblyLinkContext inContext)
+        public bool Resolve(TAssembly inAssembly)
         {
             TType unused;
-            return Resolve(inContext, out unused);
+            return Resolve(inAssembly, out unused);
         }
 
         #region Implicit Conversions

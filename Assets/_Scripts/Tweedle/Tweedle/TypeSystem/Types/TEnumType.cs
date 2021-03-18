@@ -34,9 +34,9 @@ namespace Alice.Tweedle
 
         #region Statics
 
-        protected override void PostLinkImpl(TAssemblyLinkContext inContext)
+        protected override void PostLinkImpl(TAssembly inAssembly)
         {
-            base.PostLinkImpl(inContext);
+            base.PostLinkImpl(inAssembly);
 
             for (int i = 0; i < m_ValueInitializers.Length; ++i)
                 m_ValueInitializers[i].AssignValue(i);

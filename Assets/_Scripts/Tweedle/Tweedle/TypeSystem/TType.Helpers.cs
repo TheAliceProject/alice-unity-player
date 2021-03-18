@@ -63,11 +63,11 @@ namespace Alice.Tweedle
         /// <summary>
         /// Resolves all members.
         /// </summary>
-        static protected void LinkMembers<T>(T[] inMembers, TAssemblyLinkContext inContext, TType inType) where T : ITypeMember
+        static protected void LinkMembers<T>(T[] inMembers, TAssembly inAssembly, TType inType) where T : ITypeMember
         {
             for (int i = 0; i < inMembers.Length; ++i)
             {
-                inMembers[i].Link(inContext, inType);
+                inMembers[i].Link(inAssembly, inType);
             }
         }
 
