@@ -523,24 +523,28 @@ namespace Alice.Tweedle.Parse
             {
                 // Use untyped expression visitor for target
                 ITweedleExpression target = context.expression(0).Accept(new ExpressionVisitor(assembly));
-                if (context.IDENTIFIER() != null)
-                {
-                    return new FieldAccess(target, context.IDENTIFIER().GetText());
+                var targetName = target.ToTweedle();
+                var isInteropIdentifier = targetName.StartsWith("$") && !targetName.Contains(".");
+                if (context.IDENTIFIER() != null) {
+                    var fieldName = context.IDENTIFIER().GetText();
+                    if (isInteropIdentifier && !assembly.IsFieldDefined(targetName, fieldName)) {
+                        throw new TweedleLinkException("Missing interop field referenced " + targetName + "." + fieldName);
+                    }
+                    return new FieldAccess(target, fieldName);
                 }
-                if (context.methodCall() != null)
-                {
+                if (context.methodCall() != null) {
                     Tweedle.TweedleParser.LabeledExpressionListContext argsContext = context.methodCall().labeledExpressionList();
                     NamedArgument[] arguments = new NamedArgument[0];
-                    if (argsContext != null)
-                    {
-                        arguments = TweedleParser.VisitLabeledArguments(argsContext, assembly);
+                    if (argsContext != null) {
+                        arguments = VisitLabeledArguments(argsContext, assembly);
                     }
-                    return new MethodCallExpression(target,
-                        context.methodCall().IDENTIFIER().GetText(),
-                        arguments
-                        );
+                    var methodName = context.methodCall().IDENTIFIER().GetText();
+                    if (isInteropIdentifier && !assembly.IsMethodNameDefined(targetName, methodName)) {
+                        throw new TweedleLinkException("Missing interop method called " + targetName + "." + methodName);
+                    }
+                    return new MethodCallExpression(target, methodName, arguments);
                 }
-                throw new System.Exception("Unexpected details on context " + context);
+                throw new Exception("Unexpected details on context " + context);
             }
 
             private ITweedleExpression[] TypedExpression(Tweedle.TweedleParser.ExpressionContext context, TType type)

@@ -22,15 +22,14 @@
         /// <summary>
         /// Retrieves the type with the given name.
         /// </summary>
-        public TType TypeNamed(string inName)
-        {
-            TType type = OwningAssembly.TypeNamed(inName);
+        public TType TypeNamed(string inName) {
+            TType type = OwningAssembly.LocalTypeNamed(inName);
             if (type != null)
                 return type;
 
             for (int i = m_Dependencies.Length - 1; i >= 0; --i)
             {
-                type = m_Dependencies[i].TypeNamed(inName);
+                type = m_Dependencies[i].LocalTypeNamed(inName);
                 if (type != null)
                     return type;
             }
