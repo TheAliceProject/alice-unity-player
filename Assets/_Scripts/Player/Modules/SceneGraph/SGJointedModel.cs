@@ -83,7 +83,7 @@ namespace Alice.Player.Unity {
 
         private static bool HasTranslucence(Texture2D texture) {
             const double epsilon = 0.01;
-            const double fractionOfAbsolutes = 0.96;
+            const double fractionOfAbsolutes = 0.84;
 
             var colors = texture.GetPixels();
             var total = colors.Length;
