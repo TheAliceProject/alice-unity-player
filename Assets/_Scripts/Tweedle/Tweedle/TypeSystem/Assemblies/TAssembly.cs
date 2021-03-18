@@ -70,21 +70,16 @@ namespace Alice.Tweedle
             m_Status = Status.Linking;
             {
                 // Make sure to link dependencies first
-                for (int i = 0; i < m_Dependencies.Length; ++i)
-                {
-                    m_Dependencies[i].Link();
+                foreach (var dep in m_Dependencies) {
+                    dep.Link();
                 }
 
-                TAssemblyLinkContext linkingContext = new TAssemblyLinkContext(this, m_Dependencies);
-
-                for (int i = 0; i < m_TypeList.Count; ++i)
-                {
-                    m_TypeList[i].Link(linkingContext);
+                foreach (var type in m_TypeList) {
+                    type.Link(this);
                 }
 
-                for (int i = 0; i < m_TypeList.Count; ++i)
-                {
-                    m_TypeList[i].PostLink(linkingContext);
+                foreach (var type in m_TypeList) {
+                    type.PostLink(this);
                 }
             }
             m_Status = Status.FinishedLinking;

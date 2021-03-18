@@ -13,7 +13,7 @@ namespace Alice.Tweedle
         TTypeRef Type { get; }
         MemberFlags Flags { get; }
 
-        void Link(TAssemblyLinkContext inContext, TType inOwnerType);
+        void Link(TAssembly inAssembly, TType inOwnerType);
     }
 
     /// <summary>

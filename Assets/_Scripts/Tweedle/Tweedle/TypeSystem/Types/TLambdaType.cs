@@ -20,11 +20,11 @@ namespace Alice.Tweedle
 
         #region Link
 
-        protected override void LinkImpl(TAssemblyLinkContext inContext)
+        protected override void LinkImpl(TAssembly inAssembly)
         {
-            base.LinkImpl(inContext);
+            base.LinkImpl(inAssembly);
 
-            Signature.Resolve(inContext);
+            Signature.Resolve(inAssembly);
         }
 
         #endregion // Link
@@ -192,11 +192,11 @@ namespace Alice.Tweedle
             }
         }
 
-        public void Resolve(TAssemblyLinkContext inContext)
+        public void Resolve(TAssembly inAssembly)
         {
-            ReturnType.Resolve(inContext);
+            ReturnType.Resolve(inAssembly);
             for (int i = 0; i < Parameters.Length; ++i)
-                Parameters[i].Resolve(inContext);
+                Parameters[i].Resolve(inAssembly);
         }
 
         public override bool Equals(object obj)

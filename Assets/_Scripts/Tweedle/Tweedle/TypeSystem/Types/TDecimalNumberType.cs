@@ -15,9 +15,9 @@ namespace Alice.Tweedle
         {
         }
 
-        protected override void LinkImpl(TAssemblyLinkContext inContext)
+        protected override void LinkImpl(TAssembly inAssembly)
         {
-            base.LinkImpl(inContext);
+            base.LinkImpl(inAssembly);
 
             m_Default = TValue.FromNumber(double.NaN);
         }
