@@ -22,10 +22,10 @@ namespace Alice.Tweedle
         public TTypeRef Type { get; private set; }
         public MemberFlags Flags { get; private set; }
 
-        public virtual void Link(TAssemblyLinkContext inContext, TType inOwnerType)
+        public virtual void Link(TAssembly inAssembly, TType inOwnerType)
         {
             ContainingType = inOwnerType;
-            Type.Resolve(inContext);
+            Type.Resolve(inAssembly);
 
             // Interop methods don't go through the same type checks
             bool bIsInterop = this.HasModifiers(MemberFlags.PInterop);
@@ -35,13 +35,13 @@ namespace Alice.Tweedle
 
             for (int i = 0; i < RequiredParams.Length; ++i)
             {
-                RequiredParams[i].Type.Resolve(inContext);
+                RequiredParams[i].Type.Resolve(inAssembly);
                 if (!bIsInterop && !RequiredParams[i].Type.Get().IsValidIdentifier())
                     throw new TweedleLinkException("Parameter type " + RequiredParams[i].Type.Name + " is not a valid identifier type");
             }
             for (int i = 0; i < OptionalParams.Length; ++i)
             {
-                OptionalParams[i].Type.Resolve(inContext);
+                OptionalParams[i].Type.Resolve(inAssembly);
                 if (!bIsInterop && !OptionalParams[i].Type.Get().IsValidIdentifier())
                     throw new TweedleLinkException("Parameter type " + OptionalParams[i].Type.Name + " is not a valid identifier type");
             }
