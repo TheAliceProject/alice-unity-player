@@ -301,6 +301,8 @@ namespace Alice.Player.Unity {
 
             Destroy(m_ModelCacheRoot);
             
+            m_WaitReturns.Clear();
+            m_WaitReturnsQueue.Clear();
             TextureCache.Clear();
             AudioCache.Clear();
             TextureCache = null;
