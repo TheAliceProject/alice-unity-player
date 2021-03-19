@@ -368,7 +368,7 @@ namespace Alice.Player.Modules {
             float waitTime = stopTime < 0f ? clip.length : (stopTime - startTime);
             audio.SetData(clip, volume, startTime);
             audio.Play(waitTime);
-            Routine.Start(DelayReturnRoutine(asyncReturn, waitTime));
+            SceneGraph.Current.QueueTimeReturn(asyncReturn, waitTime);
             return asyncReturn;
         }
 
@@ -406,12 +406,6 @@ namespace Alice.Player.Modules {
             }
 
             return asyncReturn;
-        }
-
-        private static IEnumerator DelayReturnRoutine(AsyncReturn asyncReturn, float delay)
-        {
-            yield return delay;
-            asyncReturn.Return();
         }
 
         #endregion // Other
