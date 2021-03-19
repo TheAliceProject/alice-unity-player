@@ -250,7 +250,6 @@ namespace Alice.Tweedle.Parse
                     if(waveTest != "WAVE")
                         Debug.LogError("Detected wav file but header incorrect.");
                     audioClip = WavUtility.ToAudioClip(data);
-                    SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
                 }
                 else if(fileSuffix == ".mp3"){
                     // Hopefully an mp3 file (maybe in the future check some bytes? Probably unnecessary though)
