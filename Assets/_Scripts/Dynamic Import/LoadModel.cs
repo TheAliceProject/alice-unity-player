@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
-using TriLib;
 using System.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Siccity.GLTFUtility;
 
 public class LoadModel : MonoBehaviour {
 
-    [SerializeField] private readonly bool useTriLib = true;
     [Tooltip("Can only load models from the Asset/Models folder per this script.")]
     [SerializeField] private string fileName = "ColaBottle.dae";
 	[SerializeField] private Texture texOverride = null;
@@ -76,21 +75,17 @@ public class LoadModel : MonoBehaviour {
 
     private void Start()
     {
-        //Debug.Log(Path.GetFullPath("./Models"));
-        if (useTriLib)
-        {
-            using (var assetLoader = new AssetLoader())
-            { //Initializes our Asset Loader.
-                var assetLoaderOptions = ScriptableObject.CreateInstance<AssetLoaderOptions>(); //Creates an Asset Loader Options object.
-                assetLoaderOptions.AutoPlayAnimations = false;
-				var filename = Path.Combine(Path.GetFullPath("./Assets/Models"), fileName); //Combines our current directory with our model filename "turtle1.b3d" and generates the full model path.
-				GameObject loadedModel = assetLoader.LoadFromFile(filename, assetLoaderOptions); //Loads our model.
-                NormalizeWeightsInModel(loadedModel);
-			}
-        }
+        var assetLoaderOptions = new ImportSettings(); //Creates an Asset Loader Options object.
+	    var filename = Path.Combine(Path.GetFullPath("./Assets/Models"), fileName); //Combines our current directory with our model filename "turtle1.b3d" and generates the full model path.
+        Importer.ImportGLTFAsync(filename, assetLoaderOptions, OnFinishLoading);  //Loads our model.
     }
 
-	private void MaterialCreated(uint materialIndex, bool isOverriden, Material material)
+    private void OnFinishLoading(GameObject loadedModel) 
+    {
+        NormalizeWeightsInModel(loadedModel);
+    }
+
+    private void MaterialCreated(uint materialIndex, bool isOverriden, Material material)
 	{
 		material.SetTexture("_MainTex", texOverride);
 	}
