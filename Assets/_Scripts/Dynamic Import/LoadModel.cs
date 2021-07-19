@@ -31,23 +31,6 @@ public class LoadModel : MonoBehaviour {
         return meshes;
     }
 
-    private void CheckWeights(Mesh mesh)
-    {
-        Debug.Log(mesh.name + "START");
-        Debug.Log("Bone Weights Check:");
-        for (int i = 0; i < mesh.boneWeights.Length; i++)
-        {
-            BoneWeight weight = mesh.boneWeights[i];
-
-            double weightTotal = weight.weight0 + weight.weight1 + weight.weight2 + weight.weight3;
-            if (Math.Abs(1 - weightTotal) > .001)
-            {
-                Debug.Log("  "+i+" BAD WEIGHTS: "+weightTotal);
-            }
-        }
-        Debug.Log(mesh.name + " DONE");
-    }
-
     private void NormalizeWeightsInMesh(Mesh mesh)
     {
         BoneWeight[] newWeights = mesh.boneWeights;
@@ -80,13 +63,8 @@ public class LoadModel : MonoBehaviour {
         Importer.ImportGLTFAsync(filename, assetLoaderOptions, OnFinishLoading);  //Loads our model.
     }
 
-    private void OnFinishLoading(GameObject loadedModel) 
+    private void OnFinishLoading(GameObject loadedModel, AnimationClip[] anims) 
     {
         NormalizeWeightsInModel(loadedModel);
     }
-
-    private void MaterialCreated(uint materialIndex, bool isOverriden, Material material)
-	{
-		material.SetTexture("_MainTex", texOverride);
-	}
 }
