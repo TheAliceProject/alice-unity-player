@@ -7,6 +7,7 @@ using System.IO;
 using UnityEngine;
 using System.Text;
 using NLayer;
+using Siccity.GLTFUtility;
 
 namespace Alice.Tweedle.Parse
 {
@@ -293,19 +294,19 @@ namespace Alice.Tweedle.Parse
                 if (meshRef == null) continue;
 
                 var data = m_ZipFile.ReadDataEntry(meshRef.file);
-                using (var assetLoader = new TriLib.AssetLoader()) {
-                    var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
-                    var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
-                    var loadedModel = assetLoader.LoadFromMemoryWithTextures(data, meshRef.file, options, null,
-                        Path.GetDirectoryName(cachePath));
+                var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
+                
+                //TODO: Cache data
+                //var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
+                
+                var loadedModel = Importer.LoadFromBytes(data, options);
 
-                    var cacheId = inManifest.description.name + "/" + model.name;
+                var cacheId = inManifest.description.name + "/" + model.name;
 
-                    var meshBounds = meshRef.boundingBox.AsBounds();
-                    var bounds = meshBounds.min.Equals(Vector3.zero) && meshBounds.max.Equals(Vector3.zero) ?
-                        inManifest.boundingBox.AsBounds() : meshBounds;
-                    SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, bounds, inManifest.jointBounds);
-                }
+                var meshBounds = meshRef.boundingBox.AsBounds();
+                var bounds = meshBounds.min.Equals(Vector3.zero) && meshBounds.max.Equals(Vector3.zero) ?
+                    inManifest.boundingBox.AsBounds() : meshBounds;
+                SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, bounds, inManifest.jointBounds);
             }
         }
 
