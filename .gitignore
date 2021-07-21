@@ -10,7 +10,7 @@ Assets/AssetStoreTools*
 /.vscode/
 
 # IntelliJ and Antlr
-*antlr/
+/antlr/
 /*idea/
 /gen/
 
