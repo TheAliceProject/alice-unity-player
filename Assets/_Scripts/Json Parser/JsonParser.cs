@@ -121,12 +121,4 @@ public class JsonParser : MonoBehaviour
 	}
 
 	#endregion
-
-	public string FromJsonFile(string path)
-	{
-		string json = System.IO.File.ReadAllText(path);
-		ExampleClass obj = JsonUtility.FromJson<ExampleClass>(json);
-
-		return "Loaded in Json file, stored in object: " + obj.ObjToString();
-	}
 }
