@@ -162,12 +162,12 @@ public class VRControl : MonoBehaviour
                 // ToDo: Allow worlds to run not in VR
                 Application.targetFrameRate = -1; // Use VR framerate specified by SDK
                 // Vive appears to be backwards when using SteamVR. Correct it here so we have identical behavior to Oculus
-                if (XRDevice.model.Contains("Vive")){
+                if (XRSettings.loadedDeviceName.Contains("Vive")){
                     deviceType = VRDevice.Vive;
                     landingRig.localRotation = UnityEngine.Quaternion.Euler(landingRig.localRotation.eulerAngles + new Vector3(0f, 180f, 0f));
                 }
                     
-                else if (XRDevice.model.Contains("Oculus")){
+                else if (XRSettings.loadedDeviceName.Contains("Oculus")){
                     deviceType = VRDevice.OculusRift;
                     XRDevice.SetTrackingSpaceType(TrackingSpaceType.RoomScale);
                 }
