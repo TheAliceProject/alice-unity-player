@@ -51,7 +51,7 @@ namespace Alice.Tweedle.Parse
 
         public IEnumerator MakeLibraryZip()
         {
-            string libraryPath = Application.streamingAssetsPath + WorldObjects.DEFAULT_FOLDER_PATH + WorldObjects.SCENE_GRAPH_LIBRARY_NAME + project_suffix;
+            string libraryPath = Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.SCENE_GRAPH_LIBRARY_NAME) + project_suffix;
             byte[] result;
             UnityWebRequest www = new UnityWebRequest(libraryPath);
             DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
@@ -65,7 +65,7 @@ namespace Alice.Tweedle.Parse
 
         IEnumerator loadStreamingAsset(string fileName)
         {
-            string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
+            string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
             byte[] result;
             yield return YieldLoadingScreens(true);
             UnityWebRequest www = new UnityWebRequest(filePath);
@@ -260,28 +260,29 @@ namespace Alice.Tweedle.Parse
              * ON PC PLATFORM: remain on the main menu
              * ON ANDROID/WebGL: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
              */
-            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath),
-                dirDefault = new DirectoryInfo(Application.streamingAssetsPath + "/Default");
-            FileInfo[] files = dir.GetFiles("*" + project_suffix),
-                filesDefault = dirDefault.GetFiles("*" + project_suffix);
 
-            if(files.Length == 1) { // Only one world is bundled, auto load that world
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+            // On Mobile platforms and WebGL, when no bundled world found, we will try to open a default world
+            // TODO sibi: remove hard coded path, add txt/json containing names of files instead
+            OpenWorld("AllSlitherersModelImportTest" + project_suffix, MainMenuControl.Disabled);
+#else
+            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
+            DirectoryInfo dirDefault = new DirectoryInfo(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH));
+            FileInfo[] files = dir.GetFiles("*" + project_suffix);
+            FileInfo[] filesDefault = dirDefault.GetFiles("*" + project_suffix);
+
+            if (files.Length == 1) { // Only one world is bundled, auto load that world
                 loadingScreen.fader.alpha = 1f;
                 OpenWorld(files[0].FullName, MainMenuControl.Disabled);
             }
             else if(files.Length > 1) { // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
-                for(int i = 0; i < menuControls.Length; i++) {
+                for (int i = 0; i < menuControls.Length; i++) {
                     menuControls[i].DeactivateMainMenu();
                 }
                 for(int i = 0; i < loadMoreControl.Length; i++) {
                     loadMoreControl[i].gameObject.SetActive(true);
                     loadMoreControl[i].SetAsStandalone();
                 }
-            }
-#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
-            // On Mobile platforms and WebGL, when no bundled world found, we will try to open a default world
-            else if(files.Length == 0){
-                OpenWorld(Application.streamingAssetsPath + WorldObjects.DEFAULT_FOLDER_PATH + WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix, MainMenuControl.Disabled);
             }
 #endif
         }
