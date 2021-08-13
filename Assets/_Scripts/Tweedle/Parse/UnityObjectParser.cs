@@ -91,7 +91,7 @@ namespace Alice.Tweedle.Parse
             }
 
             m_System = new TweedleSystem();
-            JsonParser.ParseZipFile(m_System, stream);
+            yield return JsonParser.ParseZipFile(m_System, stream);
             m_System.Link();
 
             if (dumpTypeOutlines)
