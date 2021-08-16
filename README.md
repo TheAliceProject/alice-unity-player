@@ -10,12 +10,13 @@ The Tweedle folder contains all code for Tweedle and is self contained. The File
 # Models
 Has the models used to test the dynamic model import.
 # Plugins
-Antlr - for the Antlr parsing.
-crosstales - for the file explorer selection when selecting files.
-JSON - for reading Json files the non-Unity way.
-TriLib - for dynamic model import.
-System.IO.Compression.FileSystem - for extracting zip files.
+- Antlr - for the Antlr parsing.
+- crosstales - for the file explorer selection when selecting files.
+- JSON - for reading Json files the non-Unity way.
+- GLTFUtility - for dynamic model import.
+- System.IO.Compression.FileSystem - for extracting zip files.
+- FlyingText3D - For say dialogs
 # Prefabs
-Json File - the UI for selecting and reading Json files.
-Json Zip - the UI for selecting and reading Json zip files.
-Tweedle Project - the UI for selecting and reading a3w files into a TweedleSystem.
+- Json File - the UI for selecting and reading Json files.
+- Json Zip - the UI for selecting and reading Json zip files.
+- Tweedle Project - the UI for selecting and reading a3w files into a TweedleSystem.
