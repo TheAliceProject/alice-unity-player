@@ -68,8 +68,6 @@ namespace Alice.Tweedle.Parse
 
         public static IEnumerator ParseZipFile(TweedleSystem inSystem, Stream inZipStream)
         {
-            yield return new WaitForSeconds(0.5f);
-
             using (ZipFile zipFile = new ZipFile(inZipStream))
             {
                 JsonParser reader = new JsonParser(inSystem, zipFile);
@@ -79,11 +77,12 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator Parse()
         {
+            yield return new WaitForSeconds(0.5f);
+
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
             m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
-            yield return new WaitForSeconds(0.5f);
             yield return ParseJson(m_ZipFile.ReadEntry("manifest.json"));
         }
 
@@ -136,13 +135,8 @@ namespace Alice.Tweedle.Parse
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef))
                     {
-#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
                         yield return new WaitForSeconds(0.5f);
                         yield return ParseZipFile(m_System, libraryStream);
-#else
-                        ParseZipFile(m_System, libRef.path.fullPath);
-                        yield return null;
-#endif
                     }
                     else
                     {
