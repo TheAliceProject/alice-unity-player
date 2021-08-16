@@ -1,13 +1,10 @@
-using System;
 using System.IO;
 using UnityEngine;
 using Alice.Tweedle.VM;
-using UnityEngine.UI;
 using System.Collections;
 using Alice.Player.Modules;
 using BeauRoutine;
 using ICSharpCode.SharpZipLib.Zip;
-using SFB;
 using UnityEngine.Networking;
 
 namespace Alice.Tweedle.Parse
@@ -63,7 +60,7 @@ namespace Alice.Tweedle.Parse
             JsonParser.SetLibraryStream(libraryStream);
         }
 
-        IEnumerator loadStreamingAsset(string fileName)
+        IEnumerator LoadStreamingAsset(string fileName)
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
             byte[] result;
@@ -72,7 +69,6 @@ namespace Alice.Tweedle.Parse
             DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
             www.downloadHandler = dH;
             yield return www.SendWebRequest();
-            while(!www.isDone);
             result = www.downloadHandler.data;
             Stream stream = new MemoryStream(result);
             yield return Routine.Start(MakeLibraryZip());
@@ -108,10 +104,9 @@ namespace Alice.Tweedle.Parse
          
         // arg: fileName should be the fullPath of the target file.
         public void OpenWorld(string fileName = "", MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
-
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
 
-            Routine.Start(loadStreamingAsset(fileName));
+            Routine.Start(LoadStreamingAsset(fileName));
 #else
 
             string zipPath = fileName;
@@ -264,7 +259,7 @@ namespace Alice.Tweedle.Parse
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
             // On Mobile platforms and WebGL, when no bundled world found, we will try to open a default world
             // TODO sibi: remove hard coded path, add txt/json containing names of files instead
-            OpenWorld("AllSlitherersModelImportTest" + project_suffix, MainMenuControl.Disabled);
+            OpenWorld("Default/DefaultBundledWorld" + project_suffix, MainMenuControl.Disabled);
 #else
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
             DirectoryInfo dirDefault = new DirectoryInfo(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH));
