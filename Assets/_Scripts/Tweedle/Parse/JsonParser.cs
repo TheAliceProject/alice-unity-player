@@ -225,7 +225,7 @@ namespace Alice.Tweedle.Parse
             try
             {
                 var tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.file);
-                var tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly()); // todo? sibi
+                var tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
                 m_System.GetRuntimeAssembly().Add(tweedleType);
             }
             catch (Exception e)
@@ -266,7 +266,7 @@ namespace Alice.Tweedle.Parse
 
             if (Application.isPlaying)
             {
-                byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file); // todo? sibi
+                byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
                 
                 AudioClip audioClip = null;
                 string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
