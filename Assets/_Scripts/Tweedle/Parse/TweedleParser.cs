@@ -9,47 +9,47 @@ namespace Alice.Tweedle.Parse
 {
     public class TweedleParser
     {
-        public Tweedle.TweedleParser ParseSource(string src, TAssembly inAssembly = null)
+        public Tweedle.TweedleParser ParseSource(string src, TAssembly inAssembly = null, string inFile = null)
         {
             return this.ParseSource(new StringReader(src), inAssembly);
         }
 
-        public Tweedle.TweedleParser ParseSource(TextReader src, TAssembly inAssembly = null)
+        public Tweedle.TweedleParser ParseSource(TextReader src, TAssembly inAssembly = null, string inFile = null)
         {
             AntlrInputStream antlerStream = new AntlrInputStream(src);
             TweedleLexer lexer = new TweedleLexer(antlerStream);
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-            return new Tweedle.TweedleParser(tokenStream, new TweedleParserOutput(false, inAssembly), new TweedleParserOutput(true, inAssembly));
+            return new Tweedle.TweedleParser(tokenStream, new TweedleParserOutput(false, inAssembly, inFile), new TweedleParserOutput(true, inAssembly, inFile));
         }
 
-        public TType ParseType(string src, TAssembly inAssembly = null)
+        public TType ParseType(string src, TAssembly inAssembly = null, string inFile = null)
         {
-            return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly).typeDeclaration());
+            return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).typeDeclaration());
         }
 
-        public TType ParseType(TextReader src, TAssembly inAssembly = null)
+        public TType ParseType(TextReader src, TAssembly inAssembly = null, string inFile = null)
         {
-            return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly).typeDeclaration());
+            return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).typeDeclaration());
         }
 
-        public TweedleStatement ParseStatement(string src, TAssembly inAssembly = null)
+        public TweedleStatement ParseStatement(string src, TAssembly inAssembly = null, string inFile = null)
         {
-            return new StatementVisitor(inAssembly).Visit(ParseSource(src, inAssembly).blockStatement());
+            return new StatementVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).blockStatement());
         }
 
-        public TweedleStatement ParseStatement(TextReader src, TAssembly inAssembly = null)
+        public TweedleStatement ParseStatement(TextReader src, TAssembly inAssembly = null, string inFile = null)
         {
-            return new StatementVisitor(inAssembly).Visit(ParseSource(src).blockStatement());
+            return new StatementVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).blockStatement());
         }
 
-        public ITweedleExpression ParseExpression(string src, TAssembly inAssembly = null)
+        public ITweedleExpression ParseExpression(string src, TAssembly inAssembly = null, string inFile = null)
         {
-            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src).expression());
+            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).expression());
         }
 
-        public ITweedleExpression ParseExpression(TextReader src, TAssembly inAssembly = null)
+        public ITweedleExpression ParseExpression(TextReader src, TAssembly inAssembly = null, string inFile = null)
         {
-            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src).expression());
+            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).expression());
         }
 
         private class ClassBody
