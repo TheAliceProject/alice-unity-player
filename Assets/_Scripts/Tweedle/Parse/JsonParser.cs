@@ -141,6 +141,7 @@ namespace Alice.Tweedle.Parse
                         yield return ParseZipFile(m_System, libraryStream);
 #else
                         ParseZipFile(m_System, libRef.path.fullPath);
+                        yield return null;
 #endif
                     }
                     else
