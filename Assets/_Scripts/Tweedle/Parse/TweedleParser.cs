@@ -19,7 +19,7 @@ namespace Alice.Tweedle.Parse
             AntlrInputStream antlerStream = new AntlrInputStream(src);
             TweedleLexer lexer = new TweedleLexer(antlerStream);
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-            return new Tweedle.TweedleParser(tokenStream);
+            return new Tweedle.TweedleParser(tokenStream, new TweedleParserOutput(false), new TweedleParserOutput(true));
         }
 
         public TType ParseType(string src, TAssembly inAssembly = null)
