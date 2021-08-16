@@ -54,7 +54,6 @@ namespace Alice.Tweedle.Parse
             DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
             www.downloadHandler = dH;
             yield return www.SendWebRequest();
-            while(!www.isDone);
             result = www.downloadHandler.data;
             Stream libraryStream = new MemoryStream(result);
             JsonParser.SetLibraryStream(libraryStream);
