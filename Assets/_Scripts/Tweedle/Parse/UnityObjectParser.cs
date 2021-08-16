@@ -257,7 +257,6 @@ namespace Alice.Tweedle.Parse
 
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
             // On Mobile platforms and WebGL, when no bundled world found, we will try to open a default world
-            // TODO sibi: remove hard coded path, add txt/json containing names of files instead
             OpenWorld("Default/DefaultBundledWorld" + project_suffix, MainMenuControl.Disabled);
 #else
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
