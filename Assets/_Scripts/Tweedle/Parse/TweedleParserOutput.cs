@@ -9,10 +9,13 @@ namespace Alice.Tweedle.Parse
     {
         public bool IsError { get; }
 
+        public TAssembly Assembly { get;  }
 
-        public TweedleParserOutput(bool isError)
+
+        public TweedleParserOutput(bool isError, TAssembly assembly = null)
         {
             IsError = isError;
+            Assembly = assembly;
         }
 
         public override void Write(char value)
@@ -25,12 +28,14 @@ namespace Alice.Tweedle.Parse
             StringWriter writer = new StringWriter();
             writer.Write(value, buffer, count);
 
+            string assemblyName = Assembly != null ? Assembly.Name : "(unknown)";
+
             if (IsError)
             {
-                Debug.LogError(writer.ToString());
+                Debug.LogErrorFormat("[Tweedle Parser] {0}: {1}", assemblyName, writer.ToString());
             } else
             {
-                Debug.Log(writer.ToString());
+                Debug.LogFormat("[Tweedle Parser] {0}: {1}", assemblyName, writer.ToString());
             }
         }
 

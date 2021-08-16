@@ -9,32 +9,32 @@ namespace Alice.Tweedle.Parse
 {
     public class TweedleParser
     {
-        public Tweedle.TweedleParser ParseSource(string src)
+        public Tweedle.TweedleParser ParseSource(string src, TAssembly inAssembly = null)
         {
-            return this.ParseSource(new StringReader(src));
+            return this.ParseSource(new StringReader(src), inAssembly);
         }
 
-        public Tweedle.TweedleParser ParseSource(TextReader src)
+        public Tweedle.TweedleParser ParseSource(TextReader src, TAssembly inAssembly = null)
         {
             AntlrInputStream antlerStream = new AntlrInputStream(src);
             TweedleLexer lexer = new TweedleLexer(antlerStream);
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-            return new Tweedle.TweedleParser(tokenStream, new TweedleParserOutput(false), new TweedleParserOutput(true));
+            return new Tweedle.TweedleParser(tokenStream, new TweedleParserOutput(false, inAssembly), new TweedleParserOutput(true, inAssembly));
         }
 
         public TType ParseType(string src, TAssembly inAssembly = null)
         {
-            return new TypeVisitor(inAssembly).Visit(ParseSource(src).typeDeclaration());
+            return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly).typeDeclaration());
         }
 
         public TType ParseType(TextReader src, TAssembly inAssembly = null)
         {
-            return new TypeVisitor(inAssembly).Visit(ParseSource(src).typeDeclaration());
+            return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly).typeDeclaration());
         }
 
         public TweedleStatement ParseStatement(string src, TAssembly inAssembly = null)
         {
-            return new StatementVisitor(inAssembly).Visit(ParseSource(src).blockStatement());
+            return new StatementVisitor(inAssembly).Visit(ParseSource(src, inAssembly).blockStatement());
         }
 
         public TweedleStatement ParseStatement(TextReader src, TAssembly inAssembly = null)
