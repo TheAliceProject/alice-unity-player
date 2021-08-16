@@ -224,9 +224,11 @@ namespace Alice.Tweedle.Parse
 
             try
             {
-                var tweedleCode = m_ZipFile.ReadEntry(workingDir + resourceRef.file);
-                var tweedleType = m_Parser.ParseType(tweedleCode, m_System.GetRuntimeAssembly());
-                m_System.GetRuntimeAssembly().Add(tweedleType);
+                using (TextReader tweedleStream = new StreamReader(m_ZipFile.OpenEntryStream(workingDir + resourceRef.file)))
+                {
+                    var tweedleType = m_Parser.ParseType(tweedleStream, m_System.GetRuntimeAssembly());
+                    m_System.GetRuntimeAssembly().Add(tweedleType);
+                }
             }
             catch (Exception e)
             {
