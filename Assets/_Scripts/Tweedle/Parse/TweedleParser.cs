@@ -2,6 +2,7 @@
 using Antlr4.Runtime.Misc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Alice.Tweedle.Parse
@@ -9,6 +10,11 @@ namespace Alice.Tweedle.Parse
     public class TweedleParser
     {
         public Tweedle.TweedleParser ParseSource(string src)
+        {
+            return this.ParseSource(new StringReader(src));
+        }
+
+        public Tweedle.TweedleParser ParseSource(TextReader src)
         {
             AntlrInputStream antlerStream = new AntlrInputStream(src);
             TweedleLexer lexer = new TweedleLexer(antlerStream);
@@ -21,12 +27,27 @@ namespace Alice.Tweedle.Parse
             return new TypeVisitor(inAssembly).Visit(ParseSource(src).typeDeclaration());
         }
 
+        public TType ParseType(TextReader src, TAssembly inAssembly = null)
+        {
+            return new TypeVisitor(inAssembly).Visit(ParseSource(src).typeDeclaration());
+        }
+
         public TweedleStatement ParseStatement(string src, TAssembly inAssembly = null)
         {
             return new StatementVisitor(inAssembly).Visit(ParseSource(src).blockStatement());
         }
 
+        public TweedleStatement ParseStatement(TextReader src, TAssembly inAssembly = null)
+        {
+            return new StatementVisitor(inAssembly).Visit(ParseSource(src).blockStatement());
+        }
+
         public ITweedleExpression ParseExpression(string src, TAssembly inAssembly = null)
+        {
+            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src).expression());
+        }
+
+        public ITweedleExpression ParseExpression(TextReader src, TAssembly inAssembly = null)
         {
             return new ExpressionVisitor(inAssembly).Visit(ParseSource(src).expression());
         }
