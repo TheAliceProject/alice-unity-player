@@ -77,7 +77,7 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator Parse()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
 
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
@@ -91,7 +91,7 @@ namespace Alice.Tweedle.Parse
             manifest = JsonUtility.FromJson<Manifest>(inManifestJson);
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
             yield return ParsePrerequisites(manifest);
 
             ProjectType t = manifest.Identifier.Type;
@@ -117,7 +117,7 @@ namespace Alice.Tweedle.Parse
                     break;
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
             yield return ParseResourceDetails(
                 manifest,
                 jsonObj[MemberInfoGetter.GetMemberName(() => manifest.resources)],
@@ -135,7 +135,7 @@ namespace Alice.Tweedle.Parse
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef))
                     {
-                        yield return new WaitForSeconds(0.5f);
+                        yield return null;
                         yield return ParseZipFile(m_System, libraryStream);
                     }
                     else
@@ -159,7 +159,7 @@ namespace Alice.Tweedle.Parse
 
             for (int i = 0; i < manifest.resources.Count; i++)
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return null;
                 yield return ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
                 manifest.resources[i] = strictRef;
                 m_System.AddResource(strictRef);
@@ -170,7 +170,7 @@ namespace Alice.Tweedle.Parse
         {
             string zipPath = workingDir + resourceRef.file;
 
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
 
             switch (resourceRef.ContentType)
             {
@@ -220,7 +220,7 @@ namespace Alice.Tweedle.Parse
         }
 
         private IEnumerator ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
 
             try
             {
@@ -236,7 +236,7 @@ namespace Alice.Tweedle.Parse
         }
 
         private IEnumerator CacheToDisk(ResourceReference resourceRef, string workingDir) {
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
             var cachePath = Application.temporaryCachePath + "/" + workingDir;
             if (!Directory.Exists(cachePath)) {
                 Directory.CreateDirectory(cachePath);
@@ -247,7 +247,7 @@ namespace Alice.Tweedle.Parse
         }
 
         private IEnumerator LoadTexture(ResourceReference resourceRef, string workingDir) {
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
             if (Application.isPlaying) {
                 byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
                 var texture = new Texture2D(0, 0);
@@ -262,7 +262,7 @@ namespace Alice.Tweedle.Parse
             // If mp3 and we're on desktop, must convert to wav first using NAudio
             // Then load audioclip with unitywebrequest
 
-            yield return new WaitForSeconds(0.5f);
+            yield return null;
 
             if (Application.isPlaying)
             {
@@ -313,18 +313,26 @@ namespace Alice.Tweedle.Parse
         private IEnumerator LoadModelStructures(ModelManifest inManifest) {
             if (!Application.isPlaying) yield break;
 
-            yield return new WaitForSeconds(0.5f);
             foreach (var model in inManifest.models) {
+                yield return null;
                 var meshRef = inManifest.GetStructure(model.structure);
                 if (meshRef == null) continue;
 
+                yield return null;
                 var data = m_ZipFile.ReadDataEntry(meshRef.file);
                 var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
                 
                 //TODO: Cache data
                 //var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
+                GameObject loadedModel = null;
                 
-                var loadedModel = Importer.LoadFromBytes(data, options);
+                Importer.ImportGLBAsync(data, options, (GameObject go, AnimationClip[] anims) => {
+                    loadedModel = go;
+                });
+
+                while (loadedModel == null) {
+                    yield return null;
+                }
 
                 var cacheId = inManifest.description.name + "/" + model.name;
 
