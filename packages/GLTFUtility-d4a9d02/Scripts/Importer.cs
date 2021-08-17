@@ -225,7 +225,12 @@ namespace Siccity.GLTFUtility {
 		private static IEnumerator LoadAsync(string json, string filepath, byte[] bytefile, long binChunkStart, ImportSettings importSettings, Action<GameObject, AnimationClip[]> onFinished, Action<float> onProgress = null) {
 			// Threaded deserialization
 			Task<GLTFObject> deserializeTask = new Task<GLTFObject>(() => JsonConvert.DeserializeObject<GLTFObject>(json));
+#if UNITY_WEBGL
+			deserializeTask.RunSynchronously();
+			yield return null;
+#else
 			deserializeTask.Start();
+#endif
 			while (!deserializeTask.IsCompleted) yield return null;
 			GLTFObject gltfObject = deserializeTask.Result;
 			CheckExtensions(gltfObject);
@@ -283,7 +288,12 @@ namespace Siccity.GLTFUtility {
 			// Wait for required results to complete before starting
 			while (!importTask.IsReady) yield return null;
 			// Start threaded task
+#if UNITY_WEBGL
+			importTask.task.RunSynchronously();
+			yield return null;
+#else
 			importTask.task.Start();
+#endif
 			// Wait for task to complete
 			while (!importTask.task.IsCompleted) yield return null;
 			// Run additional unity code on main thread
