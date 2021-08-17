@@ -25,18 +25,40 @@ namespace Alice.Player.Unity {
 
         private void NormalizeWeightsInMesh(Mesh mesh)
         {
-            BoneWeight[] newWeights = mesh.boneWeights;
-            for (int i = 0; i < mesh.boneWeights.Length; i++)
+            var boneWeights = mesh.GetAllBoneWeights();
+            var bonesPerVertex = mesh.GetBonesPerVertex();
+            var boneWeightIndex = 0;
+            
+            for (var vertIndex = 0; vertIndex < mesh.vertexCount; vertIndex++)
             {
-                BoneWeight weight = newWeights[i];
-                double weightTotal = weight.weight0 + weight.weight1 + weight.weight2 + weight.weight3;
-                weight.weight0 = (float)(weight.weight0 / weightTotal);
-                weight.weight1 = (float)(weight.weight1 / weightTotal);
-                weight.weight2 = (float)(weight.weight2 / weightTotal);
-                weight.weight3 = (float)(weight.weight3 / weightTotal);
-                newWeights[i] = weight;
+                var vertStartingBoneWeightIndex = boneWeightIndex;
+                var numberOfBonesForThisVertex = bonesPerVertex[vertIndex];
+                var totalWeight = 0f;
+
+                if (numberOfBonesForThisVertex == 1)
+                {
+                    // No reason to normalize if there is only one bone
+                    BoneWeight1 boneWeight = boneWeights[boneWeightIndex];
+                    boneWeight.weight = 1.0f;
+                    boneWeightIndex++;
+                    continue;
+                }
+
+                for (var i = 0; i < numberOfBonesForThisVertex; i++) {
+                    BoneWeight1 boneWeight = boneWeights[boneWeightIndex];
+                    totalWeight += boneWeight.weight;
+                    boneWeightIndex++;
+                }
+
+                // Backtrack to apply normalization
+                boneWeightIndex = vertStartingBoneWeightIndex;
+
+                for (var i = 0; i < numberOfBonesForThisVertex; i++) {
+                    BoneWeight1 boneWeight = boneWeights[boneWeightIndex];
+                    boneWeight.weight /= totalWeight;
+                    boneWeightIndex++;
+                }
             }
-            mesh.boneWeights = newWeights;
         }
 
         private void NormalizeWeightsInModel(GameObject model)
