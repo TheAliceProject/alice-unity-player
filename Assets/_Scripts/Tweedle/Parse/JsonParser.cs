@@ -164,8 +164,6 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
         {
-            Debug.LogFormat("Reading resource {0} {1}", resourceRef.file, resourceRef.name);
-
             string zipPath = workingDir + resourceRef.file;
 
             switch (resourceRef.ContentType)
@@ -313,7 +311,6 @@ namespace Alice.Tweedle.Parse
             if (!Application.isPlaying) yield break;
 
             foreach (var model in inManifest.models) {
-                Debug.LogFormat("Reading model {0}", model.name);
                 yield return null;
                 var meshRef = inManifest.GetStructure(model.structure);
                 if (meshRef == null) continue;
@@ -325,7 +322,7 @@ namespace Alice.Tweedle.Parse
                 //TODO: Cache data
                 //var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
                 GameObject loadedModel = null;
-                
+
                 Importer.ImportGLBAsync(data, options, (GameObject go, AnimationClip[] anims) => {
                     loadedModel = go;
                 });
