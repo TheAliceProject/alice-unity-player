@@ -59,11 +59,13 @@ namespace Alice.Tweedle.Parse
 
         public void CacheThumbnail(string fileName)
         {
+#if !UNITY_WEBGL
             // Save thumbnail
             byte[] data = m_ZipFile.ReadDataEntry("thumbnail.png");
             if(data == null)
                 return;
             System.IO.File.WriteAllBytes(Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png", data);
+#endif
         }
 
         public static IEnumerator ParseZipFile(TweedleSystem inSystem, Stream inZipStream)
@@ -231,6 +233,8 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator CacheToDisk(ResourceReference resourceRef, string workingDir) {
             yield return null;
+
+#if !UNITY_WEBGL
             var cachePath = Application.temporaryCachePath + "/" + workingDir;
             if (!Directory.Exists(cachePath)) {
                 Directory.CreateDirectory(cachePath);
@@ -238,6 +242,7 @@ namespace Alice.Tweedle.Parse
 
             var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
             System.IO.File.WriteAllBytes(cachePath + resourceRef.file, data);
+#endif
         }
 
         private IEnumerator LoadTexture(ResourceReference resourceRef, string workingDir) {
@@ -308,6 +313,7 @@ namespace Alice.Tweedle.Parse
             if (!Application.isPlaying) yield break;
 
             foreach (var model in inManifest.models) {
+                Debug.LogFormat("Reading model {0}", model.name);
                 yield return null;
                 var meshRef = inManifest.GetStructure(model.structure);
                 if (meshRef == null) continue;
