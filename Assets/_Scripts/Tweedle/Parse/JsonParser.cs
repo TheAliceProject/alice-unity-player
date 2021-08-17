@@ -267,14 +267,8 @@ namespace Alice.Tweedle.Parse
                     audioClip = WavUtility.ToAudioClip(data);
                 }
                 else if(fileSuffix == ".mp3"){
-                    // Hopefully an mp3 file (maybe in the future check some bytes? Probably unnecessary though)
-
-                    // This is a bit silly, but it seems like you must save the file as an mp3, then load it in.
-                    // I have tried to convert the mp3 byte array to a wav byte array without much luck.
-                    string tempFile = Application.persistentDataPath + "/tempAudio" + audioFiles++.ToString() + ".mp3";
-                    System.IO.File.WriteAllBytes(tempFile, data);
-                    audioClip = LoadMp3(tempFile);
-                    // These temporary files will get deleted when the program is started and/or stopped
+                    byte[] buffer = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
+                    audioClip = LoadMp3(new MemoryStream(buffer), resourceRef.file);
                 }
                 else{
                     Debug.LogError(fileSuffix + " files are not supported at this time.");
@@ -284,19 +278,19 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        public static AudioClip LoadMp3(string filePath) {
-            string filename = System.IO.Path.GetFileNameWithoutExtension(filePath);
+        public static AudioClip LoadMp3(Stream stream, string filePath) {
+            string filename = Path.GetFileNameWithoutExtension(filePath);
 
-            MpegFile mpegFile = new MpegFile(filePath);
+            MpegFile mpegFile = new MpegFile(stream);
 
             // assign samples into AudioClip
             AudioClip ac = AudioClip.Create(filename,
                                             (int)(mpegFile.Length / sizeof(float) / mpegFile.Channels),
                                             mpegFile.Channels,
                                             mpegFile.SampleRate,
-                                            true,
+                                            false,
                                             data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); },
-                                            position => { mpegFile = new MpegFile(filePath); });
+                                            position => { mpegFile.Position = position;  });
             return ac;
         }
 
