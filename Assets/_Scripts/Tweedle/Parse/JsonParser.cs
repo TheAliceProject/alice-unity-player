@@ -250,14 +250,10 @@ namespace Alice.Tweedle.Parse
         }
 
         private void LoadAudio(ResourceReference resourceRef, string workingDir){
-            // Save file as either wav or mp3 depending on type.
-            // If mp3 and we're on desktop, must convert to wav first using NAudio
-            // Then load audioclip with unitywebrequest
+            byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
 
             if (Application.isPlaying)
             {
-                byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-                
                 AudioClip audioClip = null;
                 string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
                 if(fileSuffix == ".wav"){
@@ -267,8 +263,7 @@ namespace Alice.Tweedle.Parse
                     audioClip = WavUtility.ToAudioClip(data);
                 }
                 else if(fileSuffix == ".mp3"){
-                    byte[] buffer = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-                    audioClip = LoadMp3(new MemoryStream(buffer), resourceRef.file);
+                    audioClip = LoadMp3(new MemoryStream(data), resourceRef.file);
                 }
                 else{
                     Debug.LogError(fileSuffix + " files are not supported at this time.");
