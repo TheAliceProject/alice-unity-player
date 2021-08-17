@@ -312,15 +312,7 @@ namespace Alice.Tweedle.Parse
                 
                 //TODO: Cache data
                 //var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
-                GameObject loadedModel = null;
-
-                Importer.ImportGLBAsync(data, options, (GameObject go, AnimationClip[] anims) => {
-                    loadedModel = go;
-                });
-
-                while (loadedModel == null) {
-                    yield return null;
-                }
+                GameObject loadedModel = Importer.LoadFromBytes(data, options);
 
                 var cacheId = inManifest.description.name + "/" + model.name;
 
@@ -328,6 +320,9 @@ namespace Alice.Tweedle.Parse
                 var bounds = meshBounds.min.Equals(Vector3.zero) && meshBounds.max.Equals(Vector3.zero) ?
                     inManifest.boundingBox.AsBounds() : meshBounds;
                 SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, bounds, inManifest.jointBounds);
+
+                // Allow unity loop to process in between model imports.
+                yield return null;
             }
         }
 
