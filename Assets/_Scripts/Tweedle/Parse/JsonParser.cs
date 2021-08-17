@@ -170,23 +170,23 @@ namespace Alice.Tweedle.Parse
             {
                 case ContentType.Audio:
                     strictRef = JsonUtility.FromJson<AudioReference>(refJson);
-                    yield return LoadAudio(resourceRef, workingDir);
+                    LoadAudio(resourceRef, workingDir);
                     break;
                 case ContentType.Class:
-                    yield return ParseTweedleTypeResource(resourceRef, workingDir);
+                    ParseTweedleTypeResource(resourceRef, workingDir);
                     strictRef = JsonUtility.FromJson<ClassReference>(refJson);
                     break;
                 case ContentType.Enum:
-                    yield return ParseTweedleTypeResource(resourceRef, workingDir);
+                    ParseTweedleTypeResource(resourceRef, workingDir);
                     strictRef = JsonUtility.FromJson<EnumReference>(refJson);
                     break;
                 case ContentType.Image:
                     if (manifest is ModelManifest) {
-                        yield return CacheToDisk(resourceRef, workingDir);
+                        CacheToDisk(resourceRef, workingDir);
                         resourceRef.name = manifest.description.name + "/" + resourceRef.name;
                         strictRef = resourceRef;
                     } else {
-                        yield return LoadTexture(resourceRef, workingDir);
+                        LoadTexture(resourceRef, workingDir);
                         strictRef = JsonUtility.FromJson<ImageReference>(refJson);
                     }
                     break;
@@ -213,9 +213,7 @@ namespace Alice.Tweedle.Parse
             strictRef.file = zipPath;
         }
 
-        private IEnumerator ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
-            yield return null;
-
+        private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
             try
             {
                 using TextReader tweedleStream = new StreamReader(m_ZipFile.OpenEntryStream(workingDir + resourceRef.file));
@@ -229,9 +227,7 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        private IEnumerator CacheToDisk(ResourceReference resourceRef, string workingDir) {
-            yield return null;
-
+        private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
 #if !UNITY_WEBGL
             var cachePath = Application.temporaryCachePath + "/" + workingDir;
             if (!Directory.Exists(cachePath)) {
@@ -243,8 +239,7 @@ namespace Alice.Tweedle.Parse
 #endif
         }
 
-        private IEnumerator LoadTexture(ResourceReference resourceRef, string workingDir) {
-            yield return null;
+        private void LoadTexture(ResourceReference resourceRef, string workingDir) {
             if (Application.isPlaying) {
                 byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
                 var texture = new Texture2D(0, 0);
@@ -254,12 +249,10 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        private IEnumerator LoadAudio(ResourceReference resourceRef, string workingDir){
+        private void LoadAudio(ResourceReference resourceRef, string workingDir){
             // Save file as either wav or mp3 depending on type.
             // If mp3 and we're on desktop, must convert to wav first using NAudio
             // Then load audioclip with unitywebrequest
-
-            yield return null;
 
             if (Application.isPlaying)
             {
@@ -311,11 +304,9 @@ namespace Alice.Tweedle.Parse
             if (!Application.isPlaying) yield break;
 
             foreach (var model in inManifest.models) {
-                yield return null;
                 var meshRef = inManifest.GetStructure(model.structure);
                 if (meshRef == null) continue;
 
-                yield return null;
                 var data = m_ZipFile.ReadDataEntry(meshRef.file);
                 var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
                 
