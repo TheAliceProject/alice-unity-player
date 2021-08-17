@@ -38,7 +38,6 @@ public class SystemSettings : ScriptableObject {
 
     private readonly Dimensions _dimensions = new Dimensions(0,0);
     private bool _fullScreen;
-    private string _qualityName;
 
     public Dimensions[] supportedResolutions = { new Dimensions(1024 , 768),
         new Dimensions(1280, 720),
@@ -55,7 +54,6 @@ public class SystemSettings : ScriptableObject {
         PlayerPrefs.SetInt("ScreenWidth", _dimensions.Width);
         PlayerPrefs.SetInt("ScreenHeight", _dimensions.Height);
         PlayerPrefs.SetInt("Fullscreen", _fullScreen ? 1 : 0);
-        PlayerPrefs.SetString("QualityLevel", _qualityName);
 
         ApplyScreenState();
     }
@@ -69,16 +67,6 @@ public class SystemSettings : ScriptableObject {
         _fullScreen = PlayerPrefs.GetInt("Fullscreen", 0) > 0;
         _dimensions.Width = PlayerPrefs.GetInt("ScreenWidth", 1024);
         _dimensions.Height = PlayerPrefs.GetInt("ScreenHeight", 768);
-        _qualityName = PlayerPrefs.GetString("QualityLevel", "AliceCustom");
-
-        // Set quality based on name instead of index
-        for (int i = 0; i < QualitySettings.names.Length; i++){
-            if (QualitySettings.names[i] != _qualityName)
-                continue;
-            QualitySettings.SetQualityLevel(i, true);
-            Debug.Log("Setting quality to " + QualitySettings.names[i]);
-            break;
-        }
 
         ApplyScreenState();
     }
@@ -86,7 +74,7 @@ public class SystemSettings : ScriptableObject {
     private void ApplyScreenState()
     {
         // Set resolution and fullscreen
-#if !UNITY_ANDROID
+#if UNITY_STANDALONE
         Screen.SetResolution(_dimensions.Width, _dimensions.Height, IsFullScreen());
 #endif
     }
