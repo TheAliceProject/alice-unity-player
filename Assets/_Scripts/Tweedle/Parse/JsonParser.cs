@@ -77,8 +77,6 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator Parse()
         {
-            yield return null;
-
             // TODO: Use manifest to determine player assembly version
             string playerAssembly = Player.PlayerAssemblies.CURRENT;
             m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
@@ -91,7 +89,6 @@ namespace Alice.Tweedle.Parse
             manifest = JsonUtility.FromJson<Manifest>(inManifestJson);
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
-            yield return null;
             yield return ParsePrerequisites(manifest);
 
             ProjectType t = manifest.Identifier.Type;
@@ -117,7 +114,6 @@ namespace Alice.Tweedle.Parse
                     break;
             }
 
-            yield return null;
             yield return ParseResourceDetails(
                 manifest,
                 jsonObj[MemberInfoGetter.GetMemberName(() => manifest.resources)],
@@ -135,7 +131,6 @@ namespace Alice.Tweedle.Parse
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef))
                     {
-                        yield return null;
                         yield return ParseZipFile(m_System, libraryStream);
                     }
                     else
@@ -159,7 +154,6 @@ namespace Alice.Tweedle.Parse
 
             for (int i = 0; i < manifest.resources.Count; i++)
             {
-                yield return null;
                 yield return ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
                 manifest.resources[i] = strictRef;
                 m_System.AddResource(strictRef);
@@ -168,14 +162,14 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
         {
-            string zipPath = workingDir + resourceRef.file;
+            Debug.LogFormat("Reading resource {0} {1}", resourceRef.file, resourceRef.name);
 
-            yield return null;
+            string zipPath = workingDir + resourceRef.file;
 
             switch (resourceRef.ContentType)
             {
                 case ContentType.Audio:
-                    strictRef = UnityEngine.JsonUtility.FromJson<AudioReference>(refJson);
+                    strictRef = JsonUtility.FromJson<AudioReference>(refJson);
                     yield return LoadAudio(resourceRef, workingDir);
                     break;
                 case ContentType.Class:
