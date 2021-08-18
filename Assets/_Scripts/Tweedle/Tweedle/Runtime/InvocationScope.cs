@@ -28,7 +28,7 @@ namespace Alice.Tweedle
         internal override void StackWith(System.Text.StringBuilder stackBuilder)
         {   
             stackBuilder.Append("\n");
-            stackBuilder.Append(callStackEntry);
+            stackBuilder.Append(callStackEntry?.ToStackFrame());
             callingScope.StackWith(stackBuilder);
         }
 
