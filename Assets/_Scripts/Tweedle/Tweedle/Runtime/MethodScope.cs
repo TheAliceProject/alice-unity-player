@@ -1,13 +1,15 @@
 ﻿namespace Alice.Tweedle.VM
 {
-    class MethodScope : InvocationScope {
+    class MethodScope : InvocationScope, IStackFrame {
         bool invokeSuper;
         TType invokedType;
         string[] argNames;
+        string methodName;
 
         public MethodScope(ExecutionScope scope, string methodName, string[] argNames, bool invokeSuper)
-            : base(scope) {
-            callStackEntry = methodName;
+            : base(null, scope) {
+            this.callStackEntry = this;
+            this.methodName = methodName;
             this.argNames = argNames;
             this.invokeSuper = invokeSuper;
         }
@@ -20,33 +22,38 @@
 
         private void IdentifyTargetTypeAndMethod() {
             if (thisValue == null || thisValue == TValue.NULL) {
-                throw new TweedleRuntimeException("Can not invoke " + callStackEntry + " on null.");
+                throw new TweedleRuntimeException("Can not invoke " + methodName + " on null.");
             }
 
             TType startingType;
             if (invokeSuper)
             {
-                startingType = callingScope.CallingType(callStackEntry);
+                startingType = callingScope.CallingType(methodName);
                 if (startingType == null)
                 {
-                    throw new TweedleRuntimeException("Call to super." + callStackEntry + "() outside of method context on " + thisValue);
+                    throw new TweedleRuntimeException("Call to super." + methodName + "() outside of method context on " + thisValue);
                 }
                 startingType = startingType.SuperType.Get(this);
             } else {
                 startingType = thisValue.Type;
             }
 
-            method = startingType.Method(callingScope, ref thisValue, callStackEntry, argNames);
+            method = startingType.Method(callingScope, ref thisValue, methodName, argNames);
 
             if (method == null)//|| !method.ExpectsArgs(callExpression.arguments))
             {
-                throw new TweedleRuntimeException("No method matching " + thisValue + "." + callStackEntry + "()");
+                throw new TweedleRuntimeException("No method matching " + thisValue + "." + methodName + "()");
             }
             invokedType = method.ContainingType.Get(this);
         }
 
         internal override TType CallingType(string methodName) {
             return callStackEntry.Equals(methodName) ? invokedType : base.CallingType(methodName);
+        }
+
+        public string ToStackFrame()
+        {
+            return methodName;
         }
     }
 }

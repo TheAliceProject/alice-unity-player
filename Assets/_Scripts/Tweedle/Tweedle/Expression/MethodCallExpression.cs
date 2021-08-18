@@ -9,6 +9,9 @@ namespace Alice.Tweedle
     {
         internal NamedArgument[] arguments;
 
+        private static IStackFrame invocationPrepStackFrame = new StaticStackFrame("Invocation Prep");
+        private static IStackFrame invocationStackFrame = new StaticStackFrame("Invocation");
+
         public string MethodName { get; }
 
         public MethodCallExpression(string methodName, NamedArgument[] arguments)
@@ -52,15 +55,15 @@ namespace Alice.Tweedle
 
             var targetStep = TargetStep(scope);
             ExecutionStep prepMethodStep = new ValueOperationStep(
-                "Invocation Prep",
+                invocationPrepStackFrame,
                 scope,
                 methodScope.SetThis);
             targetStep.OnCompletionNotify(prepMethodStep);
 
-            StepSequence main = new StepSequence(MethodName, scope);
+            StepSequence main = new StepSequence(this, scope);
             main.AddStep(targetStep);
             main.AddStep(new DelayedOperationStep(
-                "Invocation",
+                invocationStackFrame,
                 methodScope,
                 () => methodScope.QueueInvocationStep(main, arguments)));
             return main;

@@ -15,7 +15,7 @@ namespace Alice.Tweedle
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
             var val = expression.AsStep(scope);
-            val.OnCompletionNotify(new ValueComputationStep("-" + expression.ToTweedle(), scope, Negate));
+            val.OnCompletionNotify(new ValueComputationStep(this, scope, Negate));
             return val;
         }
 

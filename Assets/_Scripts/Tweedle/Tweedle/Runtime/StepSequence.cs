@@ -9,7 +9,7 @@ namespace Alice.Tweedle
         List<ExecutionStep> steps = new List<ExecutionStep>();
         int index = 0;
 
-        public StepSequence(string callStackEntry, ExecutionScope scope)
+        public StepSequence(IStackFrame callStackEntry, ExecutionScope scope)
             : base(callStackEntry, scope)
         {
         }

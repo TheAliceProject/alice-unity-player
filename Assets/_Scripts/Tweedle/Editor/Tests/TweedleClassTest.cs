@@ -8,6 +8,8 @@ namespace Alice.Tweedle.Parse
     [TestFixture]
     public class TweedleClassTest
     {
+        private static IStackFrame testStackFrame = new StaticStackFrame("Test");
+
         static TweedleParser parser = new TweedleParser();
 
         static TClassType ParseClass(string src, TAssembly assembly = null)
@@ -111,7 +113,7 @@ namespace Alice.Tweedle.Parse
         public void Init()
         {
             vm = new TestVirtualMachine(NewSystem());
-            scope = new ExecutionScope("Test", vm);
+            scope = new ExecutionScope(testStackFrame, vm);
         }
 
         void ExecuteStatement(string src)

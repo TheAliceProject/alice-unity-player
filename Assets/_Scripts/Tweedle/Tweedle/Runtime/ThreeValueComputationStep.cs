@@ -16,7 +16,7 @@ namespace Alice.Tweedle.VM
 
         Func<TValue, TValue, TValue, TValue> body;
 
-        public ThreeValueComputationStep(string callStackEntry,
+        public ThreeValueComputationStep(IStackFrame callStackEntry,
                                               ExecutionScope scope,
                                               ITweedleExpression exp1,
                                               ITweedleExpression exp2,
@@ -33,7 +33,7 @@ namespace Alice.Tweedle.VM
         void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
         {
             var evalStep = exp.AsStep(scope);
-            var storeStep = new ValueOperationStep("", scope, handler);
+            var storeStep = new ValueOperationStep(this, scope, handler);
             evalStep.OnCompletionNotify(storeStep);
             storeStep.OnCompletionNotify(this);
             evalStep.Queue();

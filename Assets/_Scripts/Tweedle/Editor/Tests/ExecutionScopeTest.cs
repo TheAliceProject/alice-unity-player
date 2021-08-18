@@ -8,9 +8,11 @@ namespace Alice.Tweedle.Parse
     {
         ExecutionScope scope;
 
+        private static IStackFrame testStackFrame = new StaticStackFrame("Test");
+
         private void Init()
         {
-            scope = new ExecutionScope("Test", new TestVirtualMachine());
+            scope = new ExecutionScope(testStackFrame, new TestVirtualMachine());
         }
 
         [Test]

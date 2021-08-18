@@ -6,6 +6,8 @@ namespace Alice.Tweedle.Parse
     [TestFixture]
     public class TweedleRecursionTest
     {
+        private static IStackFrame testStackFrame = new StaticStackFrame("Test");
+
         static readonly TweedleParser Parser = new TweedleParser();
 
         static TClassType ParseClass(string src)
@@ -59,7 +61,7 @@ namespace Alice.Tweedle.Parse
         private void Init()
         {
             vm = new TestVirtualMachine(NewSystem());
-            scope = new ExecutionScope("Test", vm);
+            scope = new ExecutionScope(testStackFrame, vm);
         }
 
         void ExecuteStatement(string src)

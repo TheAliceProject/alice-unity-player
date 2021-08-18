@@ -9,7 +9,7 @@ namespace Alice.Tweedle.VM
         TValue initialValue;
         Func<TValue, TValue> body;
 
-        public ValueComputationStep(string callStackEntry, ExecutionScope scope, Func<TValue, TValue> body)
+        public ValueComputationStep(IStackFrame callStackEntry, ExecutionScope scope, Func<TValue, TValue> body)
             : base(callStackEntry, scope)
         {
             this.body = body;

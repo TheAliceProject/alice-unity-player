@@ -72,7 +72,7 @@ namespace Alice.Tweedle
         protected override void AddBodyStep(InvocationScope inScope, StepSequence ioMain)
         {
             ioMain.AddStep(
-                new DelayedOperationStep("call", inScope, () => {
+                new DelayedOperationStep(this, inScope, () => {
                     object thisVal = PrepForInvoke(inScope);
                     object retVal = Invoke(thisVal, m_CachedArgs);
                     ReturnValue(inScope, retVal);

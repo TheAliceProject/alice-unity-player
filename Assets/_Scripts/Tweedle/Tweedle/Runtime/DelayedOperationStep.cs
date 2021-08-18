@@ -10,7 +10,7 @@ namespace Alice.Tweedle.VM
     {
         Action body;
 
-        public DelayedOperationStep(string callStackEntry, ExecutionScope scope, Action body)
+        public DelayedOperationStep(IStackFrame callStackEntry, ExecutionScope scope, Action body)
             : base(callStackEntry, scope)
         {
             this.body = body;

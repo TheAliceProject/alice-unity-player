@@ -16,7 +16,7 @@ namespace Alice.Tweedle
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
             StaticConstructorScope ctrScope = scope.StaticInstantiationScope(m_TargetType);
-            return ctrScope.InvocationStep("Instantiation");
+            return ctrScope.InvocationStep(this);
         }
 
         public override string ToTweedle()

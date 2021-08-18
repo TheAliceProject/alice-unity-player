@@ -45,13 +45,18 @@ namespace Alice.Tweedle
         {
             if (index < maxCount)
             {
-                var loopScope = scope.ChildScope("Count loop", statement.Variable, TBuiltInTypes.WHOLE_NUMBER.Instantiate(index++));
+                var loopScope = scope.ChildScope(this, statement.Variable, TBuiltInTypes.WHOLE_NUMBER.Instantiate(index++));
                 statement.Body.AddSequentialStep(loopScope, this);
             }
             else
             {
                 base.Execute();
             }
+        }
+
+        public override string ToStackFrame()
+        {
+            return "Count loop"; 
         }
     }
 }

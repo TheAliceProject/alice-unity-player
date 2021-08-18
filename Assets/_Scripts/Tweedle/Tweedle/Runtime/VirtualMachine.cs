@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Alice.Tweedle.VM
 {
-    public class VirtualMachine // : MonoBehaviour
+    public class VirtualMachine : IStackFrame // : MonoBehaviour
     {
         ExecutionScope staticScope;
         public TweedleSystem Library { get; private set; }
@@ -15,12 +15,12 @@ namespace Alice.Tweedle.VM
 
         public VirtualMachine()
         {
-            staticScope = new ExecutionScope("VM", this);
+            staticScope = new ExecutionScope(this, this);
         }
 
         public VirtualMachine(TweedleSystem tweedleSystem)
         {
-            staticScope = new ExecutionScope("VM", this);
+            staticScope = new ExecutionScope(this, this);
             Initialize(tweedleSystem);
         }
 
@@ -70,6 +70,11 @@ namespace Alice.Tweedle.VM
         public void EmptyQueue()
         {
             executionQueue.ClearQueue();
+        }
+
+        public string ToStackFrame()
+        {
+            return "VM";
         }
     }
 

@@ -9,9 +9,26 @@ namespace Alice.Tweedle
     /// <summary>
     /// Generic invokable method.
     /// </summary>
-    public abstract class TMethod : ITypeMember
+    public abstract class TMethod : ITypeMember, IStackFrame
     {
         static public readonly string ConstructorName = ConstructorInfo.ConstructorName;
+
+        internal class StackFrame : IStackFrame {
+
+            private string m_Name;
+            private string m_Middle;
+            private string m_DeclName;
+
+            public StackFrame(string name, string middle, string declName) {
+                m_Name = name;
+                m_Middle = middle;
+                m_DeclName = declName;
+            }
+
+            public string ToStackFrame() {
+                return m_Name + " Default for Arg " + m_DeclName;
+            }
+        }
 
         // Used to determine super invocations. Could be promoted to ITypeMember.
         public TTypeRef ContainingType { get; private set; }
@@ -118,7 +135,7 @@ namespace Alice.Tweedle
             return requiredArgsFound == RequiredParams.Length;
         }
 
-        public ExecutionStep AsStep(string inCallstackEntry, InvocationScope inScope, NamedArgument[] inArguments)
+        public ExecutionStep AsStep(IStackFrame inCallstackEntry, InvocationScope inScope, NamedArgument[] inArguments)
         {
             StepSequence main = new StepSequence(inCallstackEntry, inScope);
             AddInvocationSteps(inScope, main, inArguments);
@@ -190,7 +207,7 @@ namespace Alice.Tweedle
         {
             ExecutionStep argStep = inExpression.AsStep(inScope.callingScope);
             ExecutionStep storeStep = new ValueComputationStep(
-                Name + " Arg " + inArgDeclaration.Name,
+                new StackFrame(Name, " Arg ", inArgDeclaration.Name),
                 inScope.callingScope,
                 arg => inScope.SetLocalValue(inArgDeclaration, arg)
             );
@@ -202,7 +219,7 @@ namespace Alice.Tweedle
         {
             ExecutionStep argStep = inExpression.AsStep(inScope);
             ExecutionStep storeStep = new ValueComputationStep(
-                Name + " Default for Arg " + inArgDeclaration.Name,
+                new StackFrame(Name, " Default for Arg ", inArgDeclaration.Name),
                 inScope,
                 arg => inScope.SetLocalValue(inArgDeclaration, arg)
             );
@@ -218,10 +235,16 @@ namespace Alice.Tweedle
 
         private ExecutionStep ResultsStep(InvocationScope inScope)
         {
-            return new ValueComputationStep("call", inScope, arg => inScope.Result);
+            return new ValueComputationStep(this, inScope, arg => inScope.Result);
         }
 
         #endregion // Invocation Steps
+
+
+        public virtual string ToStackFrame()
+        {
+            return "call";
+        }
 
         static public readonly TMethod[] EMPTY_ARRAY = new TMethod[0];
     }

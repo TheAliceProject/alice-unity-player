@@ -21,15 +21,19 @@ namespace Alice.Tweedle
         {
             var arrayStep = Array.AsStep(scope);
             var bodyStep = new ValueOperationStep(
-                "EachInArrayTogether",
+                this,
                 scope,
                 items =>
                 {
-                    var scopes = items.Array().Select(val => scope.ChildScope("EachInArrayTogether", ItemVariable, val)).ToList();
+                    var scopes = items.Array().Select(val => scope.ChildScope(this, ItemVariable, val)).ToList();
                     Body.AddParallelSteps(scopes, next);
                 });
             arrayStep.OnCompletionNotify(bodyStep);
             return arrayStep;
+        }
+
+        public override string ToTweedle() {
+            return "EachInArrayTogether";
         }
     }
 }

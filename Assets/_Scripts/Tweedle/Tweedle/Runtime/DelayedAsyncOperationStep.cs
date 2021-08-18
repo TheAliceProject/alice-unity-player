@@ -10,7 +10,7 @@ namespace Alice.Tweedle.VM
         Func<IAsyncReturn> body;
         private IAsyncReturn m_Result;
 
-        public DelayedAsyncOperationStep(string callStackEntry, ExecutionScope scope, Func<IAsyncReturn> body)
+        public DelayedAsyncOperationStep(IStackFrame callStackEntry, ExecutionScope scope, Func<IAsyncReturn> body)
             : base(callStackEntry, scope)
         {
             this.body = body;

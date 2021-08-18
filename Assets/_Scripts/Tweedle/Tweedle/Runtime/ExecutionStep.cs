@@ -3,7 +3,7 @@ using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
-    public class ExecutionStep
+    public class ExecutionStep : IStackFrame
     {
         #region Types
 
@@ -21,7 +21,7 @@ namespace Alice.Tweedle.VM
         int blockerCount = 0;
         protected StepStatus status;
 
-        protected internal string callStackEntry;
+        protected internal IStackFrame callStackEntry;
         protected internal ExecutionScope scope;
 
         protected TValue result = TValue.NULL;
@@ -33,12 +33,12 @@ namespace Alice.Tweedle.VM
             return result;
         }
 
-        protected internal ExecutionStep(string callStackEntry, ExecutionScope scope)
+        protected internal ExecutionStep(IStackFrame callStackEntry, ExecutionScope scope)
             : this(callStackEntry, scope, null)
         {
         }
 
-        protected internal ExecutionStep(string callStackEntry, ExecutionScope scope, ExecutionStep next)
+        protected internal ExecutionStep(IStackFrame callStackEntry, ExecutionScope scope, ExecutionStep next)
         {
             if (scope == null)
             {
@@ -125,11 +125,15 @@ namespace Alice.Tweedle.VM
 
         internal string CallStack()
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry.ToStackFrame())) {
                 
                 scope.StackWith(stackBuilder.Builder);
                 return stackBuilder.ToString();
             }
+        }
+
+        public virtual string ToStackFrame() {
+            return "";
         }
     }
 }

@@ -17,12 +17,16 @@ namespace Alice.Tweedle
         {
             var initStep = Variable.AsInitializerStep(scope);
             var storeStep = new ValueOperationStep(
-                Variable.ToTweedle(),
+                this,
                 scope,
                 value => scope.SetLocalValue(Variable, value));
             initStep.OnCompletionNotify(storeStep);
             storeStep.OnCompletionNotify(next);
             return initStep;
+        }
+
+        public override string ToTweedle() {
+            return Variable.ToTweedle();
         }
     }
 }

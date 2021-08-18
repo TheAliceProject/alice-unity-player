@@ -18,7 +18,7 @@ namespace Alice.Tweedle
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
             return new TwoValueComputationStep(
-                ToTweedle(),
+                this,
                 scope,
                 array,
                 index,
@@ -30,7 +30,7 @@ namespace Alice.Tweedle
         {
 
             return new ThreeValueComputationStep(
-               ToTweedle(), 
+               this, 
                scope, 
                array, 
                index, 
