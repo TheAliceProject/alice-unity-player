@@ -7,7 +7,7 @@ namespace Alice.Tweedle.VM
     {
         Func<TValue> body;
 
-        public ValueGenerationStep(string callStackEntry, ExecutionScope scope, Func<TValue> body)
+        public ValueGenerationStep(IStackFrame callStackEntry, ExecutionScope scope, Func<TValue> body)
             : base(callStackEntry, scope)
         {
             this.body = body;

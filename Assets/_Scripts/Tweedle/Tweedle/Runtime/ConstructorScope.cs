@@ -7,13 +7,38 @@ namespace Alice.Tweedle.VM
         private TType m_Type;
         private bool m_RootInitializer;
 
+        internal class ConstructorStackFrame: IStackFrame {
+            private TType m_InClass;
+
+            public ConstructorStackFrame(TType inClass) {
+                m_InClass = inClass;
+            }
+
+            public string ToStackFrame()
+            {
+                return "new " + m_InClass.Name;
+            }
+        }
+
+        internal class ConstructorSuperStackFrame: IStackFrame {
+            private TType m_InSuperType;
+
+            public ConstructorSuperStackFrame(TType inSuperType) {
+                m_InSuperType = inSuperType;
+            }
+
+            public string ToStackFrame()
+            {
+                return "super() => " + m_InSuperType.Name;
+            }
+        }
+
         internal ConstructorScope(ExecutionScope inCaller, TType inClass)
-            : base(inCaller)
+            : base(new ConstructorStackFrame(inClass), inCaller)
         {
             m_Type = inClass;
             thisValue = inClass.HasDefaultInstantiate() ? inClass.Instantiate() : TValue.UNDEFINED;
             Result = thisValue;
-            callStackEntry = "new " + inClass.Name;
             m_RootInitializer = true;
         }
 
@@ -24,13 +49,12 @@ namespace Alice.Tweedle.VM
         }
 
         private ConstructorScope(ConstructorScope inSubclassScope, TType inSuperType, TMethod inConstructor)
-            : base(inSubclassScope)
+            : base(new ConstructorSuperStackFrame(inSuperType), inSubclassScope)
         {
             m_Type = inSuperType;
             thisValue = inSubclassScope.thisValue;
             Result = thisValue;
             method = inConstructor;
-            callStackEntry = "super() => " + m_Type.Name;
             m_RootInitializer = false;
         }
 
@@ -39,7 +63,7 @@ namespace Alice.Tweedle.VM
             return base.GetPermissions() | ScopePermissions.WriteReadonlyFields;
         }
 
-        internal override ExecutionStep InvocationStep(string callStackEntry, NamedArgument[] arguments)
+        internal override ExecutionStep InvocationStep(IStackFrame callStackEntry, NamedArgument[] arguments)
         {
             method = m_Type.Constructor(this, arguments);
             if (m_RootInitializer)

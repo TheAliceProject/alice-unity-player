@@ -56,7 +56,7 @@ namespace Alice.Tweedle
                 TValue _this = inValue;
                 return m_Initializer.AsStep(inScope)
                     .OnCompletionNotify(
-                        new ValueOperationStep("", inScope,
+                        new ValueOperationStep(this, inScope,
                         (value) =>
                         {
                             CheckSet(inScope, ref _this, ref value);

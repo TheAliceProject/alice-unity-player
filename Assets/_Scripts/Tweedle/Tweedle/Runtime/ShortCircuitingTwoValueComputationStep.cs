@@ -7,7 +7,7 @@ namespace Alice.Tweedle.VM
     public class ShortCircuitingTwoValueComputationStep : TwoValueComputationStep
     {
         TValue shortCircuitValue;
-        public ShortCircuitingTwoValueComputationStep(string callStackEntry,
+        public ShortCircuitingTwoValueComputationStep(IStackFrame callStackEntry,
                                                      ExecutionScope scope,
                                                      ITweedleExpression exp1,
                                                      ITweedleExpression exp2,

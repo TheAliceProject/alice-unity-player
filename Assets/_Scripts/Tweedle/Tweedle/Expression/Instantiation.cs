@@ -23,7 +23,7 @@ namespace Alice.Tweedle
             }
 
             ConstructorScope ctrScope = scope.InstantiationScope(type);
-            return ctrScope.InvocationStep("Instantiation", m_Arguments);
+            return ctrScope.InvocationStep(this, m_Arguments);
         }
 
         public override string ToTweedle()

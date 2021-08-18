@@ -8,7 +8,7 @@ namespace Alice.Tweedle.VM
         protected readonly ExecutionScope parent;
         public readonly VirtualMachine vm;
         protected TValue thisValue;
-        protected internal string callStackEntry;
+        protected internal IStackFrame callStackEntry;
 
         protected virtual ScopePermissions GetPermissions()
         {
@@ -35,13 +35,13 @@ namespace Alice.Tweedle.VM
         private Dictionary<string, ValueHolder> localValues =
             new Dictionary<string, ValueHolder>();
 
-        public ExecutionScope(string stackEntry)
+        public ExecutionScope(IStackFrame stackEntry)
         {
             callStackEntry = stackEntry;
             vm = new VirtualMachine();
         }
 
-        public ExecutionScope(string stackEntry, VirtualMachine vm)
+        public ExecutionScope(IStackFrame stackEntry, VirtualMachine vm)
         {
             this.vm = vm;
             callStackEntry = stackEntry;
@@ -239,7 +239,7 @@ namespace Alice.Tweedle.VM
             return child;
         }
 
-        public ExecutionScope ChildScope(string stackEntry)
+        public ExecutionScope ChildScope(IStackFrame stackEntry)
         {
             ExecutionScope child = new ExecutionScope(this);
             child.callStackEntry = stackEntry;
@@ -247,7 +247,7 @@ namespace Alice.Tweedle.VM
             return child;
         }
 
-        internal ExecutionScope ChildScope(string stackEntry, TValueHolderDeclaration declaration, TValue value)
+        internal ExecutionScope ChildScope(IStackFrame stackEntry, TValueHolderDeclaration declaration, TValue value)
         {
             var child = new ExecutionScope(this);
             child.SetLocalValue(declaration, value);

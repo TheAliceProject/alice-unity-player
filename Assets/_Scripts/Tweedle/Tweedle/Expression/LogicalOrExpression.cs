@@ -16,7 +16,7 @@ namespace Alice.Tweedle
 
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            return new ShortCircuitingTwoValueComputationStep(ToTweedle(), scope, lhs, rhs, Evaluate, TValue.TRUE);
+            return new ShortCircuitingTwoValueComputationStep(this, scope, lhs, rhs, Evaluate, TValue.TRUE);
         }
 
         internal override string Operator()

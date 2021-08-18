@@ -9,9 +9,13 @@ namespace Alice.Tweedle
         {
         }
 
+        public override string ToString() {
+            return "this";
+        }
+
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            return new ValueStep("this", scope, scope.GetThis());
+            return new ValueStep(this, scope, scope.GetThis());
         }
     }
 }

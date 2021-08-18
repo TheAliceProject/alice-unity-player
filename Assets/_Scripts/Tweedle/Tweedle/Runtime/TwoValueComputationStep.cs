@@ -12,7 +12,7 @@ namespace Alice.Tweedle.VM
         protected TValue result2;
         protected Func<TValue, TValue, TValue> body;
 
-        public TwoValueComputationStep(string callStackEntry,
+        public TwoValueComputationStep(IStackFrame callStackEntry,
                                                              ExecutionScope scope,
                                                              ITweedleExpression exp1,
                                                              ITweedleExpression exp2,
@@ -27,7 +27,7 @@ namespace Alice.Tweedle.VM
         protected virtual void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
         {
             var evalStep = exp.AsStep(scope);
-            var storeStep = new ValueOperationStep("", scope, handler);
+            var storeStep = new ValueOperationStep(this, scope, handler);
             evalStep.OnCompletionNotify(storeStep);
             storeStep.OnCompletionNotify(this);
             evalStep.Queue();

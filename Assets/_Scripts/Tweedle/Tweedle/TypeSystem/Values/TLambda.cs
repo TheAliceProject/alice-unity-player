@@ -6,10 +6,12 @@ using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
 {
-    public sealed class TLambda
+    public sealed class TLambda : IStackFrame
     {
         private readonly LambdaExpression source;
         private readonly ExecutionScope creationScope;
+
+        private static IStackFrame argStackFrame = new StaticStackFrame("Arg");
 
         public TLambda(LambdaExpression expression, ExecutionScope creationScope)
         {
@@ -32,7 +34,7 @@ namespace Alice.Tweedle
                 ITweedleExpression argExp = arguments[i];
                 ExecutionStep argStep = argExp.AsStep(scope.callingScope);
                 var storeStep = new ValueComputationStep(
-                    "Arg",
+                    argStackFrame,
                     scope.callingScope,
                     argVal => scope.SetLocalValue(param, argVal));
                 argStep.OnCompletionNotify(storeStep);
@@ -42,7 +44,7 @@ namespace Alice.Tweedle
 
         ExecutionStep ResultStep(LambdaScope scope)
         {
-            return new ValueComputationStep("call", scope, arg => scope.Result);
+            return new ValueComputationStep(this, scope, arg => scope.Result);
         }
 
         public void QueueEvaluation(TValue[] inArguments)
@@ -75,6 +77,10 @@ namespace Alice.Tweedle
             var onComplete = eval.OnCompletion();
             creationScope.vm.Queue(eval);
             return onComplete;
+        }
+
+        public string ToStackFrame() {
+            return "call";
         }
     }
 }

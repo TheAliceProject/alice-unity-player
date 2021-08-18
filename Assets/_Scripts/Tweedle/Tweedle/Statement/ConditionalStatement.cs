@@ -20,12 +20,17 @@ namespace Alice.Tweedle
         {
             var conditionStep = Condition.AsStep(scope);
             var bodyStep = new ValueOperationStep(
-                    "if " + Condition.ToTweedle(),
+                    this,
                     scope,
                     value => (value.ToBoolean() ? ThenBody : ElseBody).AddSequentialStep(scope.ChildScope(), next));
             conditionStep.OnCompletionNotify(bodyStep);
             bodyStep.OnCompletionNotify(next);
             return conditionStep;
+        }
+
+        public override string ToTweedle()
+        {
+            return "if " + Condition.ToTweedle();
         }
     }
 }

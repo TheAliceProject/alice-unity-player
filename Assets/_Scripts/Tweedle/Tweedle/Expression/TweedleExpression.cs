@@ -2,7 +2,7 @@
 
 namespace Alice.Tweedle
 {
-    public abstract class TweedleExpression : ITweedleExpression
+    public abstract class TweedleExpression : ITweedleExpression, IStackFrame
     {
         protected readonly TTypeRef m_TypeRef;
 
@@ -25,5 +25,10 @@ namespace Alice.Tweedle
         }
 
         public abstract ExecutionStep AsStep(ExecutionScope scope);
+
+        public virtual string ToStackFrame()
+        {
+            return ToTweedle();
+        }
     }
 }
