@@ -125,7 +125,7 @@ namespace Alice.Tweedle.VM
 
         internal string CallStack()
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry.ToStackFrame())) {
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry?.ToStackFrame())) {
                 
                 scope.StackWith(stackBuilder.Builder);
                 return stackBuilder.ToString();

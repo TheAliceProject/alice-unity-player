@@ -67,7 +67,7 @@ namespace Alice.Tweedle.VM
         internal virtual void StackWith(System.Text.StringBuilder stackBuilder)
         {
             stackBuilder.Append("\n");
-            stackBuilder.Append(callStackEntry);
+            stackBuilder.Append(callStackEntry?.ToStackFrame());
             if (parent == null)
             {
                 return;
