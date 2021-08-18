@@ -48,7 +48,7 @@
         }
 
         internal override TType CallingType(string methodName) {
-            return callStackEntry.Equals(methodName) ? invokedType : base.CallingType(methodName);
+            return this.methodName.Equals(methodName) ? invokedType : base.CallingType(methodName);
         }
 
         public string ToStackFrame()
