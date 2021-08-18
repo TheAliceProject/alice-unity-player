@@ -17,7 +17,7 @@ namespace Alice.Tweedle.VM
         {
             var evalStep = exp.AsStep(scope);
             var castStep = new ImplicitStringConversionStep(scope);
-            var storeStep = new ValueOperationStep(callStack, scope, handler);
+            var storeStep = new ValueOperationStep("", scope, handler);
             evalStep.OnCompletionNotify(castStep);
             castStep.OnCompletionNotify(storeStep);
             storeStep.OnCompletionNotify(this);

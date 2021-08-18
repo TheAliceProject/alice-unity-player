@@ -9,7 +9,7 @@ namespace Alice.Tweedle
         protected T statement;
 
         public LoopStep(T statement, ExecutionScope scope, ExecutionStep next)
-            : base(scope, next)
+            : base(null, scope, next)
         {
             this.statement = statement;
         }

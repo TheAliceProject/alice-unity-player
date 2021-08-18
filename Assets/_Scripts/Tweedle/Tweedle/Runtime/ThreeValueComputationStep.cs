@@ -22,13 +22,8 @@ namespace Alice.Tweedle.VM
                                               ITweedleExpression exp2,
                                               ITweedleExpression exp3,
                                               Func<TValue, TValue, TValue, TValue> body)
-            : base(scope)
+            : base(callStackEntry, scope)
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
             this.exp1 = exp1;
             this.exp2 = exp2;
             this.exp3 = exp3;
@@ -38,7 +33,7 @@ namespace Alice.Tweedle.VM
         void QueueExpressionStep(ITweedleExpression exp, Action<TValue> handler)
         {
             var evalStep = exp.AsStep(scope);
-            var storeStep = new ValueOperationStep(callStack, scope, handler);
+            var storeStep = new ValueOperationStep("", scope, handler);
             evalStep.OnCompletionNotify(storeStep);
             storeStep.OnCompletionNotify(this);
             evalStep.Queue();

@@ -57,7 +57,7 @@ namespace Alice.Tweedle
             int index = 0;
 
             public SequentialSteps(ExecutionScope scope, ExecutionStep next, BlockStatement block)
-                : base(scope, next)
+                : base(null, scope, next)
             {
                 this.block = block;
             }

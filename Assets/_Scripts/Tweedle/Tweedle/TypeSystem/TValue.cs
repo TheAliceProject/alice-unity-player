@@ -280,13 +280,9 @@ namespace Alice.Tweedle
     internal class ValueStep : ExecutionStep
     {
         public ValueStep(string callStackEntry, ExecutionScope scope, TValue inTValue)
-            : base(scope)
+            : base(callStackEntry, scope)
         {
             result = inTValue;
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
         }
     }
 }
