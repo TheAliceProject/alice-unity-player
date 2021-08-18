@@ -11,12 +11,8 @@ namespace Alice.Tweedle.VM
         private IAsyncReturn m_Result;
 
         public DelayedAsyncOperationStep(string callStackEntry, ExecutionScope scope, Func<IAsyncReturn> body)
-            : base(scope)
+            : base(callStackEntry, scope)
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
             this.body = body;
         }
 

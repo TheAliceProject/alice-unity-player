@@ -10,12 +10,8 @@ namespace Alice.Tweedle
         int index = 0;
 
         public StepSequence(string callStackEntry, ExecutionScope scope)
-            : base(scope)
+            : base(callStackEntry, scope)
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
         }
 
         internal void AddStep(ExecutionStep step)

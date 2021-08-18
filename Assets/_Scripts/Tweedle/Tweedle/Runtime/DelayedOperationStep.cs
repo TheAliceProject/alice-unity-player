@@ -11,12 +11,8 @@ namespace Alice.Tweedle.VM
         Action body;
 
         public DelayedOperationStep(string callStackEntry, ExecutionScope scope, Action body)
-            : base(scope)
+            : base(callStackEntry, scope)
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
             this.body = body;
         }
 

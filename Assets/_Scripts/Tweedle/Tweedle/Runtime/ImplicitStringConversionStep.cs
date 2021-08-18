@@ -3,7 +3,7 @@ namespace Alice.Tweedle.VM {
         TValue initialValue;
 
         public ImplicitStringConversionStep(ExecutionScope scope)
-            : base(scope) {
+            : base(null, scope) {
         }
 
         internal override void BlockerFinished(ExecutionStep blockingStep) {
