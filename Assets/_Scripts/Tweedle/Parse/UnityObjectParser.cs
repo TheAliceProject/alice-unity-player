@@ -6,6 +6,7 @@ using Alice.Player.Modules;
 using BeauRoutine;
 using ICSharpCode.SharpZipLib.Zip;
 using UnityEngine.Networking;
+using SFB;
 
 namespace Alice.Tweedle.Parse
 {
