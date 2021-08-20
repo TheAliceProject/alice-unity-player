@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using Alice.Tweedle.Parse;
+using SFB;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuControl : MonoBehaviour
@@ -64,7 +67,18 @@ public class MenuControl : MonoBehaviour
     {
         loadNewWorldButton.onClick.AddListener(() =>
         {
-            WorldObjects.GetParser().OpenWorld();
+            string zipPath = "";
+            var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", UnityObjectParser.project_ext, false);
+            if(path.Length > 0) {
+                zipPath = path[0];
+                zipPath = System.Uri.UnescapeDataString(zipPath);
+            }
+            
+            if(System.IO.File.Exists(zipPath) == false) {
+                throw new FileNotFoundException("UnityObjectParser.Select Failed to open File " + zipPath);
+            }
+
+            WorldObjects.GetParser().OpenWorld(zipPath);
         });
     }
 

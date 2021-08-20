@@ -9,52 +9,42 @@ using System.Text;
 using NLayer;
 using Siccity.GLTFUtility;
 using System.Collections;
+using UnityEngine.Networking;
 
 namespace Alice.Tweedle.Parse
 {
-    public class ModelManifestHolder
-    {
-        public ModelManifest data;
-    }
 
     public class JsonParser
     {
         Manifest manifest;
         ResourceReference strictRef;
-
-        public static Stream libraryStream;
-        public static void SetLibraryStream(Stream stream)
-        {
-            libraryStream = stream;
-        }
-
-        public static void ParseZipFile(TweedleSystem inSystem, string inZipPath) {
-            using (FileStream stream = new FileStream(inZipPath, FileMode.Open, FileAccess.Read, FileShare.None)) {
-                using (ZipFile zipFile = new ZipFile(stream))
-                {
-                    JsonParser reader = new JsonParser(inSystem, zipFile);
-                    if(!inZipPath.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME))
-                        reader.CacheThumbnail(inZipPath);
-                    reader.Parse();
-                }
-            }
-        }
-
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
         public static int audioFiles = 0;
+        private Stream m_FileStream;
+        private string m_FileName;
+        private ExceptionHandler m_ExceptionHandler;
+
+        public delegate void ExceptionHandler(Exception e);
+
+
+        public class ModelManifestHolder
+        {
+            public ModelManifest data;
+        }
 
         public TweedleSystem StoredSystem
         {
             get { return m_System; }
         }
 
-        public JsonParser(TweedleSystem inSystem, ZipFile inZipFile)
+        public JsonParser(TweedleSystem inSystem, string fileName, ExceptionHandler exceptionHandler)
         {
             m_System = inSystem;
-            m_ZipFile = inZipFile;
+            m_FileName = fileName;
             m_Parser = new TweedleParser();
+            m_ExceptionHandler = exceptionHandler;
         }
 
         public void CacheThumbnail(string fileName)
@@ -68,22 +58,61 @@ namespace Alice.Tweedle.Parse
 #endif
         }
 
-        public static IEnumerator ParseZipFile(TweedleSystem inSystem, Stream inZipStream)
+        public static IEnumerator Parse(TweedleSystem inSystem, string path, ExceptionHandler exceptionHandler)
         {
-            using (ZipFile zipFile = new ZipFile(inZipStream))
-            {
-                JsonParser reader = new JsonParser(inSystem, zipFile);
-                yield return reader.Parse();
-            }
+            JsonParser reader = new JsonParser(inSystem, path, exceptionHandler);
+            yield return reader.Parse();
         }
 
-        private IEnumerator Parse()
+        private IEnumerator LoadFile(string fileName) 
         {
-            // TODO: Use manifest to determine player assembly version
-            string playerAssembly = Player.PlayerAssemblies.CURRENT;
-            m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
+            #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+                yield return LoadFileWR(fileName);
+            #else
+                yield return LoadFileFS(fileName);
+            #endif
+        }
 
-            yield return ParseJson(m_ZipFile.ReadEntry("manifest.json"));
+        private IEnumerator LoadFileFS(string fileName) 
+        {
+            if (!System.IO.File.Exists(fileName)) {
+                var e = new FileNotFoundException(fileName);
+                m_ExceptionHandler(e);
+                throw e;
+            }
+
+            m_FileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
+            yield return null;
+        }
+
+        private IEnumerator LoadFileWR(string fileName) 
+        {
+
+            UnityWebRequest www = new UnityWebRequest(fileName);
+            DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
+            www.downloadHandler = dH;
+            yield return www.SendWebRequest();
+            m_FileStream = new MemoryStream(www.downloadHandler.data);
+        }
+
+        public IEnumerator Parse()
+        {
+            yield return LoadFile(m_FileName);
+
+            using (m_FileStream) {
+                m_ZipFile = new ZipFile(m_FileStream);
+
+                using (m_ZipFile) {
+                    if(!m_FileName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME))
+                        CacheThumbnail(m_FileName);
+                    
+                    // TODO: Use manifest to determine player assembly version
+                    string playerAssembly = Player.PlayerAssemblies.CURRENT;
+                    m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
+
+                    yield return ParseJson(m_ZipFile.ReadEntry("manifest.json"));
+                }
+            }
         }
 
         public IEnumerator ParseJson(string inManifestJson, ModelManifestHolder modelHolder = null, string inWorkingDir = "")
@@ -133,15 +162,18 @@ namespace Alice.Tweedle.Parse
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef))
                     {
-                        yield return ParseZipFile(m_System, libraryStream);
+                        yield return JsonParser.Parse(m_System, libRef.path.fullPath, m_ExceptionHandler);
                     }
                     else
                     {
-                        throw new TweedleVersionException("Could not find prerequisite " + t.name,
+                        var e = new TweedleVersionException("Could not find prerequisite " + t.name,
                             WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
                             WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + t.version,
                             PlayerLibraryManifest.Instance.aliceVersion,
                             manifest.provenance.aliceVersion);
+
+                        m_ExceptionHandler(e);
+                        throw e;
                     }
                 }
             }
@@ -222,8 +254,9 @@ namespace Alice.Tweedle.Parse
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
-                throw new TweedleParseException("Unable to read " + resourceRef.file, e);
+                var e2 = new TweedleParseException("Unable to read " + resourceRef.file, e);
+                m_ExceptionHandler(e2);
+                throw e2;
             }
         }
 

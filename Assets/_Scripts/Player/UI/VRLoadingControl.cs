@@ -11,27 +11,39 @@ public class VRLoadingControl : MonoBehaviour
     public Color loadingColor;
 
     private Material boxMat;
-    private Routine routine;
 
     public void FadeLoader(bool toOn)
     {
-        routine.Replace(this, FadeLoaderRoutine(toOn));
+        if (!gameObject.activeInHierarchy) {
+           return;
+        }
+
+        StartCoroutine(FadeLoaderRoutine(toOn));
     }
 
     public IEnumerator FadeLoaderRoutine(bool toOn)
     {
+        if (!gameObject.activeInHierarchy) {
+            yield break;
+        }
+
         boxMat = boxRenderer.material;
         if(toOn){
             boxMat.color = Color.clear;
             text.color = Color.clear;
             boxRenderer.gameObject.SetActive(true);
-            yield return Routine.Combine(boxMat.ColorTo(loadingColor, 0.25f, ColorUpdate.FullColor),
-                                        text.ColorTo(Color.white, 0.25f, ColorUpdate.FullColor));
 
+            Coroutine boxMatTween = StartCoroutine(boxMat.ColorTo(loadingColor, 0.25f, ColorUpdate.FullColor));
+            Coroutine textColorTween = StartCoroutine(text.ColorTo(Color.white, 0.25f, ColorUpdate.FullColor));
+
+            yield return boxMatTween;
+            yield return textColorTween;
         }
         else{
-            yield return Routine.Combine(boxMat.ColorTo(Color.clear, 0.25f, ColorUpdate.FullColor),
-                                        text.ColorTo(Color.clear, 0.25f, ColorUpdate.FullColor));
+            Coroutine boxMatTween = StartCoroutine(boxMat.ColorTo(Color.clear, 0.25f, ColorUpdate.FullColor));
+            Coroutine textColorTween = StartCoroutine(text.ColorTo(Color.clear, 0.25f, ColorUpdate.FullColor));
+            yield return boxMatTween;
+            yield return textColorTween;
             boxRenderer.gameObject.SetActive(false);
         }
     }
