@@ -181,8 +181,8 @@ namespace Alice.Tweedle.Parse
              * ON ANDROID/IOS: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
              */
 
-#if UNITY_WEBGL
-            // On WebGL, we will try to open a default world
+#if UNITY_WEBGL || UNITY_ANDROID || UNITY_IOS
+            // On WebGL and mobile, we will try to open a default world
             OpenWorld(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix), MainMenuControl.Disabled);
 #else
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
@@ -203,11 +203,6 @@ namespace Alice.Tweedle.Parse
                     loadMoreControl[i].SetAsStandalone();
                 }
             }
-
-    #if UNITY_ANDROID || UNITY_IOS
-            // On Mobile platforms, when no bundled world found, we will try to open a default world
-            OpenWorld(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix), MainMenuControl.Disabled);
-    #endif  
 #endif      
         }
 
