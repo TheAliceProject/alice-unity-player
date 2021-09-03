@@ -8,8 +8,7 @@ using Siccity.GLTFUtility;
 public class LoadModel : MonoBehaviour {
 
     [Tooltip("Can only load models from the Asset/Models folder per this script.")]
-    [SerializeField] private string fileName = "ColaBottle.dae";
-	[SerializeField] private Texture texOverride = null;
+    [SerializeField] private string fileName = null;
 
     private List<Mesh> GetMeshes( Transform rootTransform )
     {
@@ -31,40 +30,15 @@ public class LoadModel : MonoBehaviour {
         return meshes;
     }
 
-    private void NormalizeWeightsInMesh(Mesh mesh)
-    {
-        BoneWeight[] newWeights = mesh.boneWeights;
-        for (int i = 0; i < mesh.boneWeights.Length; i++)
-        {
-            BoneWeight weight = newWeights[i];
-            double weightTotal = weight.weight0 + weight.weight1 + weight.weight2 + weight.weight3;
-            weight.weight0 = (float)(weight.weight0 / weightTotal);
-            weight.weight1 = (float)(weight.weight1 / weightTotal);
-            weight.weight2 = (float)(weight.weight2 / weightTotal);
-            weight.weight3 = (float)(weight.weight3 / weightTotal);
-            newWeights[i] = weight;
-        }
-        mesh.boneWeights = newWeights;
-    }
-
-    private void NormalizeWeightsInModel(GameObject model)
-    {
-        List<Mesh> meshes = GetMeshes(model.transform);
-        foreach(Mesh mesh in meshes)
-        {
-            NormalizeWeightsInMesh(mesh);
-        }
-    } 
-
     private void Start()
     {
         var assetLoaderOptions = new ImportSettings(); //Creates an Asset Loader Options object.
-	    var filename = Path.Combine(Path.GetFullPath("./Assets/Models"), fileName); //Combines our current directory with our model filename "turtle1.b3d" and generates the full model path.
+        var filename = fileName;
         Importer.ImportGLTFAsync(filename, assetLoaderOptions, OnFinishLoading);  //Loads our model.
     }
 
     private void OnFinishLoading(GameObject loadedModel, AnimationClip[] anims) 
     {
-        NormalizeWeightsInModel(loadedModel);
+        GetMeshes(loadedModel.transform);
     }
 }
