@@ -21,17 +21,36 @@ namespace Alice.Player.Unity {
         }
 
         static public void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
-            GetPropertyBlock(inRenderer, ref ioPropertyBlock, 0);
+            GetPropertyBlock(inRenderer, ref ioPropertyBlock, 0, true);
         }
 
-        static public void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex) {
+        static public void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared) {
+            Debug.Assert(materialIndex == 0 || !shared);
 
             if (ioPropertyBlock == null) {
                 ioPropertyBlock = new MaterialPropertyBlock();
             }
 
             if (inRenderer.HasPropertyBlock()) {
-                inRenderer.GetPropertyBlock(ioPropertyBlock, materialIndex);
+                if (shared) {
+                    inRenderer.GetPropertyBlock(ioPropertyBlock);
+                } else { 
+                    inRenderer.GetPropertyBlock(ioPropertyBlock, materialIndex);
+                }
+            }
+        }
+
+        static public void SetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
+            SetPropertyBlock(inRenderer, ref ioPropertyBlock, 0, true);
+        }
+
+        static public void SetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared) {
+            Debug.Assert(materialIndex == 0 || !shared);
+
+            if (shared) {
+                inRenderer.SetPropertyBlock(ioPropertyBlock);
+            } else {
+                inRenderer.SetPropertyBlock(ioPropertyBlock, materialIndex);
             }
         }
 
@@ -126,20 +145,20 @@ namespace Alice.Player.Unity {
         protected abstract void OnPaintChanged();
         
         protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
-        	ApplyPaint(inRenderer, ref ioPropertyBlock, 0, baseMaterial);
+        	ApplyPaint(inRenderer, ref ioPropertyBlock, 0, true, baseMaterial);
         }
 
         protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, BaseMaterial[] baseMaterial)
         {
             for (int i = 0; i < ioPropertyBlocks.Length; i++) {
-                ApplyPaint(inRenderer, ref ioPropertyBlocks[i], i, baseMaterial[i]);
+                ApplyPaint(inRenderer, ref ioPropertyBlocks[i], i, false, baseMaterial[i]);
             }
         }
 
-        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
-            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex);
+        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, false);
             m_CachedPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName, baseMaterial);
-            inRenderer.SetPropertyBlock(ioPropertyBlock, materialIndex);
+            SetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, shared);
         }
 
         private void OnOpacityPropertyChanged(TValue inValue) {
@@ -158,7 +177,7 @@ namespace Alice.Player.Unity {
         }
 
         protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
-            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, 0,  baseMaterial);
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, 0,  true, baseMaterial);
         }
 
 
@@ -168,15 +187,15 @@ namespace Alice.Player.Unity {
 
         protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, Paint inPaint, BaseMaterial[] baseMaterial) {
             for (int i = 0; i < ioPropertyBlocks.Length; i++) {
-                ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlocks[i], inPaint, i, baseMaterial[i]);
+                ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlocks[i], inPaint, i, false, baseMaterial[i]);
             }
         }
 
         protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
-            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, inPaint, 0, baseMaterial);
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, inPaint, 0, true, baseMaterial);
         }
 
-        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, int materialIndex, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, int materialIndex, bool shared, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
             if (m_CachedOpacity < 0.004f) {
                 if (inRenderer.enabled) {
                     inRenderer.enabled = false;
@@ -187,7 +206,7 @@ namespace Alice.Player.Unity {
                 inRenderer.enabled = true;
             }
 
-            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex);
+            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, shared);
             var appliedOpacity = m_CachedOpacity;
 
             Material appliedMaterial;
@@ -205,7 +224,7 @@ namespace Alice.Player.Unity {
             }
 
             inPaint.Apply(ioPropertyBlock, appliedOpacity, PaintTextureName, baseMaterial);
-            inRenderer.SetPropertyBlock(ioPropertyBlock, materialIndex);
+            SetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, shared);
         }
 
         protected override void CreateEntityCollider()

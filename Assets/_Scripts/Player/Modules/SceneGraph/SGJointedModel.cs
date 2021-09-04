@@ -58,7 +58,7 @@ namespace Alice.Player.Unity {
                         var mainTexture = material.mainTexture;
 
                         MaterialPropertyBlock propBlock = null;
-                        GetPropertyBlock(rend, ref propBlock, i);
+                        GetPropertyBlock(rend, ref propBlock, i, false);
                         
 	                    var baseMaterial = BaseMaterial.Opaque;
 	                    if (mainTexture != null) {
