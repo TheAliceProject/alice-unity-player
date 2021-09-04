@@ -21,12 +21,17 @@ namespace Alice.Player.Unity {
         }
 
         static public void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
+            GetPropertyBlock(inRenderer, ref ioPropertyBlock, 0);
+        }
+
+        static public void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex) {
+
             if (ioPropertyBlock == null) {
                 ioPropertyBlock = new MaterialPropertyBlock();
             }
 
             if (inRenderer.HasPropertyBlock()) {
-                inRenderer.GetPropertyBlock(ioPropertyBlock);
+                inRenderer.GetPropertyBlock(ioPropertyBlock, materialIndex);
             }
         }
 
@@ -38,8 +43,9 @@ namespace Alice.Player.Unity {
         public const string MAIN_TEXTURE_SHADER_NAME = "_MainTex";
         public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTex";
         public const string COLOR_SHADER_NAME = "_Color";
+        public const string RENDER_MODE_SHADER_NAME = "_Mode";
 
-        
+
         protected Transform m_ModelTransform;
         protected Bounds m_CachedMeshBounds;
         
@@ -118,11 +124,22 @@ namespace Alice.Player.Unity {
         }
 
         protected abstract void OnPaintChanged();
-
+        
         protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
-            GetPropertyBlock(inRenderer, ref ioPropertyBlock);
+        	ApplyPaint(inRenderer, ref ioPropertyBlock, 0, baseMaterial);
+        }
+
+        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, BaseMaterial[] baseMaterial)
+        {
+            for (int i = 0; i < ioPropertyBlocks.Length; i++) {
+                ApplyPaint(inRenderer, ref ioPropertyBlocks[i], i, baseMaterial[i]);
+            }
+        }
+
+        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex);
             m_CachedPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName, baseMaterial);
-            inRenderer.SetPropertyBlock(ioPropertyBlock);
+            inRenderer.SetPropertyBlock(ioPropertyBlock, materialIndex);
         }
 
         private void OnOpacityPropertyChanged(TValue inValue) {
@@ -131,16 +148,35 @@ namespace Alice.Player.Unity {
         }
 
         protected abstract void OnOpacityChanged();
-
+        
         protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
             ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlock, baseMaterial);
         }
+        
+        protected void ApplyOpacity(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, BaseMaterial[] baseMaterial) {
+            ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlocks, baseMaterial);
+        }
 
         protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
-            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, baseMaterial);
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, 0,  baseMaterial);
+        }
+
+
+        protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, BaseMaterial[] baseMaterial) {
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlocks, m_CachedPaint, baseMaterial);
+        }
+
+        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, Paint inPaint, BaseMaterial[] baseMaterial) {
+            for (int i = 0; i < ioPropertyBlocks.Length; i++) {
+                ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlocks[i], inPaint, i, baseMaterial[i]);
+            }
         }
 
         protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+            ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, inPaint, 0, baseMaterial);
+        }
+
+        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, int materialIndex, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
             if (m_CachedOpacity < 0.004f) {
                 if (inRenderer.enabled) {
                     inRenderer.enabled = false;
@@ -151,23 +187,25 @@ namespace Alice.Player.Unity {
                 inRenderer.enabled = true;
             }
 
-            GetPropertyBlock(inRenderer, ref ioPropertyBlock);
+            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex);
             var appliedOpacity = m_CachedOpacity;
+
             Material appliedMaterial;
             if (baseMaterial == BaseMaterial.Glass) {
                 appliedMaterial = SceneGraph.Current.InternalResources.GlassMaterial;
                 appliedOpacity = 0;
             } else if (baseMaterial == BaseMaterial.Transparent || m_CachedOpacity < 0.996f) {
                 appliedMaterial = TransparentMaterial;
-            } else  {
+            } else {
                 appliedMaterial = OpaqueMaterial;
             }
 
-            if (inRenderer.sharedMaterial != appliedMaterial) {
-                inRenderer.sharedMaterial = appliedMaterial;
+            if (inRenderer.sharedMaterials[materialIndex] != appliedMaterial) {
+                inRenderer.sharedMaterials[materialIndex] = appliedMaterial;
             }
+
             inPaint.Apply(ioPropertyBlock, appliedOpacity, PaintTextureName, baseMaterial);
-            inRenderer.SetPropertyBlock(ioPropertyBlock);
+            inRenderer.SetPropertyBlock(ioPropertyBlock, materialIndex);
         }
 
         protected override void CreateEntityCollider()
