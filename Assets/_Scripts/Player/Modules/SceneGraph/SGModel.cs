@@ -156,7 +156,7 @@ namespace Alice.Player.Unity {
         }
 
         protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
-            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, false);
+            GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, shared);
             m_CachedPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName, baseMaterial);
             SetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, shared);
         }
