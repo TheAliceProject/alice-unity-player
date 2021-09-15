@@ -64,7 +64,7 @@ namespace Alice.Tweedle.Parse
             yield return reader.Parse();
         }
 
-        private IEnumerator LoadFile(string fileName) 
+        private IEnumerator LoadFile(string fileName)
         {
             #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
                 yield return LoadFileWR(fileName);
@@ -73,7 +73,7 @@ namespace Alice.Tweedle.Parse
             #endif
         }
 
-        private IEnumerator LoadFileFS(string fileName) 
+        private IEnumerator LoadFileFS(string fileName)
         {
             if (!System.IO.File.Exists(fileName)) {
                 var e = new FileNotFoundException(fileName);
@@ -85,7 +85,7 @@ namespace Alice.Tweedle.Parse
             yield return null;
         }
 
-        private IEnumerator LoadFileWR(string fileName) 
+        private IEnumerator LoadFileWR(string fileName)
         {
 
             UnityWebRequest www = new UnityWebRequest(fileName);
@@ -105,7 +105,7 @@ namespace Alice.Tweedle.Parse
                 using (m_ZipFile) {
                     if(!m_FileName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME))
                         CacheThumbnail(m_FileName);
-                    
+
                     // TODO: Use manifest to determine player assembly version
                     string playerAssembly = Player.PlayerAssemblies.CURRENT;
                     m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
@@ -141,7 +141,7 @@ namespace Alice.Tweedle.Parse
                     ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);
                     m_System.AddModel(modelAsset);
                     manifest = modelAsset;
-                    modelHolder.data = modelAsset;    
+                    modelHolder.data = modelAsset;
                     break;
             }
 
@@ -152,7 +152,7 @@ namespace Alice.Tweedle.Parse
                 );
         }
 
-        private IEnumerator ParsePrerequisites(Manifest manifest) 
+        private IEnumerator ParsePrerequisites(Manifest manifest)
         {
             var prerequisites = manifest.prerequisites;
             foreach (var t in prerequisites)
@@ -230,7 +230,7 @@ namespace Alice.Tweedle.Parse
                     yield return ParseJson(manifestJson, modelHolder, manifestDir);
                     ModelManifest modelManifest = modelHolder.data;
                     yield return LoadModelStructures(modelManifest);
-                    
+
                     strictRef = JsonUtility.FromJson<ModelReference>(refJson);
                     break;
                 case ContentType.SkeletonMesh:
@@ -310,15 +310,13 @@ namespace Alice.Tweedle.Parse
             string filename = Path.GetFileNameWithoutExtension(filePath);
 
             MpegFile mpegFile = new MpegFile(stream);
-
             // assign samples into AudioClip
             AudioClip ac = AudioClip.Create(filename,
                                             (int)(mpegFile.Length / sizeof(float) / mpegFile.Channels),
                                             mpegFile.Channels,
                                             mpegFile.SampleRate,
                                             false,
-                                            data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); },
-                                            position => { mpegFile.Position = position;  });
+                                            data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); });
             return ac;
         }
 
@@ -331,7 +329,7 @@ namespace Alice.Tweedle.Parse
 
                 var data = m_ZipFile.ReadDataEntry(meshRef.file);
                 var options = SceneGraph.Current?.InternalResources?.ModelLoaderOptions;
-                
+
                 //TODO: Cache data
                 //var cachePath = Application.temporaryCachePath + "/" + meshRef.file;
                 GameObject loadedModel = Importer.LoadFromBytes(data, options);
