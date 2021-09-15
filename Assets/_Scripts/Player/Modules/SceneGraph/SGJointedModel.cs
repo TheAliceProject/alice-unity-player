@@ -8,13 +8,13 @@ namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
         private struct RendererDetails
         {
-            internal readonly BaseMaterial Material;
-            internal MaterialPropertyBlock Block;
+            internal readonly BaseMaterial[] Materials;
+            internal MaterialPropertyBlock[] Blocks;
             internal readonly Mesh bakedMesh;
             
-            public RendererDetails(BaseMaterial material, MaterialPropertyBlock block, Mesh mesh) {
-                Material = material;
-                Block = block;
+            public RendererDetails(BaseMaterial[] material, MaterialPropertyBlock[] block, Mesh mesh) {
+                Materials = material;
+                Blocks = block;
                 bakedMesh = mesh;
             }
         }
@@ -50,19 +50,30 @@ namespace Alice.Player.Unity {
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
 
                 foreach (var rend in m_Renderers) {
-                    MaterialPropertyBlock propBlock = null;
-                    GetPropertyBlock(rend, ref propBlock);
+                    BaseMaterial[] baseMaterials = new BaseMaterial[rend.sharedMaterials.Length];
+                    MaterialPropertyBlock[] propertyBlocks = new MaterialPropertyBlock[rend.sharedMaterials.Length];
 
-                    var mainTexture = rend.sharedMaterial.mainTexture;
-                    var baseMaterial = BaseMaterial.Opaque;
-                    if (mainTexture != null) {
-                        propBlock.SetTexture(MAIN_TEXTURE_SHADER_NAME, mainTexture);
-                        if (mainTexture is Texture2D texture && HasTranslucence(texture)) {
-                            baseMaterial = BaseMaterial.Transparent;
-                        }
-                    } else {
-                        rend.sharedMaterial = SceneGraph.Current.InternalResources.GlassMaterial;
-                        baseMaterial = BaseMaterial.Glass;
+                    int i = 0;
+                    foreach (var material in rend.sharedMaterials) { 
+                        var mainTexture = material.mainTexture;
+
+                        MaterialPropertyBlock propBlock = null;
+                        GetPropertyBlock(rend, ref propBlock, i, false);
+                        
+	                    var baseMaterial = BaseMaterial.Opaque;
+	                    if (mainTexture != null) {
+	                        propBlock.SetTexture(MAIN_TEXTURE_SHADER_NAME, mainTexture);
+	                        if (mainTexture is Texture2D texture && HasTranslucence(texture)) {
+	                            baseMaterial = BaseMaterial.Transparent;
+	                        }
+	                    } else {
+	                        baseMaterial = BaseMaterial.Glass;
+	                    }
+
+                        propertyBlocks[i] = propBlock;
+                        baseMaterials[i] = baseMaterial;
+
+                        i++;
                     }
 
                     Mesh bakedMesh = null;
@@ -73,8 +84,9 @@ namespace Alice.Player.Unity {
                         bakedMesh = new Mesh();
                         skinnedRenderer.BakeMesh(bakedMesh);
                     }
-                    m_Details[rend] = new RendererDetails(baseMaterial, propBlock, bakedMesh);
-                    ApplyCurrentPaintAndOpacity(rend, ref propBlock, baseMaterial);
+
+                    m_Details[rend] = new RendererDetails(baseMaterials, propertyBlocks, bakedMesh);
+                    ApplyCurrentPaintAndOpacity(rend, ref propertyBlocks, baseMaterials);
                 }
                 CacheMeshBounds();
             }
@@ -132,14 +144,14 @@ namespace Alice.Player.Unity {
         protected override void OnPaintChanged() {
             foreach (var rend in m_Renderers) {
                 var details = m_Details[rend];
-                ApplyPaint(rend, ref details.Block, details.Material);
+                ApplyPaint(rend, ref details.Blocks, details.Materials);
             }
         }
 
         protected override void OnOpacityChanged() {
             foreach (var rend in m_Renderers) {
                 var details = m_Details[rend];
-                ApplyOpacity(rend, ref details.Block, details.Material);
+                ApplyOpacity(rend, ref details.Blocks, details.Materials);
             }
         }
 
