@@ -44,10 +44,10 @@ namespace Alice.Tweedle.Parse
         {
             DeleteTemporaryAudioFiles();
         }
-         
+
         // arg: fileName should be the fullPath of the target file.
         public void OpenWorld(string fileName, MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
-           
+
             m_currentFilePath = fileName;
 
             if(Player.Unity.SceneGraph.Exists) {
@@ -75,7 +75,7 @@ namespace Alice.Tweedle.Parse
             m_System = new TweedleSystem();
 
             yield return JsonParser.Parse(m_System, path, HandleParseException);
-            
+
             m_System.Link();
             Camera.main.backgroundColor = Color.clear;
 
@@ -104,7 +104,7 @@ namespace Alice.Tweedle.Parse
                 NotifyUserOfLoadError(
                     "Unable to open the world with this player",
                     "This player is compatible with Alice " + tve.PlayerCompatibleAliceVersion +
-                    "\nThe world was created using Alice " + tve.SourceAliceVersion + 
+                    "\nThe world was created using Alice " + tve.SourceAliceVersion +
                     "\n\nThe player has " + tve.ExpectedVersion + "\nThe world requires " + tve.DiscoveredVersion +
                     "\n\nTry updating the player.");
             } else if (e is TweedleParseException) {
@@ -175,7 +175,7 @@ namespace Alice.Tweedle.Parse
              * The StreamingAssets/Default folder should by default contain two world files: SceneGraphLigrary.a3w and DefaultBundledWorld.a3w
              * If there are some worlds bundled in StreamingAssets folder, the code bellow will try to open them(if there is a single one)
              * or to list them in a menu(multiple bundled), waiting for a choice.
-             * If no worlds found, 
+             * If no worlds found,
              * ON WEBGL: Always open DefaultBundledWorld.a3w since listing StreamingAssets files does not work
              * ON PC PLATFORM: remain on the main menu
              * ON ANDROID/IOS: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
@@ -183,6 +183,7 @@ namespace Alice.Tweedle.Parse
 
 #if UNITY_WEBGL || UNITY_ANDROID || UNITY_IOS
             // On WebGL and mobile, we will try to open a default world
+            loadingScreen.fader.alpha = 1f;
             OpenWorld(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix), MainMenuControl.Disabled);
 #else
             DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
@@ -203,7 +204,7 @@ namespace Alice.Tweedle.Parse
                     loadMoreControl[i].SetAsStandalone();
                 }
             }
-#endif      
+#endif
         }
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
