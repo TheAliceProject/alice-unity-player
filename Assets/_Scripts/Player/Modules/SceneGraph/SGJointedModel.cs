@@ -2,6 +2,7 @@ using UnityEngine;
 using Alice.Tweedle;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using Alice.Player.Modules;
 
 namespace Alice.Player.Unity {
@@ -229,6 +230,8 @@ namespace Alice.Player.Unity {
             if (skinnedMeshRenderer.gameObject.GetComponent<Rigidbody>() != null) return;
             
             var meshCollider = CreateMeshCollider(skinnedMeshRenderer);
+            if (meshCollider == null) return;
+
             // Rigid body is required for collision detection between meshes
             var rigidBody = skinnedMeshRenderer.gameObject.AddComponent<Rigidbody>();
             rigidBody.isKinematic = true;
@@ -252,6 +255,9 @@ namespace Alice.Player.Unity {
 
         private MeshCollider CreateMeshCollider(SkinnedMeshRenderer skinnedRenderer)
         {
+            // Do not try to create colliders for things vehicled to this model
+            if (!m_Renderers.Contains(skinnedRenderer)) return null;
+
             var meshCollider = skinnedRenderer.gameObject.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = m_Details[skinnedRenderer].bakedMesh;
             return meshCollider;
