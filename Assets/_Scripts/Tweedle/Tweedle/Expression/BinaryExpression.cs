@@ -16,7 +16,7 @@ namespace Alice.Tweedle
 
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            return new TwoValueComputationStep(ToTweedle(), scope, lhs, rhs, Evaluate);
+            return new TwoValueComputationStep(this, scope, lhs, rhs, Evaluate);
         }
 
         public TValue EvaluateLiteral()

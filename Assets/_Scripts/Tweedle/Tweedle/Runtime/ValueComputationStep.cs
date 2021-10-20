@@ -9,14 +9,10 @@ namespace Alice.Tweedle.VM
         TValue initialValue;
         Func<TValue, TValue> body;
 
-        public ValueComputationStep(string callStackEntry, ExecutionScope scope, Func<TValue, TValue> body)
-            : base(scope)
+        public ValueComputationStep(IStackFrame callStackEntry, ExecutionScope scope, Func<TValue, TValue> body)
+            : base(callStackEntry, scope)
         {
             this.body = body;
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
         }
 
         internal override void BlockerFinished(ExecutionStep blockingStep)

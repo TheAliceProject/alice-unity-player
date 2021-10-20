@@ -17,7 +17,7 @@ namespace Alice.Tweedle
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
             ConstructorScope superScope = ((ConstructorScope)scope).SuperScope(m_Arguments);
-            return superScope.InvocationStep("super()", m_Arguments);
+            return superScope.InvocationStep(this, m_Arguments);
         }
 
         public override string ToTweedle()

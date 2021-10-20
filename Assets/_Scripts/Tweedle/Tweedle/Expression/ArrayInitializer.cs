@@ -9,6 +9,8 @@ namespace Alice.Tweedle
         private ITweedleExpression m_Size;
         private ITweedleExpression[] m_Elements;
 
+        private static IStackFrame storeValueStackFrame = new StaticStackFrame("Store Value");
+
         public ArrayInitializer(TArrayType arrayType, ITweedleExpression[] elements)
             : base(arrayType)
         {
@@ -24,13 +26,13 @@ namespace Alice.Tweedle
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
             TArrayType arrayType = (TArrayType)this.m_TypeRef;
-            StepSequence main = new StepSequence("new Array", scope);
+            StepSequence main = new StepSequence(this, scope);
 
             if (m_Size != null)
             {
                 int desiredSize = 0;
                 ExecutionStep sizeStep = m_Size.AsStep(scope);
-                ExecutionStep storeStep = new ValueComputationStep("Store Value", scope, (res) =>
+                ExecutionStep storeStep = new ValueComputationStep(storeValueStackFrame, scope, (res) =>
                 {
                     desiredSize = (int)res.RawNumber();
                     return res;
@@ -39,7 +41,7 @@ namespace Alice.Tweedle
                 main.AddStep(sizeStep);
 
                 main.AddStep(new ValueGenerationStep(
-                    "CreateArray", scope,
+                    this, scope,
                     () =>
                     {
                         return arrayType.Instantiate(desiredSize);
@@ -49,7 +51,7 @@ namespace Alice.Tweedle
             {
                 TValue[] elements = AddElementSteps(main, scope);
                 main.AddStep(new ValueGenerationStep(
-                    "CreateArray", scope,
+                    this, scope,
                     () =>
                     {
                         return arrayType.Instantiate(elements);
@@ -67,7 +69,7 @@ namespace Alice.Tweedle
                 int idx = i;
                 ITweedleExpression element = m_Elements[i];
                 ExecutionStep computeStep = element.AsStep(scope);
-                ExecutionStep storeStep = new ValueComputationStep("Store Value", scope, (res) =>
+                ExecutionStep storeStep = new ValueComputationStep(storeValueStackFrame, scope, (res) =>
                 {
                     results[idx] = res;
                     return res;
@@ -77,6 +79,10 @@ namespace Alice.Tweedle
             }
 
             return results;
+        }
+
+        public override string ToString() {
+            return "new Array";
         }
     }
 }

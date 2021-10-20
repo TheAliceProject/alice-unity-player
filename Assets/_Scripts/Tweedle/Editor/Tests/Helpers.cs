@@ -5,12 +5,14 @@ namespace Alice.Tweedle.Parse
 {
     internal static class TweedleExpressionExtensions
     {
+        private static IStackFrame evaluateNowStackFrame = new StaticStackFrame("EvaluateNow");
+
         internal static TValue EvaluateNow(this ITweedleExpression inExpression, ExecutionScope inScope)
         {
             TValue result = TValue.NULL;
             var expStep = inExpression.AsStep(inScope);
             var storeStep = new ValueOperationStep(
-                    "EvaluateNow",
+                    evaluateNowStackFrame,
                     inScope,
                     value => result = value);
             expStep.OnCompletionNotify(storeStep);
@@ -20,7 +22,7 @@ namespace Alice.Tweedle.Parse
 
         internal static TValue EvaluateNow(this ITweedleExpression inExpression)
         {
-            return EvaluateNow(inExpression, new ExecutionScope("EvaluateNow"));
+            return EvaluateNow(inExpression, new ExecutionScope(evaluateNowStackFrame));
         }
     }
 }

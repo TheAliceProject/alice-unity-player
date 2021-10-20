@@ -1,5 +1,5 @@
 # alice-unity-player
-Build using Unity Version 2019.3.7f1
+Build using Unity Version 2020.3.15f2
 # _Scenes
 The Model Import folder holds the scenes regarding dynamically importing models. The scene labeled AssetBundle was created to test loading in asset bundles, Unity's way of compact storage of files, however at Alice's current state this feature will not be used. For future versions of Alice it may be useful to store the gallery as individual asset bundles, and package those with the a3w folder rather than the model because this ensures the model will import properly as well as saving space for the user and time on import (since TriLib won't be as fast as asset bundles). The scene labeled TriLib is for testing import of meshes/skinned-meshes through the TriLib library.
 The Project Import folder holds the scenes for testing json files/zip-files import, parsing a json file/string, as well as parsing an a3w project into Tweedle.
@@ -10,12 +10,13 @@ The Tweedle folder contains all code for Tweedle and is self contained. The File
 # Models
 Has the models used to test the dynamic model import.
 # Plugins
-Antlr - for the Antlr parsing.
-crosstales - for the file explorer selection when selecting files.
-JSON - for reading Json files the non-Unity way.
-TriLib - for dynamic model import.
-System.IO.Compression.FileSystem - for extracting zip files.
+- Antlr - for the Antlr parsing.
+- crosstales - for the file explorer selection when selecting files.
+- JSON - for reading Json files the non-Unity way.
+- GLTFUtility - for dynamic model import.
+- System.IO.Compression.FileSystem - for extracting zip files.
+- FlyingText3D - For say dialogs
 # Prefabs
-Json File - the UI for selecting and reading Json files.
-Json Zip - the UI for selecting and reading Json zip files.
-Tweedle Project - the UI for selecting and reading a3w files into a TweedleSystem.
+- Json File - the UI for selecting and reading Json files.
+- Json Zip - the UI for selecting and reading Json zip files.
+- Tweedle Project - the UI for selecting and reading a3w files into a TweedleSystem.

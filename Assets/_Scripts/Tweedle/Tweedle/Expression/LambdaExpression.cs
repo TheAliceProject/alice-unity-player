@@ -31,7 +31,7 @@ namespace Alice.Tweedle
 
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            return new ValueStep(ToTweedle(), scope, m_LambdaType.Instantiate(this, scope));
+            return new ValueStep(this, scope, m_LambdaType.Instantiate(this, scope));
         }
     }
 }

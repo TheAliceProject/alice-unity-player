@@ -44,13 +44,18 @@ namespace Alice.Tweedle
         {
             if (index < items.Length)
             {
-                var loopScope = scope.ChildScope("ForEach loop", statement.item, items[index++]);
+                var loopScope = scope.ChildScope(this, statement.item, items[index++]);
                 statement.Body.AddSequentialStep(loopScope, this);
             }
             else
             {
                 base.Execute();
             }
+        }
+
+        public override string ToStackFrame()
+        {
+            return "ForEach loop";
         }
     }
 }

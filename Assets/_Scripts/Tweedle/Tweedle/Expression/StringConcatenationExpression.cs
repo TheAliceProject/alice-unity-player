@@ -12,7 +12,7 @@ namespace Alice.Tweedle
 
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
-            return new TwoStringsStep(ToTweedle(), scope, lhs, rhs, Evaluate);
+            return new TwoStringsStep(this, scope, lhs, rhs, Evaluate);
         }
 
         protected override TValue Evaluate(TValue left, TValue right)

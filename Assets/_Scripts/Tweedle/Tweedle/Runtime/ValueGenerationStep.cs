@@ -7,13 +7,9 @@ namespace Alice.Tweedle.VM
     {
         Func<TValue> body;
 
-        public ValueGenerationStep(string callStackEntry, ExecutionScope scope, Func<TValue> body)
-            : base(scope)
+        public ValueGenerationStep(IStackFrame callStackEntry, ExecutionScope scope, Func<TValue> body)
+            : base(callStackEntry, scope)
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                callStack = stackBuilder.ToString();
-            }
             this.body = body;
         }
 

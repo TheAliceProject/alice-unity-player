@@ -6,6 +6,21 @@ namespace Alice.Tweedle
     {
         private ITweedleExpression m_Left;
 
+        private class InstanceOfExpressionStackFrame : IStackFrame {
+
+            private TType m_CastedType;
+            private ITweedleExpression m_Left;
+
+            public InstanceOfExpressionStackFrame(TType castedType, ITweedleExpression left) {
+                m_CastedType = castedType;
+                m_Left = left;
+            }
+            
+            public string ToStackFrame() {
+                 return m_Left.ToTweedle() + " instanceOf " + m_CastedType.Name;
+            }
+        }
+
         public InstanceOfExpression(ITweedleExpression lhs, TTypeRef rhs)
             : base(rhs)
         {
@@ -17,7 +32,7 @@ namespace Alice.Tweedle
             TType castedType = m_TypeRef.Get(scope);
 
             var val = m_Left.AsStep(scope);
-            val.OnCompletionNotify(new ValueComputationStep(m_Left.ToTweedle() + " instanceOf " + castedType.Name, scope, Evaluate));
+            val.OnCompletionNotify(new ValueComputationStep(new InstanceOfExpressionStackFrame(castedType, m_Left), scope, Evaluate));
             return val;
         }
 
