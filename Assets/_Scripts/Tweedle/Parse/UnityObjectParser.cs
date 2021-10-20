@@ -1,14 +1,11 @@
-using System;
 using System.IO;
 using UnityEngine;
 using Alice.Tweedle.VM;
-using UnityEngine.UI;
 using System.Collections;
 using Alice.Player.Modules;
 using BeauRoutine;
+using System;
 using ICSharpCode.SharpZipLib.Zip;
-using SFB;
-using UnityEngine.Networking;
 
 namespace Alice.Tweedle.Parse
 {
@@ -20,8 +17,8 @@ namespace Alice.Tweedle.Parse
             Disabled
         }
 
-        static string project_ext = "a3w";
-        static string project_suffix = "." + project_ext;
+        public static string project_ext = "a3w";
+        public static string project_suffix = "." + project_ext;
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
         public Transform mainMenuVr;
@@ -37,7 +34,6 @@ namespace Alice.Tweedle.Parse
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
         private Routine m_QueueProcessor;
-        private Routine m_LoadRoutine;
         private string m_currentFilePath;
         void Awake()
         {
@@ -49,85 +45,10 @@ namespace Alice.Tweedle.Parse
             DeleteTemporaryAudioFiles();
         }
 
-        public IEnumerator MakeLibraryZip()
-        {
-            string libraryPath = Application.streamingAssetsPath + WorldObjects.DEFAULT_FOLDER_PATH + WorldObjects.SCENE_GRAPH_LIBRARY_NAME + project_suffix;
-            byte[] result;
-            UnityWebRequest www = new UnityWebRequest(libraryPath);
-            DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
-            www.downloadHandler = dH;
-            yield return www.SendWebRequest();
-            while(!www.isDone);
-            result = www.downloadHandler.data;
-            Stream libraryStream = new MemoryStream(result);
-            JsonParser.SetLibraryStream(libraryStream);
-        }
-
-        IEnumerator loadStreamingAsset(string fileName)
-        {
-            string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
-            byte[] result;
-            yield return YieldLoadingScreens(true);
-            UnityWebRequest www = new UnityWebRequest(filePath);
-            DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
-            www.downloadHandler = dH;
-            yield return www.SendWebRequest();
-            while(!www.isDone);
-            result = www.downloadHandler.data;
-            Stream stream = new MemoryStream(result);
-            yield return Routine.Start(MakeLibraryZip());
-
-            Camera.main.backgroundColor = Color.clear;
-
-            if (Player.Unity.SceneGraph.Exists)
-            {
-                Player.Unity.SceneGraph.Current.Clear();
-            }
-
-            m_System?.Unload();
-            if (m_QueueProcessor != null)
-            {
-                m_QueueProcessor.Stop();
-            }
-
-            m_System = new TweedleSystem();
-            JsonParser.ParseZipFile(m_System, stream);
-            m_System.Link();
-
-            if (dumpTypeOutlines)
-            {
-                m_System.DumpTypes();
-            }
-
-            m_System.QueueProgramMain(m_VM);
-
-            StartQueueProcessing();
-            yield return YieldLoadingScreens(false);
-         }
-         
-         
         // arg: fileName should be the fullPath of the target file.
-        public void OpenWorld(string fileName = "", MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
+        public void OpenWorld(string fileName, MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
 
-#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
-
-            Routine.Start(loadStreamingAsset(fileName));
-#else
-
-            string zipPath = fileName;
-            if(zipPath == "") {
-                var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", project_ext, false);
-                if(path.Length > 0) {
-                    zipPath = path[0];
-                    zipPath = System.Uri.UnescapeDataString(zipPath);
-                }
-            }
-            if(System.IO.File.Exists(zipPath) == false) {
-                Debug.LogWarning("UnityObjectParser.Select Failed to open File " + zipPath);
-                return;
-            }
-
-            m_currentFilePath = zipPath;
+            m_currentFilePath = fileName;
 
             if(Player.Unity.SceneGraph.Exists) {
                 Player.Unity.SceneGraph.Current.Clear();
@@ -138,14 +59,12 @@ namespace Alice.Tweedle.Parse
                 m_QueueProcessor.Stop();
             }
             RenderSettings.skybox = null;
-            LoadWorld(zipPath, mainMenuCtrl);
-
-#endif
+            LoadWorld(m_currentFilePath, mainMenuCtrl);
         }
 
         private void LoadWorld(string path, MainMenuControl mainMenuCtrl)
         {
-            m_LoadRoutine.Replace(this, DisplayLoadingAndLoadLevel(path, mainMenuCtrl));
+            StartCoroutine(DisplayLoadingAndLoadLevel(path, mainMenuCtrl));
         }
 
         private IEnumerator DisplayLoadingAndLoadLevel(string path, MainMenuControl mainMenuCtrl)
@@ -154,30 +73,8 @@ namespace Alice.Tweedle.Parse
             yield return YieldLoadingScreens(true);
             worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
-            try
-            {
-                JsonParser.ParseZipFile(m_System, path);
-            }
-            catch (ZipException ze)
-            {
-                NotifyUserOfLoadError("Unable to read this file", ze.Message);
-                yield break;
-            }
-            catch (TweedleVersionException tve)
-            {
-                NotifyUserOfLoadError(
-                    "Unable to open the world with this player",
-                    "This player is compatible with Alice " + tve.PlayerCompatibleAliceVersion +
-                    "\nThe world was created using Alice " + tve.SourceAliceVersion + 
-                    "\n\nThe player has " + tve.ExpectedVersion + "\nThe world requires " + tve.DiscoveredVersion +
-                    "\n\nTry updating the player.");
-                yield break;
-            }
-            catch (TweedleParseException tre)
-            {
-                NotifyUserOfLoadError("Unable to read this world", tre.Message);
-                yield break;
-            }
+
+            yield return JsonParser.Parse(m_System, path, HandleParseException);
 
             m_System.Link();
             Camera.main.backgroundColor = Color.clear;
@@ -196,6 +93,26 @@ namespace Alice.Tweedle.Parse
             if(mainMenuCtrl == MainMenuControl.Disabled)
                 WorldControl.DisableMainMenu();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
+        }
+
+        private void HandleParseException(Exception e) {
+            if (e is ZipException) {
+                ZipException ze = e as ZipException;
+                NotifyUserOfLoadError("Unable to read this file", ze.Message);
+            } else if (e is TweedleVersionException) {
+                TweedleVersionException tve = e as TweedleVersionException;
+                NotifyUserOfLoadError(
+                    "Unable to open the world with this player",
+                    "This player is compatible with Alice " + tve.PlayerCompatibleAliceVersion +
+                    "\nThe world was created using Alice " + tve.SourceAliceVersion +
+                    "\n\nThe player has " + tve.ExpectedVersion + "\nThe world requires " + tve.DiscoveredVersion +
+                    "\n\nTry updating the player.");
+            } else if (e is TweedleParseException) {
+                NotifyUserOfLoadError("Unable to read this world", e.Message);
+            } else {
+                NotifyUserOfLoadError("An unexpected error occurred", e.Message);
+            }
+
         }
 
         private void NotifyUserOfLoadError(string title, string message)
@@ -221,12 +138,14 @@ namespace Alice.Tweedle.Parse
         }
         private IEnumerator YieldLoadingScreens(bool on)
         {
-            yield return Routine.Combine(loadingScreen.DisplayLoadingScreenRoutine(on),
-                        vrLoadingScreen.FadeLoaderRoutine(on));
+            Coroutine loadingScreenRoutine = StartCoroutine(loadingScreen.DisplayLoadingScreenRoutine(on));
+            Coroutine vrLoadingScreenRoutine = StartCoroutine(vrLoadingScreen.FadeLoaderRoutine(on));
+            yield return loadingScreenRoutine;
+            yield return vrLoadingScreenRoutine;
         }
         public void ReloadCurrentLevel()
         {
-            Routine.Start(ReloadDelayed());
+            StartCoroutine(ReloadDelayed());
         }
 
         public IEnumerator ReloadDelayed()
@@ -256,32 +175,34 @@ namespace Alice.Tweedle.Parse
              * The StreamingAssets/Default folder should by default contain two world files: SceneGraphLigrary.a3w and DefaultBundledWorld.a3w
              * If there are some worlds bundled in StreamingAssets folder, the code bellow will try to open them(if there is a single one)
              * or to list them in a menu(multiple bundled), waiting for a choice.
-             * If no worlds found, 
+             * If no worlds found,
+             * ON WEBGL: Always open DefaultBundledWorld.a3w since listing StreamingAssets files does not work
              * ON PC PLATFORM: remain on the main menu
-             * ON ANDROID/WebGL: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
+             * ON ANDROID/IOS: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
              */
-            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath),
-                dirDefault = new DirectoryInfo(Application.streamingAssetsPath + "/Default");
-            FileInfo[] files = dir.GetFiles("*" + project_suffix),
-                filesDefault = dirDefault.GetFiles("*" + project_suffix);
 
-            if(files.Length == 1) { // Only one world is bundled, auto load that world
+#if UNITY_WEBGL || UNITY_ANDROID || UNITY_IOS
+            // On WebGL and mobile, we will try to open a default world
+            loadingScreen.fader.alpha = 1f;
+            OpenWorld(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix), MainMenuControl.Disabled);
+#else
+            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
+            DirectoryInfo dirDefault = new DirectoryInfo(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH));
+            FileInfo[] files = dir.GetFiles("*" + project_suffix);
+            FileInfo[] filesDefault = dirDefault.GetFiles("*" + project_suffix);
+
+            if (files.Length == 1) { // Only one world is bundled, auto load that world
                 loadingScreen.fader.alpha = 1f;
                 OpenWorld(files[0].FullName, MainMenuControl.Disabled);
             }
             else if(files.Length > 1) { // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
-                for(int i = 0; i < menuControls.Length; i++) {
+                for (int i = 0; i < menuControls.Length; i++) {
                     menuControls[i].DeactivateMainMenu();
                 }
                 for(int i = 0; i < loadMoreControl.Length; i++) {
                     loadMoreControl[i].gameObject.SetActive(true);
                     loadMoreControl[i].SetAsStandalone();
                 }
-            }
-#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
-            // On Mobile platforms and WebGL, when no bundled world found, we will try to open a default world
-            else if(files.Length == 0){
-                OpenWorld(Application.streamingAssetsPath + WorldObjects.DEFAULT_FOLDER_PATH + WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix, MainMenuControl.Disabled);
             }
 #endif
         }

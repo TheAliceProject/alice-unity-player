@@ -43,7 +43,7 @@ namespace Alice.Tweedle
                 ExecutionStep valueStep = ValueExp.AsStep(scope);
                 valueStep.OnCompletionNotify(
                     new ValueComputationStep(
-                        ToTweedle(),
+                        this,
                         scope,
                         value => scope.SetValue(Identifier, value)));
                 return valueStep;
@@ -55,7 +55,7 @@ namespace Alice.Tweedle
                 }
 
                 return new TwoValueComputationStep(
-                    ToTweedle(),
+                    this,
                     scope,
                     TargetExp,
                     ValueExp,

@@ -16,8 +16,8 @@ namespace Alice.Tweedle
 
         protected TMethod method;
 
-        public InvocationScope(ExecutionScope scope)
-            : base("Invocation", scope.vm)
+        public InvocationScope(IStackFrame callStackEntry, ExecutionScope scope)
+            : base(callStackEntry, scope.vm)
         {
             // Note: ExecutionScope.parent is not set by the base constructor used above
             // so permissions aren't inherited from the parent
@@ -28,7 +28,7 @@ namespace Alice.Tweedle
         internal override void StackWith(System.Text.StringBuilder stackBuilder)
         {   
             stackBuilder.Append("\n");
-            stackBuilder.Append(callStackEntry);
+            stackBuilder.Append(callStackEntry?.ToStackFrame());
             callingScope.StackWith(stackBuilder);
         }
 
@@ -38,7 +38,7 @@ namespace Alice.Tweedle
             method.AddInvocationSteps(this, sequentialSteps, arguments);
         }
 
-        internal virtual ExecutionStep InvocationStep(string callStackEntry, NamedArgument[] arguments)
+        internal virtual ExecutionStep InvocationStep(IStackFrame callStackEntry, NamedArgument[] arguments)
         {
             return method.AsStep(callStackEntry, this, arguments);
         }

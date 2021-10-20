@@ -15,7 +15,7 @@ namespace Alice.Tweedle
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
             var step = expression.AsStep(scope);
-            step.OnCompletionNotify(new ValueComputationStep("!" + expression.ToTweedle(), scope, NotPrimitive));
+            step.OnCompletionNotify(new ValueComputationStep(this, scope, NotPrimitive));
             return step;
         }
 
@@ -27,6 +27,11 @@ namespace Alice.Tweedle
         public override TValue EvaluateLiteral()
         {
             return NotPrimitive((TValue)expression);
+        }
+
+        public override string ToTweedle()
+        {
+            return "!" + expression.ToTweedle();
         }
     }
 }

@@ -12,13 +12,15 @@ namespace Alice.Tweedle.Parse
         TestVirtualMachine vm;
         ExecutionScope scope;
 
+        private static IStackFrame testStackFrame = new StaticStackFrame("Test");
+
         private void Init()
         {
             var tweedleSystem = new TweedleSystem();
             tweedleSystem.AddStaticAssembly(Player.PlayerAssemblies.Assembly(Player.PlayerAssemblies.CURRENT));
             vm = new TestVirtualMachine(tweedleSystem);
             vm.Library.Link();
-            scope = new ExecutionScope("Test", vm);
+            scope = new ExecutionScope(testStackFrame, vm);
         }
 
         private TValue RunExpression(string src)

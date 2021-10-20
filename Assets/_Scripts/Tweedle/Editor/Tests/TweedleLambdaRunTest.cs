@@ -9,6 +9,8 @@ namespace Alice.Tweedle.Parse
     {
         static TweedleParser parser = new TweedleParser();
 
+        private static IStackFrame testStackFrame = new StaticStackFrame("Test");
+
         TClassType lambdaTest;
         TestVirtualMachine vm;
         ExecutionScope scope;
@@ -59,7 +61,7 @@ namespace Alice.Tweedle.Parse
             TweedleSystem system = new TweedleSystem();
             system.GetRuntimeAssembly().Add(lambdaTest);
             vm = new TestVirtualMachine(system);
-            scope = new ExecutionScope("Test", vm);
+            scope = new ExecutionScope(testStackFrame, vm);
             system.Link();
             ExecuteStatement("LambdaTest lam <- new LambdaTest();");
         }

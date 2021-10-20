@@ -18,13 +18,18 @@ namespace Alice.Tweedle
         }
     }
 
-    internal class WhileLoopStep : LoopStep<WhileLoop>
+    internal class WhileLoopStep : LoopStep<WhileLoop>, IStackFrame
     {
         bool shouldRunBody = false;
 
         public WhileLoopStep(WhileLoop statement, ExecutionScope scope, ExecutionStep next)
             : base(statement, scope, next)
         {
+        }
+
+        public override string ToStackFrame()
+        {
+            return "While loop";
         }
 
         internal override void BlockerFinished(ExecutionStep blockingStep)
@@ -37,7 +42,7 @@ namespace Alice.Tweedle
         {
             if (shouldRunBody)
             {
-                var loopScope = scope.ChildScope("While loop");
+                var loopScope = scope.ChildScope(this);
                 var shouldRunBodyAgain = statement.RunCondition.AsStep(scope);
                 shouldRunBodyAgain.OnCompletionNotify(this);
                 statement.Body.AddSequentialStep(loopScope, shouldRunBodyAgain);

@@ -1,5 +1,5 @@
 using UnityEngine;
-using TriLib;
+using Siccity.GLTFUtility;
 
 namespace Alice.Player.Unity {
     [CreateAssetMenu(menuName = "Player Resources", fileName = "New Player Resources")]
@@ -97,19 +97,12 @@ namespace Alice.Player.Unity {
         private TweedleAudioPlayer m_TweedleAudioSource = null;
         public TweedleAudioPlayer TweedleAudioSource { get { return m_TweedleAudioSource; } }
 
-        [Header("TriLib Loader Options")]
-        AssetLoaderOptions m_ModelLoaderOptions;
-        public AssetLoaderOptions ModelLoaderOptions {
+        [Header("GLTF Loader Options")]
+        ImportSettings m_ModelLoaderOptions;
+        public ImportSettings ModelLoaderOptions {
             get { 
                 if (m_ModelLoaderOptions == null) {
-                    m_ModelLoaderOptions = AssetLoaderOptions.CreateInstance();
-                    m_ModelLoaderOptions.UseOriginalPositionRotationAndScale = true;
-                    m_ModelLoaderOptions.DontLoadAnimations = true; 
-                    m_ModelLoaderOptions.AutoPlayAnimations = false;
-                    m_ModelLoaderOptions.ApplyNormalTexture = true;
-                    m_ModelLoaderOptions.MaterialTransparencyMode = MaterialTransparencyMode.Cutout;
-                    m_ModelLoaderOptions.PostProcessSteps = AssimpProcessPreset.TargetRealtimeFast | AssimpProcessPreset.ConvertToLeftHanded;
-                    m_ModelLoaderOptions.RotationAngles = Vector3.zero;
+                    m_ModelLoaderOptions = new ImportSettings();
                 }
                 return m_ModelLoaderOptions; 
             }

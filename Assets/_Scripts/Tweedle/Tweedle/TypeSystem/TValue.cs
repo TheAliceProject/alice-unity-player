@@ -4,7 +4,7 @@ using Alice.Utils;
 
 namespace Alice.Tweedle
 {
-    public struct TValue : ITweedleExpression, IEquatable<TValue>, IComparable<TValue>
+    public struct TValue : ITweedleExpression, IEquatable<TValue>, IComparable<TValue>, IStackFrame
     {
         /// <summary>
         /// Concrete type representing the value.
@@ -121,6 +121,13 @@ namespace Alice.Tweedle
 
         #endregion // Internal
 
+        #region IStackFrame
+        public string ToStackFrame() {
+            // TODO: Use ToTweedle
+            return "";
+        }
+        #endregion
+
         #region ITweedleExpression
 
         // Explicit interface implementation
@@ -133,7 +140,7 @@ namespace Alice.Tweedle
 
         ExecutionStep ITweedleExpression.AsStep(ExecutionScope inScope)
         {
-            return new ValueStep("", inScope, this);
+            return new ValueStep(this, inScope, this);
         }
 
         #endregion // ITweedleExpression
@@ -279,14 +286,10 @@ namespace Alice.Tweedle
 
     internal class ValueStep : ExecutionStep
     {
-        public ValueStep(string callStackEntry, ExecutionScope scope, TValue inTValue)
-            : base(scope)
+        public ValueStep(IStackFrame callStackEntry, ExecutionScope scope, TValue inTValue)
+            : base(callStackEntry, scope)
         {
             result = inTValue;
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
         }
     }
 }

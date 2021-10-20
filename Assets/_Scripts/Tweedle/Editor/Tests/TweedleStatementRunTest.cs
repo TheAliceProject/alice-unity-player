@@ -6,6 +6,8 @@ namespace Alice.Tweedle.Parse
     [TestFixture]
     public class TweedleStatementRunTest
     {
+        private static IStackFrame testStackFrame = new StaticStackFrame("Test");
+
         void ExecuteStatement(string src, ExecutionScope scope)
         {
             TweedleStatement stmt = new TweedleParser().ParseStatement(src);
@@ -20,7 +22,7 @@ namespace Alice.Tweedle.Parse
 
         private static ExecutionScope GetTestScope()
         {
-            return new ExecutionScope("Test", new TestVirtualMachine(new TweedleSystem()));
+            return new ExecutionScope(testStackFrame, new TestVirtualMachine(new TweedleSystem()));
         }
 
         private static ExecutionScope GetTestScopeWithReturnTestClass() {
@@ -141,7 +143,7 @@ namespace Alice.Tweedle.Parse
             system.GetRuntimeAssembly().Add(returnTestClass);
             system.Link();
 
-            return new ExecutionScope("Test", new TestVirtualMachine(system));
+            return new ExecutionScope(testStackFrame, new TestVirtualMachine(system));
         }
 
         private static ExecutionScope GetTestScopeWithStaticsOnClass()
@@ -174,7 +176,7 @@ namespace Alice.Tweedle.Parse
             TClassType valueClass = (TClassType)new TweedleParser().ParseType(valueClassSrc);
             system.GetRuntimeAssembly().Add(valueClass);
             system.Link();
-            return new ExecutionScope("Test", new TestVirtualMachine(system));
+            return new ExecutionScope(testStackFrame, new TestVirtualMachine(system));
         }
 
         [Test]
@@ -548,7 +550,7 @@ namespace Alice.Tweedle.Parse
             TClassType someClass = (TClassType)new TweedleParser().ParseType(classSrc);
             system.GetRuntimeAssembly().Add(someClass);
             system.Link();
-            return new ExecutionScope("Test", new TestVirtualMachine(system));
+            return new ExecutionScope(testStackFrame, new TestVirtualMachine(system));
         }
 
         [Test]

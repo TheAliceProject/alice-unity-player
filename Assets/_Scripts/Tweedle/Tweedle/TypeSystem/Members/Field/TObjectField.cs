@@ -36,7 +36,7 @@ namespace Alice.Tweedle
                 TObject obj = inValue.Object();
                 return m_Initializer.AsStep(inScope)
                     .OnCompletionNotify(
-                        new ValueOperationStep("", inScope,
+                        new ValueOperationStep(this, inScope,
                         (value) =>
                         {
                             CheckSet(inScope, ref _this, ref value);

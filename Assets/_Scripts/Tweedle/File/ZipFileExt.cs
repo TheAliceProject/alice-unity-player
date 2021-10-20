@@ -14,6 +14,22 @@ namespace Alice.Tweedle.File {
             return ReadEntry(zipFile, entry);
         }
 
+        public static Stream OpenEntryStream(this ZipFile zipFile, string location)
+        {
+            ZipEntry entry = zipFile.GetEntry(location);
+            if (entry == null)
+            {
+                Debug.Log("Did not find entry for: " + location);
+                return null;
+            }
+            return OpenEntryStream(zipFile, entry);
+        }
+
+
+        public static Stream OpenEntryStream(this ZipFile zipFile, ZipEntry entry) {
+            return zipFile.GetInputStream(entry);
+        }
+
         public static string ReadEntry(this ZipFile zipFile, ZipEntry entry)
         {
             Stream entryStream = zipFile.GetInputStream(entry);

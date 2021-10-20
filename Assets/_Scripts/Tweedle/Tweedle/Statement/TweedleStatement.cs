@@ -3,7 +3,7 @@ using Alice.Utils;
 
 namespace Alice.Tweedle
 {
-    abstract public class TweedleStatement
+    abstract public class TweedleStatement : IStackFrame
     {
         bool enabled = true;
 
@@ -29,5 +29,13 @@ namespace Alice.Tweedle
         internal abstract ExecutionStep AsStepToNotify(ExecutionScope scope, ExecutionStep next);
 
         static public readonly TweedleStatement[] EMPTY_STATEMENTS = new TweedleStatement[0];
+
+        public virtual string ToTweedle() {
+            return "";
+        }
+
+        public virtual string ToStackFrame() {
+            return ToTweedle();
+        }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using Alice.Tweedle;
+using Alice.Utils;
 
 namespace Alice.Tweedle.VM
 {
-    public class ExecutionStep
+    public class ExecutionStep : IStackFrame
     {
         #region Types
 
@@ -19,7 +20,8 @@ namespace Alice.Tweedle.VM
         internal ExecutionStep next;
         int blockerCount = 0;
         protected StepStatus status;
-        internal string callStack;
+
+        protected internal IStackFrame callStackEntry;
         protected internal ExecutionScope scope;
 
         protected TValue result = TValue.NULL;
@@ -31,12 +33,12 @@ namespace Alice.Tweedle.VM
             return result;
         }
 
-        protected internal ExecutionStep(ExecutionScope scope)
-            : this(scope, null)
+        protected internal ExecutionStep(IStackFrame callStackEntry, ExecutionScope scope)
+            : this(callStackEntry, scope, null)
         {
         }
 
-        protected internal ExecutionStep(ExecutionScope scope, ExecutionStep next)
+        protected internal ExecutionStep(IStackFrame callStackEntry, ExecutionScope scope, ExecutionStep next)
         {
             if (scope == null)
             {
@@ -123,7 +125,15 @@ namespace Alice.Tweedle.VM
 
         internal string CallStack()
         {
-            return callStack;
+            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry?.ToStackFrame())) {
+                
+                scope.StackWith(stackBuilder.Builder);
+                return stackBuilder.ToString();
+            }
+        }
+
+        public virtual string ToStackFrame() {
+            return "";
         }
     }
 }

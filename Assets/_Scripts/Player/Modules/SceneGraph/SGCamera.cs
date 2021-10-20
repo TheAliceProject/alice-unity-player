@@ -3,6 +3,7 @@ using UnityEngine.XR;
 using System.Collections;
 using BeauRoutine;
 using System;
+using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     public sealed class SGCamera : SGTransformableEntity {
@@ -16,7 +17,7 @@ namespace Alice.Player.Unity {
             bool vrLoaded = false;
             if(VRControl.IsLoadedInVR())
             {
-                if (XRDevice.isPresent)
+                if (IsXRDevicePresent())
                 {
                     if (Camera.main != null)
                         Destroy(Camera.main.gameObject);
@@ -91,6 +92,22 @@ namespace Alice.Player.Unity {
             if (newAngle > 180f)
                 newAngle -= 360f;
             return newAngle;
+        }
+
+        private bool IsXRDevicePresent()
+        {
+            bool isPresent = false;
+            List<XRDisplaySubsystem> xrDisplaySubsystems = new List<XRDisplaySubsystem>();
+
+            SubsystemManager.GetInstances<XRDisplaySubsystem>(xrDisplaySubsystems);
+            foreach (var xrDisplay in xrDisplaySubsystems)
+            {
+                if (xrDisplay.running)
+                {
+                    isPresent = true;
+                }
+            }
+            return isPresent;
         }
     }
 }
