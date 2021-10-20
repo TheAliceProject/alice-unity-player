@@ -91,7 +91,17 @@ The following packages were updated:
 The following packages were removed:
   com.unity.package-manager-ui@2.2.0
 
-=== Tue Aug  3 16:44:50 2021
+=== Tue Aug 31 16:57:43 2021
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.vscode from version 1.1.4 to 1.2.1
+  com.unity.multiplayer-hlapi from version 1.0.4 to 1.0.6
+  com.unity.test-framework from version 1.1.11 to 1.1.14
+
+=== Tue Aug 31 19:32:33 2021
 
 Packages were changed.
 Update Mode: updateDependencies
