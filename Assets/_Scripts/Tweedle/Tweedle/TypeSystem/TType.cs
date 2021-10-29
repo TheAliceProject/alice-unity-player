@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Alice.Tweedle.Parse;
 using Alice.Tweedle.VM;
 
 namespace Alice.Tweedle
@@ -286,38 +287,38 @@ namespace Alice.Tweedle
 
         #region Linker
 
-        public void Link(TAssemblyLinkContext inContext)
+        public void Link(TAssembly inAssembly)
         {
             if (m_Status == Status.Unlinked)
             {
                 if (m_Assembly == null)
-                    m_Assembly = inContext.OwningAssembly;
-                else if (m_Assembly != inContext.OwningAssembly)
-                    throw new Exception("Type " + Name + " is not owned by the linking assembly " + inContext.OwningAssembly.Name);
+                    m_Assembly = inAssembly;
+                else if (m_Assembly != inAssembly)
+                    throw new TweedleLinkException("Type " + Name + " is not owned by the linking assembly " + inAssembly.Name);
 
-                LinkImpl(inContext);
+                LinkImpl(inAssembly);
                 m_Status = Status.Linked;
             }
         }
 
-        protected virtual void LinkImpl(TAssemblyLinkContext inContext)
+        protected virtual void LinkImpl(TAssembly inAssembly)
         {
             if (SuperType != null)
             {
-                SuperType.Resolve(inContext);
+                SuperType.Resolve(inAssembly);
             }
         }
 
-        public void PostLink(TAssemblyLinkContext inContext)
+        public void PostLink(TAssembly inAssembly)
         {
             if (m_Status == Status.Linked)
             {
-                PostLinkImpl(inContext);
+                PostLinkImpl(inAssembly);
                 m_Status = Status.PostLinked;
             }
         }
 
-        protected virtual void PostLinkImpl(TAssemblyLinkContext inContext)
+        protected virtual void PostLinkImpl(TAssembly inAssembly)
         {
             m_InheritanceDepth = CalculateInheritanceDepth(this);
         }

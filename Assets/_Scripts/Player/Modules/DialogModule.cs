@@ -40,15 +40,10 @@ namespace Alice.Player.Modules
 
         private static SceneCanvas GetSceneCanvas()
         {
-            SceneCanvas canvas;
+            SceneCanvas canvas = SceneGraph.Current.GetCurrentCanvas();
             if (XRSettings.enabled)
             {
-                canvas = SceneGraph.Current.CreateNewWorldCanvas();
                 VRControl.Rig().EnablePointersForUI(true);
-            }
-            else
-            {
-                canvas = SceneGraph.Current.GetCurrentCanvas();
             }
             return canvas;
         }

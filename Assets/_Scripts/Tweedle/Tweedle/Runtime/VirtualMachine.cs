@@ -66,6 +66,11 @@ namespace Alice.Tweedle.VM
         {
             ProcessQueueSafely();
         }
+
+        public void EmptyQueue()
+        {
+            executionQueue.ClearQueue();
+        }
     }
 
 }

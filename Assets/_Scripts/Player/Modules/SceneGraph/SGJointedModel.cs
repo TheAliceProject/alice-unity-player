@@ -6,12 +6,23 @@ using Alice.Player.Modules;
 
 namespace Alice.Player.Unity {
     public sealed class SGJointedModel : SGModel {
+        private struct RendererDetails
+        {
+            internal readonly BaseMaterial Material;
+            internal MaterialPropertyBlock Block;
+            internal readonly Mesh bakedMesh;
+            
+            public RendererDetails(BaseMaterial material, MaterialPropertyBlock block, Mesh mesh) {
+                Material = material;
+                Block = block;
+                bakedMesh = mesh;
+            }
+        }
         private string m_ResourceId;
         private ModelSpec m_ModelSpec;
         private Renderer[] m_Renderers;
-        private MaterialPropertyBlock[] m_PropertyBlocks;
-        private Dictionary<Renderer, Mesh> bakedMeshes = new Dictionary<Renderer, Mesh>();
-        public List<Transform> m_vehicledList = new List<Transform>();
+        private readonly Dictionary<Renderer, RendererDetails> m_Details = new Dictionary<Renderer, RendererDetails>();
+        private readonly List<Transform> m_VehicledList = new List<Transform>();
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -37,29 +48,56 @@ namespace Alice.Player.Unity {
                 }
 
                 m_Renderers = model.GetComponentsInChildren<Renderer>();
-                m_PropertyBlocks = new MaterialPropertyBlock[m_Renderers.Length];
 
-                for (int i = 0; i < m_Renderers.Length; ++i) {
-                    GetPropertyBlock(m_Renderers[i], ref m_PropertyBlocks[i]);
-                    if (m_Renderers[i].sharedMaterial.mainTexture != null)
-                        m_PropertyBlocks[i].SetTexture(MAIN_TEXTURE_SHADER_NAME, m_Renderers[i].sharedMaterial.mainTexture);
-                    else
-                        Debug.LogWarningFormat("SetTexture '{0}' is null for {1}", MAIN_TEXTURE_SHADER_NAME, model);
+                foreach (var rend in m_Renderers) {
+                    MaterialPropertyBlock propBlock = null;
+                    GetPropertyBlock(rend, ref propBlock);
 
-                    if (m_Renderers[i] is SkinnedMeshRenderer) {
+                    var mainTexture = rend.sharedMaterial.mainTexture;
+                    var baseMaterial = BaseMaterial.Opaque;
+                    if (mainTexture != null) {
+                        propBlock.SetTexture(MAIN_TEXTURE_SHADER_NAME, mainTexture);
+                        if (mainTexture is Texture2D texture && HasTranslucence(texture)) {
+                            baseMaterial = BaseMaterial.Transparent;
+                        }
+                    } else {
+                        rend.sharedMaterial = SceneGraph.Current.InternalResources.GlassMaterial;
+                        baseMaterial = BaseMaterial.Glass;
+                    }
+
+                    Mesh bakedMesh = null;
+                    if (rend is SkinnedMeshRenderer skinnedRenderer) {
                         // make sure the skinned mesh renderers local bounds get updated
-                        var skinnedRenderer = (SkinnedMeshRenderer)m_Renderers[i];
                         skinnedRenderer.updateWhenOffscreen = true;
 
-                        bakedMeshes[skinnedRenderer] = new Mesh();
-                        skinnedRenderer.BakeMesh(bakedMeshes[skinnedRenderer]);
+                        bakedMesh = new Mesh();
+                        skinnedRenderer.BakeMesh(bakedMesh);
                     }
-                    ApplyCurrentPaintAndOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
+                    m_Details[rend] = new RendererDetails(baseMaterial, propBlock, bakedMesh);
+                    ApplyCurrentPaintAndOpacity(rend, ref propBlock, baseMaterial);
                 }
                 CacheMeshBounds();
             }
-
             ResetColliderState();
+        }
+
+        private static bool HasTranslucence(Texture2D texture) {
+            const double epsilon = 0.01;
+            const double fractionOfAbsolutes = 0.84;
+
+            var colors = texture.GetPixels();
+            var total = colors.Length;
+            if (total == 0) {
+                return true;
+            }
+            var absolutes = 0;
+            for (var i = 0; i < total; i++) {
+                if (Math.Abs(colors[i].a - 1.0) < epsilon || colors[i].a < epsilon) {
+                    absolutes++;
+                }
+            }
+
+            return (double) absolutes / total < fractionOfAbsolutes;
         }
 
         private void CopySkeleton(Transform oldTransform, Transform newTransform) {
@@ -83,9 +121,8 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public void AddToVehicleList(Transform t)
-        {
-            m_vehicledList.Add(t);
+        public void AddToVehicleList(Transform t) {
+            m_VehicledList.Add(t);
         }
 
         protected override Bounds GetMeshBounds() {
@@ -93,14 +130,16 @@ namespace Alice.Player.Unity {
         }
 
         protected override void OnPaintChanged() {
-            for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyPaint(m_Renderers[i], ref m_PropertyBlocks[i]);
+            foreach (var rend in m_Renderers) {
+                var details = m_Details[rend];
+                ApplyPaint(rend, ref details.Block, details.Material);
             }
         }
 
         protected override void OnOpacityChanged() {
-            for (int i = 0; i < m_Renderers?.Length; ++i) {
-                ApplyOpacity(m_Renderers[i], ref m_PropertyBlocks[i]);
+            foreach (var rend in m_Renderers) {
+                var details = m_Details[rend];
+                ApplyOpacity(rend, ref details.Block, details.Material);
             }
         }
 
@@ -120,19 +159,13 @@ namespace Alice.Player.Unity {
 
         protected override void SetSize(Vector3 inSize) {
             var meshSize = m_CachedMeshBounds.size;
-            m_ModelTransform.localScale = new UnityEngine.Vector3(
-                meshSize.x == 0 ? 1 : inSize.x/meshSize.x,
-                meshSize.y == 0 ? 1 : inSize.y/meshSize.y,
-                meshSize.z == 0 ? 1 : inSize.z/meshSize.z
-            );
-
+            var xScale = meshSize.x == 0 ? 1 : inSize.x/meshSize.x;
+            var yScale = meshSize.y == 0 ? 1 : inSize.y/meshSize.y;
+            var zScale = meshSize.z == 0 ? 1 : inSize.z/meshSize.z;
+            m_ModelTransform.localScale = new Vector3(xScale, yScale, zScale);
             // Inverse scale any holders on joints that may exist
-            foreach(Transform holder in m_vehicledList){
-                holder.localScale = new UnityEngine.Vector3(
-                meshSize.x == 0 ? 1 : meshSize.x/inSize.x,
-                meshSize.y == 0 ? 1 : meshSize.y/inSize.y,
-                meshSize.z == 0 ? 1 : meshSize.z/inSize.z
-                );
+            foreach(var holder in m_VehicledList){
+                holder.localScale = new Vector3(1/xScale, 1/yScale, 1/zScale);
             }
         }
 
@@ -208,7 +241,7 @@ namespace Alice.Player.Unity {
         private MeshCollider CreateMeshCollider(SkinnedMeshRenderer skinnedRenderer)
         {
             var meshCollider = skinnedRenderer.gameObject.AddComponent<MeshCollider>();
-            meshCollider.sharedMesh = bakedMeshes[skinnedRenderer];
+            meshCollider.sharedMesh = m_Details[skinnedRenderer].bakedMesh;
             return meshCollider;
         }
 

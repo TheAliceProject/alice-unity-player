@@ -35,6 +35,10 @@ namespace Alice.Player.Unity
             StartKeyRepeater();
         }
 
+        public void DropAllListeners() {
+            m_KeyPressListeners.Clear();
+        }
+
         public void RemoveAllKeys(){
             m_heldKeyCodes.Clear();
             m_heldKeys.Clear();
@@ -45,7 +49,7 @@ namespace Alice.Player.Unity
             if (m_KeyPressListeners.Count <= 0 && !m_objectMover.HasObjects())
                 return;
             AddPressedKeys();
-            if (XRSettings.enabled)
+            if (XRSettings.enabled && WorldObjects.GetWorldExecutionState().IsVrSendingEvents())
                 UpdateControllerEvents();
             RemoveReleasedKeys();
         }

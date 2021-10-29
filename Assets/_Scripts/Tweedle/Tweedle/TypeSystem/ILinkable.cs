@@ -5,7 +5,7 @@ namespace Alice.Tweedle
     /// </summary>
     public interface ILinkable
     {
-        void Link(TAssemblyLinkContext inContext);
-        void PostLink(TAssemblyLinkContext inContext);
+        void Link(TAssembly inAssembly);
+        void PostLink(TAssembly inAssembly);
     }
 }

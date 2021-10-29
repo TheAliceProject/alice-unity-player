@@ -18,6 +18,10 @@ namespace Alice.Player.Unity {
         public Material TransparentMultipassMaterial {get { return m_TransparentMultipassMaterial; } }
 
         [SerializeField]
+        private Material m_GlassMaterial = null;
+        public Material GlassMaterial {get { return m_GlassMaterial; } }
+
+        [SerializeField]
         private Material m_OpaqueTorusMaterial = null;
         public Material OpaqueTorusMaterial { get {return m_OpaqueTorusMaterial; } }
 

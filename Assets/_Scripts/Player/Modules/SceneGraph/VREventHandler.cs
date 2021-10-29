@@ -18,5 +18,8 @@ namespace Alice.Player.Unity
 
         }
 
+        public void DropAllListeners() {
+            m_VrEventListeners.Clear();
+        }
     }
 }

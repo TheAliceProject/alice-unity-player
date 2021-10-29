@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Alice.Tweedle
 {
@@ -69,21 +70,16 @@ namespace Alice.Tweedle
             m_Status = Status.Linking;
             {
                 // Make sure to link dependencies first
-                for (int i = 0; i < m_Dependencies.Length; ++i)
-                {
-                    m_Dependencies[i].Link();
+                foreach (var dep in m_Dependencies) {
+                    dep.Link();
                 }
 
-                TAssemblyLinkContext linkingContext = new TAssemblyLinkContext(this, m_Dependencies);
-
-                for (int i = 0; i < m_TypeList.Count; ++i)
-                {
-                    m_TypeList[i].Link(linkingContext);
+                foreach (var type in m_TypeList) {
+                    type.Link(this);
                 }
 
-                for (int i = 0; i < m_TypeList.Count; ++i)
-                {
-                    m_TypeList[i].PostLink(linkingContext);
+                foreach (var type in m_TypeList) {
+                    type.PostLink(this);
                 }
             }
             m_Status = Status.FinishedLinking;
@@ -106,11 +102,25 @@ namespace Alice.Tweedle
         /// <summary>
         /// Returns the type with the given name in the assembly.
         /// </summary>
-        public TType TypeNamed(string inName)
+        public TType LocalTypeNamed(string inName)
         {
-            TType type;
-            m_TypeMap.TryGetValue(inName, out type);
+            m_TypeMap.TryGetValue(inName, out var type);
             return type;
+        }
+
+        /// <summary>
+        /// Returns the type with the given name in the assembly or the assemblies it depends on..
+        /// </summary>
+        public TType TypeNamed(string inName) {
+            var type = LocalTypeNamed(inName);
+            if (type != null)
+                return type;
+            foreach (var assembly in m_Dependencies) {
+                type = assembly.LocalTypeNamed(inName);
+                if (type != null)
+                    return type;
+            }
+            return null;
         }
 
         /// <summary>
@@ -124,6 +134,16 @@ namespace Alice.Tweedle
         public override string ToString()
         {
             return string.Format("TAssembly:{0} ({1} types)", Name, m_TypeList.Count);
+        }
+        
+        public bool IsFieldDefined(string inTypeName, string inFieldName) {
+            var type = TypeNamed(inTypeName);
+            return type != null && type.Fields(null).Any(field => inFieldName.Equals(field.Name));
+        }
+
+        public bool IsMethodNameDefined(string inTypeName, string inMethodName) {
+            var type = TypeNamed(inTypeName);
+            return type != null && type.Methods(null).Any(method => inMethodName.Equals(method.Name));
         }
 
         /// <summary>

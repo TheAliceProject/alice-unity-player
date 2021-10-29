@@ -357,16 +357,18 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static AsyncReturn playAudio(TValue entity, string sound, float volume, float startTime, float stopTime)
         {
-            AsyncReturn asyncReturn = new AsyncReturn();
+            var asyncReturn = new AsyncReturn();
             var entityXform = SceneGraph.Current.FindEntity(entity);
-
+            if (entityXform == null) {
+                return asyncReturn;
+            }
             // Create a new audio source every time, because we need to use the start time and stop time, so PlayOneShot will not work. We will destroy the audioclip when it's finished playing.
             TweedleAudioPlayer audio = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.TweedleAudioSource, entityXform.transform);
             AudioClip clip = SceneGraph.Current.AudioCache.Get(sound);
             float waitTime = stopTime < 0f ? clip.length : (stopTime - startTime);
             audio.SetData(clip, volume, startTime);
             audio.Play(waitTime);
-            Routine.Start(DelayReturnRoutine(asyncReturn, waitTime));
+            SceneGraph.Current.QueueTimeReturn(asyncReturn, waitTime);
             return asyncReturn;
         }
 
@@ -404,12 +406,6 @@ namespace Alice.Player.Modules {
             }
 
             return asyncReturn;
-        }
-
-        private static IEnumerator DelayReturnRoutine(AsyncReturn asyncReturn, float delay)
-        {
-            yield return delay;
-            asyncReturn.Return();
         }
 
         #endregion // Other
