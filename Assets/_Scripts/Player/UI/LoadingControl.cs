@@ -8,11 +8,14 @@ public class LoadingControl : MonoBehaviour
 {
     public CanvasGroup fader;
 
-    private Routine routine;
 
     public void DisplayLoadingScreen(bool enable)
     {
-        routine.Replace(this, DisplayLoadingScreenRoutine(enable));
+        if (!gameObject.activeInHierarchy) {
+           return;
+        }
+
+        StartCoroutine(DisplayLoadingScreenRoutine(enable));
     }
 
     public IEnumerator DisplayLoadingScreenRoutine(bool enable)

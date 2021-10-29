@@ -9,8 +9,10 @@ namespace Alice.Tweedle
         private TLambda lambda;
         private ExecutionScope capturedScope;
 
+        private static IStackFrame lamdaCompletedStackFrame = new StaticStackFrame("Lambda Completed");
+
         internal LambdaScope(ExecutionScope caller)
-            : base(caller)
+            : base(null, caller)
         {
         }
 
@@ -44,7 +46,7 @@ namespace Alice.Tweedle
             return false;
         }
 
-        internal override ExecutionStep InvocationStep(string callStackEntry, NamedArgument[] arguments)
+        internal override ExecutionStep InvocationStep(IStackFrame callStackEntry, NamedArgument[] arguments)
         {
             return base.InvocationStep(callStackEntry, arguments);
         }
@@ -55,7 +57,7 @@ namespace Alice.Tweedle
             if (returnVal != null)
             {
                 sequentialSteps.AddStep(new DelayedOperationStep(
-                    "Lambda Completed",
+                    lamdaCompletedStackFrame,
                     this,
                     () =>
                     {

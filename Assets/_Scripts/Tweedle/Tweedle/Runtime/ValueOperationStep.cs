@@ -9,13 +9,9 @@ namespace Alice.Tweedle.VM
         TValue initialValue;
         Action<TValue> body;
 
-        public ValueOperationStep(string callStackEntry, ExecutionScope scope, Action<TValue> body)
-            : base(scope)
+        public ValueOperationStep(IStackFrame callStackEntry, ExecutionScope scope, Action<TValue> body)
+            : base(callStackEntry, scope)
         {
-            using (PooledStringBuilder stackBuilder = PooledStringBuilder.Alloc(callStackEntry)) {
-                scope.StackWith(stackBuilder.Builder);
-                this.callStack = stackBuilder.ToString();
-            }
             this.body = body;
         }
 

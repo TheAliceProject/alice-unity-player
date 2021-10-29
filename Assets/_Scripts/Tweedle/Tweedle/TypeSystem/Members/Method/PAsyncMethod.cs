@@ -28,7 +28,7 @@ namespace Alice.Tweedle
         protected override void AddBodyStep(InvocationScope inScope, StepSequence ioMain)
         {
             ioMain.AddStep(
-                new DelayedAsyncOperationStep("call", inScope, () => {
+                new DelayedAsyncOperationStep(this, inScope, () => {
                     object thisVal = PrepForInvoke(inScope);
                     IAsyncReturn asyncReturn = (IAsyncReturn)Invoke(thisVal, GetCachedArgs());
                     if (asyncReturn != null)

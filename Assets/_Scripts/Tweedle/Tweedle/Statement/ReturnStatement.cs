@@ -30,12 +30,16 @@ namespace Alice.Tweedle
         {
             var valStep = expression.AsStep(scope);
             var returnStep = new ValueOperationStep(
-                "return " + expression.ToTweedle(),
+                this,
                 scope,
                 result => scope.Return(result));
             valStep.OnCompletionNotify(returnStep);
             returnStep.OnCompletionNotify(next);
             return valStep;
+        }
+
+        public override string ToTweedle() {
+            return "return " + expression.ToTweedle();
         }
     }
 }

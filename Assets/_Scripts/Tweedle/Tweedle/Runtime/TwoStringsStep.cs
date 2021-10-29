@@ -4,7 +4,7 @@ namespace Alice.Tweedle.VM
 {
     public class TwoStringsStep : TwoValueComputationStep
     {
-        public TwoStringsStep(string callStackEntry,
+        public TwoStringsStep(IStackFrame callStackEntry,
                                             ExecutionScope scope,
                                             ITweedleExpression exp1,
                                             ITweedleExpression exp2,
@@ -17,7 +17,7 @@ namespace Alice.Tweedle.VM
         {
             var evalStep = exp.AsStep(scope);
             var castStep = new ImplicitStringConversionStep(scope);
-            var storeStep = new ValueOperationStep(callStack, scope, handler);
+            var storeStep = new ValueOperationStep(this, scope, handler);
             evalStep.OnCompletionNotify(castStep);
             castStep.OnCompletionNotify(storeStep);
             storeStep.OnCompletionNotify(this);

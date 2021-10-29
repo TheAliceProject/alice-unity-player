@@ -7,7 +7,7 @@ namespace Alice.Tweedle
     /// <summary>
     /// Generic get/set field
     /// </summary>
-    public abstract class TField : ITypeMember, IValueHolderDeclaration
+    public abstract class TField : ITypeMember, IValueHolderDeclaration, IStackFrame
     {
         #region ITypeMember
 
@@ -75,5 +75,11 @@ namespace Alice.Tweedle
         }
 
         static public readonly TField[] EMPTY_ARRAY = new TField[0];
+
+        #region IStackFrame
+        public virtual string ToStackFrame() {
+            return ToTweedle();
+        }
+        #endregion
     }
 }

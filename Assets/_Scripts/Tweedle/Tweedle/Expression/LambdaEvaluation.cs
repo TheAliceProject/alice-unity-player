@@ -10,6 +10,9 @@ namespace Alice.Tweedle
         ITweedleExpression[] arguments;
         AsyncReturn<TValue> onComplete;
 
+        private static IStackFrame setTargetStackFrame = new StaticStackFrame("Set Target");
+        private static IStackFrame invocationStackFrame = new StaticStackFrame("Invocation");
+
         public ITweedleExpression[] Arguments
         {
             get { return arguments; }
@@ -45,15 +48,15 @@ namespace Alice.Tweedle
             LambdaScope lambdaScope = scope.LambdaScope();
             var targetStep = target.AsStep(scope);
             var setTargetStep = new ValueOperationStep(
-                "Set Target",
+                setTargetStackFrame,
                 lambdaScope,
                 target => lambdaScope.SetLambda(target.Lambda()));
             targetStep.OnCompletionNotify(setTargetStep);
 
-            StepSequence main = new StepSequence(ToTweedle(), scope);
+            StepSequence main = new StepSequence(this, scope);
             main.AddStep(targetStep);
             main.AddStep(new DelayedOperationStep(
-                "Invocation",
+                invocationStackFrame,
                 lambdaScope,
                 () => lambdaScope.QueueInvocationStep(main, arguments, onComplete)));
 

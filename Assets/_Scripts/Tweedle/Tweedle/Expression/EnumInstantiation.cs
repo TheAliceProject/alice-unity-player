@@ -19,7 +19,7 @@ namespace Alice.Tweedle
         public override ExecutionStep AsStep(ExecutionScope scope)
         {
             ConstructorScope ctrScope = scope.EnumInstantiationScope(m_EnumType, m_ValueInitializer);
-            return ctrScope.InvocationStep("Enum Instantiation", m_ValueInitializer.Arguments);
+            return ctrScope.InvocationStep(this, m_ValueInitializer.Arguments);
         }
 
         public override string ToTweedle()
