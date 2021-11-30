@@ -29,40 +29,55 @@ namespace Alice.Player.Unity {
         private SGJoint m_LeftEyelid;
         private SGJoint m_RightEyelid;
         private SGJoint m_Mouth;
-        private Mesh m_FaceMesh;
+        private SkinnedMeshRenderer m_FaceRenderer;
+        private SkinnedMeshRenderer m_LowerTeethRenderer;
 
         private const float
-        MinEyeU = -0.033f,
-        MaxEyeU = .04f,
-        MaxEyeV = .04f,
-        MinEyeV = -.04f,
-        URange = MaxEyeU - MinEyeU,
-        VRange = MaxEyeV - MinEyeV;
+        MIN_EYE_U = -0.033f,
+        MAX_EYE_U = .04f,
+        MIN_EYE_V = -.04f,
+        MAX_EYE_V = .04f,
+        U_RANGE = MAX_EYE_U - MIN_EYE_U,
+        V_RANGE = MAX_EYE_V - MIN_EYE_V;
         private const float MAX_EYE_LEFT_RIGHT = 1.0f;
         private const float MIN_EYE_LEFT_RIGHT = -1.0f;
         private const float MAX_EYE_UP_DOWN = .4f;
         private const float MIN_EYE_UP_DOWN = -0.4f;
+        private const float MAX_EYELID_UP_DOWN = 0.0f;
+        private const float MIN_EYELID_UP_DOWN = -1.2f;
+        private const float MAX_MOUTH_UP_DOWN = 0.0f;
+        private const float MIN_MOUTH_UP_DOWN = -1.0f;
         private const string leftEyeID = "LEFT_EYE";
         private const string rightEyeID = "RIGHT_EYE";
         private const string leftEyelidID = "LEFT_EYELID";
         private const string rightEyelidID = "RIGHT_EYELID";
         private const string mouthID = "MOUTH";
 
-        struct UVData
-        {
-            public int idx;
-            public float uVal;
-            public float vVal;
+        private readonly List<Vector2> _leftEyeUVData = new List<Vector2> {
+            new Vector2(0.033740f, 0.08978999f),
+            new Vector2(0.059278f, 0.105731f),
+            new Vector2(0.038978f, 0.04508799f),
+            new Vector2(0.059942f, 0.209513f),
+            new Vector2(0.081780f, 0.183779f),
+            new Vector2(0.059278f, 0.14301f),
+            new Vector2(0.081502f, 0.081707f),
+            new Vector2(0.091173f, 0.123402f),
+            new Vector2(0.035157f, 0.162605f)
+        };
+        private readonly List<Vector2> _rightEyeUVData = new List<Vector2> {
+            new Vector2(0.059278f, 0.143538f),
+            new Vector2(0.091993f, 0.125222f),
+            new Vector2(0.059278f, 0.104884f),
+            new Vector2(0.082230f, 0.06430101f),
+            new Vector2(0.081954f, 0.165997f),
+            new Vector2(0.033548f, 0.158229f),
+            new Vector2(0.038860f, 0.20312f),
+            new Vector2(0.059558f, 0.03973001f),
+            new Vector2(0.034869f, 0.08602703f)
+        };
 
-            public UVData(float u, float v) {
-                this.idx = -1;
-                this.uVal = u;
-                this.vVal = v;
-            }
-        }
-
-        private List<UVData> leftEyeUVData;
-        private List<UVData> rightEyeUVData;
+        private readonly Dictionary<int,Vector2> _leftIndices = new Dictionary<int, Vector2>();
+        private readonly Dictionary<int,Vector2> _rightIndices = new Dictionary<int, Vector2>();
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -198,9 +213,8 @@ namespace Alice.Player.Unity {
         // This method should only be called on Sims models
         // It identifies the eye joint to update the uv mapping of the eyes when that eye joint moves.
         public void StartTrackingJoint(SGJoint inputJoint) {
-            if (leftEyeUVData == null || rightEyeUVData == null)
-            {
-                InitEyesUVData();
+            if (m_FaceRenderer == null) {
+                IdentifyFaceMeshes();
             }
 
             switch (inputJoint.gameObject.name)
@@ -224,48 +238,57 @@ namespace Alice.Player.Unity {
         }
 
         public void JointChanged(SGJoint sgJoint) {
+            if (m_FaceRenderer == null) {
+                return;
+            }
             if (sgJoint == m_LeftEye) {
-                UpdateCoordinates(sgJoint, leftEyeUVData);
+                UpdateEyeTexture(sgJoint, _leftIndices);
             }   
             if (sgJoint == m_RightEye) {
-                UpdateCoordinates(sgJoint, rightEyeUVData);
+                UpdateEyeTexture(sgJoint, _rightIndices);
             }
-            if (sgJoint == m_LeftEyelid
-                || sgJoint == m_RightEyelid
-                || sgJoint == m_Mouth) {
-                UpdateBlendshapes(sgJoint);
+            if (sgJoint == m_LeftEyelid) {
+                UpdateEyelidBlendShape(sgJoint, 2);
+            }
+            if (sgJoint == m_RightEyelid) {
+                UpdateEyelidBlendShape(sgJoint, 1);
+            }
+            if (sgJoint == m_Mouth) {
+                UpdateMouthBlendShapes(sgJoint);
             }
         }
 
-        private void UpdateCoordinates(SGJoint eyeJoint, List<UVData> uvData) {
-            if (m_FaceMesh == null) {
-                Debug.LogError("WatchEye: No face mesh found.");
-                return;
-            }
+        private void UpdateEyeTexture(SGJoint eyeJoint, Dictionary<int, Vector2> uvData) {
             var eyeAngles = eyeJoint.gameObject.transform.localEulerAngles;
             var curEyeLeftRight = RestrictAndConvertAngle(eyeAngles.y);
-            var curEyeUpDown = RestrictAndConvertAngle(eyeAngles.x);
-            
-            var uOffset = (GetPercentBetween(curEyeLeftRight, MIN_EYE_LEFT_RIGHT, MAX_EYE_LEFT_RIGHT) - .5f) * URange;
-            var vOffset = (GetPercentBetween(curEyeUpDown, MIN_EYE_UP_DOWN, MAX_EYE_UP_DOWN) - .5f) * VRange;
+            var curEyeUpDown = 0 - RestrictAndConvertAngle(eyeAngles.x);
+            var uOffset = (GetFractionBetween(curEyeLeftRight, MIN_EYE_LEFT_RIGHT, MAX_EYE_LEFT_RIGHT) - .5f) * U_RANGE;
+            var vOffset = (GetFractionBetween(curEyeUpDown, MIN_EYE_UP_DOWN, MAX_EYE_UP_DOWN) - .5f) * V_RANGE;
 
-            var uvs = m_FaceMesh.uv;
+            var faceMesh = m_FaceRenderer.sharedMesh;
+            var uvs = faceMesh.uv;
             foreach (var uvDatum in uvData) {
-                Vector2 curUV = uvs[uvDatum.idx];
-                curUV.x = uvDatum.uVal + vOffset;
-                curUV.y = uvDatum.vVal + uOffset;
-                uvs[uvDatum.idx] = curUV;
+                var curUV = uvs[uvDatum.Key];
+                curUV.x = uvDatum.Value.x + vOffset;
+                curUV.y = uvDatum.Value.y + uOffset;
+                uvs[uvDatum.Key] = curUV;
             }
-            m_FaceMesh.uv = uvs;
+            faceMesh.uv = uvs;
         }
 
-        private void UpdateBlendshapes(SGJoint joint) {
-            if (m_FaceMesh == null){
-                Debug.LogError("WatchEye: No face mesh found.");
-                return;
-            }else if (m_FaceMesh.blendShapeCount <= 0) {
-                Debug.LogError("UpdateBlendshapes: No blendshapes found on face mesh.");
-            }
+        private void UpdateEyelidBlendShape(SGJoint eyelidJoint, int meshId) {
+            var eyelidAngles = eyelidJoint.gameObject.transform.localEulerAngles;
+            var curEyeLidUpDown = RestrictAndConvertAngle(eyelidAngles.x);
+            var blendWeight = 1f - GetFractionBetween(curEyeLidUpDown, MIN_EYELID_UP_DOWN, MAX_EYELID_UP_DOWN);
+            m_FaceRenderer.SetBlendShapeWeight(meshId, blendWeight);
+        }
+
+        private void UpdateMouthBlendShapes(SGJoint mouthJoint) {
+            var mouthAngles = mouthJoint.gameObject.transform.localEulerAngles;
+            var curMouthUpDown = RestrictAndConvertAngle(mouthAngles.x);
+            var blendWeight = 1f - GetFractionBetween(curMouthUpDown, MIN_MOUTH_UP_DOWN, MAX_MOUTH_UP_DOWN);
+            m_FaceRenderer.SetBlendShapeWeight(0, blendWeight);
+            m_LowerTeethRenderer.SetBlendShapeWeight(0, blendWeight / 2);
         }
 
         private static float RestrictAndConvertAngle(float degrees) {
@@ -273,10 +296,10 @@ namespace Alice.Player.Unity {
                 degrees -= 360;
             }
             degrees = Mathf.Clamp(degrees, -90, 90);
-            return degrees * Mathf.Deg2Rad * -1;
+            return degrees * Mathf.Deg2Rad;
         }
 
-        float GetPercentBetween(float val, float min, float max) {
+        private static float GetFractionBetween(float val, float min, float max) {
             if(val < min) {
                 return 0;
             }
@@ -286,62 +309,46 @@ namespace Alice.Player.Unity {
             return (val - min) / (max - min);
         }
 
-        private void InitEyesUVData() {
-            // UV Data for left eye
-            leftEyeUVData = new List<UVData> {
-                new UVData(0.033740f, 0.910210f),
-                new UVData(0.059278f, 0.894269f),
-                new UVData(0.038978f, 0.954912f),
-                new UVData(0.059942f, 0.790487f),
-                new UVData(0.081780f, 0.816221f),
-                new UVData(0.059278f, 0.856990f),
-                new UVData(0.081502f, 0.918293f),
-                new UVData(0.091173f, 0.876598f),
-                new UVData(0.035157f, 0.837395f)
-            };
-
-            // UV Data for right eye
-            rightEyeUVData = new List<UVData> {
-                new UVData(0.059278f, 0.856462f),
-                new UVData(0.091993f, 0.874778f),
-                new UVData(0.059278f, 0.895116f),
-                new UVData(0.082230f, 0.935699f),
-                new UVData(0.081954f, 0.834003f),
-                new UVData(0.033548f, 0.841771f),
-                new UVData(0.038860f, 0.796880f),
-                new UVData(0.059558f, 0.960270f),
-                new UVData(0.034869f, 0.913973f)
-            };
-
+        private void IdentifyFaceMeshes() {
             foreach (var r in m_Renderers) {
-                Mesh mesh = r.GetComponent<SkinnedMeshRenderer>().sharedMesh;
-                Vector2[] uvs = mesh.uv;
-                if (HasAllVertices(uvs, leftEyeUVData) && HasAllVertices(uvs, rightEyeUVData)) {
-                    m_FaceMesh = mesh;
-                    return;
+                var meshRenderer = r.GetComponent<SkinnedMeshRenderer>();
+                var mesh = meshRenderer.sharedMesh;
+                if (mesh.blendShapeCount == 2) {
+                    if (m_LowerTeethRenderer != null) {
+                        Debug.LogError("Two teeth meshes");
+                    }
+                    m_LowerTeethRenderer = meshRenderer;
+                }
+                if (mesh.blendShapeCount == 3) {
+                    if (m_FaceRenderer != null) {
+                        Debug.LogError("Two face meshes");
+                    }
+                    m_FaceRenderer = meshRenderer;
+                    IdentifyEyeUvs(mesh.uv);
                 }
             }
         }
 
-        private static bool HasAllVertices(Vector2[] uvs, List<UVData> eyeUvs) {
-            for (var i = 0; i < eyeUvs.Count; i++) {
-                var eyeUv = eyeUvs[i];
-                for (var t = 0; t < uvs.Length; ++t) {
-                    if (!Mathf.Approximately(uvs[t].x, eyeUv.uVal) ||
-                        !Mathf.Approximately(uvs[t].y, eyeUv.vVal)) continue;
-                    eyeUv.idx = t;
-                    eyeUvs[i] = eyeUv;
-                    break;
-                }
-                if (eyeUv.idx < 0) {
-                    return false;
+        private void IdentifyEyeUvs(Vector2[] uvs) {
+            if (uvs == null) {
+                Debug.LogError("No UV values found.");
+                return;
+            }
+            _leftIndices.Clear();
+            _rightIndices.Clear();
+            for (var index = 0; index < uvs.Length; index++) {
+                var uv = uvs[index];
+                if (IsInVertices(uv, _leftEyeUVData)) {
+                    _leftIndices.Add(index, uv);
+                } else if (IsInVertices(uv, _rightEyeUVData)) {
+                    _rightIndices.Add(index, uv);
                 }
             }
-
-            return true;
         }
 
-
+        private static bool IsInVertices(Vector2 uv, List<Vector2> uvData) {
+            return uvData.Any(eyeUv => Mathf.Approximately(uv.x, eyeUv.x) && Mathf.Approximately(uv.y, eyeUv.y));
+        }
 
         public SGJoint LinkJoint(TValue inOwner, string inName) {
             var bone = FindInHierarchy(m_ModelTransform, inName);
