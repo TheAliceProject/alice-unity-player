@@ -24,6 +24,60 @@ namespace Alice.Player.Unity {
         private Renderer[] m_Renderers;
         private readonly Dictionary<Renderer, RendererDetails> m_Details = new Dictionary<Renderer, RendererDetails>();
         private readonly List<Transform> m_VehicledList = new List<Transform>();
+        private SGJoint m_LeftEye;
+        private SGJoint m_RightEye;
+        private SGJoint m_LeftEyelid;
+        private SGJoint m_RightEyelid;
+        private SGJoint m_Mouth;
+        private SkinnedMeshRenderer m_FaceRenderer;
+        private SkinnedMeshRenderer m_LowerTeethRenderer;
+
+        private const float
+        MIN_EYE_U = -0.033f,
+        MAX_EYE_U = .04f,
+        MIN_EYE_V = -.04f,
+        MAX_EYE_V = .04f,
+        U_RANGE = MAX_EYE_U - MIN_EYE_U,
+        V_RANGE = MAX_EYE_V - MIN_EYE_V;
+        private const float MAX_EYE_LEFT_RIGHT = 1.0f;
+        private const float MIN_EYE_LEFT_RIGHT = -1.0f;
+        private const float MAX_EYE_UP_DOWN = .4f;
+        private const float MIN_EYE_UP_DOWN = -0.4f;
+        private const float MAX_EYELID_UP_DOWN = 0.0f;
+        private const float MIN_EYELID_UP_DOWN = -1.2f;
+        private const float MAX_MOUTH_UP_DOWN = 0.0f;
+        private const float MIN_MOUTH_UP_DOWN = -1.0f;
+        private const string leftEyeID = "LEFT_EYE";
+        private const string rightEyeID = "RIGHT_EYE";
+        private const string leftEyelidID = "LEFT_EYELID";
+        private const string rightEyelidID = "RIGHT_EYELID";
+        private const string mouthID = "MOUTH";
+
+        private readonly List<Vector2> _leftEyeUVData = new List<Vector2> {
+            new Vector2(0.033740f, 0.08978999f),
+            new Vector2(0.059278f, 0.105731f),
+            new Vector2(0.038978f, 0.04508799f),
+            new Vector2(0.059942f, 0.209513f),
+            new Vector2(0.081780f, 0.183779f),
+            new Vector2(0.059278f, 0.14301f),
+            new Vector2(0.081502f, 0.081707f),
+            new Vector2(0.091173f, 0.123402f),
+            new Vector2(0.035157f, 0.162605f)
+        };
+        private readonly List<Vector2> _rightEyeUVData = new List<Vector2> {
+            new Vector2(0.059278f, 0.143538f),
+            new Vector2(0.091993f, 0.125222f),
+            new Vector2(0.059278f, 0.104884f),
+            new Vector2(0.082230f, 0.06430101f),
+            new Vector2(0.081954f, 0.165997f),
+            new Vector2(0.033548f, 0.158229f),
+            new Vector2(0.038860f, 0.20312f),
+            new Vector2(0.059558f, 0.03973001f),
+            new Vector2(0.034869f, 0.08602703f)
+        };
+
+        private readonly Dictionary<int,Vector2> _leftIndices = new Dictionary<int, Vector2>();
+        private readonly Dictionary<int,Vector2> _rightIndices = new Dictionary<int, Vector2>();
 
         public void SetResource(string inIdentifier) {
             if (m_ResourceId == inIdentifier) {
@@ -154,6 +208,148 @@ namespace Alice.Player.Unity {
                 var details = m_Details[rend];
                 ApplyOpacity(rend, ref details.Blocks, details.Materials);
             }
+        }
+
+        // This method is invoked by interop method trackFacialJoint and should only be called on Sims models
+        // It identifies a joint that is not simply weighted to, and instead affects either:
+        //  - uv mapping, in the case of eye joints
+        //  - blendshapes, for mouth and eyelid joints
+        public void StartTrackingJoint(SGJoint inputJoint) {
+            if (m_FaceRenderer == null) {
+                IdentifyFaceMeshes();
+            }
+
+            switch (inputJoint.gameObject.name)
+            {
+                case leftEyeID:
+                    m_LeftEye = inputJoint;
+                    break;
+                case rightEyeID:
+                    m_RightEye = inputJoint;
+                    break;
+                case leftEyelidID:
+                    m_LeftEyelid = inputJoint;
+                    break;
+                case rightEyelidID:
+                    m_RightEyelid = inputJoint;
+                    break;
+                case mouthID:
+                    m_Mouth = inputJoint;
+                    break;
+            }
+        }
+
+        public void JointChanged(SGJoint sgJoint) {
+            if (m_FaceRenderer == null) {
+                return;
+            }
+            if (sgJoint == m_LeftEye) {
+                UpdateEyeTexture(sgJoint, _leftIndices);
+            }   
+            if (sgJoint == m_RightEye) {
+                UpdateEyeTexture(sgJoint, _rightIndices);
+            }
+            if (sgJoint == m_LeftEyelid) {
+                UpdateEyelidBlendShape(sgJoint, 2);
+            }
+            if (sgJoint == m_RightEyelid) {
+                UpdateEyelidBlendShape(sgJoint, 1);
+            }
+            if (sgJoint == m_Mouth) {
+                UpdateMouthBlendShapes(sgJoint);
+            }
+        }
+
+        private void UpdateEyeTexture(SGJoint eyeJoint, Dictionary<int, Vector2> uvData) {
+            var eyeAngles = eyeJoint.gameObject.transform.localEulerAngles;
+            var curEyeLeftRight = RestrictAndConvertAngle(eyeAngles.y);
+            var curEyeUpDown = 0 - RestrictAndConvertAngle(eyeAngles.x);
+            var uOffset = (GetFractionBetween(curEyeLeftRight, MIN_EYE_LEFT_RIGHT, MAX_EYE_LEFT_RIGHT) - .5f) * U_RANGE;
+            var vOffset = (GetFractionBetween(curEyeUpDown, MIN_EYE_UP_DOWN, MAX_EYE_UP_DOWN) - .5f) * V_RANGE;
+
+            var faceMesh = m_FaceRenderer.sharedMesh;
+            var uvs = faceMesh.uv;
+            foreach (var uvDatum in uvData) {
+                var curUV = uvs[uvDatum.Key];
+                curUV.x = uvDatum.Value.x + vOffset;
+                curUV.y = uvDatum.Value.y + uOffset;
+                uvs[uvDatum.Key] = curUV;
+            }
+            faceMesh.uv = uvs;
+        }
+
+        private void UpdateEyelidBlendShape(SGJoint eyelidJoint, int meshId) {
+            var eyelidAngles = eyelidJoint.gameObject.transform.localEulerAngles;
+            var curEyeLidUpDown = RestrictAndConvertAngle(eyelidAngles.x);
+            var blendWeight = 1f - GetFractionBetween(curEyeLidUpDown, MIN_EYELID_UP_DOWN, MAX_EYELID_UP_DOWN);
+            m_FaceRenderer.SetBlendShapeWeight(meshId, blendWeight);
+        }
+
+        private void UpdateMouthBlendShapes(SGJoint mouthJoint) {
+            var mouthAngles = mouthJoint.gameObject.transform.localEulerAngles;
+            var curMouthUpDown = RestrictAndConvertAngle(mouthAngles.x);
+            var blendWeight = 1f - GetFractionBetween(curMouthUpDown, MIN_MOUTH_UP_DOWN, MAX_MOUTH_UP_DOWN);
+            m_FaceRenderer.SetBlendShapeWeight(0, blendWeight);
+            m_LowerTeethRenderer.SetBlendShapeWeight(0, blendWeight / 2);
+        }
+
+        private static float RestrictAndConvertAngle(float degrees) {
+            if (degrees > 180) {
+                degrees -= 360;
+            }
+            degrees = Mathf.Clamp(degrees, -90, 90);
+            return degrees * Mathf.Deg2Rad;
+        }
+
+        private static float GetFractionBetween(float val, float min, float max) {
+            if(val < min) {
+                return 0;
+            }
+            if(val > max) {
+                return 1;
+            }
+            return (val - min) / (max - min);
+        }
+
+        private void IdentifyFaceMeshes() {
+            foreach (var r in m_Renderers) {
+                var meshRenderer = r.GetComponent<SkinnedMeshRenderer>();
+                var mesh = meshRenderer.sharedMesh;
+                if (mesh.blendShapeCount == 2) {
+                    if (m_LowerTeethRenderer != null) {
+                        Debug.LogError("Two teeth meshes");
+                    }
+                    m_LowerTeethRenderer = meshRenderer;
+                }
+                if (mesh.blendShapeCount == 3) {
+                    if (m_FaceRenderer != null) {
+                        Debug.LogError("Two face meshes");
+                    }
+                    m_FaceRenderer = meshRenderer;
+                    IdentifyEyeUvs(mesh.uv);
+                }
+            }
+        }
+
+        private void IdentifyEyeUvs(Vector2[] uvs) {
+            if (uvs == null) {
+                Debug.LogError("No UV values found.");
+                return;
+            }
+            _leftIndices.Clear();
+            _rightIndices.Clear();
+            for (var index = 0; index < uvs.Length; index++) {
+                var uv = uvs[index];
+                if (IsInVertices(uv, _leftEyeUVData)) {
+                    _leftIndices.Add(index, uv);
+                } else if (IsInVertices(uv, _rightEyeUVData)) {
+                    _rightIndices.Add(index, uv);
+                }
+            }
+        }
+
+        private static bool IsInVertices(Vector2 uv, List<Vector2> uvData) {
+            return uvData.Any(eyeUv => Mathf.Approximately(uv.x, eyeUv.x) && Mathf.Approximately(uv.y, eyeUv.y));
         }
 
         public SGJoint LinkJoint(TValue inOwner, string inName) {

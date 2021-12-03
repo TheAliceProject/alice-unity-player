@@ -1,6 +1,5 @@
-using System.Diagnostics;
 using Alice.Tweedle.Interop;
-using Alice.Tweedle;
+using UnityEngine;
 
 namespace Alice.Player.Primitives
 {
@@ -20,9 +19,15 @@ namespace Alice.Player.Primitives
         [PInteropConstructor]
         public Portion(double portion)
         {
-            if (portion < 0 || portion > 1)
-                throw new TweedleRuntimeException("Cannot instantiate Portion with value " + portion + " - must be between 0 and 1");
-            Value = portion;
+            if (portion < 0) {
+                Debug.Log("Portion must be between 0 and 1. Treating " + portion + " as zero "  );
+                Value = 0;
+            } else if (portion > 1) {
+                Debug.Log("Portion must be between 0 and 1. Treating " + portion + " as one "  );
+                Value = 1;
+            } else {
+                Value = portion;
+            }
         }
 
         [PInteropField]

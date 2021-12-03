@@ -408,6 +408,13 @@ namespace Alice.Player.Modules {
             return asyncReturn;
         }
 
+        [PInteropMethod]
+        public static void trackFacialJoint(TValue joint, TValue person)
+        {
+            var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
+            var facialJoint = SceneGraph.Current.FindEntity<SGJoint>(joint);
+            entity.StartTrackingJoint(facialJoint);
+        }
         #endregion // Other
 
         #region Events
