@@ -210,8 +210,10 @@ namespace Alice.Player.Unity {
             }
         }
 
-        // This method should only be called on Sims models
-        // It identifies the eye joint to update the uv mapping of the eyes when that eye joint moves.
+        // This method is invoked by interop method trackFacialJoint and should only be called on Sims models
+        // It identifies a joint that is not simply weighted to, and instead affects either:
+        //  - uv mapping, in the case of eye joints
+        //  - blendshapes, for mouth and eyelid joints
         public void StartTrackingJoint(SGJoint inputJoint) {
             if (m_FaceRenderer == null) {
                 IdentifyFaceMeshes();

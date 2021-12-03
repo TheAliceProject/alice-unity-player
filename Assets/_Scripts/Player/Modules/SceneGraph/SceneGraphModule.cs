@@ -408,23 +408,12 @@ namespace Alice.Player.Modules {
             return asyncReturn;
         }
 
-        private static IEnumerator DelayReturnRoutine(AsyncReturn asyncReturn, float delay)
-        {
-            yield return delay;
-            asyncReturn.Return();
-        }
-
         [PInteropMethod]
         public static void trackFacialJoint(TValue joint, TValue person)
         {
             var entity = SceneGraph.Current.FindEntity<SGJointedModel>(person);
             var facialJoint = SceneGraph.Current.FindEntity<SGJoint>(joint);
             entity.StartTrackingJoint(facialJoint);
-        }
-
-        [PInteropMethod]
-        public static void updateEyesOnChange(TValue eye, TValue person) { 
-            
         }
         #endregion // Other
 
