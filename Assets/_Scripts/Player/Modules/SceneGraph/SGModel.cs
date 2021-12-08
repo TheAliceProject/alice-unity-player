@@ -6,8 +6,7 @@ using Alice.Tweedle;
 namespace Alice.Player.Unity {
     
     public abstract class SGModel : SGTransformableEntity {
-
-        static public  void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
+        protected static void CreateModelObject(Mesh inMesh, Material inMaterial, Transform inParent, out Transform outTransform, out Renderer outRenderer, out MeshFilter outFilter) {
             var go = new GameObject("Model");
             outFilter = go.AddComponent<MeshFilter>();
             outFilter.mesh = inMesh;
@@ -20,11 +19,11 @@ namespace Alice.Player.Unity {
             outTransform.localRotation = UnityEngine.Quaternion.identity;
         }
 
-        static public void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
+        protected static void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
             GetPropertyBlock(inRenderer, ref ioPropertyBlock, 0, true);
         }
 
-        static public void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared) {
+        protected static void GetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared) {
             Debug.Assert(materialIndex == 0 || !shared);
 
             if (ioPropertyBlock == null) {
@@ -40,11 +39,7 @@ namespace Alice.Player.Unity {
             }
         }
 
-        static public void SetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock) {
-            SetPropertyBlock(inRenderer, ref ioPropertyBlock, 0, true);
-        }
-
-        static public void SetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared) {
+        private static void SetPropertyBlock(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared) {
             Debug.Assert(materialIndex == 0 || !shared);
 
             if (shared) {
@@ -62,8 +57,6 @@ namespace Alice.Player.Unity {
         public const string MAIN_TEXTURE_SHADER_NAME = "_MainTex";
         public const string FILTER_TEXTURE_SHADER_NAME = "_FilterTex";
         public const string COLOR_SHADER_NAME = "_Color";
-        public const string RENDER_MODE_SHADER_NAME = "_Mode";
-
 
         protected Transform m_ModelTransform;
         protected Bounds m_CachedMeshBounds;
@@ -155,7 +148,7 @@ namespace Alice.Player.Unity {
             }
         }
 
-        protected void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+        private void ApplyPaint(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, int materialIndex, bool shared, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
             GetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, shared);
             m_CachedPaint.Apply(ioPropertyBlock, m_CachedOpacity, PaintTextureName, baseMaterial);
             SetPropertyBlock(inRenderer, ref ioPropertyBlock, materialIndex, shared);
@@ -176,7 +169,7 @@ namespace Alice.Player.Unity {
             ApplyCurrentPaintAndOpacity(inRenderer, ref ioPropertyBlocks, baseMaterial);
         }
 
-        protected void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+        private void ApplyCurrentPaintAndOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, BaseMaterial baseMaterial) {
             ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, m_CachedPaint, 0,  true, baseMaterial);
         }
 
@@ -185,7 +178,7 @@ namespace Alice.Player.Unity {
             ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlocks, m_CachedPaint, baseMaterial);
         }
 
-        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, Paint inPaint, BaseMaterial[] baseMaterial) {
+        private void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock[] ioPropertyBlocks, Paint inPaint, BaseMaterial[] baseMaterial) {
             for (int i = 0; i < ioPropertyBlocks.Length; i++) {
                 ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlocks[i], inPaint, i, false, baseMaterial[i]);
             }
@@ -195,7 +188,7 @@ namespace Alice.Player.Unity {
             ApplyPaintAndCurrentOpacity(inRenderer, ref ioPropertyBlock, inPaint, 0, true, baseMaterial);
         }
 
-        protected void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, int materialIndex, bool shared, BaseMaterial baseMaterial = BaseMaterial.Opaque) {
+        private void ApplyPaintAndCurrentOpacity(Renderer inRenderer, ref MaterialPropertyBlock ioPropertyBlock, Paint inPaint, int materialIndex, bool shared, BaseMaterial baseMaterial) {
             if (m_CachedOpacity < 0.004f) {
                 if (inRenderer.enabled) {
                     inRenderer.enabled = false;
@@ -220,7 +213,12 @@ namespace Alice.Player.Unity {
             }
 
             if (inRenderer.sharedMaterials[materialIndex] != appliedMaterial) {
-                inRenderer.sharedMaterials[materialIndex] = appliedMaterial;
+                var oldMats = inRenderer.sharedMaterials;
+                var newMats = new Material[oldMats.Length];
+                for (var i = 0; i < oldMats.Length; i++) {
+                    newMats[i] = i == materialIndex ? appliedMaterial : oldMats[i];
+                }
+                inRenderer.sharedMaterials = newMats;
             }
 
             inPaint.Apply(ioPropertyBlock, appliedOpacity, PaintTextureName, baseMaterial);
