@@ -213,7 +213,12 @@ namespace Alice.Player.Unity {
             }
 
             if (inRenderer.sharedMaterials[materialIndex] != appliedMaterial) {
-                inRenderer.sharedMaterials[materialIndex] = appliedMaterial;
+                var oldMats = inRenderer.sharedMaterials;
+                var newMats = new Material[oldMats.Length];
+                for (var i = 0; i < oldMats.Length; i++) {
+                    newMats[i] = i == materialIndex ? appliedMaterial : oldMats[i];
+                }
+                inRenderer.sharedMaterials = newMats;
             }
 
             inPaint.Apply(ioPropertyBlock, appliedOpacity, PaintTextureName, baseMaterial);
