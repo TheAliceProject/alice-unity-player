@@ -36,44 +36,35 @@ namespace Alice.Player.Unity {
         public SGEntity vehicle {
             get { return m_Vehicle; }
             set {
-                if (value != m_Vehicle) {
-                    m_Vehicle = value;
+                if (value == m_Vehicle) return;
+                m_Vehicle = value;
 
-                    if(value is SGJoint){
-                        Transform holder = m_Vehicle.cachedTransform.Find("jointHolder");
-                        if(holder == null){
-                            holder = new GameObject("jointHolder").transform;  
-                        }
-                        (value as SGJoint).GetParentJointedModel().AddToVehicleList(holder);
-                        holder.SetParent(m_Vehicle?.cachedTransform);
-                        holder.localPosition = UnityEngine.Vector3.zero;
-                        cachedTransform.SetParent(holder, true);
+                if(value is SGJoint sgJoint) {
+                    sgJoint.GetParentJointedModel().AddRider(cachedTransform);
+                } else {
+                    // Release a holding object
+                    if(m_Vehicle.cachedTransform.name == "handHolder")
+                    {
+                        // The m_Vehicle.cachedTransform.parent is supposed to be SGScene
+                        Destroy(m_Vehicle.cachedTransform.gameObject);
+                        m_Vehicle.cachedTransform = m_Vehicle.cachedTransform.parent;
                     }
-                    else{
-                        // Release a holding object
-                        if(m_Vehicle.cachedTransform.name == "handHolder")
-                        {
-                            // The m_Vehicle.cachedTransform.parent is supposed to be SGScene
-                            Destroy(m_Vehicle.cachedTransform.gameObject);
-                            m_Vehicle.cachedTransform = m_Vehicle.cachedTransform.parent;
-                        }
-                        // Hold an object
-                        if(m_Vehicle.cachedTransform.name.Contains("(SGVRHand)"))
-                        {
-                            Transform holder = new GameObject("handHolder").transform;
+                    // Hold an object
+                    if(m_Vehicle.cachedTransform.name.Contains("(SGVRHand)"))
+                    {
+                        Transform holder = new GameObject("handHolder").transform;
 
-                            UnityEngine.Vector3 controllerRay = m_Vehicle.cachedTransform.parent.forward;
-                            UnityEngine.Vector3 objectRay = cachedTransform.position - m_Vehicle.cachedTransform.parent.position;
-                            UnityEngine.Vector3 offsetRay = objectRay - UnityEngine.Vector3.Dot(controllerRay, objectRay) * controllerRay;
-                            holder.position = offsetRay + m_Vehicle.cachedTransform.parent.position;
-                            holder.SetParent(m_Vehicle.cachedTransform, true);
-                            holder.localEulerAngles = UnityEngine.Vector3.zero;
-                            holder.localScale = UnityEngine.Vector3.one;
-                            m_Vehicle.cachedTransform = holder;
-                        }
-                        cachedTransform.SetParent(m_Vehicle.cachedTransform, true);
+                        UnityEngine.Vector3 controllerRay = m_Vehicle.cachedTransform.parent.forward;
+                        UnityEngine.Vector3 objectRay = cachedTransform.position - m_Vehicle.cachedTransform.parent.position;
+                        UnityEngine.Vector3 offsetRay = objectRay - UnityEngine.Vector3.Dot(controllerRay, objectRay) * controllerRay;
+                        holder.position = offsetRay + m_Vehicle.cachedTransform.parent.position;
+                        holder.SetParent(m_Vehicle.cachedTransform, true);
+                        holder.localEulerAngles = UnityEngine.Vector3.zero;
+                        holder.localScale = UnityEngine.Vector3.one;
+                        m_Vehicle.cachedTransform = holder;
                     }
                 }
+                cachedTransform.SetParent(m_Vehicle.cachedTransform, true);
             }
         }
 

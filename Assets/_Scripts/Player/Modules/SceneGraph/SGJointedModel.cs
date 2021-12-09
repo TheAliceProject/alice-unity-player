@@ -23,7 +23,7 @@ namespace Alice.Player.Unity {
         private ModelSpec m_ModelSpec;
         private Renderer[] m_Renderers;
         private readonly Dictionary<Renderer, RendererDetails> m_Details = new Dictionary<Renderer, RendererDetails>();
-        private readonly List<Transform> m_VehicledList = new List<Transform>();
+        private readonly List<Transform> m_Riders = new List<Transform>();
         private SGJoint m_LeftEye;
         private SGJoint m_RightEye;
         private SGJoint m_LeftEyelid;
@@ -188,8 +188,8 @@ namespace Alice.Player.Unity {
             }
         }
 
-        public void AddToVehicleList(Transform t) {
-            m_VehicledList.Add(t);
+        public void AddRider(Transform t) {
+            m_Riders.Add(t);
         }
 
         protected override Bounds GetMeshBounds() {
@@ -372,8 +372,8 @@ namespace Alice.Player.Unity {
             var yScale = meshSize.y == 0 ? 1 : inSize.y/meshSize.y;
             var zScale = meshSize.z == 0 ? 1 : inSize.z/meshSize.z;
             m_ModelTransform.localScale = new Vector3(xScale, yScale, zScale);
-            // Inverse scale any holders on joints that may exist
-            foreach(var holder in m_VehicledList){
+            // Inverse scale any riders that may be on joints
+            foreach(var holder in m_Riders){
                 holder.localScale = new Vector3(1/xScale, 1/yScale, 1/zScale);
             }
         }
