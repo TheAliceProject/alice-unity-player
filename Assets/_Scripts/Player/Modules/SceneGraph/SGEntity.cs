@@ -40,7 +40,7 @@ namespace Alice.Player.Unity {
                 m_Vehicle = value;
 
                 if(value is SGJoint sgJoint) {
-                    sgJoint.GetParentJointedModel().AddRider(cachedTransform);
+                    sgJoint.GetParentJointedModel().AddJointRider(cachedTransform);
                 } else {
                     // Release a holding object
                     if(m_Vehicle.cachedTransform.name == "handHolder")
