@@ -306,7 +306,7 @@ namespace Alice.Tweedle.Parse
         {
             m_QueueProcessor.Replace(this, m_VM.ProcessQueue());
             mainMenu.gameObject.SetActive(false);
-            WorldObjects.GetVRObjects().SetActive(false);
+            WorldObjects.SetVRObjectsActive(false);
         }
 
         private void DeleteTemporaryAudioFiles()

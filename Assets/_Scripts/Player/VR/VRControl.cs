@@ -75,8 +75,9 @@ public class VRControl : MonoBehaviour
                 VRTypeFound = "Oculus";
                 SetVROutput("Oculus");
             }
-            else{
-                WorldObjects.GetVRObjects().SetActive(false);
+            else
+            {
+                WorldObjects.SetVRObjectsActive(false);
             }
         }
 #endif
