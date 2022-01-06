@@ -75,7 +75,7 @@ public class VRControl : MonoBehaviour
             }
             else
             {
-                WorldObjects.GetVRObjects().SetActive(false);
+                WorldObjects.SetVRObjectsActive(false);
             }
         }
 #endif

@@ -48,7 +48,7 @@ public class WorldControl : MonoBehaviour
         WorldObjects.GetIntroCanvas().SetActive(true);
         if (XRSettings.enabled)
         {
-            WorldObjects.GetVRObjects().SetActive(true);
+            WorldObjects.SetVRObjectsActive(true);
         }
 
         if (destroyedScene) {
