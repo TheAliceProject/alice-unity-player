@@ -6,7 +6,7 @@ using UnityEngine.XR;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_WINRT
+#if !UNITY_WEBGL
 using System.Diagnostics;
 #endif
 
@@ -18,6 +18,7 @@ public class VRControl : MonoBehaviour
         OculusRift,
         OculusS,
         OculusGo,
+        OculusQuest,
         WindowsMR
     }
 
@@ -63,7 +64,7 @@ public class VRControl : MonoBehaviour
         // while trying to go as fast as possible. 100 FPS should be plenty.
         Application.targetFrameRate = 100;
         // On mac, there won't be any VR support for now
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_WINRT
+#if !UNITY_WEBGL
         Process[] pname = Process.GetProcessesByName("vrserver");
          if(pname != null && pname.Length > 0){
             VRTypeFound = "OpenVR";
@@ -75,15 +76,17 @@ public class VRControl : MonoBehaviour
                 VRTypeFound = "Oculus";
                 SetVROutput("Oculus");
             }
-            else
-            {
-                WorldObjects.SetVRObjectsActive(false);
+            else {
+                if (SystemInfo.deviceName == "Oculus Quest 2")
+                    SetVROutput("OculusQuest"); // Standalone Quest 2
+                else
+                    WorldObjects.SetVRObjectsActive(false);
             }
         }
 #endif
     }
 
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN || UNITY_WINRT
+#if !UNITY_WEBGL
     void Update()
     {
         if(XRSettings.enabled)

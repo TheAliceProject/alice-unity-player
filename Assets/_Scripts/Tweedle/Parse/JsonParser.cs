@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Alice.Tweedle.File;
 using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
@@ -7,70 +8,94 @@ using System.IO;
 using UnityEngine;
 using System.Text;
 using NLayer;
+using UnityEngine.Networking;
 
 namespace Alice.Tweedle.Parse
 {
     public class JsonParser
     {
-        public static Stream libraryStream;
-        public static void SetLibraryStream(Stream stream)
-        {
-            libraryStream = stream;
+        public static IEnumerator Parse(TweedleSystem inSystem, string path, ExceptionHandler exceptionHandler) {
+            JsonParser reader = new JsonParser(inSystem, path, exceptionHandler);
+            yield return reader.Parse();
         }
 
-        public static void ParseZipFile(TweedleSystem inSystem, string inZipPath) {
-            using (FileStream stream = new FileStream(inZipPath, FileMode.Open, FileAccess.Read, FileShare.None)) {
-                using (ZipFile zipFile = new ZipFile(stream))
-                {
-                    JsonParser reader = new JsonParser(inSystem, zipFile);
-                    if(!inZipPath.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME))
-                        reader.CacheThumbnail(inZipPath);
-                    reader.Parse();
-                }
-            }
-        }
 
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
         public static int audioFiles = 0;
+        private Stream m_FileStream;
+        private string m_FileName;
+        private ExceptionHandler m_ExceptionHandler;
+
+        public delegate void ExceptionHandler(Exception e);
 
         public TweedleSystem StoredSystem
         {
             get { return m_System; }
         }
 
-        public JsonParser(TweedleSystem inSystem, ZipFile inZipFile)
+        public JsonParser(TweedleSystem inSystem, string fileName, ExceptionHandler exceptionHandler)
         {
             m_System = inSystem;
-            m_ZipFile = inZipFile;
+            m_FileName = fileName;
             m_Parser = new TweedleParser();
+            m_ExceptionHandler = exceptionHandler;
         }
 
         public void CacheThumbnail(string fileName)
         {
+#if !UNITY_WEBGL
             // Save thumbnail
             byte[] data = m_ZipFile.ReadDataEntry("thumbnail.png");
             if(data == null)
                 return;
             System.IO.File.WriteAllBytes(Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png", data);
+#endif
         }
 
-        private void Parse()
-        {
-            // TODO: Use manifest to determine player assembly version
-            string playerAssembly = Player.PlayerAssemblies.CURRENT;
-            m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
-
-            ParseJson(m_ZipFile.ReadEntry("manifest.json"));
+        private IEnumerator LoadFile(string fileName) {
+            if (fileName.StartsWith("jar:")) {
+                // Use UnityWebRequest when reading from a compressed file
+                yield return LoadFileWR(fileName);
+            } else {
+                yield return LoadFileFS(fileName);
+            }
         }
 
-        public static void ParseZipFile(TweedleSystem inSystem, Stream inZipStream)
+        private IEnumerator LoadFileFS(string fileName) {
+            if (!System.IO.File.Exists(fileName)) {
+                var e = new FileNotFoundException(fileName);
+                m_ExceptionHandler(e);
+                throw e;
+            }
+            m_FileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
+            yield return null;
+        }
+
+        private IEnumerator LoadFileWR(string fileName) {
+            var www = new UnityWebRequest(fileName) {downloadHandler = new DownloadHandlerBuffer()};
+            yield return www.SendWebRequest();
+            m_FileStream = new MemoryStream(www.downloadHandler.data);
+        }
+
+        public IEnumerator Parse()
         {
-            using (ZipFile zipFile = new ZipFile(inZipStream))
-            {
-                JsonParser reader = new JsonParser(inSystem, zipFile);
-                reader.Parse();
+            yield return LoadFile(m_FileName);
+
+            using (m_FileStream) {
+                m_ZipFile = new ZipFile(m_FileStream);
+
+                using (m_ZipFile) {
+                    if(!m_FileName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME))
+                        CacheThumbnail(m_FileName);
+
+                    // TODO: Use manifest to determine player assembly version
+                    string playerAssembly = Player.PlayerAssemblies.CURRENT;
+                    m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
+
+                    yield return ParseJson(m_ZipFile.ReadEntry("manifest.json"));
+                }
             }
         }
 
@@ -112,18 +137,14 @@ namespace Alice.Tweedle.Parse
             return asset;
         }
 
-        private void ParsePrerequisites(Manifest manifest) {
+        private IEnumerator ParsePrerequisites(Manifest manifest) {
             var prerequisites = manifest.prerequisites;
             foreach (var t in prerequisites) {
                 if (!m_System.LoadedFiles.Contains(t)) {
 
                     PlayerLibraryReference libRef;
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef)) {
-#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
-                        ParseZipFile(m_System, libraryStream);                     
-#else
-                        ParseZipFile(m_System, libRef.path.fullPath);
-#endif
+                        yield return Parse(m_System, libRef.path.fullPath, m_ExceptionHandler);
                     } else {
                         throw new TweedleVersionException("Could not find prerequisite " + t.name,
                             WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
