@@ -19,6 +19,7 @@ namespace Alice.Tweedle.Parse
 
         public static string project_ext = "a3w";
         public static string project_suffix = "." + project_ext;
+        public static string AutoLoadedWorldsDirectory;
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
         public Transform mainMenuVr;
@@ -37,6 +38,11 @@ namespace Alice.Tweedle.Parse
         private string m_currentFilePath;
         void Awake()
         {
+#if UNITY_ANDROID
+            AutoLoadedWorldsDirectory = Application.persistentDataPath;
+#else
+            AutoLoadedWorldsDirectory = Application.streamingAssetsPath;
+#endif
             DeleteTemporaryAudioFiles();
         }
 
@@ -172,39 +178,40 @@ namespace Alice.Tweedle.Parse
             }
 
             /*
-             * The StreamingAssets/Default folder should by default contain two world files: SceneGraphLigrary.a3w and DefaultBundledWorld.a3w
-             * If there are some worlds bundled in StreamingAssets folder, the code bellow will try to open them(if there is a single one)
-             * or to list them in a menu(multiple bundled), waiting for a choice.
+             * The StreamingAssets/Default folder should by default contain two world files: SceneGraphLibrary.a3w and DefaultBundledWorld.a3w
+             * If there are some worlds bundled, the code will try to open them (if there is a single one)
+             * or to list them in a menu (multiple bundled), waiting for a choice.
              * If no worlds found,
-             * ON WEBGL: Always open DefaultBundledWorld.a3w since listing StreamingAssets files does not work
              * ON PC PLATFORM: remain on the main menu
-             * ON ANDROID/IOS: try to open the DefaultBundledWorld.a3w, which is an indicator of putting bundled world into the StreamingAssets folder
+             * ON WEBGL/ANDROID/IOS: Always open DefaultBundledWorld.a3w since listing StreamingAssets files does not work
+             * If DefaultBundledWorld.a3w is unchanged it will tell the user to put bundled world into the StreamingAssets folder
+             * TODO Change this since it is not how it works
              */
-
-#if UNITY_WEBGL || UNITY_ANDROID || UNITY_IOS
-            // On WebGL and mobile, we will try to open a default world
-            loadingScreen.fader.alpha = 1f;
-            OpenWorld(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix), MainMenuControl.Disabled);
-#else
-            DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
-            DirectoryInfo dirDefault = new DirectoryInfo(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH));
-            FileInfo[] files = dir.GetFiles("*" + project_suffix);
-            FileInfo[] filesDefault = dirDefault.GetFiles("*" + project_suffix);
-
-            if (files.Length == 1) { // Only one world is bundled, auto load that world
-                loadingScreen.fader.alpha = 1f;
-                OpenWorld(files[0].FullName, MainMenuControl.Disabled);
-            }
-            else if(files.Length > 1) { // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
-                for (int i = 0; i < menuControls.Length; i++) {
-                    menuControls[i].DeactivateMainMenu();
-                }
-                for(int i = 0; i < loadMoreControl.Length; i++) {
-                    loadMoreControl[i].gameObject.SetActive(true);
-                    loadMoreControl[i].SetAsStandalone();
-                }
+            var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles("*" + project_suffix);
+#if UNITY_WEBGL  || UNITY_IOS || UNITY_ANDROID
+            if (files.Length == 0) {
+                OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix));
             }
 #endif
+            if (files.Length == 1) {
+                // Only one world is bundled, auto load that world
+                OpenWorldDirectly(files[0].FullName);
+            }
+            else if(files.Length > 1) {
+                // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
+                foreach (var mc in menuControls) {
+                    mc.DeactivateMainMenu();
+                }
+                foreach (var lmc in loadMoreControl) {
+                    lmc.gameObject.SetActive(true);
+                    lmc.SetAsStandalone();
+                }
+            }
+        }
+
+        private void OpenWorldDirectly(string fullName) {
+            loadingScreen.fader.alpha = 1f;
+            OpenWorld(fullName, MainMenuControl.Disabled);
         }
 
         private void NotifyUserOfError(TweedleRuntimeException tre)

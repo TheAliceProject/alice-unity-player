@@ -64,33 +64,27 @@ namespace Alice.Tweedle.Parse
             yield return reader.Parse();
         }
 
-        private IEnumerator LoadFile(string fileName)
-        {
-            #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+        private IEnumerator LoadFile(string fileName) {
+            if (fileName.StartsWith("jar:")) {
+                // Use UnityWebRequest when reading from a compressed file
                 yield return LoadFileWR(fileName);
-            #else
+            } else {
                 yield return LoadFileFS(fileName);
-            #endif
+            }
         }
 
-        private IEnumerator LoadFileFS(string fileName)
-        {
+        private IEnumerator LoadFileFS(string fileName) {
             if (!System.IO.File.Exists(fileName)) {
                 var e = new FileNotFoundException(fileName);
                 m_ExceptionHandler(e);
                 throw e;
             }
-
             m_FileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
             yield return null;
         }
 
-        private IEnumerator LoadFileWR(string fileName)
-        {
-
-            UnityWebRequest www = new UnityWebRequest(fileName);
-            DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
-            www.downloadHandler = dH;
+        private IEnumerator LoadFileWR(string fileName) {
+            var www = new UnityWebRequest(fileName) {downloadHandler = new DownloadHandlerBuffer()};
             yield return www.SendWebRequest();
             m_FileStream = new MemoryStream(www.downloadHandler.data);
         }
