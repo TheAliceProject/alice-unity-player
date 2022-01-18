@@ -1,9 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using BeauRoutine;
 using UnityEngine.XR;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.Management;
+using Debug = UnityEngine.Debug;
 #if !UNITY_WEBGL
 using System.Diagnostics;
 #endif
@@ -62,6 +64,7 @@ public class VRControl : MonoBehaviour
         Application.targetFrameRate = 100;
         // On mac, there won't be any VR support for now
 #if !UNITY_WEBGL
+        LogDetails();
         Process[] pname = Process.GetProcessesByName("vrserver");
         if (pname != null && pname.Length > 0)
         {
@@ -77,8 +80,8 @@ public class VRControl : MonoBehaviour
             else {
                 if (SystemInfo.deviceName == "Oculus Quest 2")
                     EnableVROutput(true); // Standalone Quest 2
-            else
-                WorldObjects.SetVRObjectsActive(false);
+                else
+                    WorldObjects.SetVRObjectsActive(false);
             }
         }
 #endif
@@ -245,5 +248,22 @@ public class VRControl : MonoBehaviour
     public static bool IsLeftTriggerUp()
     {
         return _instance != null && _instance.leftTriggerUp;
+    }
+
+    private static void LogDetails() {
+        /*var message = "Process names ";
+        foreach (var process in Process.GetProcesses()) {
+            message += process.ProcessName + " ";
+        }
+
+        Debug.LogError(message);*/
+
+        Debug.LogError(
+            $"operatingSystem: {SystemInfo.operatingSystem} deviceModel: {SystemInfo.deviceModel} deviceName: {SystemInfo.deviceName} deviceType: {SystemInfo.deviceType} platform: {Application.platform}");
+        var devices = new List<InputDevice>();
+        InputDevices.GetDevices(devices);
+        foreach (var device in devices) {
+            Debug.LogError("Device connected: " + device.name);
+        }
     }
 }
