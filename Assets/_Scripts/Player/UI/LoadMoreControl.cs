@@ -6,6 +6,7 @@ using TMPro;
 using System.IO;
 using BeauRoutine;
 using System.Linq;
+using Alice.Tweedle.Parse;
 using UnityEngine.UI;
 
 public class LoadMoreControl : MonoBehaviour
@@ -56,11 +57,6 @@ public class LoadMoreControl : MonoBehaviour
         }
     }
 
-    void OnEnable()
-    {
-        LoadButtons(useBundledWorlds ? GetBundledWorlds() : GetRecentWorlds());
-    }
-
     private void OnRectTransformDimensionsChange()
     {
         ResizeGrid();
@@ -70,7 +66,6 @@ public class LoadMoreControl : MonoBehaviour
     {
         useBundledWorlds = true;
         filter.gameObject.SetActive(false);
-        LoadButtons(GetBundledWorlds());
     }
 
     void ResizeGrid()
@@ -91,14 +86,12 @@ public class LoadMoreControl : MonoBehaviour
         List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
         recentWorldsData.Clear();
 
-        DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
-        FileInfo[] files = dir.GetFiles("*.a3w");
-        for(int i = 0; i < files.Length; i++)
-        {
-            if (!File.Exists(files[i].FullName) || files[i].FullName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
+        var dir = new DirectoryInfo(UnityObjectParser.AutoLoadedWorldsDirectory);
+        var files = dir.GetFiles("*.a3w");
+        foreach (var file in files) {
+            if (!File.Exists(file.FullName) || file.FullName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
                 continue;
-            RecentWorldData data = new RecentWorldData(files[i].FullName);
-            recentWorldsData.Add(data);
+            recentWorldsData.Add(new RecentWorldData(file.FullName));
         }
         return SortWorlds(recentWorldsData);
     }
