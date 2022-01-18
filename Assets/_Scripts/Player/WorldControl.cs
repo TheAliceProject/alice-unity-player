@@ -27,7 +27,7 @@ public class WorldControl : MonoBehaviour
     private static bool isDisabledForThisInstance = false;
 
     void Start() {
-        if(!currentWorldControls.Contains(this))
+        if (!currentWorldControls.Contains(this))
             currentWorldControls.Add(this);
 
         mainMenuButton.onClick.AddListener(ShowMainMenu);
@@ -92,13 +92,13 @@ public class WorldControl : MonoBehaviour
         }
     }
 
-    private void ShowWorldControlBriefly(){
+    private void ShowWorldControlBriefly() {
         uISlidedown.ShowBriefly();
     }
 
     public static void DisableMainMenu()
     {
-        foreach (WorldControl wc in currentWorldControls){
+        foreach (WorldControl wc in currentWorldControls) {
             wc.mainMenuButton.gameObject.SetActive(false);
         }
         isDisabledForThisInstance = true;
@@ -123,7 +123,10 @@ public class WorldControl : MonoBehaviour
 
     public static void Restart() {
         foreach (var wc in currentWorldControls) {
-            wc.RestartWorld();
+            if (wc.isActiveAndEnabled) {
+                wc.RestartWorld();
+                return;
+            }
         }
     }
 
