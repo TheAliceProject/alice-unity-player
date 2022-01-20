@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using BeauRoutine;
 using UnityEngine.XR;
@@ -63,30 +64,27 @@ public class VRControl : MonoBehaviour
         // If target framerate is unconstrained, graphics card will sometimes scream 
         // while trying to go as fast as possible. 100 FPS should be plenty.
         Application.targetFrameRate = 100;
-        // On mac, there won't be any VR support for now
 #if !UNITY_WEBGL
-        Process[] pname = Process.GetProcessesByName("vrserver");
-         if(pname != null && pname.Length > 0){
-            VRTypeFound = "OpenVR";
-            SetVROutput("OpenVR");
-        } 
-        else{
-            pname = Process.GetProcessesByName("OculusClient");
-            if (pname != null && pname.Length > 0){
-                VRTypeFound = "Oculus";
-                SetVROutput("Oculus");
-            }
-            else {
-                if (SystemInfo.deviceName == "Oculus Quest 2")
-                    SetVROutput("OculusQuest"); // Standalone Quest 2
-                else
-                    WorldObjects.SetVRObjectsActive(false);
-            }
-        }
+        SelectVRSystem(CurrentVrSystem());
 #endif
     }
 
 #if !UNITY_WEBGL
+    private VRDevice CurrentVrSystem() {
+        if (SystemInfo.deviceName.Contains("Oculus Quest"))
+            return VRDevice.OculusQuest;
+
+        var devices = new List<InputDevice>();
+        InputDevices.GetDevices(devices);
+        if (devices.Any(device => device.name.Contains("Oculus Rift")))
+            return VRDevice.OculusRift;
+
+        if (Process.GetProcessesByName("vrserver").Length > 0)
+            return VRDevice.Vive;
+
+        return VRDevice.None;
+    }
+
     void Update()
     {
         if(XRSettings.enabled)
@@ -95,13 +93,6 @@ public class VRControl : MonoBehaviour
         }
     }
 #endif
-
-    public static void Loaded(bool value) {
-        if (_instance != null) {
-            _instance.loadWorldInVR = value;
-            _instance.SetVROutput(value ? _instance.VRTypeFound : "");
-        }
-    }
 
     internal static VRDevice LoadedVRDevice(){
         if (_instance == null){
@@ -140,50 +131,38 @@ public class VRControl : MonoBehaviour
         return null;
     }
 
-    public void SetVROutput(string deviceToLoad)
-    {
-        m_routine.Replace(this, SwitchOutput(deviceToLoad));
+#if !UNITY_WEBGL
+    private void SelectVRSystem(VRDevice device) {
+        if (device == VRDevice.None) {
+            XRSettings.enabled = false;
+            WorldObjects.SetVRObjectsActive(false);
+        } else
+            m_routine.Replace(this, EnableVR(device));
     }
 
-    private IEnumerator SwitchOutput(string deviceToLoad)
-    {
-        if (deviceToLoad != "")
-        {
-            XRSettings.LoadDeviceByName(deviceToLoad);
-            yield return null;
-            
-            if(XRSettings.loadedDeviceName != deviceToLoad)
-            {
-                UnityEngine.Debug.Log("Problem loading device: " + deviceToLoad);
-                XRSettings.LoadDeviceByName("");
-                XRSettings.enabled = false;
+    private IEnumerator EnableVR(VRDevice device) {
+        yield return null;
+        deviceType = device;
+        VRObjects.SetActive(true);
+        loadWorldInVR = true;
+        Application.targetFrameRate = -1; // Use VR framerate specified by SDK
+
+        switch (deviceType) {
+            // Vive appears to be backwards when using SteamVR. Correct it here so we have identical behavior to Oculus
+            case VRDevice.Vive:
+                landingRig.localRotation = 
+                    Quaternion.Euler(landingRig.localRotation.eulerAngles + new Vector3(0f, 180f, 0f));
+                break;
+            case VRDevice.OculusRift:
+            case VRDevice.OculusS:
+            case VRDevice.OculusGo:
+            case VRDevice.OculusQuest: {
+                XRDevice.SetTrackingSpaceType(TrackingSpaceType.RoomScale);
+                break;
             }
-            else
-            {
-                VRObjects.SetActive(true);
-                XRSettings.enabled = true;
-                loadWorldInVR = true;
-                // ToDo: Allow worlds to run not in VR
-                Application.targetFrameRate = -1; // Use VR framerate specified by SDK
-                // Vive appears to be backwards when using SteamVR. Correct it here so we have identical behavior to Oculus
-                if (XRDevice.model.Contains("Vive")){
-                    deviceType = VRDevice.Vive;
-                    landingRig.localRotation = UnityEngine.Quaternion.Euler(landingRig.localRotation.eulerAngles + new Vector3(0f, 180f, 0f));
-                }
-                    
-                else if (XRDevice.model.Contains("Oculus")){
-                    deviceType = VRDevice.OculusRift;
-                    XRDevice.SetTrackingSpaceType(TrackingSpaceType.RoomScale);
-                }
-            }
-        }
-        else
-        {
-            XRSettings.LoadDeviceByName("");
-            yield return null;
-            XRSettings.enabled = false;
         }
     }
+#endif
 
     public static Transform GetLastControllerClicked()
     {
