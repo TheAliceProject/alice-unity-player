@@ -137,11 +137,11 @@ namespace Alice.Tweedle.Parse
                 modalWindowVr.LinkWindow(modalWindow);
                 modalWindow.LinkWindow(modalWindowVr);
             }
-            FadeLoadingScreens(false);
+            FadeLoadingScreens();
             WorldControl.ReturnToMainMenu();
         }
 
-        private void FadeLoadingScreens(bool on)
+        private void FadeLoadingScreens()
         {
             loadingScreen.DisplayLoadingScreen(false);
             vrLoadingScreen.FadeLoader(false);
