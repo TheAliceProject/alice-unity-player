@@ -96,8 +96,10 @@ namespace Alice.Tweedle.Parse
             yield return YieldLoadingScreens(false);
 
             WorldControl.ShowWorldControlsBriefly();
-            if(mainMenuCtrl == MainMenuControl.Disabled)
+            if (mainMenuCtrl == MainMenuControl.Disabled) {
                 WorldControl.DisableMainMenu();
+                WorldObjects.GetWorldExecutionState().DisableMainMenu();
+            }
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
         }
 
