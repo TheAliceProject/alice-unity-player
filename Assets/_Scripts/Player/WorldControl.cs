@@ -34,9 +34,6 @@ public class WorldControl : MonoBehaviour
         speedUpButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().IncreaseSpeed);
         slowDownButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().DecreaseSpeed);
         pauseButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().TogglePausePlay);
-
-        // Disable main menu button when restarting from a bundled world app
-        mainMenuButton.gameObject.SetActive(WorldObjects.GetWorldExecutionState().IsMainMenuAllowed());
     }
 
     private void ShowMainMenu()
@@ -91,6 +88,7 @@ public class WorldControl : MonoBehaviour
     }
 
     private void ShowWorldControlBriefly() {
+        mainMenuButton.gameObject.SetActive(WorldObjects.GetWorldExecutionState().IsMainMenuAllowed());
         uISlidedown.ShowBriefly();
     }
 
