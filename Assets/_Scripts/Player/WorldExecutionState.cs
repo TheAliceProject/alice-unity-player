@@ -6,6 +6,7 @@ public class WorldExecutionState {
     private float _currentTimeScale = 1f;
     private bool _isPaused;
     private bool _sendVrEvents;
+    private bool _isMainMenuAllowed = true;
 
     public void Reset() {
         Time.timeScale = _currentTimeScale = 1f;
@@ -77,5 +78,13 @@ public class WorldExecutionState {
 
     public void ShowMainMenu() {
         WorldControl.ReturnToMainMenu();
+    }
+
+    public bool IsMainMenuAllowed() {
+        return _isMainMenuAllowed;
+    }
+
+    public void DisableMainMenu() {
+        _isMainMenuAllowed = false;
     }
 }

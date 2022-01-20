@@ -36,7 +36,7 @@ public class MenuController : MonoBehaviour
 
     private bool _isDisplaying;
     private bool _isSpeedSubButtonActive;
-    private bool _centered;
+    private bool _canUseMainMenu;
     private float _lastSpeedChangeTime;
     private const float TIME_BETWEEN_CHANGES = 0.66F;
     private WorldExecutionState _executionState;
@@ -44,6 +44,7 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
         _executionState = WorldObjects.GetWorldExecutionState();
+        _canUseMainMenu = _executionState.IsMainMenuAllowed();
         SetDisplay(true);
         StartCoroutine(DisableMenuInSeconds(3));
     }
@@ -125,7 +126,7 @@ public class MenuController : MonoBehaviour
         } else if (Input.GetAxis("RightThumbstickLeftRight") < 0)  {
             UpdateButton(speedButton);
             _activeButton = Button.Speed;
-        } else if (Input.GetAxis("RightThumbstickLeftRight") > 0.5) {
+        } else if (_canUseMainMenu && Input.GetAxis("RightThumbstickLeftRight") > 0.5) {
             UpdateButton(leaveButton);
             _activeButton = Button.Exit;
         } else if (Input.GetAxis("RightThumbstickLeftRight") > 0)  {
@@ -174,7 +175,7 @@ public class MenuController : MonoBehaviour
         playPauseButton.SetActive(shouldDisplay);
         speedButton.SetActive(shouldDisplay);
         replayButton.SetActive(shouldDisplay);
-        leaveButton.SetActive(shouldDisplay);
+        leaveButton.SetActive(shouldDisplay && _canUseMainMenu);
         speedSubButton.SetActive(shouldDisplay);
 
         _executionState.EnableVrEvents(!shouldDisplay);
