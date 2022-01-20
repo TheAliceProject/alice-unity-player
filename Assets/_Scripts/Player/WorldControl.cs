@@ -24,7 +24,6 @@ public class WorldControl : MonoBehaviour
     public Material skyboxMaterial;
 
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
-    private static bool isDisabledForThisInstance = false;
 
     void Start() {
         if (!currentWorldControls.Contains(this))
@@ -37,8 +36,7 @@ public class WorldControl : MonoBehaviour
         pauseButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().TogglePausePlay);
 
         // Disable main menu button when restarting from a bundled world app
-        if(isDisabledForThisInstance)
-            mainMenuButton.gameObject.SetActive(false);
+        mainMenuButton.gameObject.SetActive(WorldObjects.GetWorldExecutionState().IsMainMenuAllowed());
     }
 
     private void ShowMainMenu()
@@ -94,14 +92,6 @@ public class WorldControl : MonoBehaviour
 
     private void ShowWorldControlBriefly() {
         uISlidedown.ShowBriefly();
-    }
-
-    public static void DisableMainMenu()
-    {
-        foreach (WorldControl wc in currentWorldControls) {
-            wc.mainMenuButton.gameObject.SetActive(false);
-        }
-        isDisabledForThisInstance = true;
     }
 
     public static void UpdateViews() {
