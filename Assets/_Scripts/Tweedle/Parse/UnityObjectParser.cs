@@ -11,12 +11,6 @@ namespace Alice.Tweedle.Parse
 {
     public class UnityObjectParser : MonoBehaviour
     {
-        public enum MainMenuControl
-        {
-            Normal,
-            Disabled
-        }
-
         public static string project_ext = "a3w";
         public static string project_suffix = "." + project_ext;
         public static string AutoLoadedWorldsDirectory;
@@ -52,7 +46,7 @@ namespace Alice.Tweedle.Parse
         }
 
         // arg: fileName should be the fullPath of the target file.
-        public void OpenWorld(string fileName, MainMenuControl mainMenuCtrl = MainMenuControl.Normal) {
+        public void OpenWorld(string fileName) {
 
             m_currentFilePath = fileName;
 
@@ -65,15 +59,15 @@ namespace Alice.Tweedle.Parse
                 m_QueueProcessor.Stop();
             }
             RenderSettings.skybox = null;
-            LoadWorld(m_currentFilePath, mainMenuCtrl);
+            LoadWorld(m_currentFilePath);
         }
 
-        private void LoadWorld(string path, MainMenuControl mainMenuCtrl)
+        private void LoadWorld(string path)
         {
-            StartCoroutine(DisplayLoadingAndLoadLevel(path, mainMenuCtrl));
+            StartCoroutine(DisplayLoadingAndLoadLevel(path));
         }
 
-        private IEnumerator DisplayLoadingAndLoadLevel(string path, MainMenuControl mainMenuCtrl)
+        private IEnumerator DisplayLoadingAndLoadLevel(string path)
         {
             WorldObjects.GetWorldExecutionState().SetNormalTimescale();
             yield return YieldLoadingScreens(true);
@@ -94,12 +88,7 @@ namespace Alice.Tweedle.Parse
 
             StartQueueProcessing();
             yield return YieldLoadingScreens(false);
-
             WorldControl.ShowWorldControlsBriefly();
-            if (mainMenuCtrl == MainMenuControl.Disabled) {
-                WorldControl.DisableMainMenu();
-                WorldObjects.GetWorldExecutionState().DisableMainMenu();
-            }
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
         }
 
@@ -213,7 +202,8 @@ namespace Alice.Tweedle.Parse
 
         private void OpenWorldDirectly(string fullName) {
             loadingScreen.fader.alpha = 1f;
-            OpenWorld(fullName, MainMenuControl.Disabled);
+            WorldObjects.GetWorldExecutionState().DisableMainMenu();
+            OpenWorld(fullName);
         }
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
