@@ -41,13 +41,10 @@ public class WorldObjects : MonoBehaviour
         return null;
     }
 
-    internal static GameObject GetVRObjects()
-    {
-        if (_instance != null)
-        {
-            return _instance.vrObjects;
+    internal static void SetVRObjectsActive(bool isActive) {
+        if (_instance != null) {
+            _instance.vrObjects.SetActive(isActive);
         }
-        return null;
     }
 
     internal static WorldExecutionState GetWorldExecutionState() {

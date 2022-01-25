@@ -10,7 +10,6 @@ using BeauRoutine;
 public class WorldLoaderControl : MonoBehaviour
 {
     public RecentWorldButton[] recentButtons;
-    public Toggle loadInVR;
     public bool useVRSizing = false; // Set in inspector
 
     private List<RecentWorldData> recentWorlds = new List<RecentWorldData>();
@@ -19,10 +18,6 @@ public class WorldLoaderControl : MonoBehaviour
     void Start()
     {
         PopulateLevels();
-        
-        if(loadInVR != null)
-            loadInVR.onValueChanged.AddListener(VRControl.Loaded);
-
         if(useVRSizing)
             VRControl.Rig().EnablePointersForUI(true);
     }

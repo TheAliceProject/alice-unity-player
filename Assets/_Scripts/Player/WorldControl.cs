@@ -24,10 +24,9 @@ public class WorldControl : MonoBehaviour
     public Material skyboxMaterial;
 
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
-    private static bool isDisabledForThisInstance = false;
 
     void Start() {
-        if(!currentWorldControls.Contains(this))
+        if (!currentWorldControls.Contains(this))
             currentWorldControls.Add(this);
 
         mainMenuButton.onClick.AddListener(ShowMainMenu);
@@ -35,10 +34,6 @@ public class WorldControl : MonoBehaviour
         speedUpButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().IncreaseSpeed);
         slowDownButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().DecreaseSpeed);
         pauseButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().TogglePausePlay);
-
-        // Disable main menu button when restarting from a bundled world app
-        if(isDisabledForThisInstance)
-            mainMenuButton.gameObject.SetActive(false);
     }
 
     private void ShowMainMenu()
@@ -48,7 +43,7 @@ public class WorldControl : MonoBehaviour
         WorldObjects.GetIntroCanvas().SetActive(true);
         if (XRSettings.enabled)
         {
-            WorldObjects.GetVRObjects().SetActive(true);
+            WorldObjects.SetVRObjectsActive(true);
         }
 
         if (destroyedScene) {
@@ -92,16 +87,9 @@ public class WorldControl : MonoBehaviour
         }
     }
 
-    private void ShowWorldControlBriefly(){
+    private void ShowWorldControlBriefly() {
+        mainMenuButton.gameObject.SetActive(WorldObjects.GetWorldExecutionState().IsMainMenuAllowed());
         uISlidedown.ShowBriefly();
-    }
-
-    public static void DisableMainMenu()
-    {
-        foreach (WorldControl wc in currentWorldControls){
-            wc.mainMenuButton.gameObject.SetActive(false);
-        }
-        isDisabledForThisInstance = true;
     }
 
     public static void UpdateViews() {
@@ -123,7 +111,10 @@ public class WorldControl : MonoBehaviour
 
     public static void Restart() {
         foreach (var wc in currentWorldControls) {
-            wc.RestartWorld();
+            if (wc.isActiveAndEnabled) {
+                wc.RestartWorld();
+                return;
+            }
         }
     }
 
