@@ -19,7 +19,8 @@ namespace Alice.Tweedle.Parse
             yield return reader.Parse();
         }
 
-
+        Manifest manifest;
+        ResourceReference strictRef;
         private TweedleSystem m_System;
         private TweedleParser m_Parser;
         private ZipFile m_ZipFile;
@@ -29,6 +30,11 @@ namespace Alice.Tweedle.Parse
         private ExceptionHandler m_ExceptionHandler;
 
         public delegate void ExceptionHandler(Exception e);
+
+        public class ModelManifestHolder
+        {
+            public ModelManifest data;
+        }
 
         public TweedleSystem StoredSystem
         {
@@ -99,42 +105,41 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        public Manifest ParseJson(string inManifestJson, string inWorkingDir = "")
+        public IEnumerator ParseJson(string inManifestJson, ModelManifestHolder modelHolder = null, string inWorkingDir = "")
         {
-            Manifest asset = JsonUtility.FromJson<Manifest>(inManifestJson);
+            manifest = JsonUtility.FromJson<Manifest>(inManifestJson);
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
-            ParsePrerequisites(asset);
+            yield return ParsePrerequisites(manifest);
 
-            ProjectType t = asset.Identifier.Type;
+            ProjectType t = manifest.Identifier.Type;
             switch (t)
             {
                 case ProjectType.Library:
-                    LibraryManifest libAsset = new LibraryManifest(asset);
+                    LibraryManifest libAsset = new LibraryManifest(manifest);
                     m_System.AddLibrary(libAsset);
-                    asset = libAsset;
-                    Debug.Log("Loaded Library " + asset.Identifier.name + " version " + asset.Identifier.version);
+                    manifest = libAsset;
+                    Debug.Log("Loaded Library " + manifest.Identifier.name + " version " + manifest.Identifier.version);
                     break;
                 case ProjectType.World:
-                    ProgramDescription worldAsset = new ProgramDescription(asset);
+                    ProgramDescription worldAsset = new ProgramDescription(manifest);
                     m_System.AddProgram(worldAsset);
-                    asset = worldAsset;
-                    Debug.Log("Loaded Project produced in Alice version " + asset.provenance.aliceVersion);
+                    manifest = worldAsset;
+                    Debug.Log("Loaded Project produced in Alice version " + manifest.provenance.aliceVersion);
                     break;
                 case ProjectType.Model:
                     ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);
                     m_System.AddModel(modelAsset);
-                    asset = modelAsset;
+                    manifest = modelAsset;
+                    modelHolder.data = modelAsset;
                     break;
             }
 
-            ParseResourceDetails(
-                asset,
-                jsonObj[MemberInfoGetter.GetMemberName(() => asset.resources)],
+            yield return ParseResourceDetails(
+                manifest,
+                jsonObj[MemberInfoGetter.GetMemberName(() => manifest.resources)],
                 inWorkingDir
                 );
-
-            return asset;
         }
 
         private IEnumerator ParsePrerequisites(Manifest manifest) {
@@ -146,34 +151,36 @@ namespace Alice.Tweedle.Parse
                     if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef)) {
                         yield return Parse(m_System, libRef.path.fullPath, m_ExceptionHandler);
                     } else {
-                        throw new TweedleVersionException("Could not find prerequisite " + t.name,
+                        var e = new TweedleVersionException("Could not find prerequisite " + t.name,
                             WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
                             WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + t.version,
                             PlayerLibraryManifest.Instance.aliceVersion,
                             manifest.provenance.aliceVersion);
+
+                        m_ExceptionHandler(e);
+                        throw e;
                     }
                 }
             }
         }
 
-        private void ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
+        private IEnumerator ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
         {
             if (json == null || json.type != JSONObject.Type.ARRAY)
             {
-                return;
+                yield break;
             }
 
             for (int i = 0; i < manifest.resources.Count; i++)
             {
-                ResourceReference strictResource = ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
-                manifest.resources[i] = strictResource;
-                m_System.AddResource(strictResource);
+                yield return ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
+                manifest.resources[i] = strictRef;
+                m_System.AddResource(strictRef);
             }
         }
 
-        private ResourceReference ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
+        private IEnumerator ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
         {
-            ResourceReference strictRef = null;
             string zipPath = workingDir + resourceRef.file;
 
             switch (resourceRef.ContentType)
@@ -203,8 +210,12 @@ namespace Alice.Tweedle.Parse
                 case ContentType.Model:
                     string manifestJson = m_ZipFile.ReadEntry(zipPath);
                     string manifestDir = GetDirectoryEntryPath(zipPath);
-                    var modelManifest = (ModelManifest)ParseJson(manifestJson, manifestDir);
-                    LoadModelStructures(modelManifest);
+
+                    ModelManifestHolder modelHolder = new ModelManifestHolder();
+                    yield return ParseJson(manifestJson, modelHolder, manifestDir);
+                    ModelManifest modelManifest = modelHolder.data;
+                    yield return LoadModelStructures(modelManifest);
+
                     strictRef = JsonUtility.FromJson<ModelReference>(refJson);
                     break;
                 case ContentType.SkeletonMesh:
@@ -217,8 +228,6 @@ namespace Alice.Tweedle.Parse
 
             // prepend working path to resource file
             strictRef.file = zipPath;
-
-            return strictRef;
         }
 
         private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
@@ -231,11 +240,14 @@ namespace Alice.Tweedle.Parse
             catch (Exception e)
             {
                 Debug.LogException(e);
-                throw new TweedleParseException("Unable to read " + resourceRef.file, e);
+                var e2 = new TweedleParseException("Unable to read " + resourceRef.file, e);
+                m_ExceptionHandler(e2);
+                throw e2;
             }
         }
 
         private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
+#if !UNITY_WEBGL
             var cachePath = Application.temporaryCachePath + "/" + workingDir;
             if (!Directory.Exists(cachePath)) {
                 Directory.CreateDirectory(cachePath);
@@ -243,6 +255,7 @@ namespace Alice.Tweedle.Parse
 
             var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
             System.IO.File.WriteAllBytes(cachePath + resourceRef.file, data);
+#endif
         }
 
         private void LoadTexture(ResourceReference resourceRef, string workingDir) {
@@ -272,17 +285,9 @@ namespace Alice.Tweedle.Parse
                         Debug.LogError("Detected wav file but header incorrect.");
                     audioClip = WavUtility.ToAudioClip(data);
                 }
-                else if(fileSuffix == ".mp3"){
-                    // Hopefully an mp3 file (maybe in the future check some bytes? Probably unnecessary though)
-
-                    // This is a bit silly, but it seems like you must save the file as an mp3, then load it in.
-                    // I have tried to convert the mp3 byte array to a wav byte array without much luck.
-                    string tempFile = Application.persistentDataPath + "/tempAudio" + audioFiles++.ToString() + ".mp3";
-                    System.IO.File.WriteAllBytes(tempFile, data);
-                    audioClip = LoadMp3(tempFile);
-                    // These temporary files will get deleted when the program is started and/or stopped
-                }
-                else{
+                else if(fileSuffix == ".mp3") {
+                    audioClip = LoadMp3(new MemoryStream(data), resourceRef.file);
+                } else {
                     Debug.LogError(fileSuffix + " files are not supported at this time.");
                 }
                 if(audioClip != null)
@@ -290,24 +295,22 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        public static AudioClip LoadMp3(string filePath) {
-            string filename = System.IO.Path.GetFileNameWithoutExtension(filePath);
+        public static AudioClip LoadMp3(Stream stream, string filePath) {
+            string filename = Path.GetFileNameWithoutExtension(filePath);
 
-            MpegFile mpegFile = new MpegFile(filePath);
-
+            MpegFile mpegFile = new MpegFile(stream);
             // assign samples into AudioClip
             AudioClip ac = AudioClip.Create(filename,
                                             (int)(mpegFile.Length / sizeof(float) / mpegFile.Channels),
                                             mpegFile.Channels,
                                             mpegFile.SampleRate,
-                                            true,
-                                            data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); },
-                                            position => { mpegFile = new MpegFile(filePath); });
+                                            false,
+                                            data => { int actualReadCount = mpegFile.ReadSamples(data, 0, data.Length); });
             return ac;
         }
 
-        private void LoadModelStructures(ModelManifest inManifest) {
-            if (!Application.isPlaying) return;
+        private IEnumerator LoadModelStructures(ModelManifest inManifest) {
+            if (!Application.isPlaying) yield break;
 
             foreach (var model in inManifest.models) {
                 var meshRef = inManifest.GetStructure(model.structure);
