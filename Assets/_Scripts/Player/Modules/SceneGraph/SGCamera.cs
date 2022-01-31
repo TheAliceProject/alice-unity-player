@@ -3,6 +3,7 @@ using UnityEngine.XR;
 using System.Collections;
 using BeauRoutine;
 using System;
+using System.Collections.Generic;
 
 namespace Alice.Player.Unity {
     public sealed class SGCamera : SGTransformableEntity {
@@ -16,7 +17,7 @@ namespace Alice.Player.Unity {
             bool vrLoaded = false;
             if(VRControl.IsLoadedInVR())
             {
-                if (XRDevice.isPresent)
+                if (IsXRDevicePresent())
                 {
                     if (Camera.main != null)
                         Destroy(Camera.main.gameObject);
@@ -82,6 +83,19 @@ namespace Alice.Player.Unity {
                 Camera.transform.SetParent(null, true);
                 Camera = null;
             }
+        }
+
+        private bool IsXRDevicePresent() {
+            List<XRDisplaySubsystem> xrDisplaySubsystems = new List<XRDisplaySubsystem>();
+            SubsystemManager.GetInstances<XRDisplaySubsystem>(xrDisplaySubsystems);
+            foreach (var xrDisplay in xrDisplaySubsystems)
+            {
+                if (xrDisplay.running)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         // This helper function is because sometimes in Unity, negative angles might look like -10, or 350
