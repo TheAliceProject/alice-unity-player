@@ -8,4 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/Project Import/Tweedle Project.unity
     guid: e4833dc011693e443bf7f32b456ae1a6
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 7cb56066ded854a4fb9ab8d8a38975eb,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 3eb9ff1e29fc047a88e1f49435840842,
+      type: 2}
