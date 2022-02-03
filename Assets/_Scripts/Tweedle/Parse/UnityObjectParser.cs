@@ -25,6 +25,7 @@ namespace Alice.Tweedle.Parse
         public LoadMoreControl[] loadMoreControl;
         public MenuControl[] menuControls;
         public LoadingControl loadingScreen;
+        private static int numOfFiles = 0;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
@@ -180,6 +181,7 @@ namespace Alice.Tweedle.Parse
              */
             var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles("*" + project_suffix);
 #if UNITY_WEBGL  || UNITY_IOS || UNITY_ANDROID
+            numOfFiles = files.Length;
             if (files.Length == 0) {
                 OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix));
             }
@@ -198,6 +200,11 @@ namespace Alice.Tweedle.Parse
                     lmc.SetAsStandalone();
                 }
             }
+        }
+
+        public static int GetNumOfFiles()
+        {
+            return numOfFiles;
         }
 
         private void OpenWorldDirectly(string fullName) {
