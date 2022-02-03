@@ -6,7 +6,6 @@ using BeauRoutine;
 using UnityEngine.XR;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.Management;
-using Debug = UnityEngine.Debug;
 #if !UNITY_WEBGL
 using System.Diagnostics;
 using Alice.Tweedle.Parse;
