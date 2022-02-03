@@ -7,6 +7,7 @@ using UnityEngine.XR;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
+using Debug = UnityEngine.Debug;
 #if !UNITY_WEBGL
 using System.Diagnostics;
 #endif
@@ -157,7 +158,17 @@ public class VRControl : MonoBehaviour
             case VRDevice.OculusS:
             case VRDevice.OculusGo:
             case VRDevice.OculusQuest: {
-                XRDevice.SetTrackingSpaceType(TrackingSpaceType.RoomScale);
+                try {
+                    var xrInputSubsystems = new List<XRInputSubsystem>();
+                    xrInputSubsystems.Clear();
+                    SubsystemManager.GetInstances(xrInputSubsystems);
+                    foreach (var xri in xrInputSubsystems) {
+                        xri.TrySetTrackingOriginMode(((TrackingOriginModeFlags?) TrackingOriginModeFlags.Floor).Value);
+                    }
+                }
+                catch (Exception ex) {
+                    Debug.LogError($"Unable to set TrackingOriginMode: {ex}");
+                }
                 break;
             }
         }
