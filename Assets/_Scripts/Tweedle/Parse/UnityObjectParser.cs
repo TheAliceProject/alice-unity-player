@@ -182,15 +182,15 @@ namespace Alice.Tweedle.Parse
             var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles("*" + project_suffix);
 #if UNITY_WEBGL  || UNITY_IOS || UNITY_ANDROID
             numOfFiles = files.Length;
-            if (files.Length == 0) {
+            if (numOfFiles == 0) {
                 OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix));
             }
 #endif
-            if (files.Length == 1) {
+            if (numOfFiles == 1) {
                 // Only one world is bundled, auto load that world
                 OpenWorldDirectly(files[0].FullName);
             }
-            else if(files.Length > 1) {
+            else if(numOfFiles > 1) {
                 // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
                 foreach (var mc in menuControls) {
                     mc.DeactivateMainMenu();
@@ -202,7 +202,7 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        public static int GetNumOfFiles()
+        public static int GetFileCount()
         {
             return numOfFiles;
         }
