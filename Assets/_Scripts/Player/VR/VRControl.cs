@@ -148,8 +148,7 @@ public class VRControl : MonoBehaviour
         deviceType = device;
         VRObjects.SetActive(true);
         StartObjects.SetActive(true);
-        var fileCount = UnityObjectParser.GetFileCount();
-        if (fileCount <= 1)
+        if (!WorldObjects.GetWorldExecutionState().IsMainMenuAllowed())
             HideObjects.SetActive(false);
         loadWorldInVR = true;
         Application.targetFrameRate = -1; // Use VR framerate specified by SDK

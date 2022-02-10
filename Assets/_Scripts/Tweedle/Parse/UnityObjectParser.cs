@@ -25,7 +25,6 @@ namespace Alice.Tweedle.Parse
         public LoadMoreControl[] loadMoreControl;
         public MenuControl[] menuControls;
         public LoadingControl loadingScreen;
-        private static int numOfFiles = 0;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
@@ -180,17 +179,17 @@ namespace Alice.Tweedle.Parse
              * TODO Change this since it is not how it works
              */
             var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles("*" + project_suffix);
+            var fileCount = files.Length;
 #if UNITY_WEBGL  || UNITY_IOS || UNITY_ANDROID
-            numOfFiles = files.Length;
-            if (numOfFiles == 0) {
+            if (fileCount == 0) {
                 OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix));
             }
 #endif
-            if (numOfFiles == 1) {
+            if (fileCount == 1) {
                 // Only one world is bundled, auto load that world
                 OpenWorldDirectly(files[0].FullName);
             }
-            else if(numOfFiles > 1) {
+            else if(fileCount > 1) {
                 // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
                 foreach (var mc in menuControls) {
                     mc.DeactivateMainMenu();
@@ -200,11 +199,6 @@ namespace Alice.Tweedle.Parse
                     lmc.SetAsStandalone();
                 }
             }
-        }
-
-        public static int GetFileCount()
-        {
-            return numOfFiles;
         }
 
         private void OpenWorldDirectly(string fullName) {
