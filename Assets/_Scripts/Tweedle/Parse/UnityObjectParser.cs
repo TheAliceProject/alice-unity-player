@@ -179,16 +179,17 @@ namespace Alice.Tweedle.Parse
              * TODO Change this since it is not how it works
              */
             var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles("*" + project_suffix);
+            var fileCount = files.Length;
 #if UNITY_WEBGL  || UNITY_IOS || UNITY_ANDROID
-            if (files.Length == 0) {
+            if (fileCount == 0) {
                 OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix));
             }
 #endif
-            if (files.Length == 1) {
+            if (fileCount == 1) {
                 // Only one world is bundled, auto load that world
                 OpenWorldDirectly(files[0].FullName);
             }
-            else if(files.Length > 1) {
+            else if(fileCount > 1) {
                 // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
                 foreach (var mc in menuControls) {
                     mc.DeactivateMainMenu();

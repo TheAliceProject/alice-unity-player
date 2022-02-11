@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.XR.Management;
 #if !UNITY_WEBGL
 using System.Diagnostics;
+using Alice.Tweedle.Parse;
 #endif
 
 public class VRControl : MonoBehaviour
@@ -32,6 +33,8 @@ public class VRControl : MonoBehaviour
     public Transform landingRig;
     public EventSystem eventSystem;
     public GameObject VRObjects;
+    public GameObject StartObjects;
+    public GameObject HideObjects;
 
     private VRDevice deviceType = VRDevice.None;
     private bool loadWorldInVR = false;
@@ -130,7 +133,8 @@ public class VRControl : MonoBehaviour
     }
 
 #if !UNITY_WEBGL
-    private void SelectVRSystem(VRDevice device) {
+    private void SelectVRSystem(VRDevice device)
+    {
         if (device == VRDevice.None) {
             XRSettings.enabled = false;
             WorldObjects.SetVRObjectsActive(false);
@@ -138,23 +142,29 @@ public class VRControl : MonoBehaviour
             m_routine.Replace(this, EnableVR(device));
     }
 
-    private IEnumerator EnableVR(VRDevice device) {
+    private IEnumerator EnableVR(VRDevice device)
+    {
         yield return null;
         deviceType = device;
         VRObjects.SetActive(true);
+        StartObjects.SetActive(true);
+        if (!WorldObjects.GetWorldExecutionState().IsMainMenuAllowed())
+            HideObjects.SetActive(false);
         loadWorldInVR = true;
         Application.targetFrameRate = -1; // Use VR framerate specified by SDK
 
-        switch (deviceType) {
+        switch (deviceType)
+        {
             // Vive appears to be backwards when using SteamVR. Correct it here so we have identical behavior to Oculus
             case VRDevice.Vive:
-                landingRig.localRotation = 
+                landingRig.localRotation =
                     Quaternion.Euler(landingRig.localRotation.eulerAngles + new Vector3(0f, 180f, 0f));
                 break;
             case VRDevice.OculusRift:
             case VRDevice.OculusS:
             case VRDevice.OculusGo:
-            case VRDevice.OculusQuest: {
+            case VRDevice.OculusQuest:
+            {
                 var xrSettings = XRGeneralSettings.Instance;
                 var xrManager = xrSettings.Manager;
                 var xrLoader = xrManager.activeLoader;
