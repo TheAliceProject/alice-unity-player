@@ -12,7 +12,6 @@ namespace Alice.Tweedle.Parse
     public class UnityObjectParser : MonoBehaviour
     {
         public static string project_ext = "a3w";
-        public static string project_suffix = "." + project_ext;
         public static string AutoLoadedWorldsDirectory;
         public bool dumpTypeOutlines = false;
         public Transform mainMenu;
@@ -35,7 +34,11 @@ namespace Alice.Tweedle.Parse
 #if UNITY_ANDROID
             AutoLoadedWorldsDirectory = Application.persistentDataPath;
 #else
+#if UNITY_WEBGL
+            AutoLoadedWorldsDirectory = $"{Application.streamingAssetsPath}/{WorldObjects.DEFAULT_FOLDER_PATH}/{WorldObjects.DEFAULT_BUNDLED_WORLD_NAME}.{project_ext} ";
+#else
             AutoLoadedWorldsDirectory = Application.streamingAssetsPath;
+#endif
 #endif
             DeleteTemporaryAudioFiles();
         }
@@ -161,7 +164,7 @@ namespace Alice.Tweedle.Parse
             string[] args = System.Environment.GetCommandLineArgs();
 
             for(int i = 0; i < args.Length; i++) {
-                if(args[i].ToLower().Contains(project_suffix)) {
+                if(args[i].ToLower().Contains(project_ext)) {
                     loadingScreen.fader.alpha = 1f;
                     OpenWorld(args[1]);
                     return;
@@ -178,9 +181,12 @@ namespace Alice.Tweedle.Parse
              * If DefaultBundledWorld.a3w is unchanged it will tell the user to put bundled world into the StreamingAssets folder
              * TODO Change this since it is not how it works
              */
+#if UNITY_WEBGL
+            OpenWorldDirectly(AutoLoadedWorldsDirectory);
+#else
             var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles("*" + project_suffix);
             var fileCount = files.Length;
-#if UNITY_WEBGL  || UNITY_IOS || UNITY_ANDROID
+#if UNITY_IOS || UNITY_ANDROID
             if (fileCount == 0) {
                 OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DEFAULT_FOLDER_PATH, WorldObjects.DEFAULT_BUNDLED_WORLD_NAME + project_suffix));
             }
@@ -199,6 +205,7 @@ namespace Alice.Tweedle.Parse
                     lmc.SetAsStandalone();
                 }
             }
+#endif
         }
 
         private void OpenWorldDirectly(string fullName) {

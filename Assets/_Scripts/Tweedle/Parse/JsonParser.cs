@@ -65,7 +65,7 @@ namespace Alice.Tweedle.Parse
         }
 
         private IEnumerator LoadFile(string fileName) {
-            if (fileName.StartsWith("jar:")) {
+            if (fileName.StartsWith("jar:") || fileName.StartsWith("http:")) {
                 // Use UnityWebRequest when reading from a compressed file
                 yield return LoadFileWR(fileName);
             } else {
