@@ -5,7 +5,6 @@ using UnityEngine;
 using TMPro;
 using System.IO;
 using BeauRoutine;
-using System.Linq;
 using Alice.Tweedle.Parse;
 using UnityEngine.UI;
 
@@ -87,9 +86,9 @@ public class LoadMoreControl : MonoBehaviour
         recentWorldsData.Clear();
 
         var dir = new DirectoryInfo(UnityObjectParser.AutoLoadedWorldsDirectory);
-        var files = dir.GetFiles("*.a3w");
+        var files = dir.GetFiles(WorldObjects.ProjectPattern);
         foreach (var file in files) {
-            if (!File.Exists(file.FullName) || file.FullName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME + ".a3w"))
+            if (!File.Exists(file.FullName) || file.FullName.Contains(WorldObjects.SceneGraphLibraryName))
                 continue;
             recentWorldsData.Add(new RecentWorldData(file.FullName));
         }

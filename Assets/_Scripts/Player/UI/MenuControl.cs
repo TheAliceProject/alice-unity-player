@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Alice.Tweedle.Parse;
 using SFB;
 using UnityEngine;
 using UnityEngine.UI;
@@ -68,7 +67,7 @@ public class MenuControl : MonoBehaviour
         loadNewWorldButton.onClick.AddListener(() =>
         {
             string zipPath = "";
-            var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", UnityObjectParser.project_ext, false);
+            var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", WorldObjects.ProjectExt, false);
             if(path.Length > 0) {
                 zipPath = path[0];
                 zipPath = System.Uri.UnescapeDataString(zipPath);

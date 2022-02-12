@@ -2,7 +2,6 @@ using System;
 using Alice.Tweedle.File;
 using Alice.Player.Unity;
 using ICSharpCode.SharpZipLib.Zip;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using System.Text;
@@ -97,7 +96,7 @@ namespace Alice.Tweedle.Parse
                 m_ZipFile = new ZipFile(m_FileStream);
 
                 using (m_ZipFile) {
-                    if(!m_FileName.Contains(WorldObjects.SCENE_GRAPH_LIBRARY_NAME))
+                    if(!m_FileName.Contains(WorldObjects.SceneGraphLibraryName))
                         CacheThumbnail(m_FileName);
 
                     // TODO: Use manifest to determine player assembly version
@@ -161,8 +160,8 @@ namespace Alice.Tweedle.Parse
                     else
                     {
                         var e = new TweedleVersionException("Could not find prerequisite " + t.name,
-                            WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
-                            WorldObjects.SCENE_GRAPH_LIBRARY_NAME + " " + t.version,
+                            WorldObjects.SceneGraphLibraryName + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
+                            WorldObjects.SceneGraphLibraryName + " " + t.version,
                             PlayerLibraryManifest.Instance.aliceVersion,
                             manifest.provenance.aliceVersion);
 
