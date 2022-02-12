@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Alice.Tweedle.Parse;
 
 public class WorldObjects : MonoBehaviour
@@ -11,9 +9,11 @@ public class WorldObjects : MonoBehaviour
     public GameObject vrObjects;
     public UnityObjectParser parser;
 
-    public static string SCENE_GRAPH_LIBRARY_NAME = "SceneGraphLibrary";
-    public static string DEFAULT_BUNDLED_WORLD_NAME = "DefaultBundledWorld";
-    public static string DEFAULT_FOLDER_PATH = "Default";
+    public static readonly string ProjectExt = "a3w";
+    public static readonly string ProjectPattern = $"*.{ProjectExt}";
+    public static readonly string SceneGraphLibraryName = $"SceneGraphLibrary.{ProjectExt}";
+    public static readonly string DefaultBundledWorldName = $"DefaultBundledWorld.{ProjectExt}";
+    public static readonly string DefaultFolderPath = "Default";
     
     private readonly WorldExecutionState _executionState = new WorldExecutionState();
     
