@@ -46,6 +46,8 @@ public class UISlidedown : MonoBehaviour, IPointerEnterHandler
         {
             yield return null;
         }
+        // make the panel stay 1.5f when pointer exits
+        yield return 1.5f;
         yield return anchor.AnchorPosTo(GetOffPosition(), moveTime * Time.timeScale, Axis.Y).Ease(Curve.BackOut);
     }
 
