@@ -65,7 +65,6 @@ namespace Alice.Tweedle.Parse
             if(m_QueueProcessor != null) {
                 m_QueueProcessor.Stop();
             }
-            RenderSettings.skybox = null;
             LoadWorld(m_currentFilePath);
         }
 
@@ -94,6 +93,7 @@ namespace Alice.Tweedle.Parse
 
             m_System.QueueProgramMain(m_VM);
 
+            RenderSettings.skybox = null;
             StartQueueProcessing();
             yield return YieldLoadingScreens(false);
             VRControl.ShowControls();
