@@ -28,6 +28,7 @@ namespace Alice.Tweedle.Parse
         private VirtualMachine m_VM;
         private Routine m_QueueProcessor;
         private string m_currentFilePath;
+        private bool m_IsLoading;
 
         void Awake()
         {
@@ -50,7 +51,10 @@ namespace Alice.Tweedle.Parse
 
         // arg: fileName should be the fullPath of the target file.
         public void OpenWorld(string fileName) {
-
+            if (m_IsLoading) {
+                return;
+            }
+            m_IsLoading = true;
             m_currentFilePath = fileName;
 
             if(Player.Unity.SceneGraph.Exists) {
@@ -93,6 +97,7 @@ namespace Alice.Tweedle.Parse
             yield return YieldLoadingScreens(false);
             WorldControl.ShowWorldControlsBriefly();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
+            m_IsLoading = false;
         }
 
         private void HandleParseException(Exception e) {
@@ -128,6 +133,11 @@ namespace Alice.Tweedle.Parse
                 modalWindow.LinkWindow(modalWindowVr);
             }
             FadeLoadingScreens();
+            ReturnToMainMenu();
+        }
+
+        private void ReturnToMainMenu() {
+            m_IsLoading = false;
             WorldControl.ReturnToMainMenu();
         }
 
@@ -225,7 +235,7 @@ namespace Alice.Tweedle.Parse
                 }
                 else
                 {
-                    WorldControl.ReturnToMainMenu();
+                    ReturnToMainMenu();
                 }
             });
         }
