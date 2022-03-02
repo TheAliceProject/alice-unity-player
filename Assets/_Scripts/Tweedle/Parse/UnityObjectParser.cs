@@ -77,6 +77,7 @@ namespace Alice.Tweedle.Parse
         private IEnumerator DisplayLoadingAndLoadLevel(string path)
         {
             WorldObjects.GetWorldExecutionState().SetNormalTimescale();
+            VRControl.HideControls();
             yield return YieldLoadingScreens(true);
             worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
@@ -95,6 +96,7 @@ namespace Alice.Tweedle.Parse
 
             StartQueueProcessing();
             yield return YieldLoadingScreens(false);
+            VRControl.ShowControls();
             WorldControl.ShowWorldControlsBriefly();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
             m_IsLoading = false;

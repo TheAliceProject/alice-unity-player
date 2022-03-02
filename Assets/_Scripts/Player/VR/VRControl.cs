@@ -177,6 +177,22 @@ public class VRControl : MonoBehaviour
     }
 #endif
 
+    public static void HideControls() {
+#if !UNITY_WEBGL
+        if (_instance != null) {
+            _instance.HideObjects.SetActive(false);
+        }
+#endif
+    }
+
+    public static void ShowControls() {
+#if !UNITY_WEBGL
+        if (_instance != null) {
+            _instance.HideObjects.SetActive(true);
+        }
+#endif
+    }
+
     public static Transform GetLastControllerClicked()
     {
         return _instance == null ? null : _instance.lastControllerClicked;
