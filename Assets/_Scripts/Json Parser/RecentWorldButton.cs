@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
+using ICSharpCode.SharpZipLib.Zip;
+using Alice.Tweedle.File;
 
 public class RecentWorldButton : MonoBehaviour
 {
@@ -15,6 +17,33 @@ public class RecentWorldButton : MonoBehaviour
     public BoxCollider collider;
     
     private RecentWorldData fileData = new RecentWorldData();
+    private ZipFile zipFile;
+    private Stream fileStream;
+
+
+    void ExtractThumbnail(string fileName)
+    {
+        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
+        if (File.Exists(thumbnailPath))
+        {
+            return;
+        }
+        fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
+        using (fileStream)
+        {
+            zipFile = new ZipFile(fileStream);
+            using (zipFile)
+            {   
+                // Save thumbnail
+                byte[] data = zipFile.ReadDataEntry("thumbnail.png");
+                if (data == null)
+                {
+                    return;
+                }
+                File.WriteAllBytes(thumbnailPath, data);
+            }
+        }
+    }
 
     public void SetData(RecentWorldData worldData)
     {
@@ -22,6 +51,8 @@ public class RecentWorldButton : MonoBehaviour
         fileData.path = worldData.path;
 
         string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(worldData.path) + "_thumb.png";
+        ExtractThumbnail(fileData.path);
+
         if (File.Exists(thumbnailPath))
         {
             byte[] data = File.ReadAllBytes(thumbnailPath);
@@ -30,6 +61,7 @@ public class RecentWorldButton : MonoBehaviour
             tex.LoadImage(data); //..this will auto-resize the texture dimensions.
             background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
         }
+
 
         fileData.lastOpened = worldData.lastOpened;
         SetLastOpenedText();

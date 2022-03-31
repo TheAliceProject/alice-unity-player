@@ -7,8 +7,6 @@ using System.IO;
 using BeauRoutine;
 using Alice.Tweedle.Parse;
 using UnityEngine.UI;
-using Alice.Tweedle.File;
-using ICSharpCode.SharpZipLib.Zip;
 
 public class LoadMoreControl : MonoBehaviour
 {
@@ -16,8 +14,6 @@ public class LoadMoreControl : MonoBehaviour
     public Transform buttonParent;
     public GridLayoutGroup buttonLayout;
     public ScrollRect rect;
-    private ZipFile zipFile;
-    private Stream fileStream;
 
     public enum WorldListSort{
         LocalRecent,
@@ -85,32 +81,6 @@ public class LoadMoreControl : MonoBehaviour
         buttonLayout.cellSize = new Vector2(cellWidth, cellWidth * CellAspectRatio);
     }
 
-    // @params: fileName should be the full path of the world file
-    void extractThumbnail(string fileName)
-    {
-        fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
-        using (fileStream)
-        {
-            zipFile = new ZipFile(fileStream);
-            using (zipFile)
-            {
-                // Save thumbnail
-                byte[] data = zipFile.ReadDataEntry("thumbnail.png");
-                if (data == null)
-                {
-                    fileStream.Close();
-                    return;
-                }
-                string thumbnailName = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
-                if (!File.Exists(thumbnailName))
-                {
-                    File.WriteAllBytes(thumbnailName, data);
-                }
-                fileStream.Close();
-            }
-        }
-    }
-
     private List<RecentWorldData> GetBundledWorlds(){
         List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
         recentWorldsData.Clear();
@@ -121,8 +91,6 @@ public class LoadMoreControl : MonoBehaviour
             if (!File.Exists(file.FullName) || file.FullName.Contains(WorldObjects.SceneGraphLibraryName))
                 continue;
             recentWorldsData.Add(new RecentWorldData(file.FullName));
-            // extractThumbnail will check if the thumb.png already exists
-            extractThumbnail(file.FullName);
         }
         return SortWorlds(recentWorldsData);
     }
