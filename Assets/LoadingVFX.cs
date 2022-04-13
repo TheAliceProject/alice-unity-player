@@ -1,30 +1,106 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using BeauRoutine.Internal;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class LoadingVFX : MonoBehaviour
 {
-    [SerializeField] private GameObject[] surroundingObjs;
+    [SerializeField] private BlowObj[] surroundingObjs;
     [SerializeField] private Transform tornadoCenter;
     [SerializeField] private float pullForce;
     [SerializeField] private float endPullForce;
     [SerializeField] private float pullForceDecreaseAmount = 0.1f;
+    [SerializeField] private float pullForceDecreaseSmoothness = 0.1f;
     [SerializeField] private float torqueForce = 1.0f;
     [SerializeField] private float refreshRate;
     [SerializeField] private float maxVelocity;
+    [SerializeField] private float startDelay = 3.0f;
+    [SerializeField] private ParticleSystem[] loadingVFX;
+    [SerializeField] private GameObject blocker;
+    [SerializeField] private float rotateSpeed = 10.0f;
+    [SerializeField] private Material blockerMaterial;
+    [SerializeField] private Transform blockerStartPoint;
+    [SerializeField] private Transform blockerEndPoint;
+
+    [SerializeField] private float thicknessSmoothness = 0.01f;
+    [SerializeField] private float movingSmoothness = 0.01f;
+    [SerializeField] private float thicknessDuration = 3.0f;
+    [SerializeField] private float movingDuration = 3.0f;
 
     private float fixedDeltaTime;
     private Vector3 forwardDir;
     public bool isStartDecreaseForce = false;
+    private float timer = 0f;
+    private bool hasPlayed = false;
+
+    private void Start()
+    {
+        surroundingObjs = FindObjectsOfType<BlowObj>();
+        blocker.GetComponent<MeshRenderer>().enabled = false;
+    }
 
     private void Update()
     {
+        if (timer < startDelay)
+        {
+            timer += Time.deltaTime;
+        }
+        else
+        {
+            if (!hasPlayed)
+            {
+                foreach (ParticleSystem system in loadingVFX)
+                {
+                    system.Play();
+                }
+
+                hasPlayed = true;
+                blocker.GetComponent<MeshRenderer>().enabled = true;
+                StartCoroutine(StartIncreaseBlockerThickness());
+                StartCoroutine(StartMovingBlocker());
+            }
+
+            foreach (BlowObj obj in surroundingObjs)
+            {
+                obj.StartCountDown();
+            }
+
+            blocker.transform.RotateAround(blocker.transform.position, Vector3.up, rotateSpeed);
+            isStartDecreaseForce = true;
+        }
+
         if (isStartDecreaseForce)
         {
             StartCoroutine(StartDecreaseForce());
             isStartDecreaseForce = false;
+        }
+    }
+
+    IEnumerator StartIncreaseBlockerThickness()
+    {
+        float timer = 0;
+        Color blockerMaterialColor = blockerMaterial.color;
+        while (timer <= thicknessDuration)
+        {
+            blockerMaterial.color =
+                Color.Lerp(new Color(0, 0, 0, 0),
+                    blockerMaterialColor, timer);
+            timer += thicknessSmoothness;
+            yield return new WaitForSeconds(thicknessSmoothness);
+        }
+    }
+
+    IEnumerator StartMovingBlocker()
+    {
+        float timer = 0;
+        while (timer <= movingDuration)
+        {
+            blocker.transform.position = Vector3.Lerp(blockerStartPoint.position, blockerEndPoint.position,
+                timer / movingDuration);
+            timer += movingSmoothness;
+            yield return new WaitForSeconds(movingSmoothness);
         }
     }
 
@@ -33,7 +109,7 @@ public class LoadingVFX : MonoBehaviour
         while (pullForce >= endPullForce)
         {
             pullForce -= pullForceDecreaseAmount;
-            yield return new WaitForSeconds(pullForceDecreaseAmount);
+            yield return new WaitForSeconds(pullForceDecreaseSmoothness);
         }
     }
 
@@ -41,7 +117,6 @@ public class LoadingVFX : MonoBehaviour
     {
         if (other.CompareTag("BlowObj") && other.gameObject.GetComponent<BlowObj>().shouldBlow)
         {
-            Debug.Log("trigger enter");
             StartCoroutine(StartBlowObj(other, true));
         }
     }
@@ -50,7 +125,6 @@ public class LoadingVFX : MonoBehaviour
     {
         if (other.CompareTag("BlowObj") && other.gameObject.GetComponent<BlowObj>().shouldBlow)
         {
-            Debug.Log("trigger stay");
             StartCoroutine(StartBlowObj(other, true));
         }
     }
@@ -93,7 +167,6 @@ public class LoadingVFX : MonoBehaviour
                     default:
                         break;
                 }
-                
             }
 
             if (other.GetComponent<Rigidbody>().velocity.sqrMagnitude > maxVelocity)
