@@ -25,7 +25,7 @@ namespace Alice.Player.Unity {
         private VREventHandler m_VrEventHandler = new VREventHandler();
         private InteractionEventHandler m_InteractionHandler = new InteractionEventHandler();
 
-        private UnityEngine.Color m_AmbientLightColor = new UnityEngine.Color(0.25f, 0.25f, 0.25f, 1f);
+        private UnityEngine.Color m_AmbientLightColor = UnityEngine.Color.black;
         private UnityEngine.Color m_AtmosphereColor = UnityEngine.Color.white;
         private float m_GlobalBrightness = 1f;
 
