@@ -1,15 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using BeauRoutine.Internal;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class LoadingVFX : MonoBehaviour
 {
-    [SerializeField] private BlowObj[] surroundingObjs;
-    [SerializeField] private Transform tornadoCenter;
-    [SerializeField] private float pullForce;
+    [Header("Tornado")] [SerializeField] private Transform tornadoCenter;
+    [SerializeField] private ParticleSystem[] windVFX;
+    [Header("Forces")] [SerializeField] private float pullForce;
     [SerializeField] private float endPullForce;
     [SerializeField] private float pullForceDecreaseAmount = 0.1f;
     [SerializeField] private float pullForceDecreaseSmoothness = 0.1f;
@@ -17,28 +16,28 @@ public class LoadingVFX : MonoBehaviour
     [SerializeField] private float refreshRate;
     [SerializeField] private float maxVelocity;
     [SerializeField] private float startDelay = 3.0f;
-    [SerializeField] private ParticleSystem[] loadingVFX;
-    [SerializeField] private GameObject blocker;
-    [SerializeField] private float rotateSpeed = 10.0f;
+    [Header("Blocker")] [SerializeField] private GameObject blocker;
     [SerializeField] private Material blockerMaterial;
     [SerializeField] private Transform blockerStartPoint;
     [SerializeField] private Transform blockerEndPoint;
-
-    [SerializeField] private float thicknessSmoothness = 0.01f;
-    [SerializeField] private float movingSmoothness = 0.01f;
+    [SerializeField] private float rotateSpeed = 10.0f;
     [SerializeField] private float thicknessDuration = 3.0f;
     [SerializeField] private float movingDuration = 3.0f;
+    [Header("Ground")] [SerializeField] private GameObject ground;
+    [SerializeField] private Light groundLight;
 
-    private float fixedDeltaTime;
-    private Vector3 forwardDir;
-    public bool isStartDecreaseForce = false;
     private float timer = 0f;
-    private bool hasPlayed = false;
+    public bool isStartDecreaseForce = false;
+    private bool hasWindPlayed = false;
+    private BlowObj[] surroundingObjs;
+    private Vector3 forwardDir;
 
     private void Start()
     {
         surroundingObjs = FindObjectsOfType<BlowObj>();
         blocker.GetComponent<MeshRenderer>().enabled = false;
+        ground.SetActive(false);
+        groundLight.intensity = 0;
     }
 
     private void Update()
@@ -49,14 +48,14 @@ public class LoadingVFX : MonoBehaviour
         }
         else
         {
-            if (!hasPlayed)
+            if (!hasWindPlayed)
             {
-                foreach (ParticleSystem system in loadingVFX)
+                foreach (ParticleSystem system in windVFX)
                 {
                     system.Play();
                 }
 
-                hasPlayed = true;
+                hasWindPlayed = true;
                 blocker.GetComponent<MeshRenderer>().enabled = true;
                 StartCoroutine(StartIncreaseBlockerThickness());
                 StartCoroutine(StartMovingBlocker());
@@ -74,7 +73,6 @@ public class LoadingVFX : MonoBehaviour
         if (isStartDecreaseForce)
         {
             StartCoroutine(StartDecreaseForce());
-            isStartDecreaseForce = false;
         }
     }
 
@@ -82,35 +80,44 @@ public class LoadingVFX : MonoBehaviour
     {
         float timer = 0;
         Color blockerMaterialColor = blockerMaterial.color;
-        while (timer <= thicknessDuration)
+        while (timer < thicknessDuration)
         {
             blockerMaterial.color =
                 Color.Lerp(new Color(0, 0, 0, 0),
-                    blockerMaterialColor, timer);
-            timer += thicknessSmoothness;
-            yield return new WaitForSeconds(thicknessSmoothness);
+                    blockerMaterialColor, timer / thicknessDuration);
+            timer += Time.deltaTime;
+            yield return null;
         }
+
+        blockerMaterial.color = blockerMaterialColor;
     }
 
     IEnumerator StartMovingBlocker()
     {
         float timer = 0;
-        while (timer <= movingDuration)
+        while (timer < movingDuration)
         {
             blocker.transform.position = Vector3.Lerp(blockerStartPoint.position, blockerEndPoint.position,
                 timer / movingDuration);
-            timer += movingSmoothness;
-            yield return new WaitForSeconds(movingSmoothness);
+            timer += Time.deltaTime;
+            yield return null;
         }
+
+        blocker.transform.position = blockerEndPoint.position;
     }
 
     IEnumerator StartDecreaseForce()
     {
-        while (pullForce >= endPullForce)
+        while (pullForce > endPullForce)
         {
             pullForce -= pullForceDecreaseAmount;
             yield return new WaitForSeconds(pullForceDecreaseSmoothness);
         }
+
+        ground.SetActive(true);
+        groundLight.intensity = 3;
+        pullForce = endPullForce;
+        isStartDecreaseForce = false;
     }
 
     private void OnTriggerEnter(Collider other)
