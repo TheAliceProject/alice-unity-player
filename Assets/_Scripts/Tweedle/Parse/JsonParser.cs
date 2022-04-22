@@ -91,7 +91,11 @@ namespace Alice.Tweedle.Parse
             yield return LoadFile(m_FileName);
 
             using (m_FileStream) {
-                m_ZipFile = new ZipFile(m_FileStream);
+                try {
+                    m_ZipFile = new ZipFile(m_FileStream);
+                } catch(Exception e) {
+                    HandleException(e);
+                }
 
                 using (m_ZipFile) {
                     if(!m_FileName.Contains(WorldObjects.SceneGraphLibraryName))
