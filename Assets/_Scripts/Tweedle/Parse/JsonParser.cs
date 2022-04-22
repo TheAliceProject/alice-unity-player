@@ -74,9 +74,7 @@ namespace Alice.Tweedle.Parse
 
         private IEnumerator LoadFileFS(string fileName) {
             if (!System.IO.File.Exists(fileName)) {
-                var e = new FileNotFoundException(fileName);
-                m_ExceptionHandler(e);
-                throw e;
+                HandleException(new FileNotFoundException(fileName));
             }
             m_FileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
             yield return null;
@@ -157,19 +155,21 @@ namespace Alice.Tweedle.Parse
                     {
                         yield return JsonParser.Parse(m_System, libRef.path.fullPath, m_ExceptionHandler);
                     }
-                    else
-                    {
-                        var e = new TweedleVersionException("Could not find prerequisite " + t.name,
+                    else {
+                        HandleException(new TweedleVersionException("Could not find prerequisite " + t.name,
                             WorldObjects.SceneGraphLibraryName + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
                             WorldObjects.SceneGraphLibraryName + " " + t.version,
                             PlayerLibraryManifest.Instance.aliceVersion,
-                            manifest.provenance.aliceVersion);
-
-                        m_ExceptionHandler(e);
-                        throw e;
+                            manifest.provenance.aliceVersion));
                     }
                 }
             }
+        }
+
+        private void HandleException(Exception e) {
+            m_FileStream?.Close();
+            m_ExceptionHandler(e);
+            throw e;
         }
 
         private IEnumerator ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
@@ -247,9 +247,7 @@ namespace Alice.Tweedle.Parse
             }
             catch (Exception e)
             {
-                var e2 = new TweedleParseException("Unable to read " + resourceRef.file, e);
-                m_ExceptionHandler(e2);
-                throw e2;
+                HandleException(new TweedleParseException("Unable to read " + resourceRef.file, e));
             }
         }
 
