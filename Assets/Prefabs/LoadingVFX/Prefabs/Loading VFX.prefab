@@ -90,7 +90,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3766a28e2ff7f7848afd54397c81f54f, type: 2}
+  - {fileID: 2100000, guid: 058a1318bb74f7947ae6f9dbcd573dee, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14737,6 +14737,7 @@ MonoBehaviour:
   movingDuration: 10
   ground: {fileID: 713951744}
   groundLight: {fileID: 766849627}
+  startCountdown: 0
   isStartDecreaseForce: 0
 --- !u!135 &337090631
 SphereCollider:
