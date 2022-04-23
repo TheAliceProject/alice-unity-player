@@ -11,6 +11,7 @@ public class WorldLoaderControl : MonoBehaviour
 {
     public RecentWorldButton[] recentButtons;
     public bool useVRSizing = false; // Set in inspector
+    public LoadingVFX loadingVFX;
 
     private List<RecentWorldData> recentWorlds = new List<RecentWorldData>();
     private const string RecentWorldsFileName = "/recentWorlds.txt";
@@ -116,6 +117,7 @@ public class WorldLoaderControl : MonoBehaviour
                         return;
                     }
                     recentButtons[x].SetLastOpenedNow();
+                    loadingVFX.StartCountdown();
                     parser.OpenWorld(recentButtons[x].GetFilePath());
                 });
                 totalFilesFound++;

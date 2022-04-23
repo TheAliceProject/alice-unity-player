@@ -26,6 +26,7 @@ public class LoadingVFX : MonoBehaviour
     [Header("Ground")] [SerializeField] private GameObject ground;
     [SerializeField] private Light groundLight;
 
+    public bool startCountdown = false;
     private float timer = 0f;
     public bool isStartDecreaseForce = false;
     private bool hasWindPlayed = false;
@@ -42,6 +43,7 @@ public class LoadingVFX : MonoBehaviour
 
     private void Update()
     {
+        if (!startCountdown) return;
         if (timer < startDelay)
         {
             timer += Time.deltaTime;
@@ -74,6 +76,11 @@ public class LoadingVFX : MonoBehaviour
         {
             StartCoroutine(StartDecreaseForce());
         }
+    }
+
+    public void StartCountdown()
+    {
+        startCountdown = true;
     }
 
     IEnumerator StartIncreaseBlockerThickness()
