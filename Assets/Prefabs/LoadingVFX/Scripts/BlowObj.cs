@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BlowObj : MonoBehaviour
 {
-    [SerializeField] private float blowTime = 3.0f;
+    [SerializeField] private float blowTime = 1.5f;
     [SerializeField] private float speedAdjust = 0.9f;
     [SerializeField] private float timer = 0f;
     [SerializeField] private bool isCountDown = false;

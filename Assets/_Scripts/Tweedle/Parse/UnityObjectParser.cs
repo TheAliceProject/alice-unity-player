@@ -85,7 +85,7 @@ namespace Alice.Tweedle.Parse
         {
             WorldObjects.GetWorldExecutionState().SetNormalTimescale();
             VRControl.HideControls();
-            // loadingVFX.StartCountdown();
+            loadingVFX.StartCountdown();
             yield return YieldLoadingScreens(true);
             worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
@@ -109,7 +109,7 @@ namespace Alice.Tweedle.Parse
             WorldControl.ShowWorldControlsBriefly();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
             m_IsLoading = false;
-            // loadingVFX.FinishLoading();
+            loadingVFX.FinishLoading();
         }
 
         private void HandleParseException(Exception e)

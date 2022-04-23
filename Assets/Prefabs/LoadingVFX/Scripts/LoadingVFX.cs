@@ -4,31 +4,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+/**
+ * Loading effect when loading a .a3w world.
+ * To activate the loading effect, developers need to attach BlowObj.cs, Colliders (set as trigger), and Rigidbody (without gravity) onto a gameobject that needs to be blew.
+ * Also, change the gameobject's tag to BlowObj.
+ * This effect first activate the whirling particle system. Then, a blocker will gradually show. Finally, blowobjs will be pulled into the tornado.
+ */
 public class LoadingVFX : MonoBehaviour
 {
     [Header("Tornado")] [SerializeField] private Transform tornadoCenter;
     [SerializeField] private ParticleSystem[] windVFX;
-    [Header("Forces")] [SerializeField] private float pullForce;
-    [SerializeField] private float endPullForce;
-    [SerializeField] private float pullForceDecreaseAmount = 0.1f;
-    [SerializeField] private float pullForceDecreaseSmoothness = 0.1f;
+    [Header("Forces")] [SerializeField] private float pullForce = 20.0f;
+    [SerializeField] private float endPullForce = 0.45f;
+    [SerializeField] private float pullForceDecreaseAmount = 0.05f;
+    [SerializeField] private float pullForceDecreaseSmoothness = 1f;
     [SerializeField] private float torqueForce = 1.0f;
-    [SerializeField] private float refreshRate;
-    [SerializeField] private float maxVelocity;
-    [SerializeField] private float startDelay = 3.0f;
+    [SerializeField] private float refreshRate = 1.0f;
+    [SerializeField] private float maxVelocity = 2.0f;
+    [SerializeField] private float startDelay = 1.0f;
     [Header("Blocker")] [SerializeField] private GameObject blocker;
     [SerializeField] private Color endColor = new Color(232 / 255f, 177 / 255f, 1f, 255f);
     [SerializeField] private Transform blockerStartPoint;
     [SerializeField] private Transform blockerEndPoint;
-    [SerializeField] private float rotateSpeed = 10.0f;
-    [SerializeField] private float thicknessDuration = 3.0f;
-    [SerializeField] private float movingDuration = 3.0f;
+    [SerializeField] private float rotateSpeed = 2.5f;
+    [SerializeField] private float thicknessDuration = 5.0f;
+    [SerializeField] private float movingDuration = 5.0f;
     [Header("Ground")] [SerializeField] private GameObject ground;
     [SerializeField] private Light groundLight;
 
     private bool startCountdown = false;
+    private bool isStartDecreaseForce = false;
     private float timer = 0f;
-    public bool isStartDecreaseForce = false;
     private bool hasWindPlayed = false;
     private BlowObj[] surroundingObjs;
     private Vector3 forwardDir;
@@ -103,7 +109,7 @@ public class LoadingVFX : MonoBehaviour
         Color blockerColor = blocker.GetComponent<MeshRenderer>().material.color;
         while (timer < thicknessDuration)
         {
-            blockerColor.a += Time.deltaTime * .1f;
+            blockerColor.a += Time.deltaTime * .2f;
             blocker.GetComponent<MeshRenderer>().material.color = blockerColor;
             timer += Time.deltaTime;
             Debug.Log(blockerColor.a);

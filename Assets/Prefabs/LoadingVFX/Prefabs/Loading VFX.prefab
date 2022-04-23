@@ -14722,22 +14722,21 @@ MonoBehaviour:
   - {fileID: 5571137168458312994}
   pullForce: 20
   endPullForce: 0.45
-  pullForceDecreaseAmount: 0.01
+  pullForceDecreaseAmount: 0.05
   pullForceDecreaseSmoothness: 1
   torqueForce: 1
   refreshRate: 1
   maxVelocity: 2
-  startDelay: 3
+  startDelay: 1
   blocker: {fileID: 3426557129220239009}
-  blockerMaterial: {fileID: 2100000, guid: b083b8d7e3058bd468e58143bb2d418d, type: 2}
+  endColor: {r: 0.9098039, g: 0.69411767, b: 1, a: 255}
   blockerStartPoint: {fileID: 1988999909}
   blockerEndPoint: {fileID: 955492391}
   rotateSpeed: 2.5
-  thicknessDuration: 10
-  movingDuration: 10
+  thicknessDuration: 5
+  movingDuration: 5
   ground: {fileID: 713951744}
   groundLight: {fileID: 766849627}
-  isStartDecreaseForce: 0
 --- !u!135 &337090631
 SphereCollider:
   m_ObjectHideFlags: 0
