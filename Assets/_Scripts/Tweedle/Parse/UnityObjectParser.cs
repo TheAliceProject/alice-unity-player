@@ -23,6 +23,7 @@ namespace Alice.Tweedle.Parse
         public LoadMoreControl[] loadMoreControl;
         public MenuControl[] menuControls;
         public LoadingControl loadingScreen;
+        public LoadingVFX loadingVFX;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;
@@ -36,7 +37,8 @@ namespace Alice.Tweedle.Parse
             AutoLoadedWorldsDirectory = Application.persistentDataPath;
 #else
 #if UNITY_WEBGL
-            AutoLoadedWorldsDirectory = $"{Application.streamingAssetsPath}/{WorldObjects.DefaultFolderPath}/{WorldObjects.DefaultBundledWorldName}";
+            AutoLoadedWorldsDirectory =
+ $"{Application.streamingAssetsPath}/{WorldObjects.DefaultFolderPath}/{WorldObjects.DefaultBundledWorldName}";
 #else
             AutoLoadedWorldsDirectory = Application.streamingAssetsPath;
 #endif
@@ -50,21 +52,27 @@ namespace Alice.Tweedle.Parse
         }
 
         // arg: fileName should be the fullPath of the target file.
-        public void OpenWorld(string fileName) {
-            if (m_IsLoading) {
+        public void OpenWorld(string fileName)
+        {
+            if (m_IsLoading)
+            {
                 return;
             }
+
             m_IsLoading = true;
             m_currentFilePath = fileName;
 
-            if(Player.Unity.SceneGraph.Exists) {
+            if (Player.Unity.SceneGraph.Exists)
+            {
                 Player.Unity.SceneGraph.Current.Clear();
             }
 
             m_System?.Unload();
-            if(m_QueueProcessor != null) {
+            if (m_QueueProcessor != null)
+            {
                 m_QueueProcessor.Stop();
             }
+
             LoadWorld(m_currentFilePath);
         }
 
@@ -77,6 +85,7 @@ namespace Alice.Tweedle.Parse
         {
             WorldObjects.GetWorldExecutionState().SetNormalTimescale();
             VRControl.HideControls();
+            // loadingVFX.StartCountdown();
             yield return YieldLoadingScreens(true);
             worldLoader.AddWorldToRecents(path);
             m_System = new TweedleSystem();
@@ -100,13 +109,18 @@ namespace Alice.Tweedle.Parse
             WorldControl.ShowWorldControlsBriefly();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
             m_IsLoading = false;
+            // loadingVFX.FinishLoading();
         }
 
-        private void HandleParseException(Exception e) {
-            if (e is ZipException) {
+        private void HandleParseException(Exception e)
+        {
+            if (e is ZipException)
+            {
                 ZipException ze = e as ZipException;
                 NotifyUserOfLoadError("Unable to read this file", ze.Message);
-            } else if (e is TweedleVersionException) {
+            }
+            else if (e is TweedleVersionException)
+            {
                 TweedleVersionException tve = e as TweedleVersionException;
                 NotifyUserOfLoadError(
                     "Unable to open the world with this player",
@@ -114,12 +128,15 @@ namespace Alice.Tweedle.Parse
                     "\nThe world was created using Alice " + tve.SourceAliceVersion +
                     "\n\nThe player has " + tve.ExpectedVersion + "\nThe world requires " + tve.DiscoveredVersion +
                     "\n\nTry updating the player.");
-            } else if (e is TweedleParseException) {
+            }
+            else if (e is TweedleParseException)
+            {
                 NotifyUserOfLoadError("Unable to read this world", e.Message);
-            } else {
+            }
+            else
+            {
                 NotifyUserOfLoadError("An unexpected error occurred", e.Message);
             }
-
         }
 
         private void NotifyUserOfLoadError(string title, string message)
@@ -134,11 +151,13 @@ namespace Alice.Tweedle.Parse
                 modalWindowVr.LinkWindow(modalWindow);
                 modalWindow.LinkWindow(modalWindowVr);
             }
+
             FadeLoadingScreens();
             ReturnToMainMenu();
         }
 
-        private void ReturnToMainMenu() {
+        private void ReturnToMainMenu()
+        {
             m_IsLoading = false;
             WorldControl.ReturnToMainMenu();
         }
@@ -148,6 +167,7 @@ namespace Alice.Tweedle.Parse
             loadingScreen.DisplayLoadingScreen(false);
             vrLoadingScreen.FadeLoader(false);
         }
+
         private IEnumerator YieldLoadingScreens(bool on)
         {
             Coroutine loadingScreenRoutine = StartCoroutine(loadingScreen.DisplayLoadingScreenRoutine(on));
@@ -155,6 +175,7 @@ namespace Alice.Tweedle.Parse
             yield return loadingScreenRoutine;
             yield return vrLoadingScreenRoutine;
         }
+
         public void ReloadCurrentLevel()
         {
             StartCoroutine(ReloadDelayed());
@@ -175,8 +196,10 @@ namespace Alice.Tweedle.Parse
             // On windows, right click and Open With... the Alice Player executable
             string[] args = System.Environment.GetCommandLineArgs();
 
-            for(int i = 0; i < args.Length; i++) {
-                if(args[i].ToLower().Contains(WorldObjects.ProjectExt)) {
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i].ToLower().Contains(WorldObjects.ProjectExt))
+                {
                     loadingScreen.fader.alpha = 1f;
                     OpenWorld(args[1]);
                     return;
@@ -199,20 +222,27 @@ namespace Alice.Tweedle.Parse
             var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles(WorldObjects.ProjectPattern);
             var fileCount = files.Length;
 #if UNITY_IOS || UNITY_ANDROID
-            if (fileCount == 0) {
-                OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DefaultFolderPath, WorldObjects.DefaultBundledWorldName));
+            if (fileCount == 0)
+            {
+                OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DefaultFolderPath,
+                    WorldObjects.DefaultBundledWorldName));
             }
 #endif
-            if (fileCount == 1) {
+            if (fileCount == 1)
+            {
                 // Only one world is bundled, auto load that world
                 OpenWorldDirectly(files[0].FullName);
             }
-            else if(fileCount > 1) {
+            else if (fileCount > 1)
+            {
                 // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
-                foreach (var mc in menuControls) {
+                foreach (var mc in menuControls)
+                {
                     mc.DeactivateMainMenu();
                 }
-                foreach (var lmc in loadMoreControl) {
+
+                foreach (var lmc in loadMoreControl)
+                {
                     lmc.gameObject.SetActive(true);
                     lmc.SetAsStandalone();
                 }
@@ -220,7 +250,8 @@ namespace Alice.Tweedle.Parse
 #endif
         }
 
-        private void OpenWorldDirectly(string fullName) {
+        private void OpenWorldDirectly(string fullName)
+        {
             loadingScreen.fader.alpha = 1f;
             WorldObjects.GetWorldExecutionState().DisableMainMenu();
             OpenWorld(fullName);
@@ -228,7 +259,8 @@ namespace Alice.Tweedle.Parse
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
         {
-            var dialog = DialogModule.spawnErrorDialog("There was an error executing this world.\n" + tre.Message + "\n\n Should execution continue?");
+            var dialog = DialogModule.spawnErrorDialog("There was an error executing this world.\n" + tre.Message +
+                                                       "\n\n Should execution continue?");
             dialog.OnReturn(keepTrying =>
             {
                 if (keepTrying)
@@ -253,18 +285,24 @@ namespace Alice.Tweedle.Parse
         {
             DirectoryInfo dir = new DirectoryInfo(Application.persistentDataPath);
             FileInfo[] info = dir.GetFiles("*.mp3");
-            foreach (FileInfo f in info){
-                if(f.FullName.Contains("tempAudio")){
-                    try {
+            foreach (FileInfo f in info)
+            {
+                if (f.FullName.Contains("tempAudio"))
+                {
+                    try
+                    {
                         System.IO.File.Delete(f.FullName);
-                    } catch(IOException) {
+                    }
+                    catch (IOException)
+                    {
                         // We'll get them on the next startup.
                     }
                 }
             }
         }
 
-        public void PurgeVm() {
+        public void PurgeVm()
+        {
             m_VM.EmptyQueue();
         }
     }
