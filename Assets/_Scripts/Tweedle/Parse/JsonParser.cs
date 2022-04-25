@@ -155,7 +155,8 @@ namespace Alice.Tweedle.Parse
                 if (!m_System.LoadedFiles.Contains(t))
                 {
                     PlayerLibraryReference libRef;
-                    if (PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef))
+                    var libraryMatch = PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef);
+                    if (libraryMatch == 0)
                     {
                         yield return JsonParser.Parse(m_System, libRef.path.fullPath, m_ExceptionHandler);
                     }
@@ -164,7 +165,8 @@ namespace Alice.Tweedle.Parse
                             WorldObjects.SceneGraphLibraryName + " " + PlayerLibraryManifest.Instance.GetLibraryVersion(),
                             WorldObjects.SceneGraphLibraryName + " " + t.version,
                             PlayerLibraryManifest.Instance.aliceVersion,
-                            manifest.provenance.aliceVersion));
+                            manifest.provenance.aliceVersion,
+                            libraryMatch));
                     }
                 }
             }

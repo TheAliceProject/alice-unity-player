@@ -114,10 +114,10 @@ namespace Alice.Tweedle.Parse
                 case TweedleVersionException tve:
                     NotifyUserOfLoadError(
                         "Unable to open the world with this player",
-                        "This player is compatible with Alice " + tve.PlayerCompatibleAliceVersion +
-                        "\nThe world was created using Alice " + tve.SourceAliceVersion +
-                        "\n\nThe player has " + tve.ExpectedVersion + "\nThe world requires " + tve.DiscoveredVersion +
-                        "\n\nTry updating the player.");
+                        $"This player is compatible with Alice {tve.PlayerCompatibleAliceVersion}\nThe world" +
+                        $" was created using Alice {tve.SourceAliceVersion}\n\nThe player has {tve.ExpectedVersion}\n" +
+                        $"The world requires {tve.DiscoveredVersion}\n\n" +
+                        (tve.LibraryComparison < 0 ? "Try updating the player." : "Try updating Alice and exporting again."));
                     break;
                 case TweedleParseException _:
                     NotifyUserOfLoadError("Unable to read this world", e.Message);
