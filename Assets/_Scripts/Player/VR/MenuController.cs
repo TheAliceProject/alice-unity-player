@@ -89,16 +89,17 @@ public class MenuController : MonoBehaviour
         if (!_isDisplaying)
             return;
 
-        if (Input.GetAxis("RightThumbstickUpDown") > 0) {
+        if (Input.GetAxis("LeftThumbstickUpDown") > 0) {
             if (_isSpeedSubButtonActive)
                 UpdateSpeed();
             else
                 SelectButton();
         } else if(!_isSpeedSubButtonActive) {
-            ResetButton();
-            _activeButton = Button.None;
+            // should do nothing here
+            // ResetButton();
+            // _activeButton = Button.None;
         }
-        if (VRControl.IsRightTriggerUp())
+        if (VRControl.IsLeftTriggerUp())
             ActivateButton();
     }
 
@@ -106,10 +107,10 @@ public class MenuController : MonoBehaviour
         var now = Time.unscaledTime;
         if (now - TIME_BETWEEN_CHANGES < _lastSpeedChangeTime) return;
 
-        if (Input.GetAxis("RightThumbstickLeftRight") > .25) {
+        if (Input.GetAxis("LeftThumbstickLeftRight") > .25) {
             _lastSpeedChangeTime = now;
             _executionState.IncreaseSpeed();
-        } else if (Input.GetAxis("RightThumbstickLeftRight") < -.25) {
+        } else if (Input.GetAxis("LeftThumbstickLeftRight") < -.25) {
             _lastSpeedChangeTime = now;
             _executionState.DecreaseSpeed();
         }
@@ -118,16 +119,16 @@ public class MenuController : MonoBehaviour
     }
 
     private void SelectButton() {
-        if (Input.GetAxis("RightThumbstickLeftRight") < -0.5) {
+        if (Input.GetAxis("LeftThumbstickLeftRight") < -0.5) {
             UpdateButton(playPauseButton);
             _activeButton = Button.PlayPause;
-        } else if (Input.GetAxis("RightThumbstickLeftRight") < 0)  {
+        } else if (Input.GetAxis("LeftThumbstickLeftRight") < 0)  {
             UpdateButton(speedButton);
             _activeButton = Button.Speed;
-        } else if (_executionState.IsMainMenuAllowed() && Input.GetAxis("RightThumbstickLeftRight") > 0.5) {
+        } else if (_executionState.IsMainMenuAllowed() && Input.GetAxis("LeftThumbstickLeftRight") > 0.5) {
             UpdateButton(leaveButton);
             _activeButton = Button.Exit;
-        } else if (Input.GetAxis("RightThumbstickLeftRight") > 0)  {
+        } else if (Input.GetAxis("LeftThumbstickLeftRight") > 0)  {
             UpdateButton(replayButton);
             _activeButton = Button.Reload;
         }
@@ -175,7 +176,11 @@ public class MenuController : MonoBehaviour
         replayButton.SetActive(shouldDisplay);
         leaveButton.SetActive(shouldDisplay && _executionState.IsMainMenuAllowed());
         speedSubButton.SetActive(shouldDisplay);
-
+        if (shouldDisplay)
+        {
+            UpdateButton(playPauseButton);
+            _activeButton = Button.PlayPause;
+        }
         _executionState.EnableVrEvents(!shouldDisplay);
     }
 
