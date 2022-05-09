@@ -2,6 +2,8 @@ using UnityEngine;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
 using Alice.Player.Primitives;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Alice.Player.Unity {
     public sealed class SGSphere : SGShape {
@@ -11,6 +13,7 @@ namespace Alice.Player.Unity {
         protected override void Awake() {
             base.Awake();
             RegisterPropertyDelegate(RADIUS_PROPERTY_NAME, OnRadiusPropertyChanged);
+            m_ModelTransform.rotation = Quaternion.AngleAxis(90, Vector3.up);
         }
 
         private void OnRadiusPropertyChanged(TValue inValue) {
