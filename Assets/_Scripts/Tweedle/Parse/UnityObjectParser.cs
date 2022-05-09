@@ -78,12 +78,16 @@ namespace Alice.Tweedle.Parse
             WorldObjects.GetWorldExecutionState().SetNormalTimescale();
             VRControl.HideControls();
             yield return YieldLoadingScreens(true);
-            worldLoader.AddWorldToRecents(path);
+
             m_System = new TweedleSystem();
-
-            yield return JsonParser.Parse(m_System, path, HandleParseException);
-
+            yield return JsonParser.Parse(m_System, path, HandleReadException);
             m_System.Link();
+
+            try {
+                worldLoader.AddWorldToRecents(path);
+            } catch(Exception e) {
+                HandleReadException(e);
+            }
             Camera.main.backgroundColor = Color.clear;
 
             if (dumpTypeOutlines)
@@ -102,24 +106,26 @@ namespace Alice.Tweedle.Parse
             m_IsLoading = false;
         }
 
-        private void HandleParseException(Exception e) {
-            if (e is ZipException) {
-                ZipException ze = e as ZipException;
-                NotifyUserOfLoadError("Unable to read this file", ze.Message);
-            } else if (e is TweedleVersionException) {
-                TweedleVersionException tve = e as TweedleVersionException;
-                NotifyUserOfLoadError(
-                    "Unable to open the world with this player",
-                    "This player is compatible with Alice " + tve.PlayerCompatibleAliceVersion +
-                    "\nThe world was created using Alice " + tve.SourceAliceVersion +
-                    "\n\nThe player has " + tve.ExpectedVersion + "\nThe world requires " + tve.DiscoveredVersion +
-                    "\n\nTry updating the player.");
-            } else if (e is TweedleParseException) {
-                NotifyUserOfLoadError("Unable to read this world", e.Message);
-            } else {
-                NotifyUserOfLoadError("An unexpected error occurred", e.Message);
+        private void HandleReadException(Exception e) {
+            switch (e) {
+                case ZipException ze:
+                    NotifyUserOfLoadError("Unable to read this file", ze.Message);
+                    break;
+                case TweedleVersionException tve:
+                    NotifyUserOfLoadError(
+                        "Unable to open the world with this player",
+                        $"This player is compatible with Alice {tve.PlayerCompatibleAliceVersion}\nThe world" +
+                        $" was created using Alice {tve.SourceAliceVersion}\n\nThe player has {tve.ExpectedVersion}\n" +
+                        $"The world requires {tve.DiscoveredVersion}\n\n" +
+                        (tve.LibraryComparison < 0 ? "Try updating the player." : "Try updating Alice and exporting again."));
+                    break;
+                case TweedleParseException _:
+                    NotifyUserOfLoadError("Unable to read this world", e.Message);
+                    break;
+                default:
+                    NotifyUserOfLoadError("An unexpected error occurred", e.Message);
+                    break;
             }
-
         }
 
         private void NotifyUserOfLoadError(string title, string message)

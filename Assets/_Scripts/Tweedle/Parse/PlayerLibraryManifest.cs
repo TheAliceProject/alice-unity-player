@@ -31,17 +31,18 @@ namespace Alice.Tweedle.Parse {
         [SerializeField, UnityEngine.Serialization.FormerlySerializedAs("m_Libraries")]
         private PlayerLibraryReference[] m_BuiltInLibraries = null;
 
-        public bool TryGetLibrary(ProjectIdentifier inIdentifier, out PlayerLibraryReference outLibRef) {
-
+        public int TryGetLibrary(ProjectIdentifier inIdentifier, out PlayerLibraryReference outLibRef) {
+            var comparison = -1;
             foreach (var libRef in m_BuiltInLibraries) {
-                if (libRef.identifier .EqualsVersionMatch(inIdentifier)) {
+                comparison = libRef.identifier.CompareCompatibility(inIdentifier);
+                if (comparison == 0) {
                     outLibRef = libRef;
-                    return true;
+                    return comparison;
                 }
             }
 
             outLibRef = new PlayerLibraryReference();
-            return false;
+            return comparison;
         }
 
     }

@@ -1,4 +1,6 @@
-﻿namespace Alice.Tweedle.File
+﻿using System;
+
+namespace Alice.Tweedle.File
 {
     [System.Serializable]
     public class ProjectIdentifier
@@ -30,27 +32,30 @@
             return Equals((ProjectIdentifier)obj);
         }
 
-        public bool EqualsVersionMatch(ProjectIdentifier other)
-        {
-            return name.Equals(other.name) && VersionEqualOrGreater(version, other.version) && type.Equals(other.type);
+        public int CompareCompatibility(ProjectIdentifier other) {
+            if (!name.Equals(other.name) || !type.Equals(other.type))
+                return -1;
+            var majorVersion = GetMajorVersion();
+            var otherMajorVersion = other.GetMajorVersion();
+            // Pre-release. Not stable yet. Must match version exactly.
+            if (majorVersion == 0 || otherMajorVersion == 0)
+                return StringComparer.Ordinal.Compare(version, other.version);
+            // Once stable (1.0), major version change indicates breaking change
+            return otherMajorVersion - majorVersion;
+        }
+
+        private int GetMajorVersion() {
+            return int.Parse(version.Substring(0, version.IndexOf('.')));
+        }
+
+        // TODO Expand identifier to follow semver and include patch, pre-release, and build
+        private int GetMinorVersion() {
+            return int.Parse(version.Substring(version.IndexOf('.') + 1));
         }
 
         public bool Equals(ProjectIdentifier other)
         {
             return name.Equals(other.name) && version.Equals(other.version) && type.Equals(other.type);
-        }
-
-        public bool VersionEqualOrGreater(string libraryVersion, string testVersion)
-        {
-            int frontLib = int.Parse(libraryVersion.Substring(0, libraryVersion.IndexOf('.')));
-            int frontTest = int.Parse(testVersion.Substring(0, testVersion.IndexOf('.')));
-            int libVer = int.Parse(libraryVersion.Substring(libraryVersion.IndexOf('.') + 1));
-            int testVer = int.Parse(testVersion.Substring(testVersion.IndexOf('.') + 1));
-
-            if (frontTest > frontLib)
-                return false;
-
-            return libVer >= testVer;
         }
 
         public override int GetHashCode()
