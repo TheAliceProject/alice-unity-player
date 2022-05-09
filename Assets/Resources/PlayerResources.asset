@@ -22,7 +22,8 @@ MonoBehaviour:
     type: 2}
   m_TransparentTorusMaterial: {fileID: 2100000, guid: 822416802eafe2e4caec2ed8e17fe047,
     type: 2}
-  m_BoxMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_BoxMesh: {fileID: 4658279228147188485, guid: 8b760cd8170da40a3a3caa3e60c4d2a8,
+    type: 3}
   m_SphereMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   m_CylinderMesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
   m_ConeMesh: {fileID: 4300000, guid: bce710460135b6549a4f01a69997fa8d, type: 3}
