@@ -104,12 +104,12 @@ namespace Alice.Tweedle.Parse
 
             RenderSettings.skybox = null;
             StartQueueProcessing();
+            loadingVFX.FinishLoading();
             yield return YieldLoadingScreens(false);
             VRControl.ShowControls();
             WorldControl.ShowWorldControlsBriefly();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
             m_IsLoading = false;
-            loadingVFX.FinishLoading();
         }
 
         private void HandleParseException(Exception e)

@@ -2216,6 +2216,7 @@ Transform:
   - {fileID: 707009735}
   - {fileID: 1334625017}
   - {fileID: 1476238744}
+  - {fileID: 1746744492}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5600,7 +5601,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 583400857}
     m_Modifications:
     - target: {fileID: 198975706, guid: 6c508c36274c85345a9da37673b290a4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5614,7 +5615,7 @@ PrefabInstance:
     - target: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
         type: 3}
@@ -5644,12 +5645,12 @@ PrefabInstance:
     - target: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
         type: 3}
@@ -14950,6 +14951,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1746744492 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
+    type: 3}
+  m_PrefabInstance: {fileID: 999385045}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1752458048
 GameObject:
   m_ObjectHideFlags: 0
@@ -15219,7 +15226,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 2.2227777e-38, y: 9.1858e-41, z: -2.4405384e-30, w: 9.188e-41}
+  m_BoundingSphereOverride: {x: 5.418293e-39, y: -9.1835e-41, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

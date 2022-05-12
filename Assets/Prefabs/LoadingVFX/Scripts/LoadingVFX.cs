@@ -32,13 +32,15 @@ public class LoadingVFX : MonoBehaviour
     [Header("Ground")] [SerializeField] private GameObject ground;
     [SerializeField] private Light groundLight;
 
+    private float startPullForce = 20.0f;
     private bool startCountdown = false;
     private bool isStartDecreaseForce = false;
     private float timer = 0f;
     private bool hasWindPlayed = false;
+    private bool hasFinish = false;
     private BlowObj[] surroundingObjs;
     private Vector3 forwardDir;
-    private bool hasFinish = false;
+    private Coroutine co;
 
     private void Start()
     {
@@ -46,19 +48,34 @@ public class LoadingVFX : MonoBehaviour
         blocker.GetComponent<MeshRenderer>().enabled = false;
         ground.SetActive(false);
         groundLight.intensity = 0;
+        hasFinish = false;
     }
 
     public void FinishLoading()
     {
-        blocker.SetActive(false);
+        blocker.GetComponent<MeshRenderer>().enabled = false;
         ground.SetActive(false);
-        hasFinish = true;
+        groundLight.intensity = 0;
+        pullForce = startPullForce;
+        startCountdown = false;
+        isStartDecreaseForce = false;
+        timer = 0f;
+        hasWindPlayed = false;
+        hasFinish = false;
         foreach (ParticleSystem system in windVFX)
         {
             system.Stop();
         }
 
-        gameObject.SetActive(false);
+        foreach (BlowObj blowObj in surroundingObjs)
+        {
+            blowObj.ResetPosition();
+        }
+
+        blocker.transform.position = blockerStartPoint.position;
+        StopCoroutine(StartIncreaseBlockerThickness());
+        StopCoroutine(StartDecreaseForce());
+        StopCoroutine(StartMovingBlocker());
     }
 
     private void Update()
@@ -112,7 +129,6 @@ public class LoadingVFX : MonoBehaviour
             blockerColor.a += Time.deltaTime * .2f;
             blocker.GetComponent<MeshRenderer>().material.color = blockerColor;
             timer += Time.deltaTime;
-            Debug.Log(blockerColor.a);
             yield return null;
         }
 

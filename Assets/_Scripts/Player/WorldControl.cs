@@ -22,6 +22,8 @@ public class WorldControl : MonoBehaviour
     public Sprite pauseSprite;
 
     public Material skyboxMaterial;
+    public GameObject blocker;
+    public Material blockerMaterial;
 
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
 
@@ -52,6 +54,7 @@ public class WorldControl : MonoBehaviour
             newCamera.tag = "MainCamera";
         }
         WorldObjects.GetWorldExecutionState().Reset();
+        blocker.GetComponent<MeshRenderer>().material = blockerMaterial;
         RenderSettings.skybox = skyboxMaterial;
         uISlidedown.ForceSlide(false);
     }
