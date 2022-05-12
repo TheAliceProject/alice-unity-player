@@ -791,6 +791,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 229393331}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &231086470 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3426557129220239009, guid: 6c508c36274c85345a9da37673b290a4,
+    type: 3}
+  m_PrefabInstance: {fileID: 999385045}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &239271556 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1600759796425551021, guid: efee6d1d4d595d046a09b11eab729e4c,
@@ -2216,7 +2222,6 @@ Transform:
   - {fileID: 707009735}
   - {fileID: 1334625017}
   - {fileID: 1476238744}
-  - {fileID: 1746744492}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2810,6 +2815,8 @@ MonoBehaviour:
   playSprite: {fileID: 21300000, guid: 9bb9663a2c5497a4199b48fc13855f8b, type: 3}
   pauseSprite: {fileID: 21300000, guid: 1ba87950bae933f41acba5387dadd70b, type: 3}
   skyboxMaterial: {fileID: 2100000, guid: f30233b56685b2744bc740ad292920b8, type: 2}
+  blocker: {fileID: 231086470}
+  blockerMaterial: {fileID: 2100000, guid: b083b8d7e3058bd468e58143bb2d418d, type: 2}
 --- !u!1 &666837253
 GameObject:
   m_ObjectHideFlags: 0
@@ -5601,7 +5608,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 583400857}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 198975706, guid: 6c508c36274c85345a9da37673b290a4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5615,7 +5622,7 @@ PrefabInstance:
     - target: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
         type: 3}
@@ -14951,12 +14958,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &1746744492 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8819708264544694019, guid: 6c508c36274c85345a9da37673b290a4,
-    type: 3}
-  m_PrefabInstance: {fileID: 999385045}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1752458048
 GameObject:
   m_ObjectHideFlags: 0

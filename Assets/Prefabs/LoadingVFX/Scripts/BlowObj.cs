@@ -3,6 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public struct BlowObjProperty
+{
+    public GameObject prefab;
+    public Vector3 spawnPosition;
+    public Quaternion spawnRotation;
+    public float scaleFactor;
+}
+
 public class BlowObj : MonoBehaviour
 {
     [SerializeField] private float blowTime = 1.5f;
@@ -23,6 +32,8 @@ public class BlowObj : MonoBehaviour
         originalRotation = o.transform.rotation;
         rigidbody = GetComponent<Rigidbody>();
         rigidbody.isKinematic = true;
+        rigidbody.velocity = Vector3.zero;
+        rigidbody.angularVelocity = Vector3.zero;
     }
 
     private void Update()
@@ -48,16 +59,8 @@ public class BlowObj : MonoBehaviour
         isCountDown = true;
     }
 
-    public void ResetPosition()
+    public void RemoveObject()
     {
-        shouldBlow = false;
-        isCountDown = false;
-        rigidbody.velocity = Vector3.zero;
-        rigidbody.angularVelocity = Vector3.zero;
-        rigidbody.isKinematic = true;
-        timer = 0f;
-        var o = gameObject;
-        o.transform.position = originalPosition;
-        o.transform.rotation = originalRotation;
+        Destroy(gameObject);
     }
 }

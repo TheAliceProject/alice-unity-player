@@ -31,6 +31,7 @@ public class LoadingVFX : MonoBehaviour
     [SerializeField] private float movingDuration = 5.0f;
     [Header("Ground")] [SerializeField] private GameObject ground;
     [SerializeField] private Light groundLight;
+    [SerializeField] private BlowObjProperty[] blowObjProperties;
 
     private float startPullForce = 20.0f;
     private bool startCountdown = false;
@@ -51,8 +52,32 @@ public class LoadingVFX : MonoBehaviour
         hasFinish = false;
     }
 
+    public void SpawnBlowObjs()
+    {
+        foreach (BlowObjProperty blowObjProperty in blowObjProperties)
+        {
+            GameObject o = Instantiate(blowObjProperty.prefab, blowObjProperty.spawnPosition,
+                blowObjProperty.spawnRotation);
+            o.transform.localScale = new Vector3(blowObjProperty.scaleFactor, blowObjProperty.scaleFactor,
+                blowObjProperty.scaleFactor);
+        }
+
+        surroundingObjs = FindObjectsOfType<BlowObj>();
+    }
+
+
     public void FinishLoading()
     {
+        foreach (ParticleSystem system in windVFX)
+        {
+            system.Stop();
+        }
+
+        foreach (BlowObj blowObj in surroundingObjs)
+        {
+            blowObj.RemoveObject();
+        }
+
         blocker.GetComponent<MeshRenderer>().enabled = false;
         ground.SetActive(false);
         groundLight.intensity = 0;
@@ -62,15 +87,6 @@ public class LoadingVFX : MonoBehaviour
         timer = 0f;
         hasWindPlayed = false;
         hasFinish = false;
-        foreach (ParticleSystem system in windVFX)
-        {
-            system.Stop();
-        }
-
-        foreach (BlowObj blowObj in surroundingObjs)
-        {
-            blowObj.ResetPosition();
-        }
 
         blocker.transform.position = blockerStartPoint.position;
         StopCoroutine(StartIncreaseBlockerThickness());
@@ -192,7 +208,7 @@ public class LoadingVFX : MonoBehaviour
     {
         if (shouldPull)
         {
-            var adjustCenter = new Vector3(0, 0f, 0);
+            var adjustCenter = new Vector3(0f, 0f, 0f);
 
             if (other.CompareTag("BlowObj"))
             {
@@ -203,8 +219,8 @@ public class LoadingVFX : MonoBehaviour
             {
                 other.GetComponent<Rigidbody>().AddForce(forwardDir.normalized * pullForce * Time.deltaTime,
                     ForceMode.Acceleration);
-                int randonRot = Random.Range(0, 2);
-                switch (randonRot)
+                int randomRot = Random.Range(0, 2);
+                switch (randomRot)
                 {
                     case 0:
                         other.GetComponent<Rigidbody>().AddTorque(transform.up * torqueForce * Time.deltaTime);

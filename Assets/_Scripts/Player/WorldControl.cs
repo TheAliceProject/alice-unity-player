@@ -24,6 +24,7 @@ public class WorldControl : MonoBehaviour
     public Material skyboxMaterial;
     public GameObject blocker;
     public Material blockerMaterial;
+    public LoadingVFX loadingVFX;
 
     private static List<WorldControl> currentWorldControls = new List<WorldControl>();
 
@@ -55,6 +56,7 @@ public class WorldControl : MonoBehaviour
         }
         WorldObjects.GetWorldExecutionState().Reset();
         blocker.GetComponent<MeshRenderer>().material = blockerMaterial;
+        loadingVFX.SpawnBlowObjs();
         RenderSettings.skybox = skyboxMaterial;
         uISlidedown.ForceSlide(false);
     }
