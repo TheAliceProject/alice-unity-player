@@ -133,6 +133,7 @@ namespace Alice.Tweedle.Parse
             modalWindow.SetData(title, message);
             if (VRControl.IsLoadedInVR())
             {
+                VRControl.ShowControls();
                 var modalWindowVr = Instantiate(modalWindowPrefabVR, mainMenuVr);
                 modalWindowVr.SetData(title, message);
                 // Make sure when one closes, to close the other as well
