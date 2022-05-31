@@ -200,6 +200,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 4b4be79d956afac48af36a50b061d38a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1018645861119311891, guid: 4b4be79d956afac48af36a50b061d38a,
         type: 3}
       propertyPath: m_Layer
@@ -1197,7 +1202,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &301597964
 Transform:
   m_ObjectHideFlags: 0
@@ -1455,6 +1460,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PocketWatch_DEFAULT
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 2aa76e114f470864ca5d0854099b2e7b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2aa76e114f470864ca5d0854099b2e7b, type: 3}
@@ -5031,6 +5041,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 4b4be79d956afac48af36a50b061d38a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1018645861119311891, guid: 4b4be79d956afac48af36a50b061d38a,
         type: 3}
       propertyPath: m_Layer
@@ -5400,6 +5415,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 4b4be79d956afac48af36a50b061d38a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1018645861119311891, guid: 4b4be79d956afac48af36a50b061d38a,
         type: 3}
@@ -5879,6 +5899,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: c78781a6e458ab049b62a3980ec5f151,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
@@ -7199,6 +7224,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Orchid_ORCHID
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 9efec5bc87c0f7542bac76a9748a7cab,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9efec5bc87c0f7542bac76a9748a7cab, type: 3}
 --- !u!4 &1277028472 stripped
@@ -7574,6 +7604,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: c78781a6e458ab049b62a3980ec5f151,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
@@ -13971,7 +14006,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1588761138
 Transform:
   m_ObjectHideFlags: 0
@@ -14264,6 +14299,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TreeTrunk_DEFAULT
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 5eebfb0655d5a6244bf01d40feb3938d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5eebfb0655d5a6244bf01d40feb3938d, type: 3}
@@ -14828,7 +14868,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1807862748
 Transform:
   m_ObjectHideFlags: 0
@@ -15188,7 +15228,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1869485438
 Transform:
   m_ObjectHideFlags: 0
@@ -15411,6 +15451,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DaffodilVase_DAFFODIL_VASE
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 73216e9816aa54342a9e062407c2a7a1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73216e9816aa54342a9e062407c2a7a1, type: 3}
