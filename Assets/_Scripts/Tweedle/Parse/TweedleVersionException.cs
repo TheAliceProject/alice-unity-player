@@ -8,13 +8,16 @@ namespace Alice.Tweedle.Parse
         public readonly string DiscoveredVersion;
         public readonly string PlayerCompatibleAliceVersion;
         public readonly string SourceAliceVersion;
-        public TweedleVersionException(string message, string playerLibrary, string requestedLibrary, string playerCompatibleAlice, string sourceAlice)
+        public readonly int LibraryComparison;
+        public TweedleVersionException(string message, string playerLibrary, string requestedLibrary,
+            string playerCompatibleAlice, string sourceAlice, int libraryComparison)
             : base(message)
         {
             ExpectedVersion = playerLibrary;
             DiscoveredVersion = requestedLibrary;
             PlayerCompatibleAliceVersion = playerCompatibleAlice;
             SourceAliceVersion = sourceAlice;
+            LibraryComparison = libraryComparison;
         }
     }
 }

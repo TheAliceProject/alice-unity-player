@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0614eab3cb65ee2438c20b7ee73218cd, type: 3}
   m_Name: PlayerLibraryManifest
   m_EditorClassIdentifier: 
-  playerVersion: 1.0-beta.15+glTF
+  playerVersion: 1.0-beta.16
   aliceVersion: 3.6.1.0
   m_BuiltInLibraries:
   - path:
       relativePath: Default/SceneGraphLibrary.a3w
     identifier:
       name: SceneGraphLibrary
-      version: 0.15
+      version: 0.16
       type: Library

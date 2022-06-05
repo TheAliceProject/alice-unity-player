@@ -65,7 +65,7 @@ public class WorldControl : MonoBehaviour
         WorldObjects.GetParser().PurgeVm();
         var sceneGraph = GameObject.Find("SceneGraph");
         var destroyedScene = (sceneGraph != null);
-        if (destroyedScene) {
+        if (destroyedScene && SceneGraph.Current.Scene != null) {
             SceneGraph.Current.Scene.DropAllListeners();
         }
         Destroy(sceneGraph);
