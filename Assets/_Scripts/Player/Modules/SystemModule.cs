@@ -1,17 +1,25 @@
-using System.Diagnostics;
 using Alice.Tweedle.Interop;
 using Alice.Tweedle;
-using System;
 
 namespace Alice.Player.Modules
 {
     [PInteropType("System")]
-    static public class SystemModule
+    public static class SystemModule
     {
         [PInteropMethod]
-        static public string getClassName(TValue instance)
+        public static string getClassName(TValue instance)
         {
             return instance.Type.Name;
         }
-    }
+
+        [PInteropMethod]
+        public static string getDefaultWorldMessage()
+        {
+#if UNITY_WEBGL
+            return "Replace the project file, hosted at:" + Tweedle.Parse.UnityObjectParser.AutoLoadedWorldsDirectory;
+#else
+            return "Put them in " + Tweedle.Parse.UnityObjectParser.AutoLoadedWorldsDirectory;
+#endif
+        }
+    }    
 }
