@@ -62,29 +62,22 @@ namespace Alice.Tweedle.Parse
             }
 
             m_System?.Unload();
-            if(m_QueueProcessor != null) {
-                m_QueueProcessor.Stop();
-            }
-            LoadWorld(m_currentFilePath);
+            m_QueueProcessor.Stop();
+            StartCoroutine(DisplayLoadingAndLoadLevel());
         }
 
-        private void LoadWorld(string path)
-        {
-            StartCoroutine(DisplayLoadingAndLoadLevel(path));
-        }
-
-        private IEnumerator DisplayLoadingAndLoadLevel(string path)
+        private IEnumerator DisplayLoadingAndLoadLevel()
         {
             WorldObjects.GetWorldExecutionState().SetNormalTimescale();
             VRControl.HideControls();
             yield return YieldLoadingScreens(true);
 
             m_System = new TweedleSystem();
-            yield return JsonParser.Parse(m_System, path, HandleReadException);
+            yield return JsonParser.Parse(m_System, m_currentFilePath, HandleReadException);
             m_System.Link();
 
             try {
-                worldLoader.AddWorldToRecents(path);
+                worldLoader.AddWorldToRecents(m_currentFilePath);
             } catch(Exception e) {
                 HandleReadException(e);
             }
