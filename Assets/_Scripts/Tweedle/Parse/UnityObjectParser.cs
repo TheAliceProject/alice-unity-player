@@ -88,6 +88,12 @@ namespace Alice.Tweedle.Parse
             } catch(Exception e) {
                 HandleReadException(e);
             }
+            RenderSettings.skybox = null;
+            m_IsLoading = false;
+            yield return StartWorld();
+        }
+
+        private IEnumerator StartWorld() {
             Camera.main.backgroundColor = Color.clear;
 
             if (dumpTypeOutlines)
@@ -96,14 +102,11 @@ namespace Alice.Tweedle.Parse
             }
 
             m_System.QueueProgramMain(m_VM);
-
-            RenderSettings.skybox = null;
             StartQueueProcessing();
             yield return YieldLoadingScreens(false);
             VRControl.ShowControls();
             WorldControl.ShowWorldControlsBriefly();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
-            m_IsLoading = false;
         }
 
         private void HandleReadException(Exception e) {
@@ -161,15 +164,9 @@ namespace Alice.Tweedle.Parse
             yield return loadingScreenRoutine;
             yield return vrLoadingScreenRoutine;
         }
-        public void ReloadCurrentLevel()
-        {
-            StartCoroutine(ReloadDelayed());
-        }
-
-        public IEnumerator ReloadDelayed()
-        {
-            yield return null; // Wait a frame
-            OpenWorld(m_currentFilePath);
+        public void ReloadCurrentLevel() {
+            m_QueueProcessor.Stop();
+            StartCoroutine(StartWorld());
         }
 
         // Use this for MonoBehaviour initialization
