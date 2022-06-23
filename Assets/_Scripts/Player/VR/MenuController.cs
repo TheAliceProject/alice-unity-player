@@ -160,9 +160,11 @@ public class MenuController : MonoBehaviour
                 UpdatePlayPauseIcon();
                 break;
             case Button.Reload:
+                _activeButton = Button.None;
                 _executionState.RestartWorld();
                 break;
             case Button.Exit:
+                _activeButton = Button.None;
                 _executionState.ShowMainMenu();
                 break;
         }
