@@ -16,7 +16,7 @@ namespace Alice.Player.Modules
         public static string getDefaultWorldMessage()
         {
 #if UNITY_WEBGL
-            return "Replace the project file, hosted at:" + Tweedle.Parse.UnityObjectParser.AutoLoadedWorldsDirectory;
+            return "Replace the project file, hosted at: " + Tweedle.Parse.UnityObjectParser.AutoLoadedWorldsDirectory;
 #else
             return "Put them in " + Tweedle.Parse.UnityObjectParser.AutoLoadedWorldsDirectory;
 #endif
