@@ -38,7 +38,7 @@ public class WorldControl : MonoBehaviour
 
     private void ShowMainMenu()
     {
-        var destroyedScene = StopScene();
+        var destroyedScene = SceneGraph.Current.DestroyScene();
 
         WorldObjects.GetIntroCanvas().SetActive(true);
         if (XRSettings.enabled)
@@ -56,21 +56,8 @@ public class WorldControl : MonoBehaviour
         uISlidedown.ForceSlide(false);
     }
 
-    private static bool StopScene() {
-        WorldObjects.GetParser().PurgeVm();
-        var sceneGraph = GameObject.Find("SceneGraph");
-        var destroyedScene = (sceneGraph != null);
-        if (destroyedScene && SceneGraph.Current.Scene != null) {
-            SceneGraph.Current.Scene.DropAllListeners();
-        }
-        Destroy(sceneGraph);
-        return destroyedScene;
-    }
-
     private void RestartWorld() {
-        StopScene();
-        Camera newCamera = Instantiate(CameraPrefab);
-        newCamera.tag = "MainCamera";
+        SceneGraph.Current.ResetScene();
         uISlidedown.ForceSlide(false);
         WorldObjects.GetParser().ReloadCurrentLevel();
     }

@@ -294,15 +294,9 @@ namespace Alice.Player.Unity {
         * Cleans up and destroys all scene graph entities
         */
         public void Clear() {
-            for (int i = 0; i < m_Entities.Count; ++i) {
-                m_Entities[i].CleanUp();
-            }
-            m_Entities.Clear();
+            ClearEntities();
 
             Destroy(m_ModelCacheRoot);
-            
-            m_WaitReturns.Clear();
-            m_WaitReturnsQueue.Clear();
             TextureCache.Clear();
             AudioCache.Clear();
             TextureCache = null;
@@ -311,10 +305,42 @@ namespace Alice.Player.Unity {
             Destroy();
         }
 
+        private void ClearEntities() {
+            foreach (var t in m_Entities) {
+                t.CleanUp();
+            }
+            m_Entities.Clear();
+            m_WaitReturns.Clear();
+            m_WaitReturnsQueue.Clear();
+        }
+
         private void Destroy() {
             if (ReferenceEquals(s_Current, this)) {
                 s_Current = null;
             }
+        }
+
+        public bool DestroyScene() {
+            WorldObjects.GetParser().PurgeVm();
+            var sceneGraph = GameObject.Find("SceneGraph");
+            var destroyedScene = (sceneGraph != null);
+            if (destroyedScene && Scene != null) {
+                Scene.DropAllListeners();
+            }
+            Destroy(sceneGraph);
+            return destroyedScene;
+        }
+
+        public void ResetScene() {
+            WorldObjects.GetParser().PurgeVm();
+            if (Scene != null) {
+                Scene.DropAllListeners();
+            }
+            // Leave ModelCache and SceneCanvas
+            // TODO move myScene cleanup into tweedle, where it is created
+            var myScene = GameObject.Find("myScene (SGScene)");
+            Destroy(myScene);
+            ClearEntities();
         }
     }
 }

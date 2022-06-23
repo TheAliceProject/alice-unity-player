@@ -62,32 +62,31 @@ namespace Alice.Tweedle.Parse
             }
 
             m_System?.Unload();
-            if(m_QueueProcessor != null) {
-                m_QueueProcessor.Stop();
-            }
-            LoadWorld(m_currentFilePath);
+            m_QueueProcessor.Stop();
+            StartCoroutine(DisplayLoadingAndLoadLevel());
         }
 
-        private void LoadWorld(string path)
-        {
-            StartCoroutine(DisplayLoadingAndLoadLevel(path));
-        }
-
-        private IEnumerator DisplayLoadingAndLoadLevel(string path)
+        private IEnumerator DisplayLoadingAndLoadLevel()
         {
             WorldObjects.GetWorldExecutionState().SetNormalTimescale();
             VRControl.HideControls();
             yield return YieldLoadingScreens(true);
 
             m_System = new TweedleSystem();
-            yield return JsonParser.Parse(m_System, path, HandleReadException);
+            yield return JsonParser.Parse(m_System, m_currentFilePath, HandleReadException);
             m_System.Link();
 
             try {
-                worldLoader.AddWorldToRecents(path);
+                worldLoader.AddWorldToRecents(m_currentFilePath);
             } catch(Exception e) {
                 HandleReadException(e);
             }
+            RenderSettings.skybox = null;
+            m_IsLoading = false;
+            yield return StartWorld();
+        }
+
+        private IEnumerator StartWorld() {
             Camera.main.backgroundColor = Color.clear;
 
             if (dumpTypeOutlines)
@@ -96,14 +95,11 @@ namespace Alice.Tweedle.Parse
             }
 
             m_System.QueueProgramMain(m_VM);
-
-            RenderSettings.skybox = null;
             StartQueueProcessing();
             yield return YieldLoadingScreens(false);
             VRControl.ShowControls();
             WorldControl.ShowWorldControlsBriefly();
             WorldObjects.GetWorldExecutionState().ResumeUserTimescale();
-            m_IsLoading = false;
         }
 
         private void HandleReadException(Exception e) {
@@ -161,15 +157,12 @@ namespace Alice.Tweedle.Parse
             yield return loadingScreenRoutine;
             yield return vrLoadingScreenRoutine;
         }
-        public void ReloadCurrentLevel()
-        {
-            StartCoroutine(ReloadDelayed());
-        }
-
-        public IEnumerator ReloadDelayed()
-        {
-            yield return null; // Wait a frame
-            OpenWorld(m_currentFilePath);
+        public void ReloadCurrentLevel() {
+            m_QueueProcessor.Stop();
+            // TODO Move prep tracking to be per scene, not on TweedleSystem, which is code to be run, while prep
+            // tracks the execution of static code.
+            m_System.ResetPrep();
+            StartCoroutine(StartWorld());
         }
 
         // Use this for MonoBehaviour initialization
