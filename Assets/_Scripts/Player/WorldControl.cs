@@ -79,12 +79,8 @@ public class WorldControl : MonoBehaviour
         currentWorldControls?.Remove(this);
     }
 
-    public static void ShowWorldControlsBriefly()
-    {
-        foreach (WorldControl wc in currentWorldControls)
-        {
-            wc.ShowWorldControlBriefly();
-        }
+    public static void ShowWorldControlsBriefly() {
+        GetActiveControl()?.ShowWorldControlBriefly();
     }
 
     private void ShowWorldControlBriefly() {
@@ -93,9 +89,7 @@ public class WorldControl : MonoBehaviour
     }
 
     public static void UpdateViews() {
-        foreach(var wc in currentWorldControls) {
-            wc.UpdateUI();
-        }
+        GetActiveControl()?.UpdateUI();
     }
 
     private void UpdateUI()
@@ -110,17 +104,28 @@ public class WorldControl : MonoBehaviour
     }
 
     public static void Restart() {
-        foreach (var wc in currentWorldControls) {
-            if (wc.isActiveAndEnabled) {
-                wc.RestartWorld();
-                return;
-            }
-        }
+        GetActiveControl()?.RestartWorld();
     }
 
     public static void ReturnToMainMenu() {
+        GetActiveControl()?.ShowMainMenu();
+    }
+
+    private static WorldControl GetActiveControl() {
+        WorldControl active = null;
+        List<WorldControl> inactive = new List<WorldControl>();
         foreach (var wc in currentWorldControls) {
-            wc.ShowMainMenu();
+            if (wc.isActiveAndEnabled) {
+                active = wc;
+            }
+            else {
+                inactive.Add(wc);
+            }
         }
+        foreach (var wc in inactive) {
+            currentWorldControls.Remove(wc);
+        }
+
+        return active;
     }
 }
