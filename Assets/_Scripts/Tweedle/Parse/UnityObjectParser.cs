@@ -166,6 +166,9 @@ namespace Alice.Tweedle.Parse
         }
         public void ReloadCurrentLevel() {
             m_QueueProcessor.Stop();
+            // TODO Move prep tracking to be per scene, not on TweedleSystem, which is code to be run, while prep
+            // tracks the execution of static code.
+            m_System.ResetPrep();
             StartCoroutine(StartWorld());
         }
 

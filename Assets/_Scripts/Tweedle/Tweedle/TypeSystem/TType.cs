@@ -138,6 +138,12 @@ namespace Alice.Tweedle
             }
         }
 
+        public void ResetPrep() {
+            if (m_Status == Status.Prepped) {
+                m_Status = Status.Linked;
+            }
+        }
+
         public virtual void AddStaticInitializer(ExecutionScope inScope, StepSequence ioSteps)
         {
         }

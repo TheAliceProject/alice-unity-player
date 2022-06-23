@@ -128,6 +128,12 @@ namespace Alice.Tweedle.Parse
             }
         }
 
+        public void ResetPrep() {
+            foreach (var t in m_TypeList) {
+                t.ResetPrep();
+            }
+        }
+
         /// <summary>
         /// Runs static initializers for all loaded types,
         /// and queues up any additional execution steps
