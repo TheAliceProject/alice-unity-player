@@ -131,7 +131,7 @@ public class VRBrowser : MonoBehaviour
             if (path.Contains("/") || path.Contains("\\") || path.Contains(".."))
                 Navigate(path);
             else if(path.Contains(".a3w") || path.Contains(".A3W"))
-                WorldObjects.GetParser().OpenWorld(pwd + "/" + path);
+                WorldObjects.GetGameController().OpenWorld(pwd + "/" + path);
             else
                 Debug.LogError("Invalid path: " + path);
         }

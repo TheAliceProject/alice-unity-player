@@ -9,7 +9,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace Alice.Tweedle.Parse
 {
-    public class UnityObjectParser : MonoBehaviour
+    public class GameController : MonoBehaviour
     {
         public static string AutoLoadedWorldsDirectory;
         public bool dumpTypeOutlines = false;

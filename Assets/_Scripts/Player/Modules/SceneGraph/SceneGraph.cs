@@ -321,7 +321,7 @@ namespace Alice.Player.Unity {
         }
 
         public bool DestroyScene() {
-            WorldObjects.GetParser().PurgeVm();
+            WorldObjects.GetGameController().PurgeVm();
             var sceneGraph = GameObject.Find("SceneGraph");
             var destroyedScene = (sceneGraph != null);
             if (destroyedScene && Scene != null) {
@@ -332,7 +332,7 @@ namespace Alice.Player.Unity {
         }
 
         public void ResetScene() {
-            WorldObjects.GetParser().PurgeVm();
+            WorldObjects.GetGameController().PurgeVm();
             if (Scene != null) {
                 Scene.DropAllListeners();
             }

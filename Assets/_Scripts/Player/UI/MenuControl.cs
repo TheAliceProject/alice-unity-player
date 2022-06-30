@@ -74,10 +74,10 @@ public class MenuControl : MonoBehaviour
             }
             
             if(System.IO.File.Exists(zipPath) == false) {
-                throw new FileNotFoundException("UnityObjectParser.Select Failed to open File " + zipPath);
+                throw new FileNotFoundException($"No file found at {zipPath}");
             }
 
-            WorldObjects.GetParser().OpenWorld(zipPath);
+            WorldObjects.GetGameController().OpenWorld(zipPath);
         });
     }
 
