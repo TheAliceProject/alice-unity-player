@@ -166,14 +166,14 @@ namespace Alice.Tweedle.Parse
         #endregion // Steps
 
         /// <summary>
-        /// Returns a runtime assembly for this system.
+        /// Returns the runtime assembly for this system.
         /// This assembly will be unloaded when the system is unloaded.
         /// </summary>
         public TAssembly GetRuntimeAssembly()
         {
             if (m_RuntimeAssembly == null)
             {
-                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies.ToArray(), TAssemblyFlags.Runtime);
+                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies, TAssemblyFlags.Runtime);
                 m_DynamicAssemblies.Add(m_RuntimeAssembly);
             }
             return m_RuntimeAssembly;

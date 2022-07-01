@@ -28,12 +28,12 @@ namespace Alice.Tweedle
 
         private List<TType> m_TypeList;
         private Dictionary<string, TType> m_TypeMap;
-        private TAssembly[] m_Dependencies;
+        private List<TAssembly> m_Dependencies;
 
         /// <summary>
         /// Creates a new assembly with the given name and dependencies.
         /// </summary>
-        public TAssembly(string inName, TAssembly[] inDependencies, TAssemblyFlags inFlags)
+        public TAssembly(string inName, List<TAssembly> inDependencies, TAssemblyFlags inFlags)
         {
             Name = inName;
             Flags = inFlags;
@@ -147,9 +147,13 @@ namespace Alice.Tweedle
         }
 
         /// <summary>
-        /// Dependency array representing no dependencies.
+        /// Dependency List representing no dependencies.
         /// </summary>
-        static public readonly TAssembly[] NO_DEPENDENCIES = new TAssembly[0];
+        public static readonly List<TAssembly> NO_DEPENDENCIES = new List<TAssembly>();
+
+        public void AddDependency(TAssembly assembly) {
+            m_Dependencies.Add(assembly);
+        }
     }
 
     /// <summary>
