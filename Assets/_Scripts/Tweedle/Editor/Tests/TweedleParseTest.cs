@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
-using System.Collections;
 using System;
+using System.Text.RegularExpressions;
 
 namespace Alice.Tweedle.Parse
 {
@@ -108,11 +107,10 @@ namespace Alice.Tweedle.Parse
         }
 
         [Test]
-        public void ClassNamedSameAsBooleanPrimitiveShouldCreateSomething()
+        public void ClassNamedSameAsBooleanPrimitiveShouldLogError()
         {
-            TType tested = ParseType("class Boolean {}");
-
-            Assert.NotNull(tested, "The parser should have returned something.");
+            ParseType("class Boolean {}");
+            LogAssert.Expect(LogType.Error, new Regex("mismatched input 'Boolean'"));
         }
 
         [Test]
@@ -488,11 +486,10 @@ namespace Alice.Tweedle.Parse
         ///
 
         [Test]
-        public void EnumNamedSameAsBooleanPrimitiveShouldCreateSomething()
+        public void EnumNamedSameAsBooleanPrimitiveShouldBeAnError()
         {
-            TType tested = ParseType("enum Boolean {TRUE, FALSE}");
-
-            Assert.NotNull(tested, "The parser should have returned something.");
+            ParseType("enum Boolean {TRUE, FALSE}");
+            LogAssert.Expect(LogType.Error, new Regex("mismatched input 'Boolean'"));
         }
 
         [Test]
