@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections;
+using NUnit.Framework;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -36,9 +38,24 @@ namespace Alice.Tweedle.Parse
 
         private TweedleSystem StoredSystem(string str)
         {
-            JsonParser json = new JsonParser(new TweedleSystem(), null, null);
-            json.ParseJson(str);
+            var json = new JsonParser(new TweedleSystem(), null, null);
+            WaitOnEnumeratorTree(json.ParseJson(str, new JsonParser.ModelManifestHolder()));
             return json.StoredSystem;
+        }
+
+        private static void WaitOnEnumeratorTree(IEnumerator enumerator) {
+            while (enumerator.MoveNext()) {
+                try {
+                    var val = enumerator.Current;
+                    if (val is IEnumerator val1) {
+                        WaitOnEnumeratorTree(val1);
+                    }
+                }
+                catch (NullReferenceException nre) {
+                    // Ignore errors when reading partial test structures
+                    Console.WriteLine(nre);
+                }
+            }
         }
 
         // Tweedle System
@@ -240,6 +257,12 @@ namespace Alice.Tweedle.Parse
                 "\"resources\":[" +
                     "{\"name\": \"beast_growl_02_echo.mp3\", \"type\": \"audio\", \"format\": \"mpeg\", \"file\": \"resources/beast_growl_02_echo.mp3\", \"uuid\": \"23d9dfb6-5cb0-4b55-bd05-1ec5bb133381\", \"duration\": 3.313}" +
                 "]}";
+            var resources = StoredSystem(manifest).Resources;
+            using IEnumerator<ResourceIdentifier> keys = resources.Keys.GetEnumerator();
+            keys.Reset();
+            while (keys.MoveNext()) {
+                resources.TryGetValue(keys.Current, out var val);
+            }
             Assert.NotNull(StoredSystem(manifest).Resources[new ResourceIdentifier("resources/beast_growl_02_echo.mp3", ContentType.Audio, "mpeg")], "Audio should be stored, not be null.");
         }
 
