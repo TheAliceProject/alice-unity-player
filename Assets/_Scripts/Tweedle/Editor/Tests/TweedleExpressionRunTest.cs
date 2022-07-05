@@ -309,7 +309,7 @@ namespace Alice.Tweedle.Parse
         public void AnColorInAPaintVariableShouldCompareToAColor()
         {
             Init();
-            RunStatement("Paint i <- Color.RED);", scope);
+            RunStatement("Paint i <- Color.RED;", scope);
             RunStatement("Boolean b <- (i == Color.RED);", scope);
             Assert.IsTrue(scope.GetValue("b").ToBoolean());
         }

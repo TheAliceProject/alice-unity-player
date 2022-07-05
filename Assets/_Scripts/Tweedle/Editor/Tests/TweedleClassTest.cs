@@ -81,7 +81,7 @@ namespace Alice.Tweedle.Parse
             + "  par.x <- par.x + 10;\n"
             + "  return par;\n }\n"
             + "void doMyThing(WholeNumber value) {\n"
-            + "  super.doMyThing(value: value + 1;\n }\n"
+            + "  super.doMyThing(value: value + 1);\n }\n"
             + "\n}";
 
         static string grandchildClass =

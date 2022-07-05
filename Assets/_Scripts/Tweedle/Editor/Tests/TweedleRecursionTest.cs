@@ -15,7 +15,8 @@ namespace Alice.Tweedle.Parse
             return (TClassType)Parser.ParseType(src);
         }
 
-        private const string Fib = @"class Fibonacci {
+        private const string Fib =
+@"class Fibonacci {
   Fibonacci()
   {}
 
@@ -23,11 +24,13 @@ namespace Alice.Tweedle.Parse
     if (n==1 || n==0) {
       return 1;
     } else {
-      return compute(n: n-2) + compute(n: n-1)};
+      return compute(n: n-2) + compute(n: n-1);
     }
-  }";
+  }
+}";
 
-        private const string FibTogether = @"class ParallelFibonacci {
+        private const string FibTogether =
+@"class ParallelFibonacci {
   ParallelFibonacci()
   {}
 
@@ -43,7 +46,8 @@ namespace Alice.Tweedle.Parse
       }
       return n2 + n1;
     }
-  }";
+  }
+}";
 
 
         TweedleSystem NewSystem()
