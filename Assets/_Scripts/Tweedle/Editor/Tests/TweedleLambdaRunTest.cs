@@ -56,9 +56,8 @@ namespace Alice.Tweedle.Parse
                 "    });\n" +
                 "  }\n" +
                 "}";
-            TGenerics.Reset();
-            lambdaTest = (TClassType)parser.ParseType(sourceWithLambdas);
-            TweedleSystem system = new TweedleSystem();
+            var system = new TweedleSystem();
+            lambdaTest = (TClassType)parser.ParseType(sourceWithLambdas, system.GetRuntimeAssembly());
             system.GetRuntimeAssembly().Add(lambdaTest);
             vm = new TestVirtualMachine(system);
             scope = new ExecutionScope(testStackFrame, vm);

@@ -95,7 +95,6 @@ namespace Alice.Tweedle
             if (m_Status != Status.Unloaded)
             {
                 m_Status = Status.Unloaded;
-                TGenerics.Unload(this);
             }
         }
 
@@ -121,6 +120,22 @@ namespace Alice.Tweedle
                     return type;
             }
             return null;
+        }
+
+        public TArrayType GetArrayType(TTypeRef inElementType) {
+            if (TypeNamed($"{inElementType.Name}[]") is TArrayType arrayType) return arrayType;
+            
+            arrayType = new TArrayType(this, inElementType);
+            Add(arrayType);
+            return arrayType;
+        }
+
+        public TLambdaType GetLambdaType(TLambdaSignature inSignature) {
+            if (TypeNamed(inSignature.Name) is TLambdaType lambdaType) return lambdaType;
+
+            lambdaType = new TLambdaType(this, inSignature);
+            Add(lambdaType);
+            return lambdaType;
         }
 
         /// <summary>
@@ -153,6 +168,10 @@ namespace Alice.Tweedle
 
         public void AddDependency(TAssembly assembly) {
             m_Dependencies.Add(assembly);
+        }
+
+        public static TAssembly GetDummyAssembly() {
+            return new TAssembly("DummyAssembly", new List<TAssembly>(0), TAssemblyFlags.Runtime);
         }
     }
 

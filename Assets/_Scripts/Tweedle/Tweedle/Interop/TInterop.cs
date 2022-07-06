@@ -62,7 +62,7 @@ namespace Alice.Tweedle.Interop
 
                     TAssembly assembly = inLibrary.GetRuntimeAssembly();
                     TTypeRef elementType = TTypeFor(type.GetElementType(), assembly);
-                    TArrayType arrayType = TGenerics.GetArrayType(elementType, assembly);
+                    TArrayType arrayType = assembly.GetArrayType(elementType);
 
                     return arrayType.Instantiate(elements);
                 }
@@ -222,7 +222,7 @@ namespace Alice.Tweedle.Interop
             {
                 Type elementType = inType.GetElementType();
                 TTypeRef elementTypeRef = TTypeFor(elementType, inAssembly);
-                return TGenerics.GetArrayType(elementTypeRef, inAssembly);
+                return inAssembly.GetArrayType(elementTypeRef);
             }
 
             IntPtr typePtr = inType.TypeHandle.Value;
@@ -269,7 +269,7 @@ namespace Alice.Tweedle.Interop
                 {
                     s_LambdaSignatureEmpty = new TLambdaSignature(new TTypeRef[0], TBuiltInTypes.VOID);
                 }
-                return TGenerics.GetLambdaType(s_LambdaSignatureEmpty, inAssembly);
+                return inAssembly.GetLambdaType(s_LambdaSignatureEmpty);
             }
             else if (TYPE_PLAMBDABASE.IsAssignableFrom(inType))
             {
@@ -294,7 +294,7 @@ namespace Alice.Tweedle.Interop
                 }
 
                 TLambdaSignature sig = new TLambdaSignature(parameterTypes, returnType);
-                return TGenerics.GetLambdaType(sig, inAssembly);
+                return inAssembly.GetLambdaType(sig);
             }
             else
             {

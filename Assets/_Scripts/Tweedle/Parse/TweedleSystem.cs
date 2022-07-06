@@ -203,8 +203,8 @@ namespace Alice.Tweedle.Parse
                 TValue progVal = TBuiltInTypes.TYPE_REF.Instantiate(prog);
 
                 NamedArgument[] arguments = new NamedArgument[1];
-                TArrayType arrayMemberType = TGenerics.GetArrayType(TBuiltInTypes.TEXT_STRING, null);
-                ArrayInitializer args = new ArrayInitializer(arrayMemberType, new ITweedleExpression[0]);
+                TArrayType arrayMemberType = m_RuntimeAssembly.GetArrayType(TBuiltInTypes.TEXT_STRING);
+                ArrayInitializer args = new ArrayInitializer(arrayMemberType, Array.Empty<ITweedleExpression>());
                 arguments[0] = new NamedArgument("args", args);
 
                 vm.Queue(new MethodCallExpression(progVal, "main", arguments));

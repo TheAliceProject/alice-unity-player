@@ -38,9 +38,10 @@ namespace Alice.Tweedle.Parse
 
         private TweedleSystem StoredSystem(string str)
         {
-            var json = new JsonParser(new TweedleSystem(), null, null);
+            var system = new TweedleSystem();
+            var json = new JsonParser(system);
             WaitOnEnumeratorTree(json.ParseJson(str, new JsonParser.ModelManifestHolder()));
-            return json.StoredSystem;
+            return system;
         }
 
         private static void WaitOnEnumeratorTree(IEnumerator enumerator) {

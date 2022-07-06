@@ -11,8 +11,8 @@ namespace Alice.Tweedle.Parse
     {
         TType ParseType(string src)
         {
-            TType type = new TweedleParser().ParseType(src);
-            return type;
+            var system = new TweedleSystem();
+            return new TweedleParser().ParseType(src, system.GetRuntimeAssembly());
         }
 
         static string commonProgram =

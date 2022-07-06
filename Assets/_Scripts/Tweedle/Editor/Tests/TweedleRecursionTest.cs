@@ -10,9 +10,9 @@ namespace Alice.Tweedle.Parse
 
         static readonly TweedleParser Parser = new TweedleParser();
 
-        static TClassType ParseClass(string src)
+        static TClassType ParseClass(string src, TAssembly assembly)
         {
-            return (TClassType)Parser.ParseType(src);
+            return (TClassType)Parser.ParseType(src, assembly);
         }
 
         private const string Fib =
@@ -53,8 +53,8 @@ namespace Alice.Tweedle.Parse
         TweedleSystem NewSystem()
         {
             TweedleSystem system = new TweedleSystem();
-            system.GetRuntimeAssembly().Add(ParseClass(Fib));
-            system.GetRuntimeAssembly().Add(ParseClass(FibTogether));
+            system.GetRuntimeAssembly().Add(ParseClass(Fib, system.GetRuntimeAssembly()));
+            system.GetRuntimeAssembly().Add(ParseClass(FibTogether, system.GetRuntimeAssembly()));
             system.Link();
             return system;
         }
@@ -76,14 +76,16 @@ namespace Alice.Tweedle.Parse
         [Test]
         public void AClassShouldBeCreatedForFib()
         {
-            TClassType tested = ParseClass(Fib);
+            TweedleSystem system = new TweedleSystem();
+            TClassType tested = ParseClass(Fib, system.GetRuntimeAssembly());
             Assert.NotNull(tested, "The parser should have returned something.");
         }
 
         [Test]
         public void AClassShouldBeCreatedForTogetherFib()
         {
-            TClassType tested = ParseClass(FibTogether);
+            TweedleSystem system = new TweedleSystem();
+            TClassType tested = ParseClass(FibTogether, system.GetRuntimeAssembly());
             Assert.NotNull(tested, "The parser should have returned something.");
         }
 
