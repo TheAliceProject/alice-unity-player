@@ -63,7 +63,7 @@ namespace Alice.Player.Modules {
                     break;
                 case TEXTMODEL:
                     var flyingText = FlyingText.instance;
-                    // Instantiate the flying text object if not already instantiated. Might see a "Don't Destroy on Load" wanring here from the asset.
+                    // Instantiate the flying text object if not already instantiated. Might see a "Don't Destroy on Load" warning here from the asset.
                     if (flyingText == null) {
                         var fto = UnityEngine.GameObject.Instantiate(SceneGraph.Current.InternalResources.FlyingTextObject, SceneGraph.Current.transform);
                         fto.name = "Tweedle Flying Text";

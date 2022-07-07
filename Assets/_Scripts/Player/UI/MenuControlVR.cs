@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public class MenuControlVR : MenuControl
 {
@@ -7,10 +6,7 @@ public class MenuControlVR : MenuControl
 
     public override void LinkOpenWorldButton()
     {
-        loadNewWorldButton.onClick.AddListener(() =>
-        {
-            ShowFileBrowser();
-        });
+        loadNewWorldButton.onClick.AddListener(ShowFileBrowser);
     }
 
     protected override void SetTopPanel(GameObject thisPanel)
