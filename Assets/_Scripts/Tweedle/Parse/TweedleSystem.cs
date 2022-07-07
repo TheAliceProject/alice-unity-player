@@ -21,8 +21,8 @@ namespace Alice.Tweedle.Parse
         public Dictionary<ResourceIdentifier, ResourceReference> Resources { get; private set; }
 
         private List<TAssembly> m_StaticAssemblies = new List<TAssembly>();
-        private List<TAssembly> m_DynamicAssemblies = new List<TAssembly>();
 
+        private TAssembly m_LibraryAssembly;
         private TAssembly m_RuntimeAssembly;
 
         private List<TType> m_TypeList = new List<TType>();
@@ -78,14 +78,13 @@ namespace Alice.Tweedle.Parse
         }
 
         /// <summary>
-        /// Adds a dynamic assembly to the system.
-        /// Dynamically loaded assemblies will be unloaded when the system is unloaded.
+        /// Set the library assembly to the system.
+        /// TODO Library assembly is lazily read as needed and caches types and resources.
+        /// It will not be unloaded when the system is unloaded.
         /// </summary>
-        public void AddDynamicAssembly(TAssembly assembly)
-        {
-            if (!m_DynamicAssemblies.Contains(assembly)) {
-                m_DynamicAssemblies.Add(assembly);
-            }
+        public void SetLibraryAssembly(TAssembly assembly) {
+            m_LibraryAssembly = assembly;
+            GetRuntimeAssembly().AddDependency(assembly);
         }
 
         /// <summary>
@@ -111,18 +110,17 @@ namespace Alice.Tweedle.Parse
         {
             foreach(var assembly in m_StaticAssemblies)
                 Link(assembly);
-            foreach(var assembly in m_DynamicAssemblies)
-                Link(assembly);
+            Link(m_LibraryAssembly);
+            Link(m_RuntimeAssembly);
         }
 
-        private void Link(TAssembly inAssembly)
-        {
+        private void Link(TAssembly inAssembly) {
+            if (inAssembly == null) return;
+            
             inAssembly.Link();
 
-            var allTypes = inAssembly.AllTypes();
-            for (int i = 0; i < allTypes.Count; ++i)
-            {
-                TType type = allTypes[i];
+            foreach (var type in inAssembly.AllTypes()) {
+                if (m_TypeList.Contains(type)) continue;
                 m_TypeList.Add(type);
                 m_TypeMap.Add(type.Name, type);
             }
@@ -151,15 +149,11 @@ namespace Alice.Tweedle.Parse
         }
 
         /// <summary>
-        /// Unloads all dynamically-loaded assemblies.
+        /// Unload run time assembly.
         /// </summary>
         public void Unload()
         {
-            for (int i = m_DynamicAssemblies.Count - 1; i >= 0; --i)
-            {
-                m_DynamicAssemblies[i].Unload();
-            }
-            m_DynamicAssemblies.Clear();
+            m_RuntimeAssembly.Unload();
             m_RuntimeAssembly = null;
         }
 
@@ -174,7 +168,6 @@ namespace Alice.Tweedle.Parse
             if (m_RuntimeAssembly == null)
             {
                 m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies, TAssemblyFlags.Runtime);
-                m_DynamicAssemblies.Add(m_RuntimeAssembly);
             }
             return m_RuntimeAssembly;
         }

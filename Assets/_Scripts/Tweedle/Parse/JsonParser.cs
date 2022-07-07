@@ -8,7 +8,9 @@ using System.Text;
 using NLayer;
 using Siccity.GLTFUtility;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Alice.Tweedle.Parse
 {
@@ -17,13 +19,13 @@ namespace Alice.Tweedle.Parse
     {
         Manifest manifest;
         ResourceReference strictRef;
-        private TweedleSystem m_System;
-        private TweedleParser m_Parser;
+        private readonly TweedleSystem m_System;
+        private readonly TweedleParser m_Parser;
         private ZipFile m_ZipFile;
-        public static int audioFiles = 0;
         private Stream m_FileStream;
-        private string m_FileName;
-        private ExceptionHandler m_ExceptionHandler;
+        private readonly string m_FileName;
+        private readonly ExceptionHandler m_ExceptionHandler;
+        private readonly Dictionary<ProjectIdentifier, TweedleSystem> m_LibraryCache;
 
         public delegate void ExceptionHandler(Exception e);
 
@@ -33,15 +35,17 @@ namespace Alice.Tweedle.Parse
             public ModelManifest data;
         }
 
-        public TweedleSystem StoredSystem
-        {
-            get { return m_System; }
-        }
+        public JsonParser(TweedleSystem inSystem) :
+            this(inSystem, "", new Dictionary<ProjectIdentifier, TweedleSystem>(), null)
+        {}
 
-        public JsonParser(TweedleSystem inSystem, string fileName, ExceptionHandler exceptionHandler)
+        private JsonParser(TweedleSystem inSystem, string fileName,
+            Dictionary<ProjectIdentifier, TweedleSystem> libraryCache,
+            ExceptionHandler exceptionHandler)
         {
             m_System = inSystem;
             m_FileName = fileName;
+            m_LibraryCache = libraryCache;
             m_Parser = new TweedleParser();
             m_ExceptionHandler = exceptionHandler;
         }
@@ -57,9 +61,11 @@ namespace Alice.Tweedle.Parse
 #endif
         }
 
-        public static IEnumerator Parse(TweedleSystem inSystem, string path, ExceptionHandler exceptionHandler)
+        public static IEnumerator Parse(TweedleSystem inSystem, string fileName,
+            Dictionary<ProjectIdentifier, TweedleSystem> libraryCache,
+            ExceptionHandler exceptionHandler)
         {
-            JsonParser reader = new JsonParser(inSystem, path, exceptionHandler);
+            var reader = new JsonParser(inSystem, fileName, libraryCache, exceptionHandler);
             yield return reader.Parse();
         }
 
@@ -86,7 +92,7 @@ namespace Alice.Tweedle.Parse
             m_FileStream = new MemoryStream(www.downloadHandler.data);
         }
 
-        public IEnumerator Parse()
+        private IEnumerator Parse()
         {
             yield return LoadFile(m_FileName);
 
@@ -115,10 +121,9 @@ namespace Alice.Tweedle.Parse
             manifest = JsonUtility.FromJson<Manifest>(inManifestJson);
             JSONObject jsonObj = new JSONObject(inManifestJson);
 
-            yield return ParsePrerequisites(manifest);
+            yield return ParsePrerequisites();
 
-            ProjectType t = manifest.Identifier.Type;
-            switch (t)
+            switch (manifest.Identifier.Type)
             {
                 case ProjectType.Library:
                     LibraryManifest libAsset = new LibraryManifest(manifest);
@@ -147,18 +152,21 @@ namespace Alice.Tweedle.Parse
                 );
         }
 
-        private IEnumerator ParsePrerequisites(Manifest manifest)
+        private IEnumerator ParsePrerequisites()
         {
             var prerequisites = manifest.prerequisites;
-            foreach (var t in prerequisites)
-            {
-                if (!m_System.LoadedFiles.Contains(t))
-                {
-                    PlayerLibraryReference libRef;
-                    var libraryMatch = PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef);
-                    if (libraryMatch == 0)
-                    {
-                        yield return JsonParser.Parse(m_System, libRef.path.fullPath, m_ExceptionHandler);
+            foreach (var t in prerequisites) {
+                if (m_LibraryCache.TryGetValue(t, out var cachedLibrary)) {
+                    m_System.SetLibraryAssembly(cachedLibrary.GetRuntimeAssembly());
+                } else {
+                    if (m_System.LoadedFiles.Contains(t)) continue;
+                    var libraryMatch = PlayerLibraryManifest.Instance.TryGetLibrary(t, out var libRef);
+                    if (libraryMatch == 0) {
+                        var library = new TweedleSystem();
+                        // TODO skip immediate full parsing in favor of lazy reading
+                        yield return Parse(library, libRef.path.fullPath, m_LibraryCache, m_ExceptionHandler);
+                        m_LibraryCache.Add(t, library);
+                        m_System.SetLibraryAssembly(library.GetRuntimeAssembly());
                     }
                     else {
                         HandleException(new TweedleVersionException("Could not find prerequisite " + t.name,

@@ -5,6 +5,9 @@ using System.Collections;
 using Alice.Player.Modules;
 using BeauRoutine;
 using System;
+using System.Collections.Generic;
+using Alice.Player.Unity;
+using Alice.Tweedle.File;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace Alice.Tweedle.Parse
@@ -30,7 +33,10 @@ namespace Alice.Tweedle.Parse
         private string m_currentFilePath;
         private bool m_IsLoading;
 
-        void Awake()
+        private readonly Dictionary<ProjectIdentifier, TweedleSystem> m_LibraryCache =
+            new Dictionary<ProjectIdentifier, TweedleSystem>();
+
+        private void Awake()
         {
 #if UNITY_ANDROID
             AutoLoadedWorldsDirectory = Application.persistentDataPath;
@@ -73,7 +79,7 @@ namespace Alice.Tweedle.Parse
             yield return YieldLoadingScreens(true);
 
             m_System = new TweedleSystem();
-            yield return JsonParser.Parse(m_System, m_currentFilePath, HandleReadException);
+            yield return JsonParser.Parse(m_System, m_currentFilePath, m_LibraryCache, HandleReadException);
             m_System.Link();
 
             try {
