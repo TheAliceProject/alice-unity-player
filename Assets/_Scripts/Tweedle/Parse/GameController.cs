@@ -89,6 +89,7 @@ namespace Alice.Tweedle.Parse
             }
             RenderSettings.skybox = null;
             m_IsLoading = false;
+            SceneGraph.Current.TweedleSystem = m_System;
             yield return StartWorld();
         }
 

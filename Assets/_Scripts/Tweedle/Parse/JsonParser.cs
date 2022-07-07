@@ -282,7 +282,7 @@ namespace Alice.Tweedle.Parse
                 byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
                 var texture = new Texture2D(0, 0);
                 if (ImageConversion.LoadImage(texture, data, true)) {
-                    SceneGraph.Current.TextureCache.Add(resourceRef.name, texture);
+                    m_System.CacheTexture(resourceRef.name, texture);
                 }
             }
         }

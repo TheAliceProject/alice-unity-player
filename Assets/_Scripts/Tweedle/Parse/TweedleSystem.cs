@@ -187,6 +187,20 @@ namespace Alice.Tweedle.Parse
             }
         }
 
+        internal void CacheTexture(string name, Texture2D texture) {
+            GetRuntimeAssembly().Textures.Add(name, texture);
+        }
+
+        public Texture2D TextureNamed(string name) {
+            if (GetRuntimeAssembly().Textures.TryGetValue(name, out var texture)) {
+                return texture;
+            }
+            if (m_LibraryAssembly != null && m_LibraryAssembly.Textures.TryGetValue(name, out texture)) {
+                return texture;
+            }
+            return null;
+        }
+
         internal void QueueProgramMain(VirtualMachine vm)
         {
             TType prog;

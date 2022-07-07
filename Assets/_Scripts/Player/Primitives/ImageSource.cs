@@ -7,7 +7,7 @@ namespace Alice.Player.Primitives
     [PInteropType]
     public sealed class ImageSource : Paint
     {
-        public readonly UnityEngine.Texture2D Value;
+        private readonly UnityEngine.Texture2D Value;
 
         public ImageSource(UnityEngine.Texture2D inTexture)
         {
@@ -18,7 +18,7 @@ namespace Alice.Player.Primitives
         [PInteropConstructor]
         public ImageSource(string resource)
         {
-            Value = SceneGraph.Current?.TextureCache?.Get(resource);
+            Value = SceneGraph.Current.TweedleSystem.TextureNamed(resource);
         }
 
         [PInteropField]
@@ -57,7 +57,7 @@ namespace Alice.Player.Primitives
         }
 
         public override string ToString() {
-            return string.Format("ImageSource({0})", Value.name);
+            return $"ImageSource({Value.name})";
         }
 
         public override bool Equals(object obj) 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Alice.Player.Unity;
 
 namespace Alice.Tweedle
 {
@@ -28,6 +29,7 @@ namespace Alice.Tweedle
 
         private List<TType> m_TypeList;
         private Dictionary<string, TType> m_TypeMap;
+        internal readonly TextureCache Textures = new TextureCache(); 
         private List<TAssembly> m_Dependencies;
 
         /// <summary>

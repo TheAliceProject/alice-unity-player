@@ -19,6 +19,10 @@ namespace Alice.Player.Unity {
             return true;
         }
 
+        public virtual bool TryGetValue(string inIdentifier, out T resource) {
+            return m_Cache.TryGetValue(inIdentifier, out resource);
+        }
+
         public virtual T Get(string inIdentifier) {
             T resource;
 
