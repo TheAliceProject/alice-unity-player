@@ -151,8 +151,8 @@ namespace Alice.Tweedle.Parse
         /// <summary>
         /// Unload run time assembly.
         /// </summary>
-        public void Unload()
-        {
+        public void Unload() {
+            if (m_RuntimeAssembly == null) return;
             m_RuntimeAssembly.Unload();
             m_RuntimeAssembly = null;
         }

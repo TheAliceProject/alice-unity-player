@@ -18,7 +18,7 @@ namespace Alice.Player.Primitives
         [PInteropConstructor]
         public ImageSource(string resource)
         {
-            Value = SceneGraph.Current.TweedleSystem.TextureNamed(resource);
+            Value = SceneGraph.Current?.TweedleSystem?.TextureNamed(resource);
         }
 
         [PInteropField]

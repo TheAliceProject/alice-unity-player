@@ -179,6 +179,15 @@ namespace Alice.Tweedle.Parse
             }
         }
 
+        public static IEnumerator CacheLibrary(Dictionary<ProjectIdentifier, TweedleSystem> libraryCache) {
+            var lib = PlayerLibraryManifest.Instance.GetLibraryReference();
+            if (lib == null) yield break;
+            
+            var system = new TweedleSystem();
+            yield return Parse(system, lib.Value.path.fullPath, libraryCache, null);
+            libraryCache.Add(lib.Value.identifier, system);
+        }
+
         private IEnumerator ParsePrerequisites(Manifest manifest)
         {
             var prerequisites = manifest.prerequisites;

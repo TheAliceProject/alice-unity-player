@@ -48,6 +48,11 @@ namespace Alice.Tweedle.Parse
 #endif
 #endif
             DeleteTemporaryAudioFiles();
+            PreloadLibrary();
+        }
+
+        private void PreloadLibrary() {
+            StartCoroutine(JsonParser.CacheLibrary(m_LibraryCache));
         }
 
         void OnDestroy()

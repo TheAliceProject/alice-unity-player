@@ -45,6 +45,13 @@ namespace Alice.Tweedle.Parse {
             return comparison;
         }
 
+        public PlayerLibraryReference? GetLibraryReference() {
+            if (m_BuiltInLibraries.Length == 1) {
+                return m_BuiltInLibraries[0];
+            }
+            Debug.LogError("GetLibraryReference expected to find a single library. Problems may occur during execution.");
+            return null;
+        }
     }
 
 }
