@@ -235,18 +235,6 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
-#if !UNITY_WEBGL
-            var cachePath = Application.temporaryCachePath + "/" + workingDir;
-            if (!Directory.Exists(cachePath)) {
-                Directory.CreateDirectory(cachePath);
-            }
-
-            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-            System.IO.File.WriteAllBytes(cachePath + resourceRef.file, data);
-#endif
-        }
-
         public void LoadTexture(ImageReference resourceRef, string workingDir) {
             if (!Application.isPlaying) return;
 
