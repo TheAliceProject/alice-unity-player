@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Alice.Tweedle.VM;
 using NUnit.Framework;
@@ -12,7 +13,11 @@ namespace Alice.Tweedle.Parse
 
         static TweedleParser parser = new TweedleParser();
 
-        static TClassType ParseClass(string src, TAssembly assembly = null)
+        private static TClassType ParseClass(string src) {
+            return ParseClass(src, TAssembly.GetDummyAssembly());
+        }
+
+        private static TClassType ParseClass(string src, TAssembly assembly)
         {
             return (TClassType)parser.ParseType(src, assembly);
         }

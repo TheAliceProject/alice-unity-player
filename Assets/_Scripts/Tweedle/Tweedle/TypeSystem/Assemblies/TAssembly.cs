@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Alice.Player.Unity;
 
 namespace Alice.Tweedle
 {
@@ -28,12 +29,13 @@ namespace Alice.Tweedle
 
         private List<TType> m_TypeList;
         private Dictionary<string, TType> m_TypeMap;
-        private TAssembly[] m_Dependencies;
+        internal readonly TextureCache Textures = new TextureCache(); 
+        private List<TAssembly> m_Dependencies;
 
         /// <summary>
         /// Creates a new assembly with the given name and dependencies.
         /// </summary>
-        public TAssembly(string inName, TAssembly[] inDependencies, TAssemblyFlags inFlags)
+        public TAssembly(string inName, List<TAssembly> inDependencies, TAssemblyFlags inFlags)
         {
             Name = inName;
             Flags = inFlags;
@@ -95,7 +97,6 @@ namespace Alice.Tweedle
             if (m_Status != Status.Unloaded)
             {
                 m_Status = Status.Unloaded;
-                TGenerics.Unload(this);
             }
         }
 
@@ -123,6 +124,22 @@ namespace Alice.Tweedle
             return null;
         }
 
+        public TArrayType GetArrayType(TTypeRef inElementType) {
+            if (TypeNamed($"{inElementType.Name}[]") is TArrayType arrayType) return arrayType;
+            
+            arrayType = new TArrayType(this, inElementType);
+            Add(arrayType);
+            return arrayType;
+        }
+
+        public TLambdaType GetLambdaType(TLambdaSignature inSignature) {
+            if (TypeNamed(inSignature.Name) is TLambdaType lambdaType) return lambdaType;
+
+            lambdaType = new TLambdaType(this, inSignature);
+            Add(lambdaType);
+            return lambdaType;
+        }
+
         /// <summary>
         /// Returns a list of all existing types in the assembly.
         /// </summary>
@@ -147,9 +164,17 @@ namespace Alice.Tweedle
         }
 
         /// <summary>
-        /// Dependency array representing no dependencies.
+        /// Dependency List representing no dependencies.
         /// </summary>
-        static public readonly TAssembly[] NO_DEPENDENCIES = new TAssembly[0];
+        public static readonly List<TAssembly> NO_DEPENDENCIES = new List<TAssembly>();
+
+        public void AddDependency(TAssembly assembly) {
+            m_Dependencies.Add(assembly);
+        }
+
+        public static TAssembly GetDummyAssembly() {
+            return new TAssembly("DummyAssembly", new List<TAssembly>(0), TAssemblyFlags.Runtime);
+        }
     }
 
     /// <summary>

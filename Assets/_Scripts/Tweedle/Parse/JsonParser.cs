@@ -8,45 +8,41 @@ using System.Text;
 using NLayer;
 using Siccity.GLTFUtility;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Alice.Tweedle.Parse
 {
 
     public class JsonParser
     {
-        Manifest manifest;
-        ResourceReference strictRef;
-        private TweedleSystem m_System;
-        private TweedleParser m_Parser;
+        private readonly TweedleSystem m_System;
+        private readonly TweedleParser m_Parser;
         private ZipFile m_ZipFile;
-        public static int audioFiles = 0;
         private Stream m_FileStream;
-        private string m_FileName;
-        private ExceptionHandler m_ExceptionHandler;
+        private readonly string m_FileName;
+        private readonly ExceptionHandler m_ExceptionHandler;
+        private readonly Dictionary<ProjectIdentifier, TweedleSystem> m_LibraryCache;
 
         public delegate void ExceptionHandler(Exception e);
 
+        public JsonParser(TweedleSystem inSystem) :
+            this(inSystem, "", new Dictionary<ProjectIdentifier, TweedleSystem>(), null)
+        {}
 
-        public class ModelManifestHolder
-        {
-            public ModelManifest data;
-        }
-
-        public TweedleSystem StoredSystem
-        {
-            get { return m_System; }
-        }
-
-        public JsonParser(TweedleSystem inSystem, string fileName, ExceptionHandler exceptionHandler)
+        private JsonParser(TweedleSystem inSystem, string fileName,
+            Dictionary<ProjectIdentifier, TweedleSystem> libraryCache,
+            ExceptionHandler exceptionHandler)
         {
             m_System = inSystem;
             m_FileName = fileName;
+            m_LibraryCache = libraryCache;
             m_Parser = new TweedleParser();
             m_ExceptionHandler = exceptionHandler;
         }
 
-        public void CacheThumbnail(string fileName)
+        private void CacheThumbnail(string fileName)
         {
 #if !UNITY_WEBGL
             // Save thumbnail
@@ -57,9 +53,11 @@ namespace Alice.Tweedle.Parse
 #endif
         }
 
-        public static IEnumerator Parse(TweedleSystem inSystem, string path, ExceptionHandler exceptionHandler)
+        public static IEnumerator Parse(TweedleSystem inSystem, string fileName,
+            Dictionary<ProjectIdentifier, TweedleSystem> libraryCache,
+            ExceptionHandler exceptionHandler)
         {
-            JsonParser reader = new JsonParser(inSystem, path, exceptionHandler);
+            var reader = new JsonParser(inSystem, fileName, libraryCache, exceptionHandler);
             yield return reader.Parse();
         }
 
@@ -86,7 +84,7 @@ namespace Alice.Tweedle.Parse
             m_FileStream = new MemoryStream(www.downloadHandler.data);
         }
 
-        public IEnumerator Parse()
+        private IEnumerator Parse()
         {
             yield return LoadFile(m_FileName);
 
@@ -105,60 +103,106 @@ namespace Alice.Tweedle.Parse
                     string playerAssembly = Player.PlayerAssemblies.CURRENT;
                     m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
-                    yield return ParseJson(m_ZipFile.ReadEntry("manifest.json"));
+                    var manifestJson = m_ZipFile.ReadEntry("manifest.json");
+
+                    var rootManifest = ParseProjectManifest(manifestJson);
+                    yield return ParsePrerequisites(rootManifest);
+                    LoadProject(rootManifest);
                 }
             }
         }
 
-        public IEnumerator ParseJson(string inManifestJson, ModelManifestHolder modelHolder = null, string inWorkingDir = "")
-        {
-            manifest = JsonUtility.FromJson<Manifest>(inManifestJson);
-            JSONObject jsonObj = new JSONObject(inManifestJson);
+        public void LoadStandAloneProject(string manifestJson) {
+            LoadProject(ParseProjectManifest(manifestJson));
+        }
 
-            yield return ParsePrerequisites(manifest);
+        #region Manifest Parsing
 
-            ProjectType t = manifest.Identifier.Type;
-            switch (t)
-            {
-                case ProjectType.Library:
-                    LibraryManifest libAsset = new LibraryManifest(manifest);
-                    m_System.AddLibrary(libAsset);
-                    manifest = libAsset;
-                    Debug.Log("Loaded Library " + manifest.Identifier.name + " version " + manifest.Identifier.version);
-                    break;
-                case ProjectType.World:
-                    ProgramDescription worldAsset = new ProgramDescription(manifest);
-                    m_System.AddProgram(worldAsset);
-                    manifest = worldAsset;
-                    Debug.Log("Loaded Project produced in Alice version " + manifest.provenance.aliceVersion);
-                    break;
-                case ProjectType.Model:
-                    ModelManifest modelAsset = JsonUtility.FromJson<ModelManifest>(inManifestJson);
-                    m_System.AddModel(modelAsset);
-                    manifest = modelAsset;
-                    modelHolder.data = modelAsset;
-                    break;
+        private static Manifest ParseProjectManifest(string manifestJson, string workingDirectory = "") {
+            var manifest = SpecializeProjectManifest(manifestJson);
+            var jsonObj = new JSONObject(manifestJson);
+            SpecializeResourceManifests(manifest, jsonObj[MemberInfoGetter.GetMemberName(() => manifest.resources)], workingDirectory);
+            return manifest;
+        }
+
+        private static Manifest SpecializeProjectManifest(string manifestJson) {
+            var manifest = JsonUtility.FromJson<Manifest>(manifestJson);
+            return manifest.Identifier.Type switch {
+                ProjectType.Library => new LibraryManifest(manifest),
+                ProjectType.World => new ProgramDescription(manifest),
+                ProjectType.Model => JsonUtility.FromJson<ModelManifest>(manifestJson),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        private static void SpecializeResourceManifests(Manifest projectManifest, JSONObject rawResources, string workingDir) {
+            if (!(rawResources is { type: JSONObject.Type.ARRAY })) return;
+
+            for (var i = 0; i < projectManifest.resources.Count; i++) {
+                var genericRef = projectManifest.resources[i];
+                var strictRef =
+                    SpecializeResourceManifest(genericRef, rawResources.list[i].ToString(), projectManifest);
+                strictRef.file = workingDir + genericRef.file;
+                projectManifest.resources[i] = strictRef;
             }
+        }
 
-            yield return ParseResourceDetails(
-                manifest,
-                jsonObj[MemberInfoGetter.GetMemberName(() => manifest.resources)],
-                inWorkingDir
-                );
+        private static ResourceReference SpecializeResourceManifest(ResourceReference resourceRef, string refJson, Manifest parent) {
+            return resourceRef.ContentType switch {
+                ContentType.Audio => JsonUtility.FromJson<AudioReference>(refJson),
+                ContentType.Class => JsonUtility.FromJson<ClassReference>(refJson),
+                ContentType.Enum => JsonUtility.FromJson<EnumReference>(refJson),
+                ContentType.Image => ImageReference(resourceRef, refJson, parent),
+                ContentType.Model => JsonUtility.FromJson<ModelReference>(refJson),
+                ContentType.SkeletonMesh => JsonUtility.FromJson<StructureReference>(refJson),
+                ContentType.Texture => JsonUtility.FromJson<TextureReference>(refJson),
+                ContentType.NULL => resourceRef,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        private static ResourceReference ImageReference(ResourceReference resourceRef, string refJson, Manifest parent) {
+            if (parent is ModelManifest) {
+                resourceRef.name = parent.description.name + "/" + resourceRef.name;
+                return resourceRef;
+            }
+            return JsonUtility.FromJson<ImageReference>(refJson);
+        }
+
+        #endregion Manifest Parsing
+
+        private void LoadProject(Manifest manifest, string workingDirectory = "") {
+            manifest.AddToSystem(m_System);
+            foreach (var resource in manifest.resources) {
+                resource.LoadContent(this, workingDirectory);
+                m_System.AddResource(resource);
+            }
+        }
+
+        public static IEnumerator CacheLibrary(Dictionary<ProjectIdentifier, TweedleSystem> libraryCache) {
+            var lib = PlayerLibraryManifest.Instance.GetLibraryReference();
+            if (lib == null) yield break;
+            
+            var system = new TweedleSystem();
+            yield return Parse(system, lib.Value.path.fullPath, libraryCache, null);
+            libraryCache.Add(lib.Value.identifier, system);
         }
 
         private IEnumerator ParsePrerequisites(Manifest manifest)
         {
             var prerequisites = manifest.prerequisites;
-            foreach (var t in prerequisites)
-            {
-                if (!m_System.LoadedFiles.Contains(t))
-                {
-                    PlayerLibraryReference libRef;
-                    var libraryMatch = PlayerLibraryManifest.Instance.TryGetLibrary(t, out libRef);
-                    if (libraryMatch == 0)
-                    {
-                        yield return JsonParser.Parse(m_System, libRef.path.fullPath, m_ExceptionHandler);
+            foreach (var t in prerequisites) {
+                if (m_LibraryCache.TryGetValue(t, out var cachedLibrary)) {
+                    m_System.SetLibraryAssembly(cachedLibrary.GetRuntimeAssembly());
+                } else {
+                    if (m_System.LoadedFiles.Contains(t)) continue;
+                    var libraryMatch = PlayerLibraryManifest.Instance.TryGetLibrary(t, out var libRef);
+                    if (libraryMatch == 0) {
+                        var library = new TweedleSystem();
+                        // TODO skip immediate full parsing in favor of lazy reading
+                        yield return Parse(library, libRef.path.fullPath, m_LibraryCache, m_ExceptionHandler);
+                        m_LibraryCache.Add(t, library);
+                        m_System.SetLibraryAssembly(library.GetRuntimeAssembly());
                     }
                     else {
                         HandleException(new TweedleVersionException("Could not find prerequisite " + t.name,
@@ -178,73 +222,7 @@ namespace Alice.Tweedle.Parse
             throw e;
         }
 
-        private IEnumerator ParseResourceDetails(Manifest manifest, JSONObject json, string workingDir)
-        {
-            if (json == null || json.type != JSONObject.Type.ARRAY)
-            {
-                yield break;
-            }
-
-            for (int i = 0; i < manifest.resources.Count; i++)
-            {
-                yield return ReadResource(manifest.resources[i], json.list[i].ToString(), manifest, workingDir);
-                manifest.resources[i] = strictRef;
-                m_System.AddResource(strictRef);
-            }
-        }
-
-        private IEnumerator ReadResource(ResourceReference resourceRef, string refJson, Manifest manifest, string workingDir)
-        {
-            string zipPath = workingDir + resourceRef.file;
-
-            switch (resourceRef.ContentType)
-            {
-                case ContentType.Audio:
-                    strictRef = JsonUtility.FromJson<AudioReference>(refJson);
-                    LoadAudio(resourceRef, workingDir);
-                    break;
-                case ContentType.Class:
-                    ParseTweedleTypeResource(resourceRef, workingDir);
-                    strictRef = JsonUtility.FromJson<ClassReference>(refJson);
-                    break;
-                case ContentType.Enum:
-                    ParseTweedleTypeResource(resourceRef, workingDir);
-                    strictRef = JsonUtility.FromJson<EnumReference>(refJson);
-                    break;
-                case ContentType.Image:
-                    if (manifest is ModelManifest) {
-                        CacheToDisk(resourceRef, workingDir);
-                        resourceRef.name = manifest.description.name + "/" + resourceRef.name;
-                        strictRef = resourceRef;
-                    } else {
-                        LoadTexture(resourceRef, workingDir);
-                        strictRef = JsonUtility.FromJson<ImageReference>(refJson);
-                    }
-                    break;
-                case ContentType.Model:
-                    string manifestJson = m_ZipFile.ReadEntry(zipPath);
-                    string manifestDir = GetDirectoryEntryPath(zipPath);
-
-                    ModelManifestHolder modelHolder = new ModelManifestHolder();
-                    yield return ParseJson(manifestJson, modelHolder, manifestDir);
-                    ModelManifest modelManifest = modelHolder.data;
-                    yield return LoadModelStructures(modelManifest);
-
-                    strictRef = JsonUtility.FromJson<ModelReference>(refJson);
-                    break;
-                case ContentType.SkeletonMesh:
-                    strictRef = JsonUtility.FromJson<StructureReference>(refJson);
-                    break;
-                case ContentType.Texture:
-                    strictRef = JsonUtility.FromJson<TextureReference>(refJson);
-                    break;
-            }
-
-            // prepend working path to resource file
-            strictRef.file = zipPath;
-        }
-
-        private void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
+        public void ParseTweedleTypeResource(ResourceReference resourceRef, string workingDir) {
             try
             {
                 using TextReader tweedleStream = new StreamReader(m_ZipFile.OpenEntryStream(workingDir + resourceRef.file));
@@ -257,53 +235,39 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        private void CacheToDisk(ResourceReference resourceRef, string workingDir) {
-#if !UNITY_WEBGL
-            var cachePath = Application.temporaryCachePath + "/" + workingDir;
-            if (!Directory.Exists(cachePath)) {
-                Directory.CreateDirectory(cachePath);
-            }
+        public void LoadTexture(ImageReference resourceRef, string workingDir) {
+            if (!Application.isPlaying) return;
 
-            var data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-            System.IO.File.WriteAllBytes(cachePath + resourceRef.file, data);
-#endif
-        }
-
-        private void LoadTexture(ResourceReference resourceRef, string workingDir) {
-            if (Application.isPlaying) {
-                byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-                var texture = new Texture2D(0, 0);
-                if (ImageConversion.LoadImage(texture, data, true)) {
-                    SceneGraph.Current.TextureCache.Add(resourceRef.name, texture);
-                }
-            }
-        }
-
-        private void LoadAudio(ResourceReference resourceRef, string workingDir){
             byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
-
-            if (Application.isPlaying)
-            {
-                AudioClip audioClip = null;
-                string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
-                if(fileSuffix == ".wav"){
-                    string waveTest = Encoding.ASCII.GetString(data, 8, 4);
-                    if(waveTest != "WAVE")
-                        Debug.LogError("Detected wav file but header incorrect.");
-                    audioClip = WavUtility.ToAudioClip(data);
-                }
-                else if(fileSuffix == ".mp3"){
-                    audioClip = LoadMp3(new MemoryStream(data), resourceRef.file);
-                }
-                else{
-                    Debug.LogError(fileSuffix + " files are not supported at this time.");
-                }
-                if(audioClip != null)
-                    SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
+            var texture = new Texture2D(0, 0);
+            if (ImageConversion.LoadImage(texture, data, true)) {
+                m_System.CacheTexture(resourceRef.name, texture);
             }
         }
 
-        public static AudioClip LoadMp3(Stream stream, string filePath) {
+        internal void LoadAudio(AudioReference resourceRef, string workingDir){
+            if (!Application.isPlaying) return;
+            
+            byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
+            AudioClip audioClip = null;
+            string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
+            if(fileSuffix == ".wav"){
+                string waveTest = Encoding.ASCII.GetString(data, 8, 4);
+                if(waveTest != "WAVE")
+                    Debug.LogError("Detected wav file but header incorrect.");
+                audioClip = WavUtility.ToAudioClip(data);
+            }
+            else if(fileSuffix == ".mp3"){
+                audioClip = LoadMp3(new MemoryStream(data), resourceRef.file);
+            }
+            else{
+                Debug.LogError(fileSuffix + " files are not supported at this time.");
+            }
+            if(audioClip != null)
+                SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
+        }
+
+        private static AudioClip LoadMp3(Stream stream, string filePath) {
             string filename = Path.GetFileNameWithoutExtension(filePath);
 
             MpegFile mpegFile = new MpegFile(stream);
@@ -317,8 +281,18 @@ namespace Alice.Tweedle.Parse
             return ac;
         }
 
-        private IEnumerator LoadModelStructures(ModelManifest inManifest) {
-            if (!Application.isPlaying) yield break;
+        public void LoadModel(ModelReference modelReference, string workingDir) {
+            var zipPath = workingDir + modelReference.file;
+            var manifestJson = m_ZipFile.ReadEntry(zipPath);
+            var manifestDir = GetDirectoryEntryPath(zipPath);
+
+            var modelManifest = (ModelManifest) ParseProjectManifest(manifestJson, manifestDir);
+            LoadProject(modelManifest, manifestDir);
+            LoadModelStructures(modelManifest);
+        }
+
+        private void LoadModelStructures(ModelManifest inManifest) {
+            if (!Application.isPlaying) return;
 
             foreach (var model in inManifest.models) {
                 var meshRef = inManifest.GetStructure(model.structure);
@@ -337,9 +311,6 @@ namespace Alice.Tweedle.Parse
                 var bounds = meshBounds.min.Equals(Vector3.zero) && meshBounds.max.Equals(Vector3.zero) ?
                     inManifest.boundingBox.AsBounds() : meshBounds;
                 SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, bounds, inManifest.jointBounds);
-
-                // Allow unity loop to process in between model imports.
-                yield return null;
             }
         }
 

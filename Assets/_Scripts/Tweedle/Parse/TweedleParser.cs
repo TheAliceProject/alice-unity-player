@@ -9,12 +9,12 @@ namespace Alice.Tweedle.Parse
 {
     public class TweedleParser
     {
-        public Tweedle.TweedleParser ParseSource(string src, TAssembly inAssembly = null, string inFile = null)
+        private Tweedle.TweedleParser ParseSource(string src, TAssembly inAssembly, string inFile = null)
         {
-            return this.ParseSource(new StringReader(src), inAssembly);
+            return ParseSource(new StringReader(src), inAssembly, inFile);
         }
 
-        public Tweedle.TweedleParser ParseSource(TextReader src, TAssembly inAssembly = null, string inFile = null)
+        private Tweedle.TweedleParser ParseSource(TextReader src, TAssembly inAssembly, string inFile = null)
         {
             AntlrInputStream antlerStream = new AntlrInputStream(src);
             TweedleLexer lexer = new TweedleLexer(antlerStream);
@@ -22,34 +22,22 @@ namespace Alice.Tweedle.Parse
             return new Tweedle.TweedleParser(tokenStream, new TweedleParserOutput(false, inAssembly, inFile), new TweedleParserOutput(true, inAssembly, inFile));
         }
 
-        public TType ParseType(string src, TAssembly inAssembly = null, string inFile = null)
-        {
+        public TType ParseType(string src, TAssembly inAssembly, string inFile = null) {
             return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).typeDeclaration());
         }
 
-        public TType ParseType(TextReader src, TAssembly inAssembly = null, string inFile = null)
-        {
+        public TType ParseType(TextReader src, TAssembly inAssembly, string inFile) {
             return new TypeVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).typeDeclaration());
         }
 
-        public TweedleStatement ParseStatement(string src, TAssembly inAssembly = null, string inFile = null)
-        {
-            return new StatementVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).blockStatement());
+        public TweedleStatement ParseStatement(string src) {
+            var assembly = TAssembly.GetDummyAssembly();
+            return new StatementVisitor(assembly).Visit(ParseSource(src, assembly).blockStatement());
         }
 
-        public TweedleStatement ParseStatement(TextReader src, TAssembly inAssembly = null, string inFile = null)
-        {
-            return new StatementVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).blockStatement());
-        }
-
-        public ITweedleExpression ParseExpression(string src, TAssembly inAssembly = null, string inFile = null)
-        {
-            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).expression());
-        }
-
-        public ITweedleExpression ParseExpression(TextReader src, TAssembly inAssembly = null, string inFile = null)
-        {
-            return new ExpressionVisitor(inAssembly).Visit(ParseSource(src, inAssembly, inFile).expression());
+        public ITweedleExpression ParseExpression(string src) {
+            var assembly = TAssembly.GetDummyAssembly();
+            return new ExpressionVisitor(assembly).Visit(ParseSource(src, assembly).expression());
         }
 
         private class ClassBody
@@ -382,7 +370,7 @@ namespace Alice.Tweedle.Parse
                 }
                 else if (bracket != null)
                 {
-                    ITweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(assembly, TGenerics.GetArrayType(TBuiltInTypes.ANY, assembly)));
+                    ITweedleExpression array = context.expression(0).Accept(new ExpressionVisitor(assembly, assembly.GetArrayType(TBuiltInTypes.ANY)));
                     ITweedleExpression index = context.expression(1).Accept(new ExpressionVisitor(assembly, TBuiltInTypes.WHOLE_NUMBER));
                     return new ArrayIndexExpression(array, index);
                 }
@@ -502,7 +490,7 @@ namespace Alice.Tweedle.Parse
                     TTypeRef memberType = GetPrimitiveType(typeName);
                     memberType = memberType ?? GetTypeRef(typeName);
 
-                    TArrayType arrayMemberType = TGenerics.GetArrayType(memberType, assembly);
+                    TArrayType arrayMemberType = assembly.GetArrayType(memberType);
 
                     if (arrayCreator.arrayInitializer() != null)
                     {
@@ -669,7 +657,7 @@ namespace Alice.Tweedle.Parse
                 if (context.forControl() != null)
                 {
                     TTypeRef valueType = GetTypeRef(context.forControl().typeType(), assembly);
-                    TArrayType arrayType = TGenerics.GetArrayType(valueType, assembly);
+                    TArrayType arrayType = assembly.GetArrayType(valueType);
                     TLocalVariable loopVar =
                                     new TLocalVariable(valueType, context.forControl().variableDeclaratorId().GetText());
                     ITweedleExpression loopValues = context.forControl().expression().Accept(new ExpressionVisitor(assembly, arrayType));
@@ -780,7 +768,7 @@ namespace Alice.Tweedle.Parse
                 }
                 if (context.ChildCount > 1 && baseType != null)
                 {
-                    baseType = TGenerics.GetArrayType(baseType, assembly);
+                    baseType = assembly.GetArrayType(baseType);
                 }
                 return baseType;
             }
@@ -804,7 +792,7 @@ namespace Alice.Tweedle.Parse
                 typeTypeContext.Select(type => GetTypeRef(type, assembly)).ToArray();
 
             TLambdaSignature signature = new TLambdaSignature(typeList, GetTypeOrVoid(context.typeTypeOrVoid(), assembly));
-            return TGenerics.GetLambdaType(signature, assembly);
+            return assembly.GetLambdaType(signature);
         }
 
         private static TLambdaType GetLambdaType(TParameter[] inParameters, TweedleStatement[] inStatements, TAssembly assembly)
@@ -815,7 +803,7 @@ namespace Alice.Tweedle.Parse
                 paramTypes[i] = inParameters[i].Type;
 
             TLambdaSignature signature = new TLambdaSignature(paramTypes, returnType);
-            return TGenerics.GetLambdaType(signature, assembly);
+            return assembly.GetLambdaType(signature);
         }
 
         // NOTE: This will not generate the correct return type for return statements with unknown return types

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Alice.Tweedle.Parse;
+using UnityEngine.Serialization;
 
 public class WorldObjects : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class WorldObjects : MonoBehaviour
 
     public GameObject introCanvas;
     public GameObject vrObjects;
-    public UnityObjectParser parser;
+    public GameController controller;
 
     public static readonly string ProjectExt = "a3w";
     public static readonly string ProjectPattern = $"*.{ProjectExt}";
@@ -34,9 +35,9 @@ public class WorldObjects : MonoBehaviour
         return null;
     }
 
-    internal static UnityObjectParser GetParser(){
+    internal static GameController GetGameController(){
         if (_instance != null){
-            return _instance.parser;
+            return _instance.controller;
         }
         return null;
     }

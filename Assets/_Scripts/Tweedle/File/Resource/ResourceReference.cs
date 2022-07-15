@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.File
 {
@@ -32,5 +33,9 @@ namespace Alice.Tweedle.File
         public string type;
         public string format;
         public string file;
+
+        // No additional loading by default. Subclasses may specialize.
+        public virtual void LoadContent(JsonParser parser, string workingDirectory) {
+        }
     }
 }

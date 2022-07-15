@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 using System;
+using Alice.Tweedle.Parse;
 using UnityEngine.XR;
 
 namespace Alice.Player.Unity {
@@ -105,8 +106,8 @@ namespace Alice.Player.Unity {
 
         public static bool Exists { get { return !ReferenceEquals(s_Current, null); } }
 
+        public TweedleSystem TweedleSystem {get; set;}
         public PlayerResources InternalResources {get; private set;}
-        public TextureCache TextureCache {get; private set;}
         public AudioCache AudioCache { get; private set; }
         public ModelCache ModelCache {get; private set;}
 
@@ -132,7 +133,6 @@ namespace Alice.Player.Unity {
             m_ModelCacheRoot.SetParent(transform, false);
 
             InternalResources = Resources.Load<PlayerResources>("PlayerResources");
-            TextureCache = new TextureCache();
             AudioCache = new AudioCache();
             ModelCache = new ModelCache(m_ModelCacheRoot);
 
@@ -297,9 +297,7 @@ namespace Alice.Player.Unity {
             ClearEntities();
 
             Destroy(m_ModelCacheRoot);
-            TextureCache.Clear();
             AudioCache.Clear();
-            TextureCache = null;
             AudioCache = null;
             Scene = null;
             Destroy();
@@ -321,7 +319,7 @@ namespace Alice.Player.Unity {
         }
 
         public bool DestroyScene() {
-            WorldObjects.GetParser().PurgeVm();
+            WorldObjects.GetGameController().PurgeVm();
             var sceneGraph = GameObject.Find("SceneGraph");
             var destroyedScene = (sceneGraph != null);
             if (destroyedScene && Scene != null) {
@@ -332,7 +330,7 @@ namespace Alice.Player.Unity {
         }
 
         public void ResetScene() {
-            WorldObjects.GetParser().PurgeVm();
+            WorldObjects.GetGameController().PurgeVm();
             if (Scene != null) {
                 Scene.DropAllListeners();
             }

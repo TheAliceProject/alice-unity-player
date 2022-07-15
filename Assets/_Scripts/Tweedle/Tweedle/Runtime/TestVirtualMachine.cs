@@ -26,5 +26,9 @@ namespace Alice.Tweedle.VM
             AddStep(step);
             return step.Result;
         }
+
+        public void QueueProgramMain(TweedleSystem system) {
+            system.QueueProgramMain(this);
+        }
     }
 }

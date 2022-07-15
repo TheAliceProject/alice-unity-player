@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Alice.Tweedle.Parse;
 using Alice.Utils;
 using UnityEngine;
 
@@ -31,6 +32,10 @@ namespace Alice.Tweedle.File
         public StructureReference GetStructure(string structureName)
         {
             return resources.FirstOrDefault(resource => resource.name == structureName) as StructureReference;
+        }
+
+        public override void AddToSystem(TweedleSystem system) {
+            system.AddModel(this);
         }
     }
 }

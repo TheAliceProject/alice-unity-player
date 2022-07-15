@@ -6829,7 +6829,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   introCanvas: {fileID: 1510265963}
   vrObjects: {fileID: 583400856}
-  parser: {fileID: 1216540229}
+  controller: {fileID: 1216540229}
 --- !u!4 &1216540231
 Transform:
   m_ObjectHideFlags: 0

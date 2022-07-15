@@ -38,24 +38,10 @@ namespace Alice.Tweedle.Parse
 
         private TweedleSystem StoredSystem(string str)
         {
-            var json = new JsonParser(new TweedleSystem(), null, null);
-            WaitOnEnumeratorTree(json.ParseJson(str, new JsonParser.ModelManifestHolder()));
-            return json.StoredSystem;
-        }
-
-        private static void WaitOnEnumeratorTree(IEnumerator enumerator) {
-            while (enumerator.MoveNext()) {
-                try {
-                    var val = enumerator.Current;
-                    if (val is IEnumerator val1) {
-                        WaitOnEnumeratorTree(val1);
-                    }
-                }
-                catch (NullReferenceException nre) {
-                    // Ignore errors when reading partial test structures
-                    Console.WriteLine(nre);
-                }
-            }
+            var system = new TweedleSystem();
+            var json = new JsonParser(system);
+            json.LoadStandAloneProject(str);
+            return system;
         }
 
         // Tweedle System
@@ -199,6 +185,18 @@ namespace Alice.Tweedle.Parse
                     "\"identifier\":{\"name\":\"SomeModel\",\"version\":\"1.0\",\"type\":\"Model\"}" +
                 "}}";
             Assert.NotNull(StoredSystem(manifest).Models["SomeModel"], "Model should be stored with identifier, not be null.");
+        }
+
+        [Test]
+        public void UnrecognizedSystemShouldThrow()
+        {
+            var manifest = "{ " +
+                           "\"description\":{ \"name\":\"Program\",\"icon\":\"thumbnail.png\",\"tags\":[],\"groupTags\":[],\"themeTags\":[]}," +
+                           "\"provenance\":{\"aliceVersion\":\"3.6.1.0\",\"creationYear\":\"2022\",\"creator\":\"Anonymous\"}," +
+                           "\"metadata\":{" +
+                           "\"identifier\":{\"name\":\"NewThing\",\"version\":\"1.0\",\"type\":\"NewThing\"}" +
+                           "}}";
+            Assert.Throws<ArgumentException>(() => StoredSystem(manifest));
         }
 
         [Test]

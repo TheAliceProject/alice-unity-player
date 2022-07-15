@@ -21,8 +21,8 @@ namespace Alice.Tweedle.Parse
         public Dictionary<ResourceIdentifier, ResourceReference> Resources { get; private set; }
 
         private List<TAssembly> m_StaticAssemblies = new List<TAssembly>();
-        private List<TAssembly> m_DynamicAssemblies = new List<TAssembly>();
 
+        private TAssembly m_LibraryAssembly;
         private TAssembly m_RuntimeAssembly;
 
         private List<TType> m_TypeList = new List<TType>();
@@ -78,14 +78,13 @@ namespace Alice.Tweedle.Parse
         }
 
         /// <summary>
-        /// Adds a dynamic assembly to the system.
-        /// Dynamically loaded assemblies will be unloaded when the system is unloaded.
+        /// Set the library assembly to the system.
+        /// TODO Library assembly is lazily read as needed and caches types and resources.
+        /// It will not be unloaded when the system is unloaded.
         /// </summary>
-        public void AddDynamicAssembly(TAssembly assembly)
-        {
-            if (!m_DynamicAssemblies.Contains(assembly)) {
-                m_DynamicAssemblies.Add(assembly);
-            }
+        public void SetLibraryAssembly(TAssembly assembly) {
+            m_LibraryAssembly = assembly;
+            GetRuntimeAssembly().AddDependency(assembly);
         }
 
         /// <summary>
@@ -111,18 +110,17 @@ namespace Alice.Tweedle.Parse
         {
             foreach(var assembly in m_StaticAssemblies)
                 Link(assembly);
-            foreach(var assembly in m_DynamicAssemblies)
-                Link(assembly);
+            Link(m_LibraryAssembly);
+            Link(m_RuntimeAssembly);
         }
 
-        private void Link(TAssembly inAssembly)
-        {
+        private void Link(TAssembly inAssembly) {
+            if (inAssembly == null) return;
+            
             inAssembly.Link();
 
-            var allTypes = inAssembly.AllTypes();
-            for (int i = 0; i < allTypes.Count; ++i)
-            {
-                TType type = allTypes[i];
+            foreach (var type in inAssembly.AllTypes()) {
+                if (m_TypeList.Contains(type)) continue;
                 m_TypeList.Add(type);
                 m_TypeMap.Add(type.Name, type);
             }
@@ -151,30 +149,25 @@ namespace Alice.Tweedle.Parse
         }
 
         /// <summary>
-        /// Unloads all dynamically-loaded assemblies.
+        /// Unload run time assembly.
         /// </summary>
-        public void Unload()
-        {
-            for (int i = m_DynamicAssemblies.Count - 1; i >= 0; --i)
-            {
-                m_DynamicAssemblies[i].Unload();
-            }
-            m_DynamicAssemblies.Clear();
+        public void Unload() {
+            if (m_RuntimeAssembly == null) return;
+            m_RuntimeAssembly.Unload();
             m_RuntimeAssembly = null;
         }
 
         #endregion // Steps
 
         /// <summary>
-        /// Returns a runtime assembly for this system.
+        /// Returns the runtime assembly for this system.
         /// This assembly will be unloaded when the system is unloaded.
         /// </summary>
         public TAssembly GetRuntimeAssembly()
         {
             if (m_RuntimeAssembly == null)
             {
-                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies.ToArray(), TAssemblyFlags.Runtime);
-                m_DynamicAssemblies.Add(m_RuntimeAssembly);
+                m_RuntimeAssembly = new TAssembly("RuntimeAssembly", m_StaticAssemblies, TAssemblyFlags.Runtime);
             }
             return m_RuntimeAssembly;
         }
@@ -194,6 +187,20 @@ namespace Alice.Tweedle.Parse
             }
         }
 
+        internal void CacheTexture(string name, Texture2D texture) {
+            GetRuntimeAssembly().Textures.Add(name, texture);
+        }
+
+        public Texture2D TextureNamed(string name) {
+            if (GetRuntimeAssembly().Textures.TryGetValue(name, out var texture)) {
+                return texture;
+            }
+            if (m_LibraryAssembly != null && m_LibraryAssembly.Textures.TryGetValue(name, out texture)) {
+                return texture;
+            }
+            return null;
+        }
+
         internal void QueueProgramMain(VirtualMachine vm)
         {
             TType prog;
@@ -203,8 +210,8 @@ namespace Alice.Tweedle.Parse
                 TValue progVal = TBuiltInTypes.TYPE_REF.Instantiate(prog);
 
                 NamedArgument[] arguments = new NamedArgument[1];
-                TArrayType arrayMemberType = TGenerics.GetArrayType(TBuiltInTypes.TEXT_STRING, null);
-                ArrayInitializer args = new ArrayInitializer(arrayMemberType, new ITweedleExpression[0]);
+                TArrayType arrayMemberType = m_RuntimeAssembly.GetArrayType(TBuiltInTypes.TEXT_STRING);
+                ArrayInitializer args = new ArrayInitializer(arrayMemberType, Array.Empty<ITweedleExpression>());
                 arguments[0] = new NamedArgument("args", args);
 
                 vm.Queue(new MethodCallExpression(progVal, "main", arguments));

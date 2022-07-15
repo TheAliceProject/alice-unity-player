@@ -59,7 +59,7 @@ public class WorldControl : MonoBehaviour
     private void RestartWorld() {
         SceneGraph.Current.ResetScene();
         uISlidedown.ForceSlide(false);
-        WorldObjects.GetParser().ReloadCurrentLevel();
+        WorldObjects.GetGameController().ReloadCurrentLevel();
     }
 
     void OnDestroy() {

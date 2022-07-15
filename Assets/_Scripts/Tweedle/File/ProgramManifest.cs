@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.File
 {
@@ -10,6 +11,10 @@ namespace Alice.Tweedle.File
         public ProgramDescription(Manifest asset) 
             : base(asset)
         {
+        }
+
+        public override void AddToSystem(TweedleSystem system) {
+            system.AddProgram(this);
         }
     }
 }

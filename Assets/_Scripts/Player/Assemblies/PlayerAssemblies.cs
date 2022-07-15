@@ -18,7 +18,7 @@ namespace Alice.Player
         static private TAssembly s_CurrentAssembly;
         static private string s_CurrentAssemblyName;
 
-        static private readonly TAssembly[] DEFAULT_DEPENDENCIES = new TAssembly[] { TBuiltInTypes.Assembly() };
+        static private readonly List<TAssembly> DEFAULT_DEPENDENCIES = new List<TAssembly>() { TBuiltInTypes.Assembly() };
         static private Dictionary<string, AssemblyCreationDelegate> s_AssemblyInitializers;
 
         /// <summary>

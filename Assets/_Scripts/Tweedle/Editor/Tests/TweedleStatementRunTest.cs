@@ -137,9 +137,9 @@ namespace Alice.Tweedle.Parse
 }";
 
             TweedleSystem system = new TweedleSystem();
-            TClassType attrClass = (TClassType)new TweedleParser().ParseType(attrClassSrc);
+            TClassType attrClass = (TClassType)new TweedleParser().ParseType(attrClassSrc, system.GetRuntimeAssembly());
             system.GetRuntimeAssembly().Add(attrClass);
-            TClassType returnTestClass = (TClassType)new TweedleParser().ParseType(returnTestSrc);
+            TClassType returnTestClass = (TClassType)new TweedleParser().ParseType(returnTestSrc, system.GetRuntimeAssembly());
             system.GetRuntimeAssembly().Add(returnTestClass);
             system.Link();
 
@@ -171,9 +171,9 @@ namespace Alice.Tweedle.Parse
 }";
 
             TweedleSystem system = new TweedleSystem();
-            TClassType childClass = (TClassType)new TweedleParser().ParseType(childClassSrc);
+            TClassType childClass = (TClassType)new TweedleParser().ParseType(childClassSrc, system.GetRuntimeAssembly());
             system.GetRuntimeAssembly().Add(childClass);
-            TClassType valueClass = (TClassType)new TweedleParser().ParseType(valueClassSrc);
+            TClassType valueClass = (TClassType)new TweedleParser().ParseType(valueClassSrc, system.GetRuntimeAssembly());
             system.GetRuntimeAssembly().Add(valueClass);
             system.Link();
             return new ExecutionScope(testStackFrame, new TestVirtualMachine(system));
@@ -547,7 +547,7 @@ namespace Alice.Tweedle.Parse
 }";
 
             TweedleSystem system = new TweedleSystem();
-            TClassType someClass = (TClassType)new TweedleParser().ParseType(classSrc);
+            TClassType someClass = (TClassType)new TweedleParser().ParseType(classSrc, system.GetRuntimeAssembly());
             system.GetRuntimeAssembly().Add(someClass);
             system.Link();
             return new ExecutionScope(testStackFrame, new TestVirtualMachine(system));

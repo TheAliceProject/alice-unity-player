@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.File
 {
@@ -30,6 +32,10 @@ namespace Alice.Tweedle.File
             this.metadata = asset.metadata;
             this.prerequisites = asset.prerequisites;
             this.resources = asset.resources;
+        }
+
+        public virtual void AddToSystem(TweedleSystem system) {
+            throw new NotImplementedException("Only specialized subclasses can be added");
         }
     }
 }

@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Alice.Player.Modules;
-using Alice.Player.Primitives;
-using Alice.Tweedle.Interop;
-using Alice.Tweedle;
 using TMPro;
 using BeauRoutine;
 
@@ -99,43 +96,42 @@ namespace Alice.Player.Unity {
 
         private IEnumerator AlignTailRoutine(SGEntity entity){
             while(true){
-                UnityEngine.Vector3 objectPos = UnityEngine.Vector3.zero;
-                if (isSay)
-                    objectPos = GetSpeechBubbleOffset(entity.cachedTransform);
-                else
-                    objectPos = GetThoughtBubbleOffset(entity.cachedTransform);
-                float tailRotation = 0f;
-                float tailLength = 0f;
+                var cachedTransform = entity.cachedTransform;
+                if (cachedTransform != null) {
+                    var objectPos = isSay ? GetSpeechBubbleOffset(cachedTransform) : GetThoughtBubbleOffset(cachedTransform);
+                    float tailRotation = 0f;
+                    float tailLength = 0f;
 
-                if(VRControl.IsLoadedInVR()){
-                    var screenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
-                    UnityEngine.Vector2 objectScreenPoint;
-                    RectTransformUtility.ScreenPointToLocalPointInRectangle((this.transform as RectTransform), screenPoint, Camera.main, out objectScreenPoint);
-                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position);
-                    tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
-                }
-                else{
-                    bubbleText.fontSize = fontSizeUnscaled * (Screen.width / FONT_WIDTH_SCALE);
-                    var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
-                    tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position); 
-                    tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
-                }
+                    if(VRControl.IsLoadedInVR()){
+                        var screenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
+                        UnityEngine.Vector2 objectScreenPoint;
+                        RectTransformUtility.ScreenPointToLocalPointInRectangle((this.transform as RectTransform), screenPoint, Camera.main, out objectScreenPoint);
+                        tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position);
+                        tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
+                    }
+                    else{
+                        bubbleText.fontSize = fontSizeUnscaled * (Screen.width / FONT_WIDTH_SCALE);
+                        var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos); // convert target's world space position to a screen position
+                        tailLength = Vector2.Distance(objectScreenPoint, tailPivot.position); 
+                        tailRotation = 180f + (Mathf.Rad2Deg * Mathf.Atan((objectScreenPoint.x - tailPivot.position.x) / (tailPivot.position.y - objectScreenPoint.y))) + (objectScreenPoint.y < tailPivot.position.y ? 180f : 0f);
+                    }
 
-                tailPivot.SetRotation(tailRotation, Axis.Z, Space.Self);
-                if(isSay){
-                    // Stretch tail to object
-                    Vector2 tailSizeDelta = tailOutline[0].rectTransform.sizeDelta;
-                    Vector2 tailPos = tailOutline[0].rectTransform.anchoredPosition;
-                    tailSizeDelta.y = tailLength;
-                    tailOutline[0].rectTransform.sizeDelta = tailSizeDelta;
-                }
-                else{
-                    // Place the tail along the line between object screen position and bubble
-                    // Fix the last node on the head position
-                    var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos);
-                    for (int i = 0; i < tailOutline.Length; i++)
-                    {
-                        tailOutline[i].rectTransform.position = tailPivot.position + (objectScreenPoint - tailPivot.position) * ((float)(i + 1) / (float)tailOutline.Length);
+                    tailPivot.SetRotation(tailRotation, Axis.Z, Space.Self);
+                    if(isSay){
+                        // Stretch tail to object
+                        Vector2 tailSizeDelta = tailOutline[0].rectTransform.sizeDelta;
+                        Vector2 tailPos = tailOutline[0].rectTransform.anchoredPosition;
+                        tailSizeDelta.y = tailLength;
+                        tailOutline[0].rectTransform.sizeDelta = tailSizeDelta;
+                    }
+                    else{
+                        // Place the tail along the line between object screen position and bubble
+                        // Fix the last node on the head position
+                        var objectScreenPoint = Camera.main.WorldToScreenPoint(objectPos);
+                        for (int i = 0; i < tailOutline.Length; i++)
+                        {
+                            tailOutline[i].rectTransform.position = tailPivot.position + (objectScreenPoint - tailPivot.position) * ((float)(i + 1) / (float)tailOutline.Length);
+                        }
                     }
                 }
                 yield return null;
@@ -149,6 +145,7 @@ namespace Alice.Player.Unity {
             while (queue.Count > 0)
             {
                 var c = queue.Dequeue();
+                if (c == null) continue;
                 if (c.name == aName)
                     return c;
                 foreach(Transform t in c)

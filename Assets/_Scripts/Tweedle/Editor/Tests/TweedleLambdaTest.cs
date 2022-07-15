@@ -20,7 +20,8 @@ namespace Alice.Tweedle.Parse
                                         + "    this.addArrowKeyPressListener(listener: (ArrowKeyEvent event)-> {\n"
                                         + "      this.camera.move(direction: event.getMoveDirection(movedirectionplane: MoveDirectionPlane.FORWARD_BACKWARD_LEFT_RIGHT), amount: 0.25);\n"
                                         + "    });\n  } \n }";
-            tested = (TClassType)new TweedleParser().ParseType(sourceWithLambdas);
+            var system = new TweedleSystem();
+            tested = (TClassType)new TweedleParser().ParseType(sourceWithLambdas, system.GetRuntimeAssembly());
         }
 
         [Test]

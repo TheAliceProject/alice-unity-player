@@ -85,7 +85,7 @@ public class LoadMoreControl : MonoBehaviour
         List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
         recentWorldsData.Clear();
 
-        var dir = new DirectoryInfo(UnityObjectParser.AutoLoadedWorldsDirectory);
+        var dir = new DirectoryInfo(GameController.AutoLoadedWorldsDirectory);
         var files = dir.GetFiles(WorldObjects.ProjectPattern);
         foreach (var file in files) {
             if (!File.Exists(file.FullName) || file.FullName.Contains(WorldObjects.SceneGraphLibraryName))
@@ -152,7 +152,7 @@ public class LoadMoreControl : MonoBehaviour
             recentWorlds.Add(newButton);
             newButton.button.onClick.AddListener(() =>
             {
-                var parser = WorldObjects.GetParser();
+                var parser = WorldObjects.GetGameController();
                 if (parser == null) {
                     return;
                 }
