@@ -76,6 +76,9 @@ namespace Alice.Player.Unity {
             }
 
             GameObject bubble = InstantiateBubble(isSay ? sayPrefab.gameObject : thinkPrefab.gameObject, bubblePosition, target);
+            if (bubble == null) {
+                return;
+            }
             SayThinkBubble sayThink = bubble.GetComponent<SayThinkBubble>();
             sayThink.SetColor(bubbleColor, outlineColor);
             sayThink.SetText(text, textColor, font, textScale);
@@ -84,7 +87,10 @@ namespace Alice.Player.Unity {
             bubbleReturns.Add(sayThink, asyncReturn);
         }
 
-        public GameObject InstantiateBubble(GameObject prefab, BubblePosition pos, SGEntity target){
+        private GameObject InstantiateBubble(GameObject prefab, BubblePosition pos, SGEntity target){
+            if (Camera.main == null) {
+                return null;
+            }
             Transform parent = null;
             if(pos == BubblePosition.Left){
                 parent = leftBubbles;
