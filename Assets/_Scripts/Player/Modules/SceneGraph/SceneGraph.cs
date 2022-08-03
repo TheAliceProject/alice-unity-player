@@ -339,6 +339,7 @@ namespace Alice.Player.Unity {
             var myScene = GameObject.Find("myScene (SGScene)");
             Destroy(myScene);
             ClearEntities();
+            WorldObjects.GetGameController().ResumeVm();
         }
     }
 }

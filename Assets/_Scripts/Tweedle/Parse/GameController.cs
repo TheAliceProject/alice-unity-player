@@ -95,6 +95,7 @@ namespace Alice.Tweedle.Parse
             RenderSettings.skybox = null;
             m_IsLoading = false;
             SceneGraph.Current.TweedleSystem = m_System;
+            m_VM.Resume();
             yield return StartWorld();
         }
 
@@ -276,7 +277,11 @@ namespace Alice.Tweedle.Parse
         }
 
         public void PurgeVm() {
-            m_VM.EmptyQueue();
+            m_VM.Suspend();
+        }
+
+        public void ResumeVm() {
+            m_VM.Resume();
         }
     }
 }
