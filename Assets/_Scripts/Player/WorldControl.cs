@@ -29,28 +29,31 @@ public class WorldControl : MonoBehaviour
         if (!currentWorldControls.Contains(this))
             currentWorldControls.Add(this);
 
-        mainMenuButton.onClick.AddListener(ShowMainMenu);
+        mainMenuButton.onClick.AddListener(DestroySceneAndShowMainMenu);
         restartButton.onClick.AddListener(RestartWorld);
         speedUpButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().IncreaseSpeed);
         slowDownButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().DecreaseSpeed);
         pauseButton.onClick.AddListener(WorldObjects.GetWorldExecutionState().TogglePausePlay);
     }
 
-    private void ShowMainMenu()
+    private void DestroySceneAndShowMainMenu()
     {
-        var destroyedScene = SceneGraph.Current.DestroyScene();
+        var wasSceneDestroyed = SceneGraph.Current.DestroyScene();
+        ShowMainMenu(wasSceneDestroyed);
+    }
 
+    private void ShowMainMenu(bool replaceCamera) {
         WorldObjects.GetIntroCanvas().SetActive(true);
         if (XRSettings.enabled)
         {
             WorldObjects.SetVRObjectsActive(true);
         }
-
-        if (destroyedScene) {
+        if (replaceCamera) {
             var newCamera = Instantiate(CameraPrefab);
             newCamera.stereoTargetEye = StereoTargetEyeMask.None; // Set to main display, not VR
             newCamera.tag = "MainCamera";
         }
+
         WorldObjects.GetWorldExecutionState().Reset();
         RenderSettings.skybox = skyboxMaterial;
         uISlidedown.ForceSlide(false);
@@ -95,7 +98,11 @@ public class WorldControl : MonoBehaviour
     }
 
     public static void ReturnToMainMenu() {
-        GetActiveControl()?.ShowMainMenu();
+        GetActiveControl()?.DestroySceneAndShowMainMenu();
+    }
+
+    public static void RemainOnMainMenu() {
+        GetActiveControl()?.ShowMainMenu(false);
     }
 
     private static WorldControl GetActiveControl() {

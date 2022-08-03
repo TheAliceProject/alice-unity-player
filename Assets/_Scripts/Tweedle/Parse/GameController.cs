@@ -150,12 +150,12 @@ namespace Alice.Tweedle.Parse
                 modalWindow.LinkWindow(modalWindowVr);
             }
             FadeLoadingScreens();
-            ReturnToMainMenu();
+            RemainOnMainMenu();
         }
 
-        private void ReturnToMainMenu() {
+        private void RemainOnMainMenu() {
             m_IsLoading = false;
-            WorldControl.ReturnToMainMenu();
+            WorldControl.RemainOnMainMenu();
         }
 
         private void FadeLoadingScreens()
@@ -249,7 +249,7 @@ namespace Alice.Tweedle.Parse
                 }
                 else
                 {
-                    ReturnToMainMenu();
+                    RemainOnMainMenu();
                 }
             });
         }
