@@ -183,6 +183,7 @@ public class MenuController : MonoBehaviour
             UpdateButton(playPauseButton);
             _activeButton = Button.PlayPause;
         }
+        VRControl.Rig().EnableControllerLight(shouldDisplay);
         _executionState.EnableVrEvents(!shouldDisplay);
     }
 

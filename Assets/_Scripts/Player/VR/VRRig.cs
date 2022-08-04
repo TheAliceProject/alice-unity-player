@@ -21,6 +21,7 @@ public class VRRig : MonoBehaviour
     private bool enabledForControl = false;
 
     private GameObject cursor;
+    private Light controllerLight;
 
     private List<GameObject> selectedButtons = new List<GameObject>();
 
@@ -31,6 +32,22 @@ public class VRRig : MonoBehaviour
         enabledForUI = false;
         enabledForControl = false;
         eventSystem = VRControl.EventSystem();
+        CreateLight();
+    }
+    
+    // A light on the left hand so the controls are visible and usable in all cases.
+    private void CreateLight() {
+        if (controllerLight == null) {
+            controllerLight = new GameObject("Controller Area Light").AddComponent<Light>();
+            controllerLight.transform.parent = leftController;
+            controllerLight.type = LightType.Point;
+            controllerLight.intensity = 1.0F;
+        }
+        controllerLight.enabled = false;
+    }
+
+    public void EnableControllerLight(bool on) {
+        controllerLight.enabled = on;
     }
 
     private void Start()
