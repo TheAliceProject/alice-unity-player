@@ -10,6 +10,7 @@ namespace Alice.Tweedle.VM
         Queue<ExecutionStep> stepsForThisFrame = new Queue<ExecutionStep>();
         Queue<ExecutionStep> stepsForNextFrame = new Queue<ExecutionStep>();
         bool isProcessing = false;
+        bool isSuspended = false;
 
         // This adds an independent thread of work.
         // It may be triggered by
@@ -19,7 +20,7 @@ namespace Alice.Tweedle.VM
         // * a previously process step that has been notified all its children are complete
         internal void AddToQueue(ExecutionStep step)
         {
-            if (step == null || step.IsComplete())
+            if (isSuspended || step == null || step.IsComplete())
             {
                 return;
             }
@@ -31,6 +32,15 @@ namespace Alice.Tweedle.VM
             stepsForNextFrame.Clear();
             stepsForThisFrame.Clear();
             isProcessing = false;
+        }
+
+        internal void Suspend() {
+            isSuspended = true;
+            ClearQueue();
+        }
+
+        public void Unsuspend() {
+            isSuspended = false;
         }
 
         private void AddToCorrectQueue(ExecutionStep step)
@@ -55,7 +65,7 @@ namespace Alice.Tweedle.VM
 
         internal void ProcessOneFrame()
         {
-            if (isProcessing) return;
+            if (isSuspended || isProcessing) return;
 
             isProcessing = true;
             try

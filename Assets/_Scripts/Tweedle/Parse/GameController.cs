@@ -95,6 +95,7 @@ namespace Alice.Tweedle.Parse
             RenderSettings.skybox = null;
             m_IsLoading = false;
             SceneGraph.Current.TweedleSystem = m_System;
+            m_VM.Resume();
             yield return StartWorld();
         }
 
@@ -149,12 +150,8 @@ namespace Alice.Tweedle.Parse
                 modalWindow.LinkWindow(modalWindowVr);
             }
             FadeLoadingScreens();
-            ReturnToMainMenu();
-        }
-
-        private void ReturnToMainMenu() {
             m_IsLoading = false;
-            WorldControl.ReturnToMainMenu();
+            WorldControl.RemainOnMainMenu();
         }
 
         private void FadeLoadingScreens()
@@ -248,7 +245,7 @@ namespace Alice.Tweedle.Parse
                 }
                 else
                 {
-                    ReturnToMainMenu();
+                    WorldControl.ReturnToMainMenu();
                 }
             });
         }
@@ -276,7 +273,11 @@ namespace Alice.Tweedle.Parse
         }
 
         public void PurgeVm() {
-            m_VM.EmptyQueue();
+            m_VM.Suspend();
+        }
+
+        public void ResumeVm() {
+            m_VM.Resume();
         }
     }
 }

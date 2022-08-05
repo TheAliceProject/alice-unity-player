@@ -321,11 +321,12 @@ namespace Alice.Player.Modules {
 
             SceneCanvas canvas = SceneGraph.Current.GetCurrentCanvas();
             var sgEntity = SceneGraph.Current.FindEntity(entity);
-            canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, true, 
-                                                (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
-                                                bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
-        
-            
+            if (sgEntity != null) {
+                canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, true,
+                    (BubblePosition)bubblePosition, (FontType)fontType, (TextStyle)textStyle, (float)textScale,
+                    bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
+            }
+
             return asyncReturn;
         }
 

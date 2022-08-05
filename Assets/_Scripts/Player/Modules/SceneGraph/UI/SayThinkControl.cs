@@ -76,6 +76,10 @@ namespace Alice.Player.Unity {
             }
 
             GameObject bubble = InstantiateBubble(isSay ? sayPrefab.gameObject : thinkPrefab.gameObject, bubblePosition, target);
+            if (bubble == null) {
+                // A restarting world is replacing the main camera so a bubble for the earlier execution can be ignored
+                return;
+            }
             SayThinkBubble sayThink = bubble.GetComponent<SayThinkBubble>();
             sayThink.SetColor(bubbleColor, outlineColor);
             sayThink.SetText(text, textColor, font, textScale);
@@ -84,7 +88,11 @@ namespace Alice.Player.Unity {
             bubbleReturns.Add(sayThink, asyncReturn);
         }
 
-        public GameObject InstantiateBubble(GameObject prefab, BubblePosition pos, SGEntity target){
+        private GameObject InstantiateBubble(GameObject prefab, BubblePosition pos, SGEntity target){
+            if (Camera.main == null) {
+                // If the world is restarting this may be reached by a vestigial async process when the camera is null
+                return null;
+            }
             Transform parent = null;
             if(pos == BubblePosition.Left){
                 parent = leftBubbles;

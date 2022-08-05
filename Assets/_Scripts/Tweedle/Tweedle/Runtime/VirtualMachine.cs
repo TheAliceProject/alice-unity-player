@@ -64,12 +64,13 @@ namespace Alice.Tweedle.VM
 
         public void Resume()
         {
+            executionQueue.Unsuspend();
             ProcessQueueSafely();
         }
 
-        public void EmptyQueue()
+        public void Suspend()
         {
-            executionQueue.ClearQueue();
+            executionQueue.Suspend();
         }
 
         public string ToStackFrame()
