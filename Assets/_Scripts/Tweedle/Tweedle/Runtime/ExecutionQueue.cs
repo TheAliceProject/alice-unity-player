@@ -20,7 +20,7 @@ namespace Alice.Tweedle.VM
         // * a previously process step that has been notified all its children are complete
         internal void AddToQueue(ExecutionStep step)
         {
-            if (isSuspended | step == null || step.IsComplete())
+            if (isSuspended || step == null || step.IsComplete())
             {
                 return;
             }
