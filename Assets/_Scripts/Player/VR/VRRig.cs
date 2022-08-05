@@ -37,12 +37,12 @@ public class VRRig : MonoBehaviour
     
     // A light on the left hand so the controls are visible and usable in all cases.
     private void CreateLight() {
-        if (controllerLight == null) {
-            controllerLight = new GameObject("Controller Area Light").AddComponent<Light>();
-            controllerLight.transform.parent = leftController;
-            controllerLight.type = LightType.Point;
-            controllerLight.intensity = 1.0F;
-        }
+        if (controllerLight != null) return;
+        
+        controllerLight = new GameObject("Controller Area Light").AddComponent<Light>();
+        controllerLight.transform.parent = leftController;
+        controllerLight.type = LightType.Point;
+        controllerLight.intensity = 1.0F;
         controllerLight.enabled = false;
     }
 
