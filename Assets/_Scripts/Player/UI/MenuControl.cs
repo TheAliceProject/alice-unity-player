@@ -67,9 +67,10 @@ public class MenuControl : MonoBehaviour
         loadNewWorldButton.onClick.AddListener(() =>
         {
             var path = StandaloneFileBrowser.OpenFilePanel("Open File", "", WorldObjects.ProjectExt, false);
-            if (path.Length <= 2) return;
+            if (path.Length < 1) return;
             var zipPath = path[0];
             zipPath = System.Uri.UnescapeDataString(zipPath);
+            if (zipPath.Length < 1) return;
             if (File.Exists(zipPath) == false) {
                 throw new FileNotFoundException($"No file found at {zipPath}");
             }
