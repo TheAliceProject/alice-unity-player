@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
@@ -9,6 +10,7 @@ using Alice.Tweedle.Parse;
 using ArenaUnity;
 using BeauRoutine;
 using FlyingText3D;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Alice.Player.Modules {
     [PInteropType("SceneGraph")]
@@ -39,6 +41,7 @@ namespace Alice.Player.Modules {
         public static void createEntity(TValue model, string resource) {
 
             SGEntity entity = null;
+            Console.Out.WriteLine(resource);
             switch (resource) {
                 case BOX:
                     entity = SGEntity.Create<SGBox>(model);
@@ -97,6 +100,21 @@ namespace Alice.Player.Modules {
             data.rotation = ArenaUnity.ArenaUnity.ToArenaRotationQuat(newObject.transform.localRotation);
             // TODO upload models and replace this hardcoded single model ref
             data.url = "store/users/dabeshou/models/Ambulance_AMBULANCE.glb";
+            arenaObject.data = data;
+        }
+
+        private static void AddTextObjToArena(GameObject newObject, string text)
+        {
+            var arenaObject = newObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
+            if (arenaObject == null) return;
+        
+            dynamic data = new ExpandoObject();
+            data.object_type = "text";
+            var spawnPosition = newObject.transform.localPosition;
+            data.position = ArenaUnity.ArenaUnity.ToArenaPosition(spawnPosition);
+            data.rotation = ArenaUnity.ArenaUnity.ToArenaRotationQuat(newObject.transform.localRotation);
+            data.value = text;
+            data.color = "#000000";
             arenaObject.data = data;
         }
 
@@ -345,7 +363,26 @@ namespace Alice.Player.Modules {
                     bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
             }
 
+            Debug.Log(entity.ToString());
+            Debug.Log(bubblePosition);
+            Debug.Log(canvas.transform.position);
+            Debug.Log(bubbleText);
+            String name = entity.ToString();
+            
+            GameObject targetEntity = GameObject.Find(ToLowerFirstChar(entity.ToString()));
+            Debug.Log("here");
+            Debug.Log(sgEntity.ToString());
+            var textEntity = SGEntity.Create<SGTextModel>(entity);
+            AddTextObjToArena(textEntity.gameObject, bubbleText);
+
             return asyncReturn;
+        }
+
+        private static string ToLowerFirstChar(String input)
+        {
+            if (String.IsNullOrEmpty(input))
+                return input;
+            return Char.ToLower(input[0]) + input.Substring(1);
         }
 
         [PInteropMethod]
@@ -368,8 +405,8 @@ namespace Alice.Player.Modules {
             canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, false, 
                                                 (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
                                                 bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
-        
-            
+
+            Debug.Log(bubbleText);
             return asyncReturn;
         }
 
