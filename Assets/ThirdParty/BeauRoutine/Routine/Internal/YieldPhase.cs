@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    1 March 2018
  * 
  * File:    YieldPhase.cs
@@ -12,7 +12,7 @@ namespace BeauRoutine.Internal
     /// <summary>
     /// Identifies Routine updates caused by a YieldInstruction.
     /// </summary>
-    public enum YieldPhase
+    internal enum YieldPhase
     {
         None,
 
@@ -21,6 +21,7 @@ namespace BeauRoutine.Internal
         WaitForLateUpdate,
         WaitForUpdate,
         WaitForThinkUpdate,
-        WaitForCustomUpdate
+        WaitForCustomUpdate,
+        WaitForRealtimeUpdate
     }
 }

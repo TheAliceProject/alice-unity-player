@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    3 Apr 2017
  * 
  * File:    TableOperation.cs
@@ -9,17 +9,17 @@
 
 namespace BeauRoutine.Internal
 {
-    public interface ITableOperation
+    internal interface ITableOperation
     {
         void Execute(Fiber inFiber);
     }
 
-    public struct NullOperation : ITableOperation
+    internal struct NullOperation : ITableOperation
     {
         public void Execute(Fiber inFiber) { }
     }
 
-    public struct PauseOperation : ITableOperation
+    internal struct PauseOperation : ITableOperation
     {
         public void Execute(Fiber inFiber)
         {
@@ -27,7 +27,7 @@ namespace BeauRoutine.Internal
         }
     }
 
-    public struct ResumeOperation : ITableOperation
+    internal struct ResumeOperation : ITableOperation
     {
         public void Execute(Fiber inFiber)
         {
@@ -35,7 +35,7 @@ namespace BeauRoutine.Internal
         }
     }
 
-    public struct StopOperation : ITableOperation
+    internal struct StopOperation : ITableOperation
     {
         public void Execute(Fiber inFiber)
         {

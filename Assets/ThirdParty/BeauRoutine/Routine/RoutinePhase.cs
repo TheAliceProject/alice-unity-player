@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    1 March 2018
  * 
  * File:    RoutinePhase.cs
@@ -43,5 +43,10 @@ namespace BeauRoutine
         /// Routines will be updated at a configurable rate.
         /// </summary>
         CustomUpdate,
+
+        /// <summary>
+        /// Routines will be updated during Update and ignore Time.timeScale
+        /// </summary>
+        RealtimeUpdate
     }
 }

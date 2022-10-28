@@ -1,21 +1,21 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    4 Nov 2017
  * 
  * File:    Routine.Operations.cs
  * Purpose: Public API for starting, stopping, pausing, resuming,
  *          and querying Routines.
-*/
+ */
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 #define DEVELOPMENT
 #endif
 
-using BeauRoutine.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using BeauRoutine.Internal;
 using UnityEngine;
 
 namespace BeauRoutine
@@ -439,20 +439,20 @@ namespace BeauRoutine
             {
                 get
                 {
-#if DEVELOPMENT
+                    #if DEVELOPMENT
                     Manager m = Manager.Get();
                     if (m != null)
                         return m.DebugMode;
-#endif // DEVELOPMENT
+                    #endif // DEVELOPMENT
                     return false;
                 }
                 set
                 {
-#if DEVELOPMENT
+                    #if DEVELOPMENT
                     Manager m = Manager.Get();
                     if (m != null)
                         m.DebugMode = value;
-#endif // DEVELOPMENT
+                    #endif // DEVELOPMENT
                 }
             }
 
@@ -465,20 +465,20 @@ namespace BeauRoutine
             {
                 get
                 {
-#if DEVELOPMENT
+                    #if DEVELOPMENT
                     Manager m = Manager.Get();
                     if (m != null)
                         return m.ProfilingEnabled;
-#endif // DEVELOPMENT
+                    #endif // DEVELOPMENT
                     return false;
                 }
                 set
                 {
-#if DEVELOPMENT
+                    #if DEVELOPMENT
                     Manager m = Manager.Get();
                     if (m != null)
                         m.ProfilingEnabled = value;
-#endif // DEVELOPMENT
+                    #endif // DEVELOPMENT
                 }
             }
 
@@ -540,11 +540,11 @@ namespace BeauRoutine
                 }
                 set
                 {
-#if DEVELOPMENT
+                    #if DEVELOPMENT
                     Manager m = Manager.Get();
                     if (m != null)
                         m.SnapshotEnabled = value;
-#endif // DEVELOPMENT
+                    #endif // DEVELOPMENT
                 }
             }
 
@@ -605,6 +605,88 @@ namespace BeauRoutine
                     Manager m = Manager.Get();
                     if (m != null)
                         m.SetCustomUpdateInterval(value);
+                }
+            }
+
+            /// <summary>
+            /// Gets/sets the expected milliseconds budget per frame.
+            /// </summary>
+            static public double FrameDurationBudgetMS
+            {
+                get
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                        return m.FrameDurationBudgetTicks / TimeSpan.TicksPerMillisecond;
+                    return Manager.CalculateDefaultFrameBudgetTicks() / TimeSpan.TicksPerMillisecond;
+                }
+                set
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                    {
+                        m.SetFrameBudget(value);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Gets/sets the minimum async milliseconds budget per frame.
+            /// </summary>
+            static public double AsyncBudgetMinMS
+            {
+                get
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                        return m.AsyncBudgetTicksMin / TimeSpan.TicksPerMillisecond;
+                    return Manager.CalculateDefaultFrameBudgetTicks() * Manager.DEFAULT_ASYNC_PERCENTAGE_MIN / TimeSpan.TicksPerMillisecond;
+                }
+                set
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                        m.AsyncBudgetTicksMin = (long) (TimeSpan.TicksPerMillisecond * value);
+                }
+            }
+
+            /// <summary>
+            /// Gets/sets the maximum async milliseconds budget per frame.
+            /// </summary>
+            static public double AsyncBudgetMaxMS
+            {
+                get
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                        return m.AsyncBudgetTicksMax / TimeSpan.TicksPerMillisecond;
+                    return Manager.CalculateDefaultFrameBudgetTicks() * Manager.DEFAULT_ASYNC_PERCENTAGE_MAX / TimeSpan.TicksPerMillisecond;
+                }
+                set
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                        m.AsyncBudgetTicksMax = (long) (TimeSpan.TicksPerMillisecond * value);
+                }
+            }
+
+            /// <summary>
+            /// Gets/sets whether or not to force single-threaded mode for async operations.
+            /// </summary>
+            static public bool ForceSingleThreaded
+            {
+                get
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                        return m.ForceSingleThreaded;
+                    return false;
+                }
+                set
+                {
+                    Manager m = Manager.Get();
+                    if (m != null)
+                        m.ForceSingleThreaded = value;
                 }
             }
         }

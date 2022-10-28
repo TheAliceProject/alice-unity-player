@@ -1,26 +1,24 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    4 Apr 2017
  * 
  * File:    Frame.cs
  * Purpose: Data needed for an individual frame of routine execution.
-*/
-
-using UnityEngine;
+ */
 
 namespace BeauRoutine.Internal
 {
     /// <summary>
     /// Contains settings for an individual frame.
     /// </summary>
-    public struct Frame
+    internal struct Frame
     {
         /// <summary>
         /// Current delta time.
         /// </summary>
         public float DeltaTime;
-        
+
         /// <summary>
         /// Unscaled delta time.
         /// </summary>
