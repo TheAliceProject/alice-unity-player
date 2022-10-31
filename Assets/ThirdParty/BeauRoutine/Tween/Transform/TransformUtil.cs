@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    21 Nov 2016
  * 
  * File:    TransformUtil.cs
@@ -114,7 +114,7 @@ namespace BeauRoutine
             if (inAxis != 0)
             {
                 Vector3 pos;
-                if (inAxis == Axis.XYZ)
+                if ((inAxis & Axis.XYZ) == Axis.XYZ)
                     pos = inPosition;
                 else
                 {
@@ -167,7 +167,7 @@ namespace BeauRoutine
             if (inAxis != 0)
             {
                 Vector3 scale;
-                if (inAxis == Axis.XYZ)
+                if ((inAxis & Axis.XYZ) == Axis.XYZ)
                     scale = inScale;
                 else
                 {
@@ -227,7 +227,7 @@ namespace BeauRoutine
             if (inAxis != 0)
             {
                 Vector3 rotation;
-                if (inAxis == Axis.XYZ)
+                if ((inAxis & Axis.XYZ) == Axis.XYZ)
                 {
                     rotation = inRotation;
                 }
@@ -250,7 +250,7 @@ namespace BeauRoutine
                 if (inSpace == Space.Self)
                     inTransform.localEulerAngles = rotation;
                 else
-                    inTransform.localEulerAngles = rotation;
+                    inTransform.eulerAngles = rotation;
             }
         }
 
@@ -292,7 +292,7 @@ namespace BeauRoutine
             if (inAxis != 0)
             {
                 Vector2 pos;
-                if (inAxis == Axis.XYZ || inAxis == Axis.XY)
+                if ((inAxis & Axis.XY) == Axis.XY)
                     pos = inPosition;
                 else
                 {
@@ -342,7 +342,7 @@ namespace BeauRoutine
             if (inAxis != 0)
             {
                 Vector2 pos;
-                if (inAxis == Axis.XYZ || inAxis == Axis.XY)
+                if ((inAxis & Axis.XY) == Axis.XY)
                     pos = inSize;
                 else
                 {

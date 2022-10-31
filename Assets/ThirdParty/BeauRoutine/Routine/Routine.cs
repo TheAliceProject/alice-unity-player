@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    21 Nov 2016
  * 
  * File:    Routine.cs
@@ -365,6 +365,26 @@ namespace BeauRoutine
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets a lock on the routine.
+        /// Locked routines will not execute while locked.
+        /// Dispose or release the RoutineLock to unlock.
+        /// </summary>
+        public RoutineLock GetLock()
+        {
+            Manager m = Manager.Get();
+            if (m != null)
+            {
+                Fiber fiber = m.Fibers[this];
+                if (fiber != null)
+                {
+                    fiber.AddLock();
+                    return new RoutineLock(this);
+                }
+            }
+            return default(RoutineLock);
         }
 
         #endregion

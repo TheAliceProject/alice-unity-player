@@ -1,17 +1,21 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    21 Nov 2016
  * 
  * File:    Routine.Utils.cs
  * Purpose: Set of utility functions for both running Routines
  *          and creating routine functions for common tasks.
-*/
+ */
 
-using BeauRoutine.Internal;
+#if UNITY_WEBGL
+#define DISABLE_THREADING
+#endif // UNITY_WEBGL
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using BeauRoutine.Internal;
 using UnityEngine;
 
 namespace BeauRoutine
@@ -70,6 +74,20 @@ namespace BeauRoutine
                 if (m != null)
                     return m.Frame.UnscaledDeltaTime;
                 return 0.0f;
+            }
+        }
+
+        /// <summary>
+        /// Returns the remaining milliseconds left in this frame's budget.
+        /// </summary>
+        static public double RemainingFrameBudgetMS
+        {
+            get
+            {
+                Manager m = Manager.Get();
+                if (m != null)
+                    return m.CalculateRemainingFrameBudgetMS();
+                return 0;
             }
         }
 
@@ -136,6 +154,11 @@ namespace BeauRoutine
             /// its caller immediately
             /// </summary>
             BreakAndResume,
+
+            /// <summary>
+            /// Continues executing this frame.
+            /// </summary>
+            Continue,
         }
 
         static private readonly WaitForFixedUpdate s_CachedWaitForFixedUpdate = new WaitForFixedUpdate();
@@ -144,6 +167,7 @@ namespace BeauRoutine
         static private readonly WaitForUpdate s_CachedWaitForUpdate = new WaitForUpdate();
         static private readonly WaitForCustomUpdate s_CachedWaitForCustomUpdate = new WaitForCustomUpdate();
         static private readonly WaitForThinkUpdate s_CachedWaitForThinkUpdate = new WaitForThinkUpdate();
+        static private readonly WaitForRealtimeUpdate s_CachedWaitForRealtimeUpdate = new WaitForRealtimeUpdate();
 
         /// <summary>
         /// Waits for a FixedUpdate to occur.
@@ -194,6 +218,15 @@ namespace BeauRoutine
         }
 
         /// <summary>
+        /// Waits until after the RealtimeUpdate phase.
+        /// </summary>
+        /// <returns></returns>
+        static public IEnumerator WaitForRealtimeUpdate()
+        {
+            return s_CachedWaitForRealtimeUpdate;
+        }
+
+        /// <summary>
         /// Executes the enclosed coroutine immediately when yielded.
         /// Will resume its caller immediately once complete.
         /// </summary>
@@ -202,7 +235,7 @@ namespace BeauRoutine
             RoutineDecorator decorator;
             if (inEnumerator is RoutineDecorator)
             {
-                decorator = (RoutineDecorator)inEnumerator;
+                decorator = (RoutineDecorator) inEnumerator;
             }
             else
             {
@@ -250,7 +283,7 @@ namespace BeauRoutine
         /// </summary>
         static public IEnumerator WaitCondition(Func<bool> inCondition, float inInterval = 0)
         {
-            object boxedTime = (inInterval > 0 ? (object)inInterval : null);
+            object boxedTime = (inInterval > 0 ? (object) inInterval : null);
             while (!inCondition())
                 yield return boxedTime;
         }
@@ -295,7 +328,7 @@ namespace BeauRoutine
         /// </summary>
         static public IEnumerator Timer(float inSeconds, Action<float> inOnUpdate)
         {
-            while(true)
+            while (true)
             {
                 inSeconds -= Routine.DeltaTime;
                 if (inSeconds < 0)
@@ -316,7 +349,7 @@ namespace BeauRoutine
         static public IEnumerator Accumulate(float inSeconds, Action<float> inOnUpdate)
         {
             float acc = 0;
-            while(true)
+            while (true)
             {
                 acc += Routine.DeltaTime;
                 if (acc > inSeconds)
@@ -348,7 +381,7 @@ namespace BeauRoutine
 
             int nonNullCount = 0;
             int firstNonNull = -1;
-            for(int i = 0; i < inRoutines.Length; ++i)
+            for (int i = 0; i < inRoutines.Length; ++i)
             {
                 if (inRoutines[i] != null)
                 {
@@ -455,14 +488,28 @@ namespace BeauRoutine
             return CreateParallel(new List<IEnumerator>(inRoutines), true);
         }
 
-        /// <summary>
-        /// Runs all the given IEnumerators
-        /// </summary>
-        static private IEnumerator CreateParallel(List<IEnumerator> inEnumerators, bool inbRace)
+        // Runs all the given IEnumerators
+        static private ParallelFibers CreateParallel(List<IEnumerator> inEnumerators, bool inbRace)
         {
             Manager m = Manager.Get();
             if (m != null)
                 return new ParallelFibers(m, inEnumerators, inbRace);
+            return null;
+        }
+
+        static private ParallelFibers CreateEmptyParallel(bool inbRace)
+        {
+            Manager m = Manager.Get();
+            if (m != null)
+                return new ParallelFibers(m, new List<IEnumerator>(), inbRace);
+            return null;
+        }
+
+        static private ParallelFibers CreateEmptyParallel(bool inbRace, int inCapacity)
+        {
+            Manager m = Manager.Get();
+            if (m != null)
+                return new ParallelFibers(m, new List<IEnumerator>(inCapacity), inbRace);
             return null;
         }
 
@@ -543,9 +590,59 @@ namespace BeauRoutine
         /// </summary>
         static public IEnumerator Delay(IEnumerator inRoutine, float inSeconds)
         {
-            if (inSeconds > 0)
-                yield return inSeconds;
-            yield return Routine.Inline(inRoutine);
+            return new DelayedIEnumerator(inRoutine, inSeconds);
+        }
+
+        // Delays executing an IEnumerator by a certain amount of seconds
+        private class DelayedIEnumerator : IEnumerator, IDisposable
+        {
+            private IEnumerator m_Enumerator;
+            private float m_Delay;
+            private object m_Yielding = false;
+
+            public DelayedIEnumerator(IEnumerator inRoutine, float inSeconds)
+            {
+                m_Enumerator = inRoutine;
+                m_Delay = inSeconds;
+            }
+
+            public object Current
+            {
+                get { return m_Yielding; }
+            }
+
+            public void Dispose()
+            {
+                DisposeUtils.DisposeEnumerator(ref m_Enumerator);
+                m_Delay = 0;
+            }
+
+            public bool MoveNext()
+            {
+                if (m_Enumerator == null)
+                    return false;
+
+                if (m_Delay > 0)
+                {
+                    m_Yielding = m_Delay;
+                    m_Delay = 0;
+                    return true;
+                }
+
+                m_Yielding = Routine.Inline(m_Enumerator);
+                m_Enumerator = null;
+                return true;
+            }
+
+            public void Reset()
+            {
+                throw new NotSupportedException();
+            }
+
+            public override string ToString()
+            {
+                return "Routine::Delay()";
+            }
         }
 
         #endregion
@@ -613,6 +710,8 @@ namespace BeauRoutine
         /// </summary>
         static public Routine StartLoop(Action inAction)
         {
+            if (inAction == null)
+                return Routine.Null;
             return Start(LoopedRoutine(inAction));
         }
 
@@ -621,6 +720,8 @@ namespace BeauRoutine
         /// </summary>
         static public Routine StartLoop<T>(Action<T> inAction, T inArg)
         {
+            if (inAction == null)
+                return Routine.Null;
             return Start(LoopedRoutine(inAction, inArg));
         }
 
@@ -629,6 +730,8 @@ namespace BeauRoutine
         /// </summary>
         static public Routine StartLoopRoutine(Func<IEnumerator> inEnumerator)
         {
+            if (inEnumerator == null)
+                return Routine.Null;
             return Start(LoopedRoutine(inEnumerator));
         }
 
@@ -637,6 +740,8 @@ namespace BeauRoutine
         /// </summary>
         static public Routine StartLoop(MonoBehaviour inHost, Action inAction)
         {
+            if (inAction == null)
+                return Routine.Null;
             return Start(inHost, LoopedRoutine(inAction));
         }
 
@@ -645,6 +750,8 @@ namespace BeauRoutine
         /// </summary>
         static public Routine StartLoop<T>(MonoBehaviour inHost, Action<T> inAction, T inArg)
         {
+            if (inAction == null)
+                return Routine.Null;
             return Start(inHost, LoopedRoutine(inAction, inArg));
         }
 
@@ -653,6 +760,8 @@ namespace BeauRoutine
         /// </summary>
         static public Routine StartLoopRoutine(MonoBehaviour inHost, Func<IEnumerator> inEnumerator)
         {
+            if (inEnumerator == null)
+                return Routine.Null;
             return Start(inHost, LoopedRoutine(inEnumerator));
         }
 
@@ -678,7 +787,7 @@ namespace BeauRoutine
 
         static private IEnumerator LoopedRoutine(Func<IEnumerator> inRoutine)
         {
-            while(true)
+            while (true)
                 yield return Routine.Inline(inRoutine());
         }
 
@@ -697,10 +806,23 @@ namespace BeauRoutine
             while (true)
             {
                 accumulation += Routine.DeltaTime * inTimesPerSecond;
-                while (accumulation > 1)
+                if (accumulation >= 1)
                 {
-                    inAction();
-                    --accumulation;
+                    // Ensure DeltaTime reflects this interval
+                    Manager m = Manager.Get();
+                    float oldUnscaledDeltaTime = m.Frame.UnscaledDeltaTime;
+                    m.Frame.UnscaledDeltaTime = 1f / inTimesPerSecond;
+                    m.Frame.RefreshTimeScale();
+
+                    while (accumulation >= 1)
+                    {
+                        inAction();
+                        --accumulation;
+                    }
+
+                    // Reset DeltaTime
+                    m.Frame.UnscaledDeltaTime = oldUnscaledDeltaTime;
+                    m.Frame.RefreshTimeScale();
                 }
                 yield return null;
             }
@@ -715,77 +837,843 @@ namespace BeauRoutine
             while (true)
             {
                 accumulation += Routine.DeltaTime * inTimesPerSecond;
-                while (accumulation > 1)
+                if (accumulation >= 1)
                 {
-                    inAction(inArg);
-                    --accumulation;
+                    // Ensure DeltaTime reflects this interval
+                    Manager m = Manager.Get();
+                    float oldUnscaledDeltaTime = m.Frame.UnscaledDeltaTime;
+                    m.Frame.UnscaledDeltaTime = 1f / inTimesPerSecond;
+                    m.Frame.RefreshTimeScale();
+
+                    while (accumulation >= 1)
+                    {
+                        inAction(inArg);
+                        --accumulation;
+                    }
+
+                    // Reset DeltaTime
+                    m.Frame.UnscaledDeltaTime = oldUnscaledDeltaTime;
+                    m.Frame.RefreshTimeScale();
                 }
                 yield return null;
             }
         }
 
+        /// <summary>
+        /// Returns an IEnumerator that attempts to update the given routine a certain number of times per frame.
+        /// </summary>
+        static public IEnumerator PerSecond(IEnumerator inRoutine, float inTimesPerSecond)
+        {
+            return new IntervalFiber(Manager.Get(), inRoutine, 1f / inTimesPerSecond);
+        }
+
         #endregion
-    
+
         #region For Each
 
         /// <summary>
-        /// Executes, in order, an enumerator function for every element in the given list.
+        /// Delegate for returning a coroutine operation for the given element.
         /// </summary>
-        static public IEnumerator ForEach<T>(IList<T> inList, Func<T, IEnumerator> inOperation)
+        public delegate IEnumerator ElementOperationGenerator<T>(T inElement);
+
+        /// <summary>
+        /// Delegate for returning a coroutine operation for the given element and element index.
+        /// </summary>
+        public delegate IEnumerator IndexedElementOperationGenerator<T>(int inIndex, T inElement);
+
+        /// <summary>
+        /// Delegate for returning a coroutine operation for the given index.
+        /// </summary>
+        public delegate IEnumerator IndexOperationGenerator(int inIndex);
+
+        /// <summary>
+        /// Executes an enumerator function for every integer between the from (inclusive) and to (exclusive).
+        /// </summary>
+        static public IEnumerator For(int inFrom, int inTo, IndexOperationGenerator inOperation)
         {
-            if (inList != null && inOperation != null)
+            if (inOperation != null && inFrom < inTo)
             {
-                foreach (var obj in inList)
+                for (int i = inFrom; i < inTo; ++i)
+                    yield return inOperation(i);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, an enumerator function for every element in the given enumerable.
+        /// </summary>
+        static public IEnumerator ForEach<T>(IEnumerable<T> inEnumerable, ElementOperationGenerator<T> inOperation)
+        {
+            if (inEnumerable != null && inOperation != null)
+            {
+                foreach (var obj in inEnumerable)
                     yield return inOperation(obj);
             }
         }
 
         /// <summary>
-        /// Executes, in parallel, an enumerator function for every element in the given list.
+        /// Executes, in order, an enumerator function for every element in the given array.
         /// </summary>
-        static public IEnumerator ForEachParallel<T>(IList<T> inList, Func<T, IEnumerator> inOperation)
+        static public IEnumerator ForEach<T>(T[] inArray, ElementOperationGenerator<T> inOperation)
         {
-            int count = 0;
-            if (inList != null && inOperation != null && (count = inList.Count) > 0)
+            if (inArray != null && inOperation != null)
             {
-                IEnumerator[] enumerators = new IEnumerator[count];
-                for (int i = 0; i < count; ++i)
-                    enumerators[i] = inOperation(inList[i]);
-                yield return Routine.Inline(
-                    Routine.Combine(enumerators)
-                );
+                for (int i = 0; i < inArray.Length; ++i)
+                    yield return inOperation(inArray[i]);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, an enumerator function for every element in the given enumerable.
+        /// </summary>
+        static public IEnumerator ForEach<T>(IEnumerable<T> inEnumerable, IndexedElementOperationGenerator<T> inOperation)
+        {
+            if (inEnumerable != null && inOperation != null)
+            {
+                int idx = 0;
+                foreach (var obj in inEnumerable)
+                    yield return inOperation(idx++, obj);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, an enumerator function for every element in the given array.
+        /// </summary>
+        static public IEnumerator ForEach<T>(T[] inArray, IndexedElementOperationGenerator<T> inOperation)
+        {
+            if (inArray != null && inOperation != null)
+            {
+                for (int i = 0; i < inArray.Length; ++i)
+                    yield return inOperation(i, inArray[i]);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel, an enumerator function for every integer between the from (inclusive) and to (exclusive).
+        /// </summary>
+        static public IEnumerator ForParallel(int inFrom, int inTo, IndexOperationGenerator inOperation)
+        {
+            if (inOperation != null && inFrom < inTo)
+            {
+                ParallelFibers combine = CreateEmptyParallel(false, inTo - inFrom);
+                for (int i = inFrom; i < inTo; ++i)
+                {
+                    combine.AddEnumerator(inOperation(i));
+                }
+                yield return Routine.Inline(combine);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel, an enumerator function for every element in the given enumerable.
+        /// </summary>
+        static public IEnumerator ForEachParallel<T>(IEnumerable<T> inEnumerable, ElementOperationGenerator<T> inOperation)
+        {
+            if (inEnumerable != null && inOperation != null)
+            {
+                ParallelFibers combine = CreateEmptyParallel(false);
+                foreach (var obj in inEnumerable)
+                {
+                    combine.AddEnumerator(inOperation(obj));
+                }
+                yield return Routine.Inline(combine);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel, an enumerator function for every element in the given enumerable.
+        /// </summary>
+        static public IEnumerator ForEachParallel<T>(IEnumerable<T> inEnumerable, IndexedElementOperationGenerator<T> inOperation)
+        {
+            if (inEnumerable != null && inOperation != null)
+            {
+                ParallelFibers combine = CreateEmptyParallel(false);
+                int idx = 0;
+                foreach (var obj in inEnumerable)
+                {
+                    combine.AddEnumerator(inOperation(idx++, obj));
+                }
+                yield return Routine.Inline(combine);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel, an enumerator function for every element in the given collection.
+        /// </summary>
+        static public IEnumerator ForEachParallel<T>(ICollection<T> inCollection, ElementOperationGenerator<T> inOperation)
+        {
+            if (inCollection != null && inOperation != null)
+            {
+                ParallelFibers combine = CreateEmptyParallel(false, inCollection.Count);
+                foreach (var obj in inCollection)
+                {
+                    combine.AddEnumerator(inOperation(obj));
+                }
+                yield return Routine.Inline(combine);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel, an enumerator function for every element in the given collection.
+        /// </summary>
+        static public IEnumerator ForEachParallel<T>(ICollection<T> inCollection, IndexedElementOperationGenerator<T> inOperation)
+        {
+            if (inCollection != null && inOperation != null)
+            {
+                ParallelFibers combine = CreateEmptyParallel(false, inCollection.Count);
+                int idx = 0;
+                foreach (var obj in inCollection)
+                {
+                    combine.AddEnumerator(inOperation(idx++, obj));
+                }
+                yield return Routine.Inline(combine);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel, an enumerator function for every element in the given array.
+        /// </summary>
+        static public IEnumerator ForEachParallel<T>(T[] inArray, ElementOperationGenerator<T> inOperation)
+        {
+            if (inArray != null && inOperation != null)
+            {
+                ParallelFibers combine = CreateEmptyParallel(false, inArray.Length);
+                for (int i = 0; i < inArray.Length; ++i)
+                {
+                    combine.AddEnumerator(inOperation(inArray[i]));
+                }
+                yield return Routine.Inline(combine);
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel, an enumerator function for every element in the given array.
+        /// </summary>
+        static public IEnumerator ForEachParallel<T>(T[] inArray, IndexedElementOperationGenerator<T> inOperation)
+        {
+            if (inArray != null && inOperation != null)
+            {
+                ParallelFibers combine = CreateEmptyParallel(false, inArray.Length);
+                for (int i = 0; i < inArray.Length; ++i)
+                {
+                    combine.AddEnumerator(inOperation(i, inArray[i]));
+                }
+                yield return Routine.Inline(combine);
             }
         }
 
         /// <summary>
         /// Executes, in parallel chunks, an enumerator function for every element in the given list.
         /// </summary>
-        static public IEnumerator ForEachParallel<T>(IList<T> inList, Func<T, IEnumerator> inOperation, int inChunkSize)
+        static public IEnumerator ForEachParallelChunked<T>(IEnumerable<T> inEnumerable, ElementOperationGenerator<T> inOperation, int inChunkSize)
         {
-            int count = 0;
-            if (inList != null && inOperation != null && (count = inList.Count) > 0)
+            if (inEnumerable != null && inOperation != null)
             {
-                int chunkSize = Math.Min(inChunkSize, count);
+                IEnumerator[] block = new IEnumerator[inChunkSize];
                 int numItems = 0;
-                IEnumerator[] enumerators = new IEnumerator[chunkSize];
-                for (int i = 0; i < count; ++i)
+                foreach (var obj in inEnumerable)
                 {
-                    enumerators[numItems++] = inOperation(inList[i]);
-                    if (i == count - 1 || numItems == chunkSize)
+                    IEnumerator operation = inOperation(obj);
+                    if (operation != null)
                     {
-                        yield return Routine.Inline(
-                            Routine.Combine(enumerators)
-                        );
+                        block[numItems++] = operation;
 
-                        for (int j = 0; j < numItems; ++j)
-                            enumerators[j] = null;
-                        numItems = 0;
+                        if (numItems == inChunkSize)
+                        {
+                            yield return Routine.Inline(
+                                Routine.Combine(block)
+                            );
+
+                            for (int i = numItems - 1; i >= 0; --i)
+                                block[i] = null;
+                            numItems = 0;
+                        }
                     }
+                }
+
+                if (numItems > 0)
+                {
+                    yield return Routine.Inline(
+                        Routine.Combine(block)
+                    );
+
+                    for (int i = numItems - 1; i >= 0; --i)
+                        block[i] = null;
+                    numItems = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in parallel chunks, an enumerator function for every element in the given enumerable.
+        /// </summary>
+        static public IEnumerator ForEachParallelChunked<T>(IEnumerable<T> inEnumerable, IndexedElementOperationGenerator<T> inOperation, int inChunkSize)
+        {
+            if (inEnumerable != null && inOperation != null)
+            {
+                IEnumerator[] block = new IEnumerator[inChunkSize];
+                int numItems = 0;
+                int idx = 0;
+                foreach (var obj in inEnumerable)
+                {
+                    IEnumerator operation = inOperation(idx++, obj);
+                    if (operation != null)
+                    {
+                        block[numItems++] = operation;
+
+                        if (numItems == inChunkSize)
+                        {
+                            yield return Routine.Inline(
+                                Routine.Combine(block)
+                            );
+
+                            for (int i = numItems - 1; i >= 0; --i)
+                                block[i] = null;
+                            numItems = 0;
+                        }
+                    }
+                }
+
+                if (numItems > 0)
+                {
+                    yield return Routine.Inline(
+                        Routine.Combine(block)
+                    );
+
+                    for (int i = numItems - 1; i >= 0; --i)
+                        block[i] = null;
+                    numItems = 0;
                 }
             }
         }
 
         #endregion
+
+        #region Amortize
+
+        /// <summary>
+        /// Delegate for performing an operation on the given element.
+        /// </summary>
+        public delegate void ElementOperation<T>(T inElement);
+
+        /// <summary>
+        /// Delegate for performing an operation on the given element for the given element index.
+        /// </summary>
+        public delegate void IndexedElementOperation<T>(int inIndex, T inElement);
+
+        /// <summary>
+        /// Delegate for performing an operation on the given index.
+        /// </summary>
+        public delegate void IndexOperation(int inIndex);
+
+        /// <summary>
+        /// Parameters for amortized methods.
+        /// </summary>
+        public struct AmortizeParams
+        {
+            /// <summary>
+            /// Maximum number of milliseconds to execute per frame before cutting off.
+            /// </summary>
+            public double MaxMillisecsPerFrame;
+
+            /// <summary>
+            /// Required number of milliseconds remaining in the frame for execution start to start. 
+            /// </summary>
+            public double? RequiredFrameBudget;
+
+            public AmortizeParams(double inMaxMillisecsPerFrame, double? inRequiredFrameBudget = null)
+            {
+                MaxMillisecsPerFrame = inMaxMillisecsPerFrame;
+                RequiredFrameBudget = inRequiredFrameBudget;
+            }
+        }
+
+        /// <summary>
+        /// Tracker for an amortized routine.
+        /// </summary>
+        public struct AmortizeTimer
+        {
+            private readonly AmortizeParams m_Params;
+
+            private double m_DurationThisFrame;
+            private double m_LastBudgetTimestamp;
+
+            public AmortizeTimer(AmortizeParams inParams)
+            {
+                m_Params = inParams;
+                m_DurationThisFrame = 0;
+                m_LastBudgetTimestamp = 0;
+            }
+
+            #region Frame Start
+
+            /// <summary>
+            /// Starts the frame.
+            /// </summary>
+            public void ResetFrame()
+            {
+                m_DurationThisFrame = 0;
+                m_LastBudgetTimestamp = RemainingFrameBudgetMS;
+            }
+
+            /// <summary>
+            /// Returns if the frame can be started.
+            /// </summary>
+            public bool CanStartFrame()
+            {
+                if (!m_Params.RequiredFrameBudget.HasValue)
+                    return true;
+
+                return RemainingFrameBudgetMS >= m_Params.RequiredFrameBudget.GetValueOrDefault();
+            }
+
+            #endregion // Frame Start
+
+            /// <summary>
+            /// Advances within the current frame.
+            /// </summary>
+            public void Tick()
+            {
+                double currentTimestamp = RemainingFrameBudgetMS;
+                m_DurationThisFrame += m_LastBudgetTimestamp - currentTimestamp;
+                m_LastBudgetTimestamp = currentTimestamp;
+            }
+
+            /// <summary>
+            /// Returns if this timer has run for its budget this frame.
+            /// </summary>
+            public bool IsOverBudgetForFrame()
+            {
+                return m_DurationThisFrame >= m_Params.MaxMillisecsPerFrame;
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, the set of provided functions.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator Amortize(IEnumerable<Action> inActions, double inMaxMillisecsPerFrame)
+        {
+            return Amortize(inActions, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Executes, in order, the set of provided functions.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator Amortize(IEnumerable<Action> inActions, AmortizeParams inParams)
+        {
+            AmortizeTimer tracker = new AmortizeTimer(inParams);
+
+            while (!tracker.CanStartFrame())
+                yield return null;
+            tracker.ResetFrame();
+
+            foreach (var action in inActions)
+            {
+                if (tracker.IsOverBudgetForFrame())
+                {
+                    yield return null;
+                    while (!tracker.CanStartFrame())
+                        yield return null;
+                    tracker.ResetFrame();
+                }
+
+                action();
+                tracker.Tick();
+            }
+        }
+
+        /// <summary>
+        /// Steps through the given IEnumerator over time.
+        /// Yielding null or Routine.Command.Continue will continue if there's enough time left in the frame.
+        /// </summary>
+        static public IEnumerator Amortize(IEnumerator inEnumerator, double inMaxMillisecsPerFrame)
+        {
+            return Amortize(inEnumerator, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Steps through the given IEnumerator over time.
+        /// Yielding null or Routine.Command.Continue will continue if there's enough time left in the frame.
+        /// </summary>
+        static public IEnumerator Amortize(IEnumerator inEnumerator, AmortizeParams inParams)
+        {
+            AmortizeTimer tracker = new AmortizeTimer(inParams);
+
+            while (!tracker.CanStartFrame())
+                yield return null;
+            tracker.ResetFrame();
+
+            while (inEnumerator.MoveNext())
+            {
+                tracker.Tick();
+
+                object yieldResult = inEnumerator.Current;
+                bool bAttemptContinue = yieldResult == null;
+                if (!bAttemptContinue)
+                {
+                    if (yieldResult is Routine.Command && (Routine.Command) yieldResult == Routine.Command.Continue)
+                    {
+                        bAttemptContinue = true;
+                    }
+                }
+
+                if (!bAttemptContinue)
+                {
+                    yield return yieldResult;
+
+                    while (!tracker.CanStartFrame())
+                        yield return null;
+                    tracker.ResetFrame();
+
+                    continue;
+                }
+
+                if (tracker.IsOverBudgetForFrame())
+                {
+                    yield return null;
+
+                    while (!tracker.CanStartFrame())
+                        yield return null;
+                    tracker.ResetFrame();
+
+                    continue;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, the set of provided functions.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator Amortize(double inMaxMillisecsPerFrame, params Action[] inActions)
+        {
+            return Amortize(inActions, inMaxMillisecsPerFrame);
+        }
+
+        /// <summary>
+        /// Executes, in order, the set of provided functions.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator Amortize(AmortizeParams inParams, params Action[] inActions)
+        {
+            return Amortize(inActions, inParams);
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every index between from (inclusive) and to (exclusive).
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForAmortize(int inFrom, int inTo, IndexOperation inOperation, double inMaxMillisecsPerFrame)
+        {
+            return ForAmortize(inFrom, inTo, inOperation, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every index between from (inclusive) and to (exclusive).
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForAmortize(int inFrom, int inTo, IndexOperation inOperation, AmortizeParams inParams)
+        {
+            if (inFrom < inTo && inOperation != null)
+            {
+                AmortizeTimer tracker = new AmortizeTimer(inParams);
+
+                while (!tracker.CanStartFrame())
+                    yield return null;
+                tracker.ResetFrame();
+
+                for (int i = inFrom; i < inTo; ++i)
+                {
+                    if (tracker.IsOverBudgetForFrame())
+                    {
+                        yield return null;
+
+                        while (!tracker.CanStartFrame())
+                            yield return null;
+                        tracker.ResetFrame();
+                    }
+
+                    inOperation(i);
+
+                    tracker.Tick();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given enumerable.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(IEnumerable<T> inEnumerable, ElementOperation<T> inOperation, double inMaxMillisecsPerFrame)
+        {
+            return ForEachAmortize<T>(inEnumerable, inOperation, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given enumerable.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(IEnumerable<T> inEnumerable, ElementOperation<T> inOperation, AmortizeParams inParams)
+        {
+            if (inEnumerable != null && inOperation != null)
+            {
+                AmortizeTimer tracker = new AmortizeTimer(inParams);
+
+                while (!tracker.CanStartFrame())
+                    yield return null;
+                tracker.ResetFrame();
+
+                foreach (var obj in inEnumerable)
+                {
+                    if (tracker.IsOverBudgetForFrame())
+                    {
+                        yield return null;
+
+                        while (!tracker.CanStartFrame())
+                            yield return null;
+                        tracker.ResetFrame();
+                    }
+
+                    inOperation(obj);
+
+                    tracker.Tick();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given enumerable.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(IEnumerable<T> inEnumerable, IndexedElementOperation<T> inOperation, double inMaxMillisecsPerFrame)
+        {
+            return ForEachAmortize<T>(inEnumerable, inOperation, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given enumerable.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(IEnumerable<T> inEnumerable, IndexedElementOperation<T> inOperation, AmortizeParams inParams)
+        {
+            if (inEnumerable != null && inOperation != null)
+            {
+                AmortizeTimer tracker = new AmortizeTimer(inParams);
+                while (!tracker.CanStartFrame())
+                    yield return null;
+                tracker.ResetFrame();
+
+                int idx = 0;
+                foreach (var obj in inEnumerable)
+                {
+                    if (tracker.IsOverBudgetForFrame())
+                    {
+                        yield return null;
+
+                        while (!tracker.CanStartFrame())
+                            yield return null;
+                        tracker.ResetFrame();
+                    }
+
+                    inOperation(idx++, obj);
+
+                    tracker.Tick();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given array.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(T[] inArray, ElementOperation<T> inOperation, double inMaxMillisecsPerFrame)
+        {
+            return ForEachAmortize<T>(inArray, inOperation, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given array.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(T[] inArray, ElementOperation<T> inOperation, AmortizeParams inParams)
+        {
+            if (inArray != null && inOperation != null)
+            {
+                AmortizeTimer tracker = new AmortizeTimer(inParams);
+
+                while (!tracker.CanStartFrame())
+                    yield return null;
+                tracker.ResetFrame();
+
+                for (int idx = 0; idx < inArray.Length; ++idx)
+                {
+                    if (tracker.IsOverBudgetForFrame())
+                    {
+                        yield return null;
+
+                        while (!tracker.CanStartFrame())
+                            yield return null;
+                        tracker.ResetFrame();
+                    }
+
+                    inOperation(inArray[idx]);
+
+                    tracker.Tick();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given array.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(T[] inArray, IndexedElementOperation<T> inOperation, double inMaxMillisecsPerFrame)
+        {
+            return ForEachAmortize<T>(inArray, inOperation, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given array.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator ForEachAmortize<T>(T[] inArray, IndexedElementOperation<T> inOperation, AmortizeParams inParams)
+        {
+            if (inArray != null && inOperation != null)
+            {
+                AmortizeTimer tracker = new AmortizeTimer(inParams);
+
+                while (!tracker.CanStartFrame())
+                    yield return null;
+                tracker.ResetFrame();
+
+                for (int idx = 0; idx < inArray.Length; ++idx)
+                {
+                    if (tracker.IsOverBudgetForFrame())
+                    {
+                        yield return null;
+
+                        while (!tracker.CanStartFrame())
+                            yield return null;
+                        tracker.ResetFrame();
+                    }
+
+                    inOperation(idx, inArray[idx]);
+
+                    tracker.Tick();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given queue.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator AmortizeQueue<T>(Queue<T> inQueue, ElementOperation<T> inOperation, double inMaxMillisecsPerFrame)
+        {
+            return AmortizeQueue(inQueue, inOperation, new AmortizeParams(inMaxMillisecsPerFrame));
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given queue.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// </summary>
+        static public IEnumerator AmortizeQueue<T>(Queue<T> inQueue, ElementOperation<T> inOperation, AmortizeParams inParams)
+        {
+            if (inQueue != null && inOperation != null)
+            {
+                AmortizeTimer tracker = new AmortizeTimer(inParams);
+                while (!tracker.CanStartFrame())
+                    yield return null;
+                tracker.ResetFrame();
+
+                while (inQueue.Count > 0)
+                {
+                    if (tracker.IsOverBudgetForFrame())
+                    {
+                        yield return null;
+                        while (tracker.CanStartFrame() && inQueue.Count > 0)
+                            yield return null;
+                        tracker.ResetFrame();
+                        continue;
+                    }
+
+                    T obj = inQueue.Dequeue();
+                    inOperation(obj);
+
+                    tracker.Tick();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given queue.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// If the queue is empty, this will wait StarvationDelay seconds until attempting to do more work.
+        /// </summary>
+        static public IEnumerator AmortizeQueueLoop<T>(Queue<T> inQueue, ElementOperation<T> inOperation, double inMaxMillisecsPerFrame, float inStarvationDelay = 0)
+        {
+            return AmortizeQueueLoop(inQueue, inOperation, new AmortizeParams(inMaxMillisecsPerFrame), inStarvationDelay);
+        }
+
+        /// <summary>
+        /// Executes, in order, a function for every element in the given queue.
+        /// This will attempt to not execute for longer than the given number of milliseconds per frame.
+        /// If the queue is empty, this will wait StarvationDelay seconds until attempting to do more work.
+        /// </summary>
+        static public IEnumerator AmortizeQueueLoop<T>(Queue<T> inQueue, ElementOperation<T> inOperation, AmortizeParams inParams, float inStarvationDelay = 0)
+        {
+            if (inQueue != null && inOperation != null)
+            {
+                object starvationDelayObj = inStarvationDelay > 0 ? (object) inStarvationDelay : null;
+
+                AmortizeTimer tracker = new AmortizeTimer(inParams);
+                while (!tracker.CanStartFrame())
+                    yield return null;
+                tracker.ResetFrame();
+
+                while (true)
+                {
+                    if (inQueue.Count <= 0)
+                    {
+                        yield return starvationDelayObj;
+                        while (!tracker.CanStartFrame())
+                            yield return null;
+                        tracker.ResetFrame();
+                        continue;
+                    }
+
+                    if (tracker.IsOverBudgetForFrame())
+                    {
+                        yield return null;
+                        while (tracker.CanStartFrame() && inQueue.Count > 0)
+                            yield return null;
+                        tracker.ResetFrame();
+                        continue;
+                    }
+
+                    T obj = inQueue.Dequeue();
+                    inOperation(obj);
+
+                    tracker.Tick();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Waits for spare time at the end of a frame.
+        /// </summary>
+        static public IEnumerator WaitForSpareTime(double inDesiredRemainingMillisecs)
+        {
+            while (true)
+            {
+                yield return s_CachedWaitForEndOfFrame;
+                if (RemainingFrameBudgetMS >= inDesiredRemainingMillisecs)
+                    yield return Command.BreakAndResume;
+            }
+        }
+
+        #endregion // Amortize
 
         #region Yield
 
@@ -797,7 +1685,7 @@ namespace BeauRoutine
         {
             if (inObject == null)
                 return null;
-            
+
             IEnumerator enumerator = inObject as IEnumerator;
             if (enumerator != null)
                 return Routine.Inline(enumerator);
@@ -816,7 +1704,7 @@ namespace BeauRoutine
             if (inObjects.Length == 1)
                 return Yield(inObjects[0]);
 
-            return Routine.Inline(new YieldableArray((object[])inObjects.Clone()));
+            return Routine.Inline(new YieldableArray((object[]) inObjects.Clone()));
         }
 
         /// <summary>
@@ -852,7 +1740,7 @@ namespace BeauRoutine
 
             public void Dispose()
             {
-                m_Object = null;
+                DisposeUtils.DisposeObject(ref m_Object);
                 m_Finished = true;
             }
 
@@ -870,6 +1758,11 @@ namespace BeauRoutine
             public void Reset()
             {
                 throw new NotSupportedException();
+            }
+
+            public override string ToString()
+            {
+                return "Routine::Yield()";
             }
         }
 
@@ -891,7 +1784,7 @@ namespace BeauRoutine
                 if (m_Objects != null)
                 {
                     for (int i = m_Objects.Length - 1; i >= 0; --i)
-                        m_Objects[i] = null;
+                        DisposeUtils.DisposeObject(ref m_Objects[i]);
                     m_Objects = null;
                 }
 
@@ -906,6 +1799,11 @@ namespace BeauRoutine
             public void Reset()
             {
                 throw new NotSupportedException();
+            }
+
+            public override string ToString()
+            {
+                return "Routine::Yield()";
             }
         }
 

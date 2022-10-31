@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    21 Nov 2016
  * 
  * File:    Sequence.cs
@@ -71,6 +71,15 @@ namespace BeauRoutine
         }
 
         /// <summary>
+        /// Executes the routines in parallel.
+        /// </summary>
+        public Sequence Combine(params IEnumerator[] inNexts)
+        {
+            AddNode(NodeType.Routine, Routine.Combine(inNexts));
+            return this;
+        }
+
+        /// <summary>
         /// Waits for the given number of seconds.
         /// </summary>
         public Sequence Wait(float inSeconds)
@@ -128,12 +137,12 @@ namespace BeauRoutine
 
         #region IRoutineEnumerator
 
-        public object Current
+        object IEnumerator.Current
         {
             get { return m_Current; }
         }
 
-        public bool MoveNext()
+        bool IEnumerator.MoveNext()
         {
             m_Current = null;
             while(true)
@@ -161,6 +170,11 @@ namespace BeauRoutine
             }
         }
 
+        void IEnumerator.Reset()
+        {
+            throw new NotSupportedException();
+        }
+
         public void Dispose()
         {
             for(int i = m_Index + 1; i < m_Nodes.Count; ++i)
@@ -172,11 +186,6 @@ namespace BeauRoutine
                         break;
                 }
             }
-        }
-
-        public void Reset()
-        {
-            throw new NotSupportedException();
         }
 
         #endregion

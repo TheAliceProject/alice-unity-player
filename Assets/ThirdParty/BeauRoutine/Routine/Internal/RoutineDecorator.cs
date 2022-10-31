@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    31 Oct 2017
  * 
  * File:    RoutineDecorator.cs
  * Purpose: Decorator object for modifying routine execution.
-*/
+ */
 
 using System;
 using System.Collections;
@@ -13,12 +13,13 @@ using System.Collections;
 namespace BeauRoutine.Internal
 {
     [Flags]
-    public enum RoutineDecoratorFlag
+    internal enum RoutineDecoratorFlag
     {
-        Inline   = 0x001
+        Inline = 0x001,
+        ContinueIfNull = 0x002,
     }
 
-    public struct RoutineDecorator : IEnumerator, IDisposable
+    internal class RoutineDecorator : IEnumerator, IDisposable
     {
         public IEnumerator Enumerator;
         public RoutineDecoratorFlag Flags;
@@ -37,11 +38,7 @@ namespace BeauRoutine.Internal
 
         public void Dispose()
         {
-            if (Enumerator != null)
-            {
-                ((IDisposable)Enumerator).Dispose();
-                Enumerator = null;
-            }
+            DisposeUtils.DisposeEnumerator(ref Enumerator);
         }
 
         public override string ToString()

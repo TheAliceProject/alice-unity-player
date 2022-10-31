@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    21 Nov 2016
  * 
  * File:    Tween.Value.cs
@@ -127,6 +127,11 @@ namespace BeauRoutine
             public void ApplyTween(float inPercent)
             {
                 m_Setter(m_Curve.Evaluate(inPercent * m_CurveDuration));
+            }
+
+            public override string ToString()
+            {
+                return "Float (AnimationCurve)";
             }
         }
 
@@ -468,6 +473,11 @@ namespace BeauRoutine
             public void ApplyTween(float inPercent)
             {
                 m_Setter(m_Gradient.Evaluate(inPercent));
+            }
+
+            public override string ToString()
+            {
+                return "Color (Gradient)";
             }
         }
 

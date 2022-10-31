@@ -1,15 +1,19 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    4 Apr 2017
  * 
  * File:    Manager.cs
  * Purpose: Manages BeauRoutine lifecycle.
-*/
+ */
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    #define DEVELOPMENT
+#define DEVELOPMENT
 #endif
+
+#if !UNITY_WEBGL
+#define SUPPORTS_THREADING
+#endif // UNITY_WEBGL
 
 using System;
 using System.Collections;
@@ -19,14 +23,17 @@ using UnityEngine;
 
 namespace BeauRoutine.Internal
 {
-    public sealed class Manager
+    internal sealed class Manager
     {
         public const int DEFAULT_CAPACITY = 32;
         public const float DEFAULT_THINKUPDATE_INTERVAL = 1f / 10f;
         public const float DEFAULT_CUSTOMUPDATE_INTERVAL = 1f / 8f;
 
+        public const double DEFAULT_ASYNC_PERCENTAGE_MIN = 0.05f;
+        public const double DEFAULT_ASYNC_PERCENTAGE_MAX = 0.4f;
+
         // Version number
-        static public readonly Version VERSION = new Version("0.9.1");
+        static public readonly Version VERSION = new Version("0.11.0");
 
         // Used to perform check for starting a Routine.Inline in development builds
         static private readonly IntPtr TYPEHANDLE_DECORATOR = typeof(RoutineDecorator).TypeHandle.Value;
@@ -69,8 +76,15 @@ namespace BeauRoutine.Internal
         /// </summary>
         static public Manager Get()
         {
-            if (s_Instance == null && !s_AppQuitting)
-                throw new InvalidOperationException("BeauRoutine has been shutdown. Please call Initialize() before anything else.");
+            if (s_Instance == null)
+            {
+                #if DEVELOPMENT
+                if (!Application.isPlaying)
+                    return null;
+                #endif // DEVELOPMENT
+                if (!s_AppQuitting)
+                    throw new InvalidOperationException("BeauRoutine has been shutdown. Please call Initialize() before anything else.");
+            }
             return s_Instance;
         }
 
@@ -108,6 +122,10 @@ namespace BeauRoutine.Internal
         private float m_LastCustomUpdateTime = 0;
         private float m_CustomUpdateDeltaAccum = 0;
 
+        // Frame timing
+        private Stopwatch m_FrameTimer;
+        private bool m_ForceSingleThreaded;
+
         // Profiling
         private Stopwatch m_UpdateTimer;
         private int m_MaxConcurrent;
@@ -120,10 +138,21 @@ namespace BeauRoutine.Internal
         private const long MAX_UPDATE_MS = 1000;
         private StringBuilder m_LogBuilder = new StringBuilder(128);
 
+        private bool m_DebugMode;
+
+        #if SUPPORTS_THREADING
+        private readonly object m_LoggerLock = new object();
+        #endif // SUPPORTS_THREADING
+
         /// <summary>
         /// Table containing all fibers.
         /// </summary>
         public readonly Table Fibers;
+
+        /// <summary>
+        /// Scheduler for async calls.
+        /// </summary>
+        public readonly AsyncScheduler Scheduler;
 
         /// <summary>
         /// Unity host object.
@@ -153,7 +182,15 @@ namespace BeauRoutine.Internal
         /// <summary>
         /// Additional checking and profiling.
         /// </summary>
-        public bool DebugMode = false;
+        public bool DebugMode
+        {
+            get { return m_DebugMode; }
+            set
+            {
+                m_DebugMode = value;
+                Scheduler.DebugMode = value;
+            }
+        }
 
         /// <summary>
         /// Determines whether snapshots should be taken
@@ -187,13 +224,28 @@ namespace BeauRoutine.Internal
         public float ThinkUpdateInterval = DEFAULT_THINKUPDATE_INTERVAL;
 
         /// <summary>
+        /// Frame duration budget, in ticks.
+        /// </summary>
+        public long FrameDurationBudgetTicks;
+
+        /// <summary>
+        /// Minimum async budget, in ticks.
+        /// </summary>
+        public long AsyncBudgetTicksMin;
+
+        /// <summary>
+        /// Async budget, in ticks.
+        /// </summary>
+        public long AsyncBudgetTicksMax;
+
+        /// <summary>
         /// Is the manager in the middle of updating routines right now?
         /// </summary>
         public bool IsUpdating()
         {
             return m_Updating;
         }
-        
+
         /// <summary>
         /// Is the manager in the middle of updating the given update list.
         /// </summary>
@@ -209,27 +261,37 @@ namespace BeauRoutine.Internal
             s_Instance = this;
 
             Fibers = new Table(this);
+            #if DEVELOPMENT
+            Scheduler = new AsyncScheduler(UnityEngine.Debug.Log);
+            #else
+            Scheduler = new AsyncScheduler(null);
+            #endif // DEVELOPMENT
 
+            m_FrameTimer = new Stopwatch();
             m_UpdateTimer = new Stopwatch();
 
             Frame.ResetTime(Time.deltaTime, TimeScale);
+            FrameDurationBudgetTicks = CalculateDefaultFrameBudgetTicks();
+            AsyncBudgetTicksMin = (long) (FrameDurationBudgetTicks * DEFAULT_ASYNC_PERCENTAGE_MIN);
+            AsyncBudgetTicksMax = (long) (FrameDurationBudgetTicks * DEFAULT_ASYNC_PERCENTAGE_MAX);
 
             m_QueuedGroupTimescale = new float[Routine.MAX_GROUPS];
             Frame.GroupTimeScale = new float[Routine.MAX_GROUPS];
             for (int i = 0; i < Routine.MAX_GROUPS; ++i)
                 m_QueuedGroupTimescale[i] = Frame.GroupTimeScale[i] = 1.0f;
 
-#if DEVELOPMENT
-    #if UNITY_EDITOR
+            #if DEVELOPMENT
+            #if UNITY_EDITOR
             DebugMode = true;
-    #else
+            #else
             DebugMode = UnityEngine.Debug.isDebugBuild;
-    #endif // UNITY_EDITOR
-#else
+            #endif // UNITY_EDITOR
+            #else
             DebugMode = false;
-#endif // DEVELOPMENT
+            #endif // DEVELOPMENT
 
             HandleExceptions = DebugMode;
+            m_ForceSingleThreaded = AsyncScheduler.SupportsThreading;
         }
 
         /// <summary>
@@ -243,7 +305,7 @@ namespace BeauRoutine.Internal
             GameObject hostGO = new GameObject("Routine::Manager");
             Host = hostGO.AddComponent<RoutineUnityHost>();
             Host.Initialize(this);
-            hostGO.hideFlags = HideFlags.HideAndDontSave;
+            hostGO.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor;
             GameObject.DontDestroyOnLoad(hostGO);
 
             Log("Initialize() -- Version " + VERSION.ToString());
@@ -272,8 +334,8 @@ namespace BeauRoutine.Internal
             bool bPrevUpdating = m_Updating;
             m_Updating = true;
             {
-#if DEVELOPMENT
-                if (DebugMode && !bPrevUpdating && ProfilingEnabled)
+                #if DEVELOPMENT
+                if (m_DebugMode && !bPrevUpdating && ProfilingEnabled)
                 {
                     m_UpdateTimer.Reset();
                     m_UpdateTimer.Start();
@@ -317,7 +379,7 @@ namespace BeauRoutine.Internal
                     }
                 }
                 else
-#endif // DEVELOPMENT
+                #endif // DEVELOPMENT
                 {
                     if (!Paused && !SystemPaused && Fibers.GetUpdateCount(inPhase) > 0)
                     {
@@ -356,7 +418,7 @@ namespace BeauRoutine.Internal
             {
                 // Copy this, so we have a consistent group time scale
                 // for any previous updates
-                oldFrame.GroupTimeScale = (float[])oldFrame.GroupTimeScale.Clone();
+                oldFrame.GroupTimeScale = (float[]) oldFrame.GroupTimeScale.Clone();
             }
 
             Frame.IncrementSerial();
@@ -366,15 +428,15 @@ namespace BeauRoutine.Internal
             {
                 if (!bPrevUpdating)
                     m_GroupTimescaleDirty = false;
-                
+
                 // This is only temporary, so we won't reset the dirty flag here
                 Array.Copy(m_QueuedGroupTimescale, Frame.GroupTimeScale, Routine.MAX_GROUPS);
             }
-            
+
             m_Updating = true;
             {
-#if DEVELOPMENT
-                if (DebugMode && !bPrevUpdating && ProfilingEnabled)
+                #if DEVELOPMENT
+                if (m_DebugMode && !bPrevUpdating && ProfilingEnabled)
                 {
                     m_UpdateTimer.Reset();
                     m_UpdateTimer.Start();
@@ -396,7 +458,7 @@ namespace BeauRoutine.Internal
                     m_TotalUpdateTime += m_UpdateTimer.ElapsedTicks;
                 }
                 else
-#endif // DEVELOPMENT
+                #endif // DEVELOPMENT
                 {
                     if (Fibers.GetUpdateCount(RoutinePhase.Manual) > 0)
                     {
@@ -435,7 +497,7 @@ namespace BeauRoutine.Internal
             {
                 // Copy this, so we have a consistent group time scale
                 // for any previous updates
-                oldFrame.GroupTimeScale = (float[])oldFrame.GroupTimeScale.Clone();
+                oldFrame.GroupTimeScale = (float[]) oldFrame.GroupTimeScale.Clone();
             }
 
             Frame.IncrementSerial();
@@ -450,8 +512,8 @@ namespace BeauRoutine.Internal
 
             m_Updating = true;
             {
-#if DEVELOPMENT
-                if (DebugMode && !bPrevUpdating && ProfilingEnabled)
+                #if DEVELOPMENT
+                if (m_DebugMode && !bPrevUpdating && ProfilingEnabled)
                 {
                     m_UpdateTimer.Reset();
                     m_UpdateTimer.Start();
@@ -470,7 +532,7 @@ namespace BeauRoutine.Internal
                     m_TotalUpdateTime += m_UpdateTimer.ElapsedTicks;
                 }
                 else
-#endif // DEVELOPMENT
+                #endif // DEVELOPMENT
                 {
                     Fibers.RunManualUpdate(inFiber);
                     Frame.ResetTimeScale();
@@ -500,6 +562,8 @@ namespace BeauRoutine.Internal
                 return;
 
             Fibers.ClearAll();
+            TweenPool.StopPooling();
+            Scheduler.Destroy();
 
             if (Host != null)
             {
@@ -616,16 +680,16 @@ namespace BeauRoutine.Internal
             if (ReferenceEquals(inHost, null))
                 inHost = Host;
 
-#if DEVELOPMENT
+            #if DEVELOPMENT
             if (inStart.GetType().TypeHandle.Value == TYPEHANDLE_DECORATOR)
             {
-                RoutineDecorator decorator = (RoutineDecorator)inStart;
+                RoutineDecorator decorator = (RoutineDecorator) inStart;
                 if ((decorator.Flags & RoutineDecoratorFlag.Inline) != 0)
                 {
                     UnityEngine.Debug.LogWarning("[BeauRoutine] Starting a BeauRoutine with an Inlined coroutine. This is not supported, and the coroutine will not execute immediately.");
                 }
             }
-#endif // DEVELOPMENT
+            #endif // DEVELOPMENT
 
             Routine handle;
             Fiber fiber = CreateFiber(inHost, inStart, false, out handle);
@@ -659,7 +723,8 @@ namespace BeauRoutine.Internal
             Fiber fiber = Fibers.GetFreeFiber();
             outHandle = fiber.Initialize(inHost, inStart, inbChained);
 
-            if (DebugMode)
+            #if DEVELOPMENT
+            if (m_DebugMode)
             {
                 int running = Fibers.TotalRunning;
                 if (running > m_MaxConcurrent)
@@ -668,6 +733,7 @@ namespace BeauRoutine.Internal
                     m_NeedsSnapshot = SnapshotEnabled;
                 }
             }
+            #endif // DEVELOPMENT
 
             return fiber;
         }
@@ -689,8 +755,8 @@ namespace BeauRoutine.Internal
 
             m_Updating = true;
             {
-#if DEVELOPMENT
-                if (DebugMode && ProfilingEnabled)
+                #if DEVELOPMENT
+                if (m_DebugMode && ProfilingEnabled)
                 {
                     m_UpdateTimer.Reset();
                     m_UpdateTimer.Start();
@@ -712,7 +778,7 @@ namespace BeauRoutine.Internal
                     m_TotalUpdateTime += m_UpdateTimer.ElapsedTicks;
                 }
                 else
-#endif // DEVELOPMENT
+                #endif // DEVELOPMENT
                 {
                     if (!Paused && !SystemPaused && Fibers.GetYieldCount(inYieldUpdate) > 0)
                     {
@@ -822,22 +888,190 @@ namespace BeauRoutine.Internal
 
         #endregion // Groups
 
+        #region Frame Timing
+
+        /// <summary>
+        /// Adjusts the frame budget and preserves the async budget ratio.
+        /// </summary>
+        public void SetFrameBudget(double inMillisecs)
+        {
+            double asyncRatioMin = (double) AsyncBudgetTicksMin / FrameDurationBudgetTicks;
+            double asyncRatioMax = (double) AsyncBudgetTicksMax / FrameDurationBudgetTicks;
+            FrameDurationBudgetTicks = (long) (TimeSpan.TicksPerMillisecond * inMillisecs);
+            AsyncBudgetTicksMin = (long) (asyncRatioMin * FrameDurationBudgetTicks);
+            AsyncBudgetTicksMax = (long) (asyncRatioMax * FrameDurationBudgetTicks);
+        }
+
+        /// <summary>
+        /// Marks a frame as having started.
+        /// </summary>
+        public void MarkFrameStart()
+        {
+            if (!m_FrameTimer.IsRunning)
+            {
+                m_FrameTimer.Reset();
+                m_FrameTimer.Start();
+            }
+        }
+
+        /// <summary>
+        /// Marks a frame as having ended.
+        /// </summary>
+        public void MarkFrameEnd()
+        {
+            if (m_FrameTimer.IsRunning)
+            {
+                // Log(string.Format("Frame {0} - {1}ms/ left ({2}ms original budget)", Time.frameCount, CalculateRemainingFrameBudgetMS(), FrameDurationBudgetTicks / (double) TimeSpan.TicksPerMillisecond));
+                m_FrameTimer.Stop();
+            }
+        }
+
+        /// <summary>
+        /// Returns the remaining milliseconds for this frame.
+        /// </summary>
+        public double CalculateRemainingFrameBudgetMS()
+        {
+            if (m_FrameTimer.IsRunning)
+            {
+                return (FrameDurationBudgetTicks - m_FrameTimer.ElapsedTicks) / (double) TimeSpan.TicksPerMillisecond;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns the remaining ticks for this frame.
+        /// </summary>
+        public long CalculateRemainingFrameBudgetTicks()
+        {
+            if (m_FrameTimer.IsRunning)
+            {
+                return FrameDurationBudgetTicks - m_FrameTimer.ElapsedTicks;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Calculates the default frame budget.
+        /// </summary>
+        static public long CalculateDefaultFrameBudgetTicks()
+        {
+            return TimeSpan.TicksPerSecond / GetTargetFramerate();
+        }
+
+        /// <summary>
+        /// Gets the default framerate for this platform.
+        /// </summary>
+        static public int GetTargetFramerate()
+        {
+            if (QualitySettings.vSyncCount > 0)
+            {
+                return Screen.currentResolution.refreshRate / QualitySettings.vSyncCount;
+            }
+
+            if (Application.targetFrameRate > 0)
+            {
+                return Application.targetFrameRate;
+            }
+
+            if (Application.isMobilePlatform || Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                return 30;
+            }
+
+            return 60;
+        }
+
+        #endregion // Frame Timing
+
+        #region Async
+
+        /// <summary>
+        /// Initializes for calls.
+        /// </summary>
+        public void InitializeAsync()
+        {
+            if (!m_Initialized)
+                Initialize();
+        }
+
+        /// <summary>
+        /// Updates the async scheduler.
+        /// </summary>
+        public void UpdateAsync(float inPortion)
+        {
+            long minAsyncTicks = (long) (AsyncBudgetTicksMin * inPortion);
+            long maxAsyncTicks = (long) (AsyncBudgetTicksMax * inPortion);
+
+            long currentTicks = m_FrameTimer.ElapsedTicks;
+            long ticksRemaining = FrameDurationBudgetTicks - currentTicks;
+            long asyncBudget = ticksRemaining;
+            if (asyncBudget > maxAsyncTicks)
+                asyncBudget = maxAsyncTicks;
+            if (asyncBudget < minAsyncTicks)
+                asyncBudget = minAsyncTicks;
+            Scheduler.Process(asyncBudget);
+        }
+
+        /// <summary>
+        /// Returns if only a single thread is assumed.
+        /// </summary>
+        public bool IsSingleThreaded()
+        {
+            return m_ForceSingleThreaded || !AsyncScheduler.SupportsThreading;
+        }
+
+        /// <summary>
+        /// Gets/sets whether to force single-threaded mode for async operations.
+        /// </summary>
+        public bool ForceSingleThreaded
+        {
+            get { return m_ForceSingleThreaded; }
+            set
+            {
+                m_ForceSingleThreaded = value;
+                Scheduler.SetForceSingleThread(value);
+            }
+        }
+
+        /// <summary>
+        /// Pauses/resumes async execution.
+        /// </summary>
+        public void SetAsyncPaused(bool inbPaused)
+        {
+            Scheduler.SetPaused(inbPaused);
+        }
+
+        #endregion // Async
+
         /// <summary>
         /// Logs a message to the console in Debug Mode.
         /// </summary>
         [Conditional("DEVELOPMENT")]
         public void Log(string inMessage)
         {
-#if DEVELOPMENT
-            if (DebugMode)
+            #if DEVELOPMENT
+            if (m_DebugMode)
             {
-                m_LogBuilder.Insert(0, "[BeauRoutine] ");
-                m_LogBuilder.Append(inMessage);
-                string logged = m_LogBuilder.ToString();
-                m_LogBuilder.Length = 0;
-                UnityEngine.Debug.Log(logged);
+                #if SUPPORTS_THREADING
+                lock(m_LoggerLock)
+                {
+                    LogImpl(inMessage);
+                }
+                #else
+                LogImpl(inMessage);
+                #endif // SUPPORTS_THREADING
             }
-#endif // DEVELOPMENT
+            #endif // DEVELOPMENT
+        }
+
+        // Log implementation
+        private void LogImpl(string inMessage)
+        {
+            m_LogBuilder.Insert(0, "[BeauRoutine] ");
+            m_LogBuilder.Append(inMessage);
+            string logged = m_LogBuilder.ToString();
+            m_LogBuilder.Length = 0;
+            UnityEngine.Debug.Log(logged);
         }
     }
 }

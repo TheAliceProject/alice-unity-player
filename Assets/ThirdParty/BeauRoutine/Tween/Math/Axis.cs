@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    21 Nov 2016
  * 
  * File:    Axis.cs
@@ -23,11 +23,20 @@ namespace BeauRoutine
         X		= 0x01,
         Y		= 0x02,
         Z		= 0x04,
+        W       = 0x08,
 
         XY		= X | Y,
         XZ		= X | Z,
+        XW      = X | W,
         YZ		= Y | Z,
+        YW      = Y | W,
+        ZW      = Z | W,
 
-        XYZ		= X | Y | Z
+        XYZ		= X | Y | Z,
+        XYW     = X | Y | W,
+        XZW     = X | Z | W,
+        YZW     = Y | Z | W,
+
+        XYZW    = X | Y | Z | W
     }
 }

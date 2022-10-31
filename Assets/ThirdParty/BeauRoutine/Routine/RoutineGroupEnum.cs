@@ -1,6 +1,6 @@
 ﻿/*
- * Copyright (C) 2016-2018. Filament Games, LLC. All rights reserved.
- * Author:  Alex Beauchesne
+ * Copyright (C) 2016-2020. Autumn Beauchesne. All rights reserved.
+ * Author:  Autumn Beauchesne
  * Date:    21 Nov 2016
  * 
  * File:    RoutineGroupEnum.cs
@@ -27,10 +27,10 @@ namespace BeauRoutine
     /// <summary>
     /// Identifies an enum as the type to use when specifying routine groups.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Enum, AllowMultiple=false, Inherited=false)]
+    [AttributeUsage(AttributeTargets.Enum, AllowMultiple = false, Inherited = false)]
     public sealed class RoutineGroupEnum : Attribute
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         static private Type s_Type;
         static private bool s_Initialized = false;
@@ -81,7 +81,7 @@ namespace BeauRoutine
                 Rect indentedPos = EditorGUI.IndentedRect(position);
                 float toShift = EditorGUIUtility.labelWidth - 2 * (indentedPos.x - position.x);
 
-                EditorGUI.BeginProperty(indentedPos, label, property);
+                label = EditorGUI.BeginProperty(indentedPos, label, property);
                 {
                     GUI.Label(indentedPos, label);
 
@@ -107,6 +107,6 @@ namespace BeauRoutine
 
         #endregion
 
-#endif
+#endif // UNITY_EDITOR
     }
 }
