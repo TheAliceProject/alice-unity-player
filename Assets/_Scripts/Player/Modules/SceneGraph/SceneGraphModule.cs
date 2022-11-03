@@ -6,6 +6,7 @@ using Alice.Player.Primitives;
 using UnityEngine;
 using System.Collections;
 using System.Dynamic;
+using System.Linq;
 using Alice.Tweedle.Parse;
 using ArenaUnity;
 using BeauRoutine;
@@ -96,21 +97,21 @@ namespace Alice.Player.Modules {
 
             dynamic data = new ExpandoObject();
             data.object_type = "gltf-model";
-            data.position = ArenaUnity.ArenaUnity.ToArenaPosition(newObject.transform.localPosition);
+            // data.position = ArenaUnity.ArenaUnity.ToArenaPosition(newObject.transform.localPosition);
             data.rotation = ArenaUnity.ArenaUnity.ToArenaRotationQuat(newObject.transform.localRotation);
             // TODO upload models and replace this hardcoded single model ref
             data.url = "store/users/dabeshou/models/Ambulance_AMBULANCE.glb";
             arenaObject.data = data;
         }
 
-        private static void AddTextObjToArena(GameObject newObject, string text)
+        private static void AddTextObjToArena(GameObject newObject, string text, Vector3 spawnPosition)
         {
+            newObject.transform.position = spawnPosition;
             var arenaObject = newObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
             if (arenaObject == null) return;
         
             dynamic data = new ExpandoObject();
             data.object_type = "text";
-            var spawnPosition = newObject.transform.localPosition;
             data.position = ArenaUnity.ArenaUnity.ToArenaPosition(spawnPosition);
             data.rotation = ArenaUnity.ArenaUnity.ToArenaRotationQuat(newObject.transform.localRotation);
             data.value = text;
@@ -363,17 +364,13 @@ namespace Alice.Player.Modules {
                     bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
             }
 
-            Debug.Log(entity.ToString());
-            Debug.Log(bubblePosition);
-            Debug.Log(canvas.transform.position);
-            Debug.Log(bubbleText);
-            String name = entity.ToString();
-            
-            GameObject targetEntity = GameObject.Find(ToLowerFirstChar(entity.ToString()));
-            Debug.Log("here");
-            Debug.Log(sgEntity.ToString());
+            var skinnedMeshRenderers = sgEntity.gameObject.transform.GetChild(0).GetComponentsInChildren<SkinnedMeshRenderer>();
+            const float textOffset = 2.0f;
+            var spawnHeight = skinnedMeshRenderers.Select(meshRenderer => meshRenderer.bounds.max.y).Prepend(0).Max();
+            var spawnPosition = sgEntity.transform.position;
+            spawnPosition.y = spawnHeight + textOffset;
             var textEntity = SGEntity.Create<SGTextModel>(entity);
-            AddTextObjToArena(textEntity.gameObject, bubbleText);
+            AddTextObjToArena(textEntity.gameObject, bubbleText, spawnPosition);
 
             return asyncReturn;
         }
@@ -406,7 +403,14 @@ namespace Alice.Player.Modules {
                                                 (BubblePosition)bubblePosition, (FontType) fontType, (TextStyle) textStyle, (float)textScale, 
                                                 bubbleColorConverted, outlineColorConverted, textColorConverted, duration.Value);
 
-            Debug.Log(bubbleText);
+            var skinnedMeshRenderers = sgEntity.gameObject.transform.GetChild(0).GetComponentsInChildren<SkinnedMeshRenderer>();
+            const float textOffset = 2.0f;
+            var spawnHeight = skinnedMeshRenderers.Select(meshRenderer => meshRenderer.bounds.max.y).Prepend(0).Max();
+            var spawnPosition = sgEntity.transform.position;
+            spawnPosition.y = spawnHeight + textOffset;
+            var textEntity = SGEntity.Create<SGTextModel>(entity);
+            AddTextObjToArena(textEntity.gameObject, bubbleText, spawnPosition);
+
             return asyncReturn;
         }
 
