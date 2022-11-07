@@ -1,3 +1,4 @@
+using System;
 using Alice.Tweedle;
 using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
@@ -6,6 +7,7 @@ using UnityEngine;
 using System.Collections;
 using BeauRoutine;
 using FlyingText3D;
+using Unity.XR.CoreUtils;
 
 namespace Alice.Player.Modules {
     [PInteropType("SceneGraph")]
@@ -251,6 +253,12 @@ namespace Alice.Player.Modules {
 
         #region Camera
         [PInteropMethod]
+        public static double getCameraVerticalFOV(TValue camera) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            return cam ? cam.Camera.fieldOfView : Double.NaN;
+        }
+
+        [PInteropMethod]
         public static void setCameraVerticalFOV(TValue camera, Angle fov) {
             var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
             if (cam) {
@@ -259,11 +267,44 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
-        public static void setCameraClipPlanes(TValue camera, double nearClip, double farClip) {
+        public static double getCameraHorizontalFOV(TValue camera) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            return cam ? cam.Camera.fieldOfView : Double.NaN;
+        }
+
+        [PInteropMethod]
+        public static void setCameraHorizontalFOV(TValue camera, Angle fov) {
             var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
             if (cam) {
-                cam.Camera.nearClipPlane = (float)nearClip;
-                cam.Camera.farClipPlane = (float)farClip;
+                cam.Camera.fieldOfView = Camera.HorizontalToVerticalFieldOfView((float) fov.degrees, cam.Camera.aspect);
+            }
+        }
+
+        [PInteropMethod]
+        public static float getCameraNearClippingPlaneDistance(TValue camera) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            return cam ? cam.Camera.nearClipPlane : 0;
+        }
+
+        [PInteropMethod]
+        public static void setCameraNearClippingPlaneDistance(TValue camera, double distance) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            if (cam) {
+                cam.Camera.nearClipPlane = (float) distance;
+            }
+        }
+
+        [PInteropMethod]
+        public static float getCameraFarClippingPlaneDistance(TValue camera) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            return cam ? cam.Camera.farClipPlane : 0;
+        }
+
+        [PInteropMethod]
+        public static void setCameraFarClippingPlaneDistance(TValue camera, double distance) {
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            if (cam) {
+                cam.Camera.farClipPlane = (float) distance;
             }
         }
         #endregion // Camera
