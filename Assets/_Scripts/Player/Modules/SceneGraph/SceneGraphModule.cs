@@ -255,7 +255,7 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static double getCameraVerticalFOV(TValue camera) {
             var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
-            return cam ? cam.Camera.fieldOfView : Double.NaN;
+            return cam ? cam.Camera.fieldOfView / 360f : Double.NaN;
         }
 
         [PInteropMethod]
@@ -269,7 +269,7 @@ namespace Alice.Player.Modules {
         [PInteropMethod]
         public static double getCameraHorizontalFOV(TValue camera) {
             var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
-            return cam ? cam.Camera.fieldOfView : Double.NaN;
+            return cam ? Camera.VerticalToHorizontalFieldOfView(cam.Camera.fieldOfView, cam.Camera.aspect) / 360f : Double.NaN;
         }
 
         [PInteropMethod]
