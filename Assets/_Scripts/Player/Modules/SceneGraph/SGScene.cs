@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Alice.Player.Modules;
 using Alice.Player.Primitives;
 using UnityEngine.XR;
+using ArenaUnity;
 
 namespace Alice.Player.Unity {
     
@@ -62,7 +63,6 @@ namespace Alice.Player.Unity {
 
         protected override void Awake() {
             base.Awake();
-
             m_AboveLightA = CreateLight(k_AboveLightPitch, 0f, k_AboveLightIntensity, true);
             m_AboveLightB = CreateLight(k_AboveLightPitch, 120f, k_AboveLightIntensity, true);
             m_AboveLightC = CreateLight(k_AboveLightPitch, 240f, k_AboveLightIntensity, true);
@@ -82,6 +82,15 @@ namespace Alice.Player.Unity {
             RegisterPropertyDelegate(ABOVE_LIGHT_COLOR_PROPERTY_NAME, OnUpdateAboveLightColor);
             RegisterPropertyDelegate(BELOW_LIGHT_COLOR_PROPERTY_NAME, OnUpdateBelowLightColor);
             m_MouseEventHandler.isMac = SystemInfo.operatingSystem.Contains("Mac OS");
+            
+            // initialize environment in Arena
+            CreateDefaultEnvironment();
+        }
+
+        private void CreateDefaultEnvironment()
+        {
+            ArenaClientScene.Instance.PublishObject("scene-options",
+                "{\"object_id\":\"scene-options\",\"persist\":true,\"type\":\"scene-options\",\"action\":\"update\",\"data\":{\"env-presets\":{\"ground\":\"none\"}}}");
         }
 
         void OnApplicationFocus(bool hasFocus)

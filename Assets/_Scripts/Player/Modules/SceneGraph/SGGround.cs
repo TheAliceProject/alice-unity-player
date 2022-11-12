@@ -4,6 +4,8 @@ using Alice.Player.Modules;
 using UnityEngine;
 using Alice.Player.Primitives;
 using Alice.Tweedle;
+using System.Dynamic;
+using ArenaUnity;
 
 namespace Alice.Player.Unity {
     public sealed class SGGround : SGShape {
@@ -31,12 +33,35 @@ namespace Alice.Player.Unity {
             m_GroundBacksideTransform.localScale = new UnityEngine.Vector3(100, 100, 100);
             m_GroundBacksideTransform.localPosition = new UnityEngine.Vector3(0, -0.0001f, 0);
             m_GroundBacksideTransform.Rotate(new UnityEngine.Vector3(0, 0, 1), 180);
+            CreateArenaGround(m_GroundBacksideTransform);
 
             GetPropertyBlock(m_GroundBacksideRenderer, ref m_GroundBacksidePropertyBlock);
             m_GroundBacksidePropertyBlock.SetVector("_MainTex_ST", new Vector4(-128, -128, -0.5f, -0.5f));
             m_GroundBacksideRenderer.SetPropertyBlock(m_GroundBacksidePropertyBlock);
         }
+        
+        private void CreateArenaGround(Transform targetTransform)
+        {
+            var arenaObject = targetTransform.gameObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
+            if (arenaObject == null) return;
 
+            dynamic data = new ExpandoObject();
+            data.object_type = "plane";
+            data.position = ArenaUnity.ArenaUnity.ToArenaPosition(targetTransform.localPosition);
+            data.rotation = ArenaUnity.ArenaUnity.ToArenaRotationQuat(targetTransform.localRotation);
+            dynamic materialData = new ExpandoObject();
+            materialData.color = "#949494";
+            materialData.shader = "flat";
+            materialData.side = "double";
+            materialData.src = "https://arenaxr.org/store/users/alicedevteam/image/grass.png";
+            dynamic repeatValue = new ExpandoObject();
+            repeatValue.x = 50;
+            repeatValue.y = 50;
+            materialData.repeat = repeatValue;
+            data.material = materialData;
+            arenaObject.data = data;
+        }
+        
         protected override void CreateEntityCollider()
         {
             if (m_Renderer.gameObject.GetComponent<BoxCollider>() != null) return;
