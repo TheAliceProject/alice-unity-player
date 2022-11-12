@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.6474107, g: 0.521598, b: 0.86984, a: 1}
+  m_IndirectSpecularColor: {r: 0.6473983, g: 0.5215698, b: 0.869735, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1598,8 +1598,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   authType: 1
   hostAddress: mqtt.arenaxr.org
-  namespaceName: dabeshou
-  sceneName: Alice
+  namespaceName: alicedevteam
+  sceneName: example
   renderCameras: 0
   logMqttObjects: 0
   logMqttUsers: 0
