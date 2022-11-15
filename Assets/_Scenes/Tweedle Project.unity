@@ -1906,6 +1906,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Red_DEFAULT
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -5897,6 +5902,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: c78781a6e458ab049b62a3980ec5f151,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -6057140222963153312, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
@@ -7094,6 +7104,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Red_DEFAULT (2)
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -7631,6 +7646,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: c78781a6e458ab049b62a3980ec5f151,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -6057140222963153312, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
@@ -13803,6 +13823,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Red_DEFAULT (3)
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -16334,6 +16359,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Red_DEFAULT (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
