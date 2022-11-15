@@ -1463,7 +1463,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PocketWatch_DEFAULT
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: 2aa76e114f470864ca5d0854099b2e7b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2aa76e114f470864ca5d0854099b2e7b, type: 3}
 --- !u!4 &413895173 stripped
 Transform:
@@ -5896,7 +5897,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
 --- !u!4 &1080411640 stripped
 Transform:
@@ -7630,7 +7632,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
 --- !u!4 &1366282560 stripped
 Transform:
@@ -14563,7 +14566,8 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 81a51179e379aaf49921aee2d7784fe4, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: 275de6e87cb60fb4e9a897de1e5157c6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 275de6e87cb60fb4e9a897de1e5157c6, type: 3}
 --- !u!4 &1694510722 stripped
 Transform:
