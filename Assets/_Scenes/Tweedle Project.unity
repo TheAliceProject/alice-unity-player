@@ -6832,9 +6832,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dumpTypeOutlines: 0
+  desktopCanvas: {fileID: 616136227}
   mainMenu: {fileID: 1234680187}
   mainMenuVr: {fileID: 2035864318}
   worldLoader: {fileID: 965266421}
+  loadingScreen: {fileID: 1877518932}
   vrLoadingScreen: {fileID: 1522420936}
   modalWindowPrefab: {fileID: 7627015889440884549, guid: dee85d91b48f0ef4bbe006aea37fe262,
     type: 3}
@@ -6846,7 +6848,6 @@ MonoBehaviour:
   menuControls:
   - {fileID: 1216540232}
   - {fileID: 583400859}
-  loadingScreen: {fileID: 1877518932}
 --- !u!114 &1216540230
 MonoBehaviour:
   m_ObjectHideFlags: 0

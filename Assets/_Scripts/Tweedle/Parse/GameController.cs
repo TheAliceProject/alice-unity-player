@@ -16,16 +16,17 @@ namespace Alice.Tweedle.Parse
     {
         public static string AutoLoadedWorldsDirectory;
         public bool dumpTypeOutlines = false;
+        public Canvas desktopCanvas;
         public Transform mainMenu;
         public Transform mainMenuVr;
 
         public WorldLoaderControl worldLoader;
+        public LoadingControl loadingScreen;
         public VRLoadingControl vrLoadingScreen;
         public ModalWindow modalWindowPrefab;
         public ModalWindow modalWindowPrefabVR;
         public LoadMoreControl[] loadMoreControl;
         public MenuControl[] menuControls;
-        public LoadingControl loadingScreen;
 
         private TweedleSystem m_System;
         private VirtualMachine m_VM;

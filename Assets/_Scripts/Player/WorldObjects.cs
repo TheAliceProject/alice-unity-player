@@ -48,6 +48,10 @@ public class WorldObjects : MonoBehaviour
         }
     }
 
+    public static void DisableDesktopCanvas() {
+        GetGameController().desktopCanvas.gameObject.SetActive(false);
+    }
+
     internal static WorldExecutionState GetWorldExecutionState() {
         return _instance != null ? _instance._executionState : null;
     }
