@@ -138,8 +138,10 @@ public class VRControl : MonoBehaviour
         if (device == VRDevice.None) {
             XRSettings.enabled = false;
             WorldObjects.SetVRObjectsActive(false);
-        } else
+        } else {
+            WorldObjects.DisableDesktopCanvas();
             m_routine.Replace(this, EnableVR(device));
+        }
     }
 
     private IEnumerator EnableVR(VRDevice device)

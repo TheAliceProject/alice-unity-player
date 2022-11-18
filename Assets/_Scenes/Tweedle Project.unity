@@ -1463,7 +1463,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PocketWatch_DEFAULT
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: 2aa76e114f470864ca5d0854099b2e7b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2aa76e114f470864ca5d0854099b2e7b, type: 3}
 --- !u!4 &413895173 stripped
 Transform:
@@ -1904,6 +1905,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Red_DEFAULT
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
@@ -5896,7 +5902,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: -927199367670048503, guid: c78781a6e458ab049b62a3980ec5f151,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
 --- !u!4 &1080411640 stripped
 Transform:
@@ -6820,9 +6832,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dumpTypeOutlines: 0
+  desktopCanvas: {fileID: 616136227}
   mainMenu: {fileID: 1234680187}
   mainMenuVr: {fileID: 2035864318}
   worldLoader: {fileID: 965266421}
+  loadingScreen: {fileID: 1877518932}
   vrLoadingScreen: {fileID: 1522420936}
   modalWindowPrefab: {fileID: 7627015889440884549, guid: dee85d91b48f0ef4bbe006aea37fe262,
     type: 3}
@@ -6834,7 +6848,6 @@ MonoBehaviour:
   menuControls:
   - {fileID: 1216540232}
   - {fileID: 583400859}
-  loadingScreen: {fileID: 1877518932}
 --- !u!114 &1216540230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7091,6 +7104,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Red_DEFAULT (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
@@ -7630,7 +7648,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: SunflowerHouseplant_SUNFLOWER_HOUSEPLANT (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: -927199367670048503, guid: c78781a6e458ab049b62a3980ec5f151,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c78781a6e458ab049b62a3980ec5f151, type: 3}
 --- !u!4 &1366282560 stripped
 Transform:
@@ -13800,6 +13824,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Red_DEFAULT (3)
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -14563,7 +14592,8 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 81a51179e379aaf49921aee2d7784fe4, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -6057140222963153312, guid: 275de6e87cb60fb4e9a897de1e5157c6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 275de6e87cb60fb4e9a897de1e5157c6, type: 3}
 --- !u!4 &1694510722 stripped
 Transform:
@@ -16330,6 +16360,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Red_DEFAULT (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: bf9299bfd9f359c44a9bef688b25fd9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 458844201601600569, guid: bf9299bfd9f359c44a9bef688b25fd9a,
         type: 3}
