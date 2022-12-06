@@ -78,7 +78,7 @@ namespace Alice.Player.Modules {
                 default:
                     var jointedEntity = SGEntity.Create<SGJointedModel>(model);
                     jointedEntity.SetResource(resource);
-                    AddToArena(jointedEntity.gameObject);
+                    AddToArena(jointedEntity.gameObject, model.ToString());
                     entity = jointedEntity;
                     break;
             }
@@ -86,7 +86,7 @@ namespace Alice.Player.Modules {
             SceneGraph.Current.AddEntity(entity);
         }
 
-        private static void AddToArena(GameObject newObject) {
+        private static void AddToArena(GameObject newObject, string modelName) {
             // Attach ArenaObject to manage updates, it will automatically send an MQTT create message
             var arenaObject = newObject.AddComponent(typeof(ArenaObject)) as ArenaObject;
             if (arenaObject == null) return;
@@ -96,7 +96,8 @@ namespace Alice.Player.Modules {
             data.position = ArenaUnity.ArenaUnity.ToArenaPosition(newObject.transform.localPosition);
             data.rotation = ArenaUnity.ArenaUnity.ToArenaRotationQuat(newObject.transform.localRotation);
             // TODO upload models and replace this hardcoded single model ref
-            data.url = "store/users/dabeshou/models/Ambulance_AMBULANCE.glb";
+            var dataUrl = "store/users/alicedevteam/models/" + modelName + "_DEFAULT.glb";
+            data.url = dataUrl;
             arenaObject.data = data;
         }
 
