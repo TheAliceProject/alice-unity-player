@@ -29,7 +29,10 @@ namespace Alice.Player.Unity {
 
             MeshFilter groundBacksideFilter;
             CreateModelObject(SceneGraph.Current?.InternalResources?.GroundMesh, OpaqueMaterial, transform, out m_GroundBacksideTransform, out m_GroundBacksideRenderer, out groundBacksideFilter);
-
+            Debug.Log("here");
+            Debug.Log(OpaqueMaterial.ToString());
+            Debug.Log(OpaqueMaterial.shader.ToString());
+            Debug.Log(OpaqueMaterial.GetTexture("_MainTex"));
             m_GroundBacksideTransform.localScale = new UnityEngine.Vector3(100, 100, 100);
             m_GroundBacksideTransform.localPosition = new UnityEngine.Vector3(0, -0.0001f, 0);
             m_GroundBacksideTransform.Rotate(new UnityEngine.Vector3(0, 0, 1), 180);

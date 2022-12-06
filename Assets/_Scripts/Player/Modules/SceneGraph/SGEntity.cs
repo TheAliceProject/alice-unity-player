@@ -76,7 +76,11 @@ namespace Alice.Player.Unity {
             gameObject.name = string.Format("{0} ({1})", inName, GetType().Name);
         }
 
-        protected void RegisterPropertyDelegate(string inName, UpdatePropertyDelegate inDelegate) {
+        protected void RegisterPropertyDelegate(string inName, UpdatePropertyDelegate inDelegate)
+        {
+            Debug.Log("===register property===");
+            Debug.Log(inName);
+            Debug.Log(inDelegate.Target.ToString());
             if (m_PropertyBindings.ContainsKey(inName)) {
                 throw new SceneGraphException(string.Format("Property \"{0}\" binding already registered.", inName));
             } else {
