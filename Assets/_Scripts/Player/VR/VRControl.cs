@@ -1,14 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using BeauRoutine;
+using Unity.XR.Oculus;
 using UnityEngine.XR;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.Management;
 #if !UNITY_WEBGL
 using System.Diagnostics;
-using Alice.Tweedle.Parse;
 #endif
 
 public class VRControl : MonoBehaviour
@@ -66,24 +64,46 @@ public class VRControl : MonoBehaviour
         // while trying to go as fast as possible. 100 FPS should be plenty.
         Application.targetFrameRate = 100;
 #if !UNITY_WEBGL
-        SelectVRSystem(CurrentVrSystem());
+        SelectVRSystem();
 #endif
     }
 
 #if !UNITY_WEBGL
-    private VRDevice CurrentVrSystem() {
-        if (SystemInfo.deviceName.Contains("Oculus Quest"))
-            return VRDevice.OculusQuest;
+    private static VRDevice GetVRDevice() {
+        return Process.GetProcessesByName("vrserver").Length > 0 ? VRDevice.Vive : GetOculusVRDevice();
+    }
 
-        var devices = new List<InputDevice>();
-        InputDevices.GetDevices(devices);
-        if (devices.Any(device => device.name.Contains("Oculus Rift")))
-            return VRDevice.OculusRift;
-
-        if (Process.GetProcessesByName("vrserver").Length > 0)
-            return VRDevice.Vive;
-
-        return VRDevice.None;
+    private static VRDevice GetOculusVRDevice() {
+        switch (Utils.GetSystemHeadsetType()) {
+            // case SystemHeadset.Oculus_Go = 7 has been removed from the SystemHeadset enum
+            case SystemHeadset.Rift_DK1: // Prototype 1 - 4096
+            case SystemHeadset.Rift_DK2: // Prototype 2 - 4097
+            case SystemHeadset.Rift_CV1: // Rift - 4098
+            case SystemHeadset.Rift_CB: // 4099
+                return VRDevice.OculusRift;
+            case SystemHeadset.Rift_S: // Rift S 4100
+            // Placeholder values after the Rift S, but not the linked Quests, which are below
+            // TODO: revisit these as they become defined
+            case SystemHeadset.PC_Placeholder_4103:
+            case SystemHeadset.PC_Placeholder_4104:
+            case SystemHeadset.PC_Placeholder_4105:
+            case SystemHeadset.PC_Placeholder_4106:
+            case SystemHeadset.PC_Placeholder_4107:
+                return VRDevice.OculusS;
+            case SystemHeadset.Oculus_Quest: // 8
+            case SystemHeadset.Oculus_Quest_2: // 9
+            case SystemHeadset.Placeholder_10:
+            case SystemHeadset.Placeholder_11:
+            case SystemHeadset.Placeholder_12:
+            case SystemHeadset.Placeholder_13:
+            case SystemHeadset.Placeholder_14:
+            case SystemHeadset.Oculus_Link_Quest: // 4101 recognizing all Quest variants as Quest
+            case SystemHeadset.Oculus_Link_Quest_2: // 4102
+                return VRDevice.OculusQuest;
+            case SystemHeadset.None:
+            default:
+                return VRDevice.None;
+        }
     }
 
     void Update()
@@ -133,21 +153,20 @@ public class VRControl : MonoBehaviour
     }
 
 #if !UNITY_WEBGL
-    private void SelectVRSystem(VRDevice device)
-    {
-        if (device == VRDevice.None) {
+    private void SelectVRSystem() {
+        deviceType = GetVRDevice();
+        if (deviceType == VRDevice.None) {
             XRSettings.enabled = false;
             WorldObjects.SetVRObjectsActive(false);
         } else {
             WorldObjects.DisableDesktopCanvas();
-            m_routine.Replace(this, EnableVR(device));
+            m_routine.Replace(this, EnableVR());
         }
     }
 
-    private IEnumerator EnableVR(VRDevice device)
+    private IEnumerator EnableVR()
     {
         yield return null;
-        deviceType = device;
         VRObjects.SetActive(true);
         StartObjects.SetActive(true);
         if (!WorldObjects.GetWorldExecutionState().IsMainMenuAllowed())
