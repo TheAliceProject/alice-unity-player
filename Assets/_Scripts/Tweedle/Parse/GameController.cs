@@ -101,7 +101,10 @@ namespace Alice.Tweedle.Parse
         }
 
         private IEnumerator StartWorld() {
-            Camera.main.backgroundColor = Color.clear;
+            var mainCamera = Camera.main;
+            if (mainCamera != null) {
+                mainCamera.backgroundColor = Color.clear;
+            }
 
             if (dumpTypeOutlines)
             {
