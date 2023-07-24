@@ -256,11 +256,10 @@ namespace Alice.Player.Unity {
 
         internal T FindEntity<T>(TValue inOwner) where T : SGEntity {
             var ownerObj = inOwner.RawObject<object>();
-            if (ownerObj != null) {
-                for (int i = 0; i < m_Entities.Count; i++) {
-                    if (ReferenceEquals(m_Entities[i].owner.RawObject<object>(), ownerObj)) {
-                        return (T)m_Entities[i];
-                    }
+            if (ownerObj == null) return null;
+            foreach (var t in m_Entities) {
+                if (t is T entity && ReferenceEquals(entity.owner.RawObject<object>(), ownerObj)) {
+                    return entity;
                 }
             }
             return null;
