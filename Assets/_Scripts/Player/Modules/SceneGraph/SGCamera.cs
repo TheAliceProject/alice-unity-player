@@ -4,6 +4,9 @@ using System.Collections;
 using BeauRoutine;
 using System;
 using System.Collections.Generic;
+using Alice.Player.Primitives;
+using Alice.Tweedle;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Alice.Player.Unity {
     public sealed class SGCamera : SGTransformableEntity {
@@ -14,33 +17,34 @@ namespace Alice.Player.Unity {
 
         protected override void Awake() {
             base.Awake();
-            bool vrLoaded = false;
-            if(VRControl.IsLoadedInVR())
+            if(IsVRLoaded())
             {
-                if (IsXRDevicePresent())
-                {
-                    if (Camera.main != null)
-                        Destroy(Camera.main.gameObject);
-                    m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
-                    Camera = m_rig.headCamera;
-                    Camera.tag = "MainCamera";
-                    if(VRControl.LoadedVRDevice() != VRControl.VRDevice.Vive)
-                        m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
-                    VRControl.SetRig(m_rig);
-                    SceneGraph.Current.CreateVRCanvas();
-                    vrLoaded = true;
-                    routine.Replace(this, CancelOutDefaultVrRotation());
-                }
-            }
-            
-            if(!vrLoaded)
-            {
+                if (Camera.main != null)
+                    Destroy(Camera.main.gameObject);
+                m_rig = Instantiate(SceneGraph.Current.InternalResources.VRRig, cachedTransform, false);
+                Camera = m_rig.headCamera;
+                Camera.tag = "MainCamera";
+                if(VRControl.LoadedVRDevice() != VRControl.VRDevice.Vive)
+                    m_rig.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
+                VRControl.SetRig(m_rig);
+                SceneGraph.Current.CreateVRCanvas();
+                routine.Replace(this, CancelOutDefaultVrRotation());
+            } else {
                 Camera = Camera.main;
                 Camera.transform.SetParent(cachedTransform, false);
                 Camera.transform.localPosition = UnityEngine.Vector3.zero;
                 Camera.transform.localRotation = UnityEngine.Quaternion.Euler(0, 180f, 0);
             }
             Camera.GetComponentInChildren<AudioListener>().enabled = true;
+            RegisterPropertyDelegate(SGModel.SIZE_PROPERTY_NAME, OnSizePropertyChanged);
+        }
+
+        public bool IsVRLoaded() {
+            return VRControl.IsLoadedInVR() && IsXRDevicePresent();
+        }
+
+        public Transform GetHeadset() {
+            return m_rig == null ? cachedTransform : m_rig.head;
         }
 
         public Transform GetHandFor(string handName)
@@ -58,6 +62,12 @@ namespace Alice.Player.Unity {
                 return m_rig.rightController;
             }
             throw new ArgumentException("No recognized hand in " + handName);
+        }
+
+        private void OnSizePropertyChanged(TValue inValue) {
+            if (m_rig == null) return;
+            Vector3 scale = inValue.RawObject<Size>();
+            m_rig.transform.SetScale(scale);
         }
 
         private IEnumerator CancelOutDefaultVrRotation()

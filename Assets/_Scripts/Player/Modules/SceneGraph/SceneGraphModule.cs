@@ -4,14 +4,11 @@ using Alice.Tweedle.Interop;
 using Alice.Player.Unity;
 using Alice.Player.Primitives;
 using UnityEngine;
-using System.Collections;
-using BeauRoutine;
-using FlyingText3D;
-using Unity.XR.CoreUtils;
+// ReSharper disable InconsistentNaming
 
 namespace Alice.Player.Modules {
     [PInteropType("SceneGraph")]
-    static public class SceneGraphModule
+    public static class SceneGraphModule
     {
 
         [PInteropField]
@@ -122,16 +119,34 @@ namespace Alice.Player.Modules {
         }
 
         [PInteropMethod]
+        public static void createVRUserEntity(TValue user) {
+            var entity = SGEntity.Create<SGCamera>(user);
+            SceneGraph.Current.AddEntity(entity);
+        }
+
+        [PInteropMethod]
+        public static void createHeadsetEntity(TValue headset) {
+            var entity = SGEntity.Create<SGVRHeadset>(headset);
+            SceneGraph.Current.AddEntity(entity);
+        }
+
+        [PInteropMethod]
         public static void createVrHandEntity(TValue hand) {
             var entity = SGEntity.Create<SGVRHand>(hand);
             SceneGraph.Current.AddEntity(entity);
         }
 
         [PInteropMethod]
+        [Obsolete("To support exports from 3.7 and earlier. Use connectVrDevice.")]
         public static void connectVrHandToCamera(TValue hand, TValue camera) {
-            var hnd = SceneGraph.Current.FindEntity<SGVRHand>(hand);
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
-            hnd.SetCamera(cam);
+            connectVrDevice(hand, camera);
+        }
+
+        [PInteropMethod]
+        public static void connectVrDevice(TValue device, TValue parent) {
+            var dev = SceneGraph.Current.FindEntity<SGVRDevice>(device);
+            var root = SceneGraph.Current.FindEntity<SGCamera>(parent);
+            dev.SetCamera(root);
         }
 
         [PInteropMethod]
@@ -252,59 +267,69 @@ namespace Alice.Player.Modules {
         #endregion // Property Binding
 
         #region Camera
+
+        private static Camera getCamera(TValue cameraOrHeadset) {
+            var headset = SceneGraph.Current.FindEntity<SGVRHeadset>(cameraOrHeadset);
+            if (headset != null) {
+                return headset.GetCamera().Camera;
+            }
+            var cam = SceneGraph.Current.FindEntity<SGCamera>(cameraOrHeadset);
+            return cam ? cam.Camera : null;
+        }
+
         [PInteropMethod]
         public static double getCameraVerticalFOV(TValue camera) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
-            return cam ? cam.Camera.fieldOfView / 360f : Double.NaN;
+            var cam = getCamera(camera);
+            return cam ? cam.fieldOfView / 360f : Double.NaN;
         }
 
         [PInteropMethod]
         public static void setCameraVerticalFOV(TValue camera, Angle fov) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            var cam = getCamera(camera);
             if (cam) {
-                cam.Camera.fieldOfView = (float)fov.degrees;
+                cam.fieldOfView = (float)fov.degrees;
             }
         }
 
         [PInteropMethod]
         public static double getCameraHorizontalFOV(TValue camera) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
-            return cam ? Camera.VerticalToHorizontalFieldOfView(cam.Camera.fieldOfView, cam.Camera.aspect) / 360f : Double.NaN;
+            var cam = getCamera(camera);
+            return cam ? Camera.VerticalToHorizontalFieldOfView(cam.fieldOfView, cam.aspect) / 360f : Double.NaN;
         }
 
         [PInteropMethod]
         public static void setCameraHorizontalFOV(TValue camera, Angle fov) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            var cam = getCamera(camera);
             if (cam) {
-                cam.Camera.fieldOfView = Camera.HorizontalToVerticalFieldOfView((float) fov.degrees, cam.Camera.aspect);
+                cam.fieldOfView = Camera.HorizontalToVerticalFieldOfView((float) fov.degrees, cam.aspect);
             }
         }
 
         [PInteropMethod]
         public static float getCameraNearClippingPlaneDistance(TValue camera) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
-            return cam ? cam.Camera.nearClipPlane : 0;
+            var cam = getCamera(camera);
+            return cam ? cam.nearClipPlane : 0;
         }
 
         [PInteropMethod]
         public static void setCameraNearClippingPlaneDistance(TValue camera, double distance) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            var cam = getCamera(camera);
             if (cam) {
-                cam.Camera.nearClipPlane = (float) distance;
+                cam.nearClipPlane = (float) distance;
             }
         }
 
         [PInteropMethod]
         public static float getCameraFarClippingPlaneDistance(TValue camera) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
-            return cam ? cam.Camera.farClipPlane : 0;
+            var cam = getCamera(camera);
+            return cam ? cam.farClipPlane : 0;
         }
 
         [PInteropMethod]
         public static void setCameraFarClippingPlaneDistance(TValue camera, double distance) {
-            var cam = SceneGraph.Current.FindEntity<SGCamera>(camera);
+            var cam = getCamera(camera);
             if (cam) {
-                cam.Camera.farClipPlane = (float) distance;
+                cam.farClipPlane = (float) distance;
             }
         }
         #endregion // Camera
