@@ -8,6 +8,7 @@ public class BuildScript {
       string[] args = System.Environment.GetCommandLineArgs();
 
       BuildTarget target = BuildTarget.NoTarget;
+      string platform = "";
       string extension = "";
       bool? isDevBuild = null;
 
@@ -26,7 +27,7 @@ public class BuildScript {
             }
          } else if (arg == "-platform") {
             if (i + 1 < args.Length) {
-               string platform = args[i + 1];
+               platform = args[i + 1];
 
                if (Enum.TryParse<BuildTarget>(platform, out target)) {
                   switch (target) {
@@ -61,7 +62,7 @@ public class BuildScript {
          }
       }
 
-      string buildFolder = "Player";
+      string buildFolder = platform;
 
       if (isDevBuild == null) {
          isDevBuild = false;

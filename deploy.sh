@@ -25,8 +25,9 @@ echo Cleaning up build directories
 
 rm -Rf $BASE_DIR/Build
 mkdir $BASE_DIR/Build
-mkdir $BASE_DIR/Build/Client
-mkdir $BASE_DIR/Build/Server
+
+#mkdir $BASE_DIR/Build/Client
+#mkdir $BASE_DIR/Build/Server
 
 echo Starting Unity build
 
@@ -39,13 +40,10 @@ echo Unity version: $UNITY_VERSION
 
 if [ $OS = "Windows" ]; then
 	UNITY_BINARY="/c/Program Files/Unity/Hub/Editor/$UNITY_VERSION/Editor/Unity.exe"
-	TARGET_PLATFORM=StandaloneWindows64
 elif [ $OS = "Mac" ]; then
 	UNITY_BINARY="/Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity"
-	TARGET_PLATFORM=StandaloneOSX
 elif [ $OS = "Linux" ]; then
-	UNITY_BINARY="/home/dportnoy/Unity/Hub/Editor/$UNITY_VERSION/Editor/Unity"
-	TARGET_PLATFORM=StandaloneLinux64
+	UNITY_BINARY="/home/$(whoami)/Unity/Hub/Editor/$UNITY_VERSION/Editor/Unity"
 else
 	echo Could not detect the operating system
 fi
@@ -53,8 +51,25 @@ fi
 echo Unity binary path: $UNITY_BINARY
 printf "Target Platform: $TARGET_PLATFORM\n\n"
 
-echo Building Alice Unity Player...
-"$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/log.txt -dev -platform $TARGET_PLATFORM
-echo Alice Unity Player build finished successfully
+printf "Building Alice Unity Player...\n\n"
+
+'''
+TARGET_PLATFORM=StandaloneWindows64
+echo Alice Unity Player build for $TARGET_PLATFORM started
+"$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/$TARGET_PLATFORM/log.txt -dev -platform $TARGET_PLATFORM
+printf "Alice Unity Player build for $TARGET_PLATFORM finished successfully\n\n"
+'''
+
+'''
+TARGET_PLATFORM=StandaloneOSX
+echo Alice Unity Player build for $TARGET_PLATFORM started
+"$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/$TARGET_PLATFORM/log.txt -dev -platform $TARGET_PLATFORM
+printf "Alice Unity Player build for $TARGET_PLATFORM finished successfully\n\n"
+'''
+
+TARGET_PLATFORM=StandaloneLinux64
+echo Alice Unity Player build for $TARGET_PLATFORM started
+"$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/$TARGET_PLATFORM/log.txt -dev -platform $TARGET_PLATFORM
+printf "Alice Unity Player build for $TARGET_PLATFORM finished successfully\n\n"
 
 echo Unity build process complete
