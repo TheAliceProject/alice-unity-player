@@ -48,6 +48,7 @@ fi
 #TARGET_PLATFORM=StandaloneWindows64
 #TARGET_PLATFORM=StandaloneOSX
 TARGET_PLATFORM=StandaloneLinux64
+#TARGET_PLATFORM=WebGL
 
 echo Unity binary path: $UNITY_BINARY
 printf "Target Platform: $TARGET_PLATFORM\n\n"

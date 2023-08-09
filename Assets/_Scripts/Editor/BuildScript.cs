@@ -41,6 +41,9 @@ public class BuildScript {
                      case BuildTarget.StandaloneOSX:
                         extension = ".app";
                         break;
+                     case BuildTarget.WebGL:
+                        extension = "";
+                        break;
                      default:
                         Console.WriteLine($"{target} builds are not yet supported");
                         error = true;
