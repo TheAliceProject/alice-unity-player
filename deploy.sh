@@ -26,13 +26,10 @@ echo Cleaning up build directories
 rm -Rf $BASE_DIR/Build
 mkdir $BASE_DIR/Build
 
-#mkdir $BASE_DIR/Build/Client
-#mkdir $BASE_DIR/Build/Server
-
 echo Starting Unity build
 
 # This extracts the Unity version from ProjectVersion.txt
-UNITY_VERSION=$(sed -n "s/m_EditorVersion: \([[:digit:]]\+.[[:digit:]]\+.[[:alnum:]]\+\)/\1/p" $BASE_DIR/ProjectSettings/ProjectVersion.txt)
+UNITY_VERSION=$(sed -n "s/m_EditorVersion: //p" $BASE_DIR/ProjectSettings/ProjectVersion.txt)
 
 echo Unity version: $UNITY_VERSION
 
@@ -48,26 +45,15 @@ else
 	echo Could not detect the operating system
 fi
 
+#TARGET_PLATFORM=StandaloneWindows64
+#TARGET_PLATFORM=StandaloneOSX
+TARGET_PLATFORM=StandaloneLinux64
+
 echo Unity binary path: $UNITY_BINARY
 printf "Target Platform: $TARGET_PLATFORM\n\n"
 
 printf "Building Alice Unity Player...\n\n"
 
-'''
-TARGET_PLATFORM=StandaloneWindows64
-echo Alice Unity Player build for $TARGET_PLATFORM started
-"$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/$TARGET_PLATFORM/log.txt -dev -platform $TARGET_PLATFORM
-printf "Alice Unity Player build for $TARGET_PLATFORM finished successfully\n\n"
-'''
-
-'''
-TARGET_PLATFORM=StandaloneOSX
-echo Alice Unity Player build for $TARGET_PLATFORM started
-"$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/$TARGET_PLATFORM/log.txt -dev -platform $TARGET_PLATFORM
-printf "Alice Unity Player build for $TARGET_PLATFORM finished successfully\n\n"
-'''
-
-TARGET_PLATFORM=StandaloneLinux64
 echo Alice Unity Player build for $TARGET_PLATFORM started
 "$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/$TARGET_PLATFORM/log.txt -dev -platform $TARGET_PLATFORM
 printf "Alice Unity Player build for $TARGET_PLATFORM finished successfully\n\n"
