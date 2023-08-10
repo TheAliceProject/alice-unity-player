@@ -44,6 +44,9 @@ public class BuildScript {
                      case BuildTarget.WebGL:
                         extension = "";
                         break;
+                     case BuildTarget.Android:
+                        extension = ".apk";
+                        break;
                      default:
                         Console.WriteLine($"{target} builds are not yet supported");
                         error = true;
