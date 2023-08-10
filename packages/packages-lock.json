@@ -1,13 +1,22 @@
 {
   "dependencies": {
+    "com.atteneder.draco": {
+      "version": "4.1.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.4.11"
+      },
+      "url": "https://package.openupm.com"
+    },
     "com.siccity.gltfutility": {
-      "version": "https://github.com/siccity/gltfutility.git",
+      "version": "https://github.com/genemiller/GLTFUtility.git",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "2.0.0"
       },
-      "hash": "ac70aeb91915ccb157eedca167b7de8a4b55fd31"
+      "hash": "bc061b3c857a8f08c4d1aadfa37bdc41c5aeee30"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -20,6 +29,15 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {}
+    },
+    "com.unity.burst": {
+      "version": "1.6.6",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
       "version": "2.0.3",
