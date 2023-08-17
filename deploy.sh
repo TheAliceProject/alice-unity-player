@@ -19,17 +19,17 @@ fi
 
 echo Detected OS: $OS
 
-BASE_DIR=$(dirname $0)
+BASE_DIR=$(dirname "$0")
 
 echo Cleaning up build directories
 
-rm -Rf $BASE_DIR/Build
-mkdir $BASE_DIR/Build
+rm -Rf "$BASE_DIR"/Build
+mkdir "$BASE_DIR"/Build
 
 echo Starting Unity build
 
 # This extracts the Unity version from ProjectVersion.txt
-UNITY_VERSION=$(sed -n "s/m_EditorVersion: //p" $BASE_DIR/ProjectSettings/ProjectVersion.txt)
+UNITY_VERSION=$(sed -n "s/m_EditorVersion: //p" "$BASE_DIR/ProjectSettings/ProjectVersion.txt")
 
 echo Unity version: $UNITY_VERSION
 
@@ -47,7 +47,7 @@ echo Unity binary path: $UNITY_BINARY
 
 build_for_platform () {
 	echo Alice Unity Player build for $1 started...
-	"$UNITY_BINARY" -quit -batchmode -projectPath $BASE_DIR -executeMethod BuildScript.PerformPlayerBuild -logFile $BASE_DIR/Build/$1/log.txt -dev -platform $1
+	"$UNITY_BINARY" -quit -batchmode -projectPath "$BASE_DIR" -executeMethod BuildScript.PerformPlayerBuild -logFile "$BASE_DIR"/Build/"$1"/log.txt -dev -platform "$1"
 	printf "Alice Unity Player build for $1 finished successfully\n\n"
 }
 
@@ -55,7 +55,15 @@ build_for_platform () {
 
 #Currently supported platforms:
 # StandaloneWindows64, StandaloneOSX, StandaloneLinux64, WebGL, Android
-
-build_for_platform $1
+if [ "$1" ]; then
+	build_for_platform "$1"
+else
+	echo Building all
+	build_for_platform StandaloneWindows64
+	build_for_platform StandaloneOSX
+	build_for_platform StandaloneLinux64
+	build_for_platform WebGL
+	build_for_platform Android
+fi
 
 echo Build script completed
