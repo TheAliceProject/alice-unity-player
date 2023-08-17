@@ -86,7 +86,7 @@ public class BuildScript {
 
          BuildPlayerOptions buildOptions = new BuildPlayerOptions();
          buildOptions.scenes = playerScenes;
-         buildOptions.locationPathName = "./Build/" + buildFolder + "/AlicePlayer" + extension;
+         buildOptions.locationPathName = "./Build/" + buildFolder + "/Alice Player" + extension;
          buildOptions.target = target;
          buildOptions.subtarget = (int) EditorUserBuildSettings.standaloneBuildSubtarget;
          buildOptions.options = isDevBuild.Value ? BuildOptions.Development : BuildOptions.None;
