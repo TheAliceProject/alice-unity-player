@@ -47,7 +47,8 @@ echo Unity binary path: $UNITY_BINARY
 
 build_for_platform () {
 	echo Alice Unity Player build for $1 started...
-	"$UNITY_BINARY" -quit -batchmode -projectPath "$BASE_DIR" -executeMethod BuildScript.PerformPlayerBuild -logFile "$BASE_DIR"/Build/"$1"/log.txt -dev -platform "$1"
+	# May add -dev flag for development build
+	"$UNITY_BINARY" -quit -batchmode -projectPath "$BASE_DIR" -executeMethod BuildScript.PerformPlayerBuild -logFile "$BASE_DIR"/Build/"$1"/log.txt -platform "$1"
 	printf "Alice Unity Player build for $1 finished successfully\n\n"
 }
 
