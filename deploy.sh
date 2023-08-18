@@ -21,13 +21,6 @@ echo Detected OS: $OS
 
 BASE_DIR=$(dirname "$0")
 
-echo Cleaning up build directories
-
-rm -Rf "$BASE_DIR"/Build
-mkdir "$BASE_DIR"/Build
-
-echo Starting Unity build
-
 # This extracts the Unity version from ProjectVersion.txt
 UNITY_VERSION=$(sed -n "s/m_EditorVersion: //p" "$BASE_DIR/ProjectSettings/ProjectVersion.txt")
 
@@ -46,7 +39,11 @@ fi
 echo Unity binary path: $UNITY_BINARY
 
 build_for_platform () {
+  echo Cleaning up build directory for $1
+  rm -Rf "$BASE_DIR"/Build/"$1"
+  mkdir "$BASE_DIR"/Build/"$1"
 	echo Alice Unity Player build for $1 started...
+
 	# May add -dev flag for development build
 	"$UNITY_BINARY" -quit -batchmode -projectPath "$BASE_DIR" -executeMethod BuildScript.PerformPlayerBuild -logFile "$BASE_DIR"/Build/"$1"/log.txt -platform "$1"
 	printf "Alice Unity Player build for $1 finished successfully\n\n"
