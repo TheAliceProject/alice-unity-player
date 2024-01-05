@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.IO;
+using System.Linq;
 using BeauRoutine;
 using Alice.Tweedle.Parse;
 using UnityEngine.UI;
@@ -33,12 +34,11 @@ public class LoadMoreControl : MonoBehaviour
     
     private const float MinCellWidth = 350;
     private const float CellAspectRatio = 0.85f;
-    private static bool useBundledWorlds = false;
 
-    void Start()
+    private void Start()
     {
         DestroyCurrentButtons();
-        LoadButtons(useBundledWorlds ? GetBundledWorlds() : GetRecentWorlds());
+        LoadButtons(GameController.IsStandAlone ? GetBundledWorlds() : GetRecentWorlds());
 
         filter.onValueChanged.AddListener(delegate
         {
@@ -63,7 +63,6 @@ public class LoadMoreControl : MonoBehaviour
 
     public void SetAsStandalone()
     {
-        useBundledWorlds = true;
         filter.gameObject.SetActive(false);
     }
 
@@ -82,16 +81,8 @@ public class LoadMoreControl : MonoBehaviour
     }
 
     private List<RecentWorldData> GetBundledWorlds(){
-        List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
-        recentWorldsData.Clear();
-
-        var dir = new DirectoryInfo(GameController.AutoLoadedWorldsDirectory);
-        var files = dir.GetFiles(WorldObjects.ProjectPattern);
-        foreach (var file in files) {
-            if (!File.Exists(file.FullName) || file.FullName.Contains(WorldObjects.SceneGraphLibraryName))
-                continue;
-            recentWorldsData.Add(new RecentWorldData(file.FullName));
-        }
+        List<RecentWorldData> recentWorldsData =
+            GameController.GetAvailableWorlds().Select(file => new RecentWorldData(file.FullName)).ToList();
         return SortWorlds(recentWorldsData);
     }
 

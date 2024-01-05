@@ -6,6 +6,7 @@ using Alice.Player.Modules;
 using BeauRoutine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Alice.Player.Unity;
 using Alice.Tweedle.File;
 using ICSharpCode.SharpZipLib.Zip;
@@ -14,7 +15,7 @@ namespace Alice.Tweedle.Parse
 {
     public class GameController : MonoBehaviour
     {
-        public static string AutoLoadedWorldsDirectory;
+        public static string BundledWorldsDirectory =  Path.Combine(Application.streamingAssetsPath, WorldObjects.DefaultFolderPath);
         public bool dumpTypeOutlines = false;
         public Canvas desktopCanvas;
         public Transform mainMenu;
@@ -37,17 +38,9 @@ namespace Alice.Tweedle.Parse
         private readonly Dictionary<ProjectIdentifier, TweedleSystem> m_LibraryCache =
             new Dictionary<ProjectIdentifier, TweedleSystem>();
 
-        private void Awake()
-        {
-#if UNITY_ANDROID
-            AutoLoadedWorldsDirectory = Application.persistentDataPath;
-#else
-#if UNITY_WEBGL
-            AutoLoadedWorldsDirectory = $"{Application.streamingAssetsPath}/{WorldObjects.DefaultFolderPath}/{WorldObjects.DefaultBundledWorldName}";
-#else
-            AutoLoadedWorldsDirectory = Application.streamingAssetsPath;
-#endif
-#endif
+        public static bool IsStandAlone { get; private set; }
+
+        private void Awake() {
             DeleteTemporaryAudioFiles();
             PreloadLibrary();
         }
@@ -185,6 +178,7 @@ namespace Alice.Tweedle.Parse
 
             // This code will open a world directly in the unity app.
             // On windows, right click and Open With... the Alice Player executable
+            // This supersedes any further loading options.
             string[] args = System.Environment.GetCommandLineArgs();
 
             for(int i = 0; i < args.Length; i++) {
@@ -196,34 +190,28 @@ namespace Alice.Tweedle.Parse
             }
 
             /*
-             * The StreamingAssets/Default folder should by default contain two world files: SceneGraphLibrary.a3w and DefaultBundledWorld.a3w
-             * If there are some worlds bundled, the code will try to open them (if there is a single one)
-             * or to list them in a menu (multiple bundled), waiting for a choice.
-             * If no worlds found,
-             * ON PC PLATFORM: remain on the main menu
-             * ON WEBGL/ANDROID/IOS: Always open DefaultBundledWorld.a3w since listing StreamingAssets files does not work
-             * If DefaultBundledWorld.a3w is unchanged it will tell the user to put bundled world into the StreamingAssets folder
-             * TODO Change this since it is not how it works
+             * On the desktop it always opens to the main menu.
+             * 
+             * For other platforms (WEBGL/ANDROID/IOS )it looks in the (OS specific) directory for user worlds and the
+             * worlds bundled in the player.
+             * The StreamingAssets/Default directory contains SceneGraphLibrary.a3w, the shared base code, along with
+             * a collection of bundled worlds.
+             *
+             * If there is a single bundled world it will open that world.
+             * Otherwise, it will list both bundled and user worlds in a menu, presenting the choice.
              */
-#if UNITY_WEBGL
-            OpenWorldDirectly(AutoLoadedWorldsDirectory);
-#else
-            var files = new DirectoryInfo(AutoLoadedWorldsDirectory).GetFiles(WorldObjects.ProjectPattern);
-            var fileCount = files.Length;
-#if UNITY_IOS || UNITY_ANDROID
-            if (fileCount == 0) {
-                OpenWorldDirectly(Path.Combine(Application.streamingAssetsPath, WorldObjects.DefaultFolderPath, WorldObjects.DefaultBundledWorldName));
-            }
-#endif
-            if (fileCount == 1) {
+#if UNITY_IOS || UNITY_ANDROID || UNITY_WEBGL
+            var bundledWorlds = GetBundledWorlds();
+            if (bundledWorlds.Count() == 1) {
                 // Only one world is bundled, auto load that world
-                OpenWorldDirectly(files[0].FullName);
+                OpenWorldDirectly(bundledWorlds.First().FullName);
             }
-            else if(fileCount > 1) {
+            else {
                 // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
                 foreach (var mc in menuControls) {
                     mc.DeactivateMainMenu();
                 }
+                IsStandAlone = false;
                 foreach (var lmc in loadMoreControl) {
                     lmc.gameObject.SetActive(true);
                     lmc.SetAsStandalone();
@@ -232,11 +220,14 @@ namespace Alice.Tweedle.Parse
 #endif
         }
 
+        
+#if UNITY_IOS || UNITY_ANDROID || UNITY_WEBGL
         private void OpenWorldDirectly(string fullName) {
             loadingScreen.fader.alpha = 1f;
             WorldObjects.GetWorldExecutionState().DisableMainMenu();
             OpenWorld(fullName);
         }
+#endif
 
         private void NotifyUserOfError(TweedleRuntimeException tre)
         {
@@ -282,6 +273,31 @@ namespace Alice.Tweedle.Parse
 
         public void ResumeVm() {
             m_VM.Resume();
+        }
+
+        public static IEnumerable<FileInfo> GetAvailableWorlds() {
+            var available = GetBundledWorlds();
+            available.AddRange(GetUserWorlds());
+            return available;
+        }
+
+        private static List<FileInfo> GetBundledWorlds() {
+            var bundledFiles = new DirectoryInfo(BundledWorldsDirectory).GetFiles(WorldObjects.ProjectPattern);
+            return bundledFiles.Where(file => System.IO.File.Exists(file.FullName) &&
+                                              !file.FullName.Contains(WorldObjects.SceneGraphLibraryName)).ToList();
+        }
+
+        private static List<FileInfo> GetUserWorlds() {
+            var userFiles = new DirectoryInfo(Application.persistentDataPath).GetFiles(WorldObjects.ProjectPattern);
+            return userFiles.Where(file => System.IO.File.Exists(file.FullName)).ToList();
+        }
+
+        public static string GetDefaultWorldMessage() {
+#if UNITY_WEBGL
+            return  $"Replace the project file, hosted at: {BundledWorldsDirectory}/{WorldObjects.DefaultBundledWorldName}";
+#else
+            return $"Put them in {BundledWorldsDirectory}";
+#endif
         }
     }
 }
