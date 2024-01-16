@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
+using Alice.Storage;
 using Alice.Tweedle.File;
 
 public class RecentWorldButton : MonoBehaviour
@@ -16,33 +15,32 @@ public class RecentWorldButton : MonoBehaviour
     public Image background;
     public BoxCollider collider;
     
-    private RecentWorldData fileData = new RecentWorldData();
+    private RecentWorldData fileData = new();
     private ZipFile zipFile;
     private Stream fileStream;
 
 
-    void ExtractThumbnail(string fileName)
+    private void ExtractThumbnail(string fileName)
     {
-        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
-        if (File.Exists(thumbnailPath))
-        {
+        var thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
+        if (File.Exists(thumbnailPath)) {
             return;
         }
-        fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
-        using (fileStream)
-        {
-            zipFile = new ZipFile(fileStream);
-            using (zipFile)
-            {   
-                // Save thumbnail
-                byte[] data = zipFile.ReadDataEntry("thumbnail.png");
-                if (data == null)
-                {
-                    return;
+        StartCoroutine(StorageReader.Read(fileName, stream => {
+            using (stream) {
+                zipFile = new ZipFile(stream);
+                using (zipFile) {
+                    // Save thumbnail
+                    var data = zipFile.ReadDataEntry("thumbnail.png");
+                    if (data == null) {
+                        return;
+                    }
+                    File.WriteAllBytes(thumbnailPath, data);
                 }
-                File.WriteAllBytes(thumbnailPath, data);
             }
-        }
+        }, _ => {
+            // Ignored
+        }));
     }
 
     public void SetData(RecentWorldData worldData)
