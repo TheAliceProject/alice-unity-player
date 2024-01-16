@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,8 +27,7 @@ public class LoadMoreControl : MonoBehaviour
 
     public RecentWorldButton recentWorldPrefab;
     public bool useVRSizing; // set in inspector
-
-    private const string RecentWorldsFileName = "/recentWorlds.txt";
+    
     private List<RecentWorldButton> recentWorlds = new List<RecentWorldButton>();
     private Routine m_routine;
     
@@ -87,13 +86,13 @@ public class LoadMoreControl : MonoBehaviour
     }
 
     private List<RecentWorldData> GetRecentWorlds(){
-        if (!File.Exists(Application.persistentDataPath + RecentWorldsFileName)){
+        if (!File.Exists(WorldObjects.RecentWorldsListFile)){
             return null;
         }
 
         List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
         recentWorldsData.Clear();
-        var fs = File.OpenText(Application.persistentDataPath + RecentWorldsFileName);
+        var fs = File.OpenText(WorldObjects.RecentWorldsListFile);
         string line = "";
         while (line != null)
         {

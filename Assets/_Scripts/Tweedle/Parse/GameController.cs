@@ -15,7 +15,6 @@ namespace Alice.Tweedle.Parse
 {
     public class GameController : MonoBehaviour
     {
-        public static string BundledWorldsDirectory =  Path.Combine(Application.streamingAssetsPath, WorldObjects.DefaultFolderPath);
         public bool dumpTypeOutlines = false;
         public Canvas desktopCanvas;
         public Transform mainMenu;
@@ -282,7 +281,7 @@ namespace Alice.Tweedle.Parse
         }
 
         private static List<FileInfo> GetBundledWorlds() {
-            var bundledFiles = new DirectoryInfo(BundledWorldsDirectory).GetFiles(WorldObjects.ProjectPattern);
+            var bundledFiles = new DirectoryInfo(WorldObjects.BundledWorldsDirectory).GetFiles(WorldObjects.ProjectPattern);
             return bundledFiles.Where(file => System.IO.File.Exists(file.FullName) &&
                                               !file.FullName.Contains(WorldObjects.SceneGraphLibraryName)).ToList();
         }
@@ -294,9 +293,9 @@ namespace Alice.Tweedle.Parse
 
         public static string GetDefaultWorldMessage() {
 #if UNITY_WEBGL
-            return  $"Replace the project file, hosted at: {BundledWorldsDirectory}/{WorldObjects.DefaultBundledWorldName}";
+            return  $"Replace the project file, hosted at: {WorldObjects.BundledWorldsDirectory}/{WorldObjects.DefaultBundledWorldName}";
 #else
-            return $"Put them in {BundledWorldsDirectory}";
+            return $"Put them in {WorldObjects.BundledWorldsDirectory}";
 #endif
         }
     }
