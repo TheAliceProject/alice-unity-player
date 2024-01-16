@@ -200,25 +200,25 @@ namespace Alice.Tweedle.Parse
              * Otherwise, it will list both bundled and user worlds in a menu, presenting the choice.
              */
 #if UNITY_IOS || UNITY_ANDROID || UNITY_WEBGL
-            var bundledWorlds = GetBundledWorlds();
-            if (bundledWorlds.Count() == 1) {
-                // Only one world is bundled, auto load that world
-                OpenWorldDirectly(bundledWorlds.First().FullName);
-            }
-            else {
-                // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
+            StartCoroutine(LoadMoreControl.ReadAvailableWorlds((bundledWorlds => {
+                if (bundledWorlds.Count() == 1) {
+                    // Only one world is bundled, auto load that world
+                    OpenWorldDirectly(bundledWorlds.First());
+                }
+                else {
+                    // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
                 foreach (var mc in menuControls) {
                     mc.DeactivateMainMenu();
                 }
                 IsStandAlone = false;
                 foreach (var lmc in loadMoreControl) {
                     lmc.gameObject.SetActive(true);
-                    lmc.SetAsStandalone();
+                        lmc.SetAsStandalone();
+                    }
                 }
-            }
+            })));
 #endif
         }
-
         
 #if UNITY_IOS || UNITY_ANDROID || UNITY_WEBGL
         private void OpenWorldDirectly(string fullName) {
@@ -272,23 +272,6 @@ namespace Alice.Tweedle.Parse
 
         public void ResumeVm() {
             m_VM.Resume();
-        }
-
-        public static IEnumerable<FileInfo> GetAvailableWorlds() {
-            var available = GetBundledWorlds();
-            available.AddRange(GetUserWorlds());
-            return available;
-        }
-
-        private static List<FileInfo> GetBundledWorlds() {
-            var bundledFiles = new DirectoryInfo(WorldObjects.BundledWorldsDirectory).GetFiles(WorldObjects.ProjectPattern);
-            return bundledFiles.Where(file => System.IO.File.Exists(file.FullName) &&
-                                              !file.FullName.Contains(WorldObjects.SceneGraphLibraryName)).ToList();
-        }
-
-        private static List<FileInfo> GetUserWorlds() {
-            var userFiles = new DirectoryInfo(Application.persistentDataPath).GetFiles(WorldObjects.ProjectPattern);
-            return userFiles.Where(file => System.IO.File.Exists(file.FullName)).ToList();
         }
 
         public static string GetDefaultWorldMessage() {
