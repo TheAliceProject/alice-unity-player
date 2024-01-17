@@ -38,6 +38,12 @@ public class LoadMoreControl : MonoBehaviour
 
     private void Start()    
     {
+        // If the control is VR and VR is not running,
+        // or the control is not VR and VR is loaded
+        // do nothing.
+        if (useVRSizing != VRControl.IsLoadedInVR()) {
+            return;
+        }
         DestroyCurrentButtons();
         ReadWorldData();
 
