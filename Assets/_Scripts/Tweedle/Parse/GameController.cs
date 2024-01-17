@@ -201,19 +201,18 @@ namespace Alice.Tweedle.Parse
              */
 #if UNITY_IOS || UNITY_ANDROID || UNITY_WEBGL
             StartCoroutine(LoadMoreControl.ReadAvailableWorlds((bundledWorlds => {
+                IsStandAlone = bundledWorlds.Count > 1;
                 if (bundledWorlds.Count() == 1) {
                     // Only one world is bundled, auto load that world
                     OpenWorldDirectly(bundledWorlds.First());
-                }
-                else {
+                } else {
                     // Multiple worlds are bundled, we will put them on the "Load More" screen as a hub for their worlds
-                foreach (var mc in menuControls) {
-                    mc.DeactivateMainMenu();
-                }
-                IsStandAlone = false;
-                foreach (var lmc in loadMoreControl) {
-                    lmc.gameObject.SetActive(true);
-                        lmc.SetAsStandalone();
+                    foreach (var mc in menuControls) {
+                        mc.DeactivateMainMenu();
+                    }
+                    foreach (var lmc in loadMoreControl) {
+                        lmc.gameObject.SetActive(true);
+                            lmc.SetAsStandalone();
                     }
                 }
             })));
