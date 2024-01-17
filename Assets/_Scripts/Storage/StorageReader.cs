@@ -20,9 +20,7 @@ namespace Alice.Storage {
         public static IEnumerator Read(string resourceLocation, SuccessHandler successHandler, ExceptionHandler exceptionHandler) {
             var reader = new StorageReader(exceptionHandler);
             yield return reader.Load(resourceLocation);
-            using (reader.m_ReadStream) {
-                successHandler(reader.m_ReadStream);
-            }
+            successHandler(reader.m_ReadStream);
         }
 
         private StorageReader(ExceptionHandler exceptionHandler) {
