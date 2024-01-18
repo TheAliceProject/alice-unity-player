@@ -159,6 +159,7 @@ public class VRControl : MonoBehaviour
             XRSettings.enabled = false;
             WorldObjects.SetVRObjectsActive(false);
         } else {
+            loadWorldInVR = true;
             WorldObjects.DisableDesktopCanvas();
             m_routine.Replace(this, EnableVR());
         }
@@ -171,7 +172,6 @@ public class VRControl : MonoBehaviour
         StartObjects.SetActive(true);
         if (!WorldObjects.GetWorldExecutionState().IsMainMenuAllowed())
             HideObjects.SetActive(false);
-        loadWorldInVR = true;
         Application.targetFrameRate = -1; // Use VR framerate specified by SDK
 
         switch (deviceType)
