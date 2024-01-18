@@ -22,9 +22,9 @@ public class RecentWorldButton : MonoBehaviour
 
     private void ExtractThumbnail(string fileName)
     {
-        var thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
-        if (File.Exists(thumbnailPath)) {
-            return;
+        var cachedThumbnail = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
+        if (File.Exists(cachedThumbnail)) {
+            ShowThumbnail(File.ReadAllBytes(cachedThumbnail));
         }
         StartCoroutine(StorageReader.Read(fileName, stream => {
             using (stream) {
@@ -35,7 +35,8 @@ public class RecentWorldButton : MonoBehaviour
                     if (data == null) {
                         return;
                     }
-                    File.WriteAllBytes(thumbnailPath, data);
+                    ShowThumbnail(data);
+                    File.WriteAllBytes(cachedThumbnail, data);
                 }
             }
         }, _ => {
@@ -43,26 +44,19 @@ public class RecentWorldButton : MonoBehaviour
         }));
     }
 
+    private void ShowThumbnail(byte[] data) {
+        var tex = new Texture2D(640, 360);
+        tex.LoadImage(data); //..this will auto-resize the texture dimensions.
+        background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
+    }
+
     public void SetData(RecentWorldData worldData)
     {
         nameText.text = Path.GetFileNameWithoutExtension(worldData.path);
         fileData.path = worldData.path;
-
-        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(worldData.path) + "_thumb.png";
-        ExtractThumbnail(fileData.path);
-
-        if (File.Exists(thumbnailPath))
-        {
-            byte[] data = File.ReadAllBytes(thumbnailPath);
-            Texture2D tex = null;
-            tex = new Texture2D(640, 360);
-            tex.LoadImage(data); //..this will auto-resize the texture dimensions.
-            background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
-        }
-
-
         fileData.lastOpened = worldData.lastOpened;
         SetLastOpenedText();
+        ExtractThumbnail(fileData.path);
     }
 
     public void ScaleText(float scaleFactor)
