@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Alice.Tweedle.Parse {
     [TestFixture]
     public class TweedleSystemTest {
-        private static readonly string TestWorld = $"{Application.streamingAssetsPath}/{WorldObjects.DefaultFolderPath}/MinimalTestWorld.a3w";
+        private static readonly string TestWorld = $"{WorldObjects.BundledWorldsDirectory}/MinimalTestWorld.a3w";
 
         private TweedleSystem _system;
         private readonly Dictionary<ProjectIdentifier, TweedleSystem> _libraryCache = new Dictionary<ProjectIdentifier, TweedleSystem>();

@@ -105,8 +105,6 @@ namespace Alice.Player.Unity {
         }
 
         public static bool Exists { get { return !ReferenceEquals(s_Current, null); } }
-
-        public TweedleSystem TweedleSystem {get; set;}
         public PlayerResources InternalResources {get; private set;}
         public AudioCache AudioCache { get; private set; }
         public ModelCache ModelCache {get; private set;}

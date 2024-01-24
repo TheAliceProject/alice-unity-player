@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 using Alice.Tweedle.Parse;
 using UnityEngine.Serialization;
 
@@ -10,16 +11,21 @@ public class WorldObjects : MonoBehaviour
     public GameObject vrObjects;
     public GameController controller;
 
-    public static readonly string ProjectExt = "a3w";
+    public const string ProjectExt = "a3w";
     public static readonly string ProjectPattern = $"*.{ProjectExt}";
     public static readonly string SceneGraphLibraryName = $"SceneGraphLibrary.{ProjectExt}";
     public static readonly string DefaultBundledWorldName = $"DefaultBundledWorld.{ProjectExt}";
-    public static readonly string DefaultFolderPath = "Default";
+    public static string BundledWorldsDirectory = "";
+    public static string BundledWorldsListFile = "";
+    public static string RecentWorldsListFile = "";
     
     private readonly WorldExecutionState _executionState = new WorldExecutionState();
     
     void Awake()
     {
+        BundledWorldsDirectory = Path.Combine(Application.streamingAssetsPath, "Default");
+        BundledWorldsListFile = Path.Combine(BundledWorldsDirectory, "bundledWorlds.txt");
+        RecentWorldsListFile = Path.Combine(Application.persistentDataPath, "recentWorlds.txt");
         if (_instance != null && _instance != this){
             Destroy(this.gameObject);
         }

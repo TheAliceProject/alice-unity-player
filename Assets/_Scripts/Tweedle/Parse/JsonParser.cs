@@ -9,7 +9,7 @@ using NLayer;
 using Siccity.GLTFUtility;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Networking;
+using Alice.Storage;
 using Vector3 = UnityEngine.Vector3;
 
 namespace Alice.Tweedle.Parse
@@ -20,7 +20,6 @@ namespace Alice.Tweedle.Parse
         private readonly TweedleSystem m_System;
         private readonly TweedleParser m_Parser;
         private ZipFile m_ZipFile;
-        private Stream m_FileStream;
         private readonly string m_FileName;
         private readonly ExceptionHandler m_ExceptionHandler;
         private readonly Dictionary<ProjectIdentifier, TweedleSystem> m_LibraryCache;
@@ -60,55 +59,30 @@ namespace Alice.Tweedle.Parse
             var reader = new JsonParser(inSystem, fileName, libraryCache, exceptionHandler);
             yield return reader.Parse();
         }
-
-        private IEnumerator LoadFile(string fileName) {
-            if (fileName.StartsWith("jar:") || fileName.StartsWith("http:")) {
-                // Use UnityWebRequest when reading from a compressed file
-                yield return LoadFileWR(fileName);
-            } else {
-                yield return LoadFileFS(fileName);
-            }
-        }
-
-        private IEnumerator LoadFileFS(string fileName) {
-            if (!System.IO.File.Exists(fileName)) {
-                HandleException(new FileNotFoundException(fileName));
-            }
-            m_FileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
-            yield return null;
-        }
-
-        private IEnumerator LoadFileWR(string fileName) {
-            var www = new UnityWebRequest(fileName) {downloadHandler = new DownloadHandlerBuffer()};
-            yield return www.SendWebRequest();
-            m_FileStream = new MemoryStream(www.downloadHandler.data);
-        }
-
-        private IEnumerator Parse()
-        {
-            yield return LoadFile(m_FileName);
-
-            using (m_FileStream) {
+        
+        private IEnumerator Parse() {
+            yield return StorageReader.Read(m_FileName, stream => {
                 try {
-                    m_ZipFile = new ZipFile(m_FileStream);
-                } catch(Exception e) {
+                    m_ZipFile = new ZipFile(stream);
+                }
+                catch (Exception e) {
                     HandleException(e);
                 }
+            }, HandleException);
 
-                using (m_ZipFile) {
-                    if(!m_FileName.Contains(WorldObjects.SceneGraphLibraryName))
-                        CacheThumbnail(m_FileName);
+            using (m_ZipFile) {
+                if (!m_FileName.Contains(WorldObjects.SceneGraphLibraryName))
+                    CacheThumbnail(m_FileName);
 
-                    // TODO: Use manifest to determine player assembly version
-                    string playerAssembly = Player.PlayerAssemblies.CURRENT;
-                    m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
+                // TODO: Use manifest to determine player assembly version
+                string playerAssembly = Player.PlayerAssemblies.CURRENT;
+                m_System.AddStaticAssembly(Player.PlayerAssemblies.Assembly(playerAssembly));
 
-                    var manifestJson = m_ZipFile.ReadEntry("manifest.json");
+                var manifestJson = m_ZipFile.ReadEntry("manifest.json");
 
-                    var rootManifest = ParseProjectManifest(manifestJson);
-                    yield return ParsePrerequisites(rootManifest);
-                    LoadProject(rootManifest);
-                }
+                var rootManifest = ParseProjectManifest(manifestJson);
+                yield return ParsePrerequisites(rootManifest);
+                LoadProject(rootManifest);
             }
         }
 
@@ -217,7 +191,7 @@ namespace Alice.Tweedle.Parse
         }
 
         private void HandleException(Exception e) {
-            m_FileStream?.Close();
+            m_ZipFile?.Close();
             m_ExceptionHandler(e);
             throw e;
         }
