@@ -39,6 +39,10 @@ namespace Alice.Tweedle.Parse
 
         public static bool IsStandAlone { get; private set; }
 
+        public TweedleSystem GetTweedleSystem() {
+            return m_System;
+        }
+
         private void Awake() {
             DeleteTemporaryAudioFiles();
             PreloadLibrary();
@@ -87,7 +91,6 @@ namespace Alice.Tweedle.Parse
             }
             RenderSettings.skybox = null;
             m_IsLoading = false;
-            SceneGraph.Current.TweedleSystem = m_System;
             m_VM.Resume();
             yield return StartWorld();
         }
