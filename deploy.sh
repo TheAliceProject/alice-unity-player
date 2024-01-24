@@ -58,8 +58,9 @@ build_for_platform () {
 	# May add -dev flag for development build
 	"$UNITY_BINARY" -quit -batchmode -projectPath "$BASE_DIR" -executeMethod BuildScript.PerformPlayerBuild -logFile "$BASE_DIR"/Build/"$1"/log.txt -platform "$1"
   if [ "$1" = "StandaloneOSX" ]; then
-    # mac bundling
-    echo A mac build
+    echo Notarizing Mac app and bundling into dmg
+    ./notarizeMacBuild.sh
+    mv "$BASE_DIR/Build/StandaloneOSX/Alice Player.dmg" "$BASE_DIR/Build/Alice Player-$VERSION_TAG.dmg"
   else
     zip_clean "$1"
   fi	  
