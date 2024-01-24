@@ -2,7 +2,7 @@
 
 ARCH=$(uname)
 
-echo Detected architecture is $ARCH 
+echo Detected architecture is "$ARCH"
 
 if [[ $ARCH =~ ^MINGW ]]; then # uname returns this in Git Bash
 	echo Detected Windows architecture
@@ -14,39 +14,39 @@ elif [[ $ARCH =~ ^Linux ]]; then
 	echo Detected Linux architecture
 	OS=Linux
 else
-	echo Unknown architecture: $ARCH
+	echo Unknown architecture: "$ARCH"
 fi
 
-echo Detected OS: $OS
+echo Detected OS: "$OS"
 
 BASE_DIR=$(dirname "$0")
 
 # This extracts the Unity version from ProjectVersion.txt
 UNITY_VERSION=$(sed -n "s/m_EditorVersion: //p" "$BASE_DIR/ProjectSettings/ProjectVersion.txt")
 
-echo Unity version: $UNITY_VERSION
+echo Unity version: "$UNITY_VERSION"
 
-if [ $OS = "Windows" ]; then
+if [ "$OS" = "Windows" ]; then
 	UNITY_BINARY="/c/Program Files/Unity/Hub/Editor/$UNITY_VERSION/Editor/Unity.exe"
-elif [ $OS = "Mac" ]; then
+elif [ "$OS" = "Mac" ]; then
 	UNITY_BINARY="/Applications/Unity/Hub/Editor/$UNITY_VERSION/Unity.app/Contents/MacOS/Unity"
-elif [ $OS = "Linux" ]; then
+elif [ "$OS" = "Linux" ]; then
 	UNITY_BINARY="/home/$(whoami)/Unity/Hub/Editor/$UNITY_VERSION/Editor/Unity"
 else
 	echo Could not detect the operating system
 fi
 
-echo Unity binary path: $UNITY_BINARY
+echo Unity binary path: "$UNITY_BINARY"
 
 build_for_platform () {
-  echo Cleaning up build directory for $1
+  echo Cleaning up build directory for "$1"
   rm -Rf "$BASE_DIR"/Build/"$1"
   mkdir "$BASE_DIR"/Build/"$1"
-	echo Alice Unity Player build for $1 started...
+	echo Alice Unity Player build for "$1" started...
 
 	# May add -dev flag for development build
 	"$UNITY_BINARY" -quit -batchmode -projectPath "$BASE_DIR" -executeMethod BuildScript.PerformPlayerBuild -logFile "$BASE_DIR"/Build/"$1"/log.txt -platform "$1"
-	printf "Alice Unity Player build for $1 finished successfully\n\n"
+	printf "Alice Unity Player build for %s finished successfully\n\n", "$1"
 }
 
 # Note that the platform must match one of the values for the UnityEditor.BuildTarget enum
