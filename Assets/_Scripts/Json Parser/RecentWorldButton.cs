@@ -25,7 +25,9 @@ public class RecentWorldButton : MonoBehaviour
         var cachedThumbnail = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
         if (File.Exists(cachedThumbnail)) {
             ShowThumbnail(File.ReadAllBytes(cachedThumbnail));
+            return;
         }
+        
         StartCoroutine(StorageReader.Read(fileName, stream => {
             using (stream) {
                 zipFile = new ZipFile(stream);
