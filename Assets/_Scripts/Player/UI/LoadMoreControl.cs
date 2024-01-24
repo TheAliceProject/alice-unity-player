@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.IO;
+using System.Linq;
 using BeauRoutine;
+using Alice.Storage;
 using Alice.Tweedle.Parse;
 using UnityEngine.UI;
 
@@ -26,24 +28,97 @@ public class LoadMoreControl : MonoBehaviour
 
     public RecentWorldButton recentWorldPrefab;
     public bool useVRSizing; // set in inspector
-
-    private const string RecentWorldsFileName = "/recentWorlds.txt";
+    
     private List<RecentWorldButton> recentWorlds = new List<RecentWorldButton>();
+    private static List<string> availableWorldNames = new List<string>();
     private Routine m_routine;
     
     private const float MinCellWidth = 350;
     private const float CellAspectRatio = 0.85f;
-    private static bool useBundledWorlds = false;
 
-    void Start()
+    private void Start()    
     {
+        // If the control is VR and VR is not running,
+        // or the control is not VR and VR is loaded
+        // do nothing.
+        if (useVRSizing != VRControl.IsLoadedInVR()) {
+            return;
+        }
         DestroyCurrentButtons();
-        LoadButtons(useBundledWorlds ? GetBundledWorlds() : GetRecentWorlds());
+        ReadWorldData();
 
         filter.onValueChanged.AddListener(delegate
         {
             LoadButtons(GetRecentWorlds());
         });
+    }
+
+    private void ReadWorldData() {
+        if (GameController.IsStandAlone) {
+            StartCoroutine(ReadAvailableWorlds());
+        }
+        else {
+            LoadButtons(GetRecentWorlds());
+        }
+    }
+
+    private IEnumerator ReadAvailableWorlds() {
+        yield return ReadAvailableWorlds(SetWorldList);
+    }
+
+    public delegate void ListHandler(List<string> files);
+
+    public static IEnumerator ReadAvailableWorlds(ListHandler onSuccess) {
+        if (availableWorldNames.Count == 0) {
+            yield return PopulateFullBundledFileNames();
+            availableWorldNames.AddRange(GetUserWorlds());
+        }
+        onSuccess(availableWorldNames);
+    }
+
+    private void SetWorldList(List<string> worldNames) {
+        var worldData = worldNames.Select(file => new RecentWorldData(file)).ToList();
+        LoadButtons(SortWorlds(worldData));
+    }
+
+    private static IEnumerator PopulateFullBundledFileNames() {
+        yield return StorageReader.Read(WorldObjects.BundledWorldsListFile, (stream => {
+            using (stream) {
+                foreach (var line in ReadLines(new StreamReader(stream))) {
+                    availableWorldNames.Add(Path.Combine(WorldObjects.BundledWorldsDirectory, line));
+                }
+            }
+        }), _ => {
+            // ignore exceptions
+        });
+    }
+
+    private static IEnumerable<string> GetFileEntries(string worldListFile) {
+        return !File.Exists(worldListFile) ? new List<string>() : ReadLines(File.OpenText(worldListFile));
+    }
+
+    private static IEnumerable<string> ReadLines(TextReader reader) {
+        var lines = new List<string>();
+        while (true)
+        {
+            var line = reader.ReadLine();
+            if (line == null)
+                break;
+            if (line.Trim() == "") // Really looking for \n or \r or some combination here. Should never happen in theory unless someone purposefully messes with this file
+                continue;
+            lines.Add(line);
+        }
+        reader.Close();
+        return lines;
+    }
+
+    private List<RecentWorldData> GetRecentWorlds(){
+        var lines = GetFileEntries(WorldObjects.RecentWorldsListFile);
+        var recentWorldsData = lines
+            .Select(line => new RecentWorldData(line.Split('|')))
+            .Where(data => File.Exists(data.path))
+            .ToList();
+        return SortWorlds(recentWorldsData);
     }
 
     void Update()
@@ -63,7 +138,6 @@ public class LoadMoreControl : MonoBehaviour
 
     public void SetAsStandalone()
     {
-        useBundledWorlds = true;
         filter.gameObject.SetActive(false);
     }
 
@@ -81,45 +155,9 @@ public class LoadMoreControl : MonoBehaviour
         buttonLayout.cellSize = new Vector2(cellWidth, cellWidth * CellAspectRatio);
     }
 
-    private List<RecentWorldData> GetBundledWorlds(){
-        List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
-        recentWorldsData.Clear();
-
-        var dir = new DirectoryInfo(GameController.AutoLoadedWorldsDirectory);
-        var files = dir.GetFiles(WorldObjects.ProjectPattern);
-        foreach (var file in files) {
-            if (!File.Exists(file.FullName) || file.FullName.Contains(WorldObjects.SceneGraphLibraryName))
-                continue;
-            recentWorldsData.Add(new RecentWorldData(file.FullName));
-        }
-        return SortWorlds(recentWorldsData);
-    }
-
-    private List<RecentWorldData> GetRecentWorlds(){
-        if (!File.Exists(Application.persistentDataPath + RecentWorldsFileName)){
-            return null;
-        }
-
-        List<RecentWorldData> recentWorldsData = new List<RecentWorldData>();
-        recentWorldsData.Clear();
-        var fs = File.OpenText(Application.persistentDataPath + RecentWorldsFileName);
-        string line = "";
-        while (line != null)
-        {
-            line = fs.ReadLine();
-            if (line == null)
-                break;
-            else if (line.Trim() == "") // Really looking for \n or \r or some combination here. Should never happen in theory unless someone purposefully messes with this file
-                continue;
-
-            string[] parsedFile = line.Split('|');
-            RecentWorldData data = new RecentWorldData(parsedFile);
-            if (!File.Exists(parsedFile[0]))
-                continue;
-            recentWorldsData.Add(data);
-        }
-        fs.Close();
-        return SortWorlds(recentWorldsData);
+    private static IEnumerable<string> GetUserWorlds() {
+        var userFiles = new DirectoryInfo(Application.persistentDataPath).GetFiles(WorldObjects.ProjectPattern);
+        return (from file in userFiles where File.Exists(file.FullName) select file.FullName).ToList();
     }
 
     private List<RecentWorldData> SortWorlds(List<RecentWorldData> listToSort) {

@@ -13,13 +13,8 @@ namespace Alice.Player.Modules
         }
 
         [PInteropMethod]
-        public static string getDefaultWorldMessage()
-        {
-#if UNITY_WEBGL
-            return "Replace the project file, hosted at: " + Tweedle.Parse.GameController.AutoLoadedWorldsDirectory;
-#else
-            return "Put them in " + Tweedle.Parse.GameController.AutoLoadedWorldsDirectory;
-#endif
+        public static string getDefaultWorldMessage() {
+            return Tweedle.Parse.GameController.GetDefaultWorldMessage();
         }
     }    
 }

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System.IO;
-using TMPro;
-using BeauRoutine;
 
 public class WorldLoaderControl : MonoBehaviour
 {
@@ -13,7 +9,6 @@ public class WorldLoaderControl : MonoBehaviour
     public bool useVRSizing = false; // Set in inspector
 
     private List<RecentWorldData> recentWorlds = new List<RecentWorldData>();
-    private const string RecentWorldsFileName = "/recentWorlds.txt";
 
     void Start()
     {
@@ -48,7 +43,7 @@ public class WorldLoaderControl : MonoBehaviour
 
     void PopulateLevels()
     {
-        if(!File.Exists(Application.persistentDataPath + RecentWorldsFileName)){
+        if(!File.Exists(WorldObjects.RecentWorldsListFile)){
             for (int i = 0; i < recentButtons.Length; i++)
                 recentButtons[i].gameObject.SetActive(false);
             return;
@@ -56,7 +51,7 @@ public class WorldLoaderControl : MonoBehaviour
 
 
         recentWorlds.Clear();
-        var fs = File.OpenText(Application.persistentDataPath + RecentWorldsFileName);
+        var fs = File.OpenText(WorldObjects.RecentWorldsListFile);
         string line = "";
         while (line != null)
         {
@@ -76,7 +71,7 @@ public class WorldLoaderControl : MonoBehaviour
 
     void SaveLevels()
     {
-        var fs = File.CreateText(Application.persistentDataPath + RecentWorldsFileName);
+        var fs = File.CreateText(WorldObjects.RecentWorldsListFile);
         for (int i = 0; i < recentWorlds.Count; i++)
         {
             fs.WriteLine(recentWorlds[i].path + "|" + recentWorlds[i].lastOpened);

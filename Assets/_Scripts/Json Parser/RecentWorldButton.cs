@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
+using Alice.Storage;
 using Alice.Tweedle.File;
 
 public class RecentWorldButton : MonoBehaviour
@@ -16,55 +15,50 @@ public class RecentWorldButton : MonoBehaviour
     public Image background;
     public BoxCollider collider;
     
-    private RecentWorldData fileData = new RecentWorldData();
+    private RecentWorldData fileData = new();
     private ZipFile zipFile;
     private Stream fileStream;
 
 
-    void ExtractThumbnail(string fileName)
+    private void ExtractThumbnail(string fileName)
     {
-        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
-        if (File.Exists(thumbnailPath))
-        {
+        var cachedThumbnail = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(fileName) + "_thumb.png";
+        if (File.Exists(cachedThumbnail)) {
+            ShowThumbnail(File.ReadAllBytes(cachedThumbnail));
             return;
         }
-        fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
-        using (fileStream)
-        {
-            zipFile = new ZipFile(fileStream);
-            using (zipFile)
-            {   
-                // Save thumbnail
-                byte[] data = zipFile.ReadDataEntry("thumbnail.png");
-                if (data == null)
-                {
-                    return;
+        
+        StartCoroutine(StorageReader.Read(fileName, stream => {
+            using (stream) {
+                zipFile = new ZipFile(stream);
+                using (zipFile) {
+                    // Save thumbnail
+                    var data = zipFile.ReadDataEntry("thumbnail.png");
+                    if (data == null) {
+                        return;
+                    }
+                    ShowThumbnail(data);
+                    File.WriteAllBytes(cachedThumbnail, data);
                 }
-                File.WriteAllBytes(thumbnailPath, data);
             }
-        }
+        }, _ => {
+            // Ignored
+        }));
+    }
+
+    private void ShowThumbnail(byte[] data) {
+        var tex = new Texture2D(640, 360);
+        tex.LoadImage(data); //..this will auto-resize the texture dimensions.
+        background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
     }
 
     public void SetData(RecentWorldData worldData)
     {
         nameText.text = Path.GetFileNameWithoutExtension(worldData.path);
         fileData.path = worldData.path;
-
-        string thumbnailPath = Application.persistentDataPath + "/" + Path.GetFileNameWithoutExtension(worldData.path) + "_thumb.png";
-        ExtractThumbnail(fileData.path);
-
-        if (File.Exists(thumbnailPath))
-        {
-            byte[] data = File.ReadAllBytes(thumbnailPath);
-            Texture2D tex = null;
-            tex = new Texture2D(640, 360);
-            tex.LoadImage(data); //..this will auto-resize the texture dimensions.
-            background.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0, 0), 72);
-        }
-
-
         fileData.lastOpened = worldData.lastOpened;
         SetLastOpenedText();
+        ExtractThumbnail(fileData.path);
     }
 
     public void ScaleText(float scaleFactor)
