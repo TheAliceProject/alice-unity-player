@@ -40,7 +40,7 @@ namespace Alice.Storage {
             if (!File.Exists(fileName)) {
                 HandleException(new FileNotFoundException(fileName));
             }
-            m_ReadStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
+            m_ReadStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
             yield return null;
         }
 

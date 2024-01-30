@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.File
@@ -35,7 +36,8 @@ namespace Alice.Tweedle.File
         public string file;
 
         // No additional loading by default. Subclasses may specialize.
-        public virtual void LoadContent(JsonParser parser, string workingDirectory) {
+        public virtual IEnumerator LoadContent(JsonParser parser, string workingDirectory) {
+            yield return null;
         }
     }
 }

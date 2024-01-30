@@ -82,12 +82,12 @@ namespace Alice.Tweedle.Parse
 
                 var rootManifest = ParseProjectManifest(manifestJson);
                 yield return ParsePrerequisites(rootManifest);
-                LoadProject(rootManifest);
+                yield return LoadProject(rootManifest);
             }
         }
 
-        public void LoadStandAloneProject(string manifestJson) {
-            LoadProject(ParseProjectManifest(manifestJson));
+        public IEnumerator LoadStandAloneProject(string manifestJson) {
+            yield return LoadProject(ParseProjectManifest(manifestJson));
         }
 
         #region Manifest Parsing
@@ -145,10 +145,10 @@ namespace Alice.Tweedle.Parse
 
         #endregion Manifest Parsing
 
-        private void LoadProject(Manifest manifest, string workingDirectory = "") {
+        private IEnumerator LoadProject(Manifest manifest, string workingDirectory = "") {
             manifest.AddToSystem(m_System);
             foreach (var resource in manifest.resources) {
-                resource.LoadContent(this, workingDirectory);
+                yield return resource.LoadContent(this, workingDirectory);
                 m_System.AddResource(resource);
             }
         }
@@ -219,12 +219,12 @@ namespace Alice.Tweedle.Parse
             }
         }
 
-        internal void LoadAudio(AudioReference resourceRef, string workingDir){
-            if (!Application.isPlaying) return;
-            
+        internal IEnumerator LoadAudio(AudioReference resourceRef, string workingDir) {
+            if (!Application.isPlaying) yield break;
             byte[] data = m_ZipFile.ReadDataEntry(workingDir + resourceRef.file);
             AudioClip audioClip = null;
             string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
+            yield return null;
             if(fileSuffix == ".wav"){
                 string waveTest = Encoding.ASCII.GetString(data, 8, 4);
                 if(waveTest != "WAVE")
@@ -239,6 +239,7 @@ namespace Alice.Tweedle.Parse
             }
             if(audioClip != null)
                 SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
+            yield return null;
         }
 
         private static AudioClip LoadMp3(Stream stream, string filePath) {
@@ -255,18 +256,18 @@ namespace Alice.Tweedle.Parse
             return ac;
         }
 
-        public void LoadModel(ModelReference modelReference, string workingDir) {
+        public IEnumerator LoadModel(ModelReference modelReference, string workingDir) {
             var zipPath = workingDir + modelReference.file;
             var manifestJson = m_ZipFile.ReadEntry(zipPath);
             var manifestDir = GetDirectoryEntryPath(zipPath);
 
             var modelManifest = (ModelManifest) ParseProjectManifest(manifestJson, manifestDir);
-            LoadProject(modelManifest, manifestDir);
-            LoadModelStructures(modelManifest);
+            yield return LoadProject(modelManifest, manifestDir);
+            yield return LoadModelStructures(modelManifest);
         }
 
-        private void LoadModelStructures(ModelManifest inManifest) {
-            if (!Application.isPlaying) return;
+        private IEnumerator LoadModelStructures(ModelManifest inManifest) {
+            if (!Application.isPlaying) yield break;
 
             foreach (var model in inManifest.models) {
                 var meshRef = inManifest.GetStructure(model.structure);
@@ -285,6 +286,7 @@ namespace Alice.Tweedle.Parse
                 var bounds = meshBounds.min.Equals(Vector3.zero) && meshBounds.max.Equals(Vector3.zero) ?
                     inManifest.boundingBox.AsBounds() : meshBounds;
                 SceneGraph.Current.ModelCache.Add(cacheId, loadedModel, bounds, inManifest.jointBounds);
+                yield return null;
             }
         }
 
