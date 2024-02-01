@@ -18,7 +18,7 @@ namespace Alice.Player.Primitives
         [PInteropConstructor]
         public ImageSource(string resource)
         {
-            Value = WorldObjects.GetGameController().GetTweedleSystem().TextureNamed(resource);
+            Value = WorldObjects.GetGameController()?.GetTweedleSystem()?.TextureNamed(resource);
         }
 
         [PInteropField]
