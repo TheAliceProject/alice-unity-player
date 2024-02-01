@@ -40,7 +40,7 @@ namespace Alice.Tweedle.Parse
         {
             var system = new TweedleSystem();
             var json = new JsonParser(system);
-            json.LoadStandAloneProject(str);
+            TestHelpers.WaitOnEnumeratorTree(json.LoadStandAloneProject(str));
             return system;
         }
 

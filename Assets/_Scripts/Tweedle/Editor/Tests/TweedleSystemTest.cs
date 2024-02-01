@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Alice.Tweedle.File;
 using Alice.Tweedle.VM;
@@ -19,7 +18,7 @@ namespace Alice.Tweedle.Parse {
         [SetUp]
         public void Setup() {
             _system = new TweedleSystem();
-            WaitOnEnumeratorTree(JsonParser.Parse(_system, TestWorld, _libraryCache, LogExceptionAsError));
+            TestHelpers.WaitOnEnumeratorTree(JsonParser.Parse(_system, TestWorld, _libraryCache, LogExceptionAsError));
             _system.Link();
         }
 
@@ -30,21 +29,6 @@ namespace Alice.Tweedle.Parse {
         private void Run() {
             _vm = new TestVirtualMachine(_system);
             _vm.QueueProgramMain(_system);
-        }
-
-        private static void WaitOnEnumeratorTree(IEnumerator enumerator) {
-            while (enumerator.MoveNext()) {
-                try {
-                    var val = enumerator.Current;
-                    if (val is IEnumerator val1) {
-                        WaitOnEnumeratorTree(val1);
-                    }
-                }
-                catch (NullReferenceException nre) {
-                    // Ignore errors when reading partial test structures
-                    Console.WriteLine(nre);
-                }
-            }
         }
 
         private static void LogExceptionAsError(Exception e) {
