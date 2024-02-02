@@ -156,7 +156,6 @@ public class VRControl : MonoBehaviour
     private void SelectVRSystem() {
         deviceType = GetVRDevice();
         if (deviceType == VRDevice.None) {
-            XRSettings.enabled = false;
             WorldObjects.SetVRObjectsActive(false);
         } else {
             loadWorldInVR = true;

@@ -1,4 +1,5 @@
-﻿using Alice.Tweedle.Parse;
+﻿using System.Collections;
+using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.File
 {
@@ -11,8 +12,9 @@ namespace Alice.Tweedle.File
         public float height;
         public float width;
 
-        public override void LoadContent(JsonParser parser, string workingDirectory) {
+        public override IEnumerator LoadContent(JsonParser parser, string workingDirectory) {
             parser.LoadTexture(this, workingDirectory);
+            yield return null;
         }
     }
 }

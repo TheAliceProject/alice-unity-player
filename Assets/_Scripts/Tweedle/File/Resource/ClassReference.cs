@@ -1,4 +1,5 @@
-﻿using Alice.Tweedle.Parse;
+﻿using System.Collections;
+using Alice.Tweedle.Parse;
 
 namespace Alice.Tweedle.File
 {
@@ -7,8 +8,9 @@ namespace Alice.Tweedle.File
     {
         public override ContentType ContentType => ContentType.Class;
 
-        public override void LoadContent(JsonParser parser, string workingDirectory) {
+        public override IEnumerator LoadContent(JsonParser parser, string workingDirectory) {
             parser.ParseTweedleTypeResource(this, workingDirectory);
+            yield return null;
         }
     }
 }
