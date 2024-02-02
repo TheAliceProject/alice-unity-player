@@ -110,7 +110,8 @@ namespace Alice.Tweedle.Parse
         public void ClassNamedSameAsBooleanPrimitiveShouldLogError()
         {
             ParseType("class Boolean {}");
-            LogAssert.Expect(LogType.Error, new Regex("mismatched input 'Boolean'"));
+            LogAssert.Expect(LogType.Error, new Regex("\\[Tweedle Parser\\] RuntimeAssembly .unknown.. line 1.6 mismatched input 'Boolean' expecting IDENTIFIER"));
+            LogAssert.Expect(LogType.Error, new Regex("\\[Tweedle Parser\\] RuntimeAssembly .unknown.."));
         }
 
         [Test]
@@ -489,7 +490,8 @@ namespace Alice.Tweedle.Parse
         public void EnumNamedSameAsBooleanPrimitiveShouldBeAnError()
         {
             ParseType("enum Boolean {TRUE, FALSE}");
-            LogAssert.Expect(LogType.Error, new Regex("mismatched input 'Boolean'"));
+            LogAssert.Expect(LogType.Error, new Regex("\\[Tweedle Parser\\] RuntimeAssembly .unknown.. line 1.5 mismatched input 'Boolean' expecting IDENTIFIER"));
+            LogAssert.Expect(LogType.Error, new Regex("\\[Tweedle Parser\\] RuntimeAssembly .unknown.."));
         }
 
         [Test]

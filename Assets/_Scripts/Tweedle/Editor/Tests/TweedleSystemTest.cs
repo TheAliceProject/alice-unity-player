@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Alice.Tweedle.File;
 using Alice.Tweedle.VM;
 using NUnit.Framework;
@@ -9,7 +10,7 @@ using UnityEngine;
 namespace Alice.Tweedle.Parse {
     [TestFixture]
     public class TweedleSystemTest {
-        private static readonly string TestWorld = $"{WorldObjects.BundledWorldsDirectory}/MinimalTestWorld.a3w";
+        private static readonly string TestWorld = $"{Path.Combine(Application.streamingAssetsPath, "Default")}/MinimalTestWorld.a3w";
 
         private TweedleSystem _system;
         private readonly Dictionary<ProjectIdentifier, TweedleSystem> _libraryCache = new Dictionary<ProjectIdentifier, TweedleSystem>();
