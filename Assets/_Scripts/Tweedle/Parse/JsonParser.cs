@@ -225,18 +225,26 @@ namespace Alice.Tweedle.Parse
             AudioClip audioClip = null;
             string fileSuffix = resourceRef.file.Substring(resourceRef.file.Length - 4).ToLower();
             yield return null;
-            if(fileSuffix == ".wav"){
-                string waveTest = Encoding.ASCII.GetString(data, 8, 4);
-                if(waveTest != "WAVE")
-                    Debug.LogError("Detected wav file but header incorrect.");
-                audioClip = WavUtility.ToAudioClip(data);
+            try {
+                switch (fileSuffix) {
+                    case ".wav": {
+                        var waveTest = Encoding.ASCII.GetString(data, 8, 4);
+                        if (waveTest != "WAVE")
+                            Debug.LogError("Detected wav file but header incorrect.");
+                        audioClip = WavUtility.ToAudioClip(data);
+                        break;
+                    }
+                    case ".mp3":
+                        audioClip = LoadMp3(new MemoryStream(data), resourceRef.file);
+                        break;
+                    default:
+                        Debug.LogError(fileSuffix + " files are not supported at this time.");
+                        break;
+                }
+            } catch (Exception e) {
+                Debug.LogError($"Problem reading the audio file: {resourceRef.file}\nResuming without it.\n{e}");
             }
-            else if(fileSuffix == ".mp3"){
-                audioClip = LoadMp3(new MemoryStream(data), resourceRef.file);
-            }
-            else{
-                Debug.LogError(fileSuffix + " files are not supported at this time.");
-            }
+
             if(audioClip != null)
                 SceneGraph.Current.AudioCache.Add(resourceRef.name, audioClip);
             yield return null;
