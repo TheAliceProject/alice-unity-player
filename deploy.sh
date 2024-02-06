@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # TODO read this from a single shared source
-VERSION_TAG="beta.23"
+VERSION_TAG="beta.24"
 
 ARCH=$(uname)
 
