@@ -12,7 +12,7 @@ namespace Alice.Tweedle.Parse {
         private static readonly string TestWorld = $"{Path.Combine(Application.streamingAssetsPath, "Default")}/MinimalTestWorld.a3w";
 
         private TweedleSystem _system;
-        private readonly Dictionary<ProjectIdentifier, TweedleSystem> _libraryCache = new Dictionary<ProjectIdentifier, TweedleSystem>();
+        private readonly LibraryCache _libraryCache = new();
 
         private TestVirtualMachine _vm;
         

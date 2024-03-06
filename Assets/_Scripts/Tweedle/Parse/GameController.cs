@@ -5,10 +5,7 @@ using System.Collections;
 using Alice.Player.Modules;
 using BeauRoutine;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Alice.Player.Unity;
-using Alice.Tweedle.File;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace Alice.Tweedle.Parse
@@ -34,8 +31,7 @@ namespace Alice.Tweedle.Parse
         private string m_currentFilePath;
         private bool m_IsLoading;
 
-        private readonly Dictionary<ProjectIdentifier, TweedleSystem> m_LibraryCache =
-            new Dictionary<ProjectIdentifier, TweedleSystem>();
+        private readonly LibraryCache m_LibraryCache = new();
 
         public static bool IsStandAlone { get; private set; }
 
