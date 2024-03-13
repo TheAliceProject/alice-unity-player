@@ -65,9 +65,12 @@ namespace Alice.Player.Unity {
         }
 
         private void OnSizePropertyChanged(TValue inValue) {
-            if (m_rig == null) return;
             Vector3 scale = inValue.RawObject<Size>();
-            m_rig.transform.SetScale(scale);
+            if (m_rig == null) {
+                cachedTransform.SetScale(scale);
+            } else {
+                m_rig.transform.SetScale(scale);
+            }
         }
 
         private IEnumerator CancelOutDefaultVrRotation()
