@@ -1,5 +1,5 @@
 # Alice Player
-A stand alone program to run worlds exported from the Alice 3 IDE.
+A stand alone program to run worlds exported from the Alice 3 IDE. Exports use the file extension `a3w`.
 
 Available for desktop on Mac, Windows, and Linux, and for VR on Oculus and Vive.
 
@@ -18,7 +18,7 @@ To create asset bundles from the models the script can be run in Unity (Assets >
 The `Tweedle` folder contains code for reading and running Tweedle, the text representation of Alice code. It is in the Java/C# family.
 - The `File` folder has class definitions for reading in manifests.
 - The `Grammar` folder has the Antlr grammar.
-- The `Player` folder supports the excution of Tweedle.
+- The `Player` folder supports the execution of Tweedle.
 - The `Parse` folder has tests for testing parsing, code to parse an a3w project, code to select the zip folder, code to parse twe files, and the class to hold all the parsed information.
 - The inner `Tweedle` folder holds the specific language elements.
 
