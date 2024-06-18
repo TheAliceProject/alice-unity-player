@@ -5,7 +5,7 @@ using BeauRoutine;
 namespace Alice.Player.Unity {
     public sealed class SGTextModel : SGModel {
 
-        [SerializeField]private string currTextStr = "";
+        private string currTextStr = "";
         private GameObject textStrObj;
         private Renderer m_Renderer;
         private MeshFilter m_MeshFilter;
