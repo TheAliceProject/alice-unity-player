@@ -54,7 +54,8 @@ namespace Alice.Player.Unity {
         }
 
         public void SetText(string text, UnityEngine.Color c, TMP_FontAsset font, float scale){
-            bubbleText.text = text;
+            // Converts escape sequences in strings into the characters they represent and assigns it to the bubble text
+            bubbleText.text = System.Text.RegularExpressions.Regex.Unescape(text);
             bubbleText.color = c;
             bubbleText.font = font;
             fontSizeUnscaled = BASE_FONT_SIZE * scale;

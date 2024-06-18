@@ -61,7 +61,8 @@ namespace Alice.Player.Unity {
         }
 
         private void OnTextPropertyChanged(TValue inValue) {
-            currTextStr = inValue.ToTextString();
+            // Unescapes any escaped characters in the input string 
+            currTextStr = System.Text.RegularExpressions.Regex.Unescape(inValue.ToTextString());
             RefreshText();
         }
     }
