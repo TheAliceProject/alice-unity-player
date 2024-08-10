@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+</head>
+<body>
+    <h1>Upload a File</h1>
+    <form action="upload.php" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <input type="submit" value="Upload">
+    </form>
+
+    <h1>Delete a File</h1>
+    <form action="delete.php" method="post">
+        <select id="fileSelect" name="filename" required>
+            <option value="" disabled selected>Select a file to delete</option>
+        </select>
+        <input type="submit" value="Delete">
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('list_files_delete.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(files => {
+                    console.log('Files received:', files); // Debugging line
+                    const select = document.getElementById('fileSelect');
+                    files.forEach(file => {
+                        const option = document.createElement('option');
+                        option.value = file;
+                        option.textContent = file;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching file list:', error));
+        });
+    </script>
+</body>
+</html>
