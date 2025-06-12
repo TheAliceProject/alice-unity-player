@@ -384,8 +384,9 @@ namespace Alice.Player.Modules {
             UnityEngine.Color textColorConverted = new UnityEngine.Color((float)textColorRaw.R, (float)textColorRaw.G, (float)textColorRaw.B, (float)textColorRaw.A);
 
             AsyncReturn asyncReturn = new AsyncReturn();
-
+            // This is VRSceneCanvas, the canvas that the bubble will be spawned on. 
             SceneCanvas canvas = SceneGraph.Current.GetCurrentCanvas();
+            // This is the character that is speaking.
             var sgEntity = SceneGraph.Current.FindEntity(entity);
             if (sgEntity != null) {
                 canvas.SayThinkControl.SpawnSayThink(asyncReturn, canvas.transform, sgEntity, bubbleText, true,
